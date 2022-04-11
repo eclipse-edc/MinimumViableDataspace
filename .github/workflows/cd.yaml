@@ -1,0 +1,33 @@
+name: CD
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+
+# Grant permissions to obtain federated identity credentials
+# see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  Deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID}}
+          tenant-id: ${{ secrets.ARM_TENANT_ID}}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+
+      - name: "Show that Azure login succeeded"
+        run: az acr show --name $ACR_NAME -o table
+        env:
+          ACR_NAME: ${{ secrets.ACR_NAME }}

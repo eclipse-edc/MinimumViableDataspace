@@ -1,0 +1,33 @@
+name: Initialize CD
+
+on: workflow_dispatch
+
+# Grant permissions to obtain federated identity credentials
+# see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+
+  Deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      COMMON_RESOURCE_GROUP: ${{ secrets.COMMON_RESOURCE_GROUP }}
+      COMMON_RESOURCE_GROUP_LOCATION: ${{ secrets.COMMON_RESOURCE_GROUP_LOCATION }}
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: "Create resource group"
+        run: az group create --name "$COMMON_RESOURCE_GROUP" --location "$COMMON_RESOURCE_GROUP_LOCATION" -o table
+
+      - name: "Create Azure Container Registry"
+        run: az acr create --resource-group "$COMMON_RESOURCE_GROUP" --name "$ACR_NAME" --sku Basic --admin-enabled -o table
