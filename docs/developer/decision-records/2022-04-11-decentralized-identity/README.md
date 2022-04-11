@@ -20,13 +20,15 @@ An automated terraform deployment should generate certificates, DID documents an
 
 ### Sending IDS requests
 
-A JWT token is sent on each IDS request. The JWT is generated using the private key in the certicate available in the KeyVault of the consumer connector. The DID is set as issuer of the JWT token, which can be resolved to the URL of the corresponding DID document.
+A [JWT token](https://jwt.io/introduction) is sent on each IDS request. The JWT is generated using the private key in the certicate available in the KeyVault of the consumer connector. The DID is set as issuer of the JWT token, which can be resolved to the URL of the corresponding DID document.
 
 ![Sending IDS requests](send-ids-request.png)
 
 ### Receiving IDS requests
 
-Upon reception, the provider connector verifies the JWT token. To achieve this, the DID URL is resolved from the DID available as the token issuer. The public key is retrieved from the DID document, which is then used by the provider connector to verify the JWT.
+Upon reception, the provider connector verifies the JWT token. To achieve this, the DID URL is resolved from the DID available as the token issuer. The public key is retrieved from the DID document, which is then used by the provider connector to verify the JWT and thus the identity of the token's signer. 
+
+Note: since tokens are credentials, great care must be taken to prevent security issues. In general, JWTs should not be kept longer than required (expire them as soon as possible).
 
 No Identity Hub integration is desired at this point. An `EmptyCredentialsVerifier` should be used, returning an empty claim collection. Identity Hub integration will be evaluated later together with policies.
 
