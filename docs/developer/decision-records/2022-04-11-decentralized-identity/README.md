@@ -26,7 +26,7 @@ A JWT token is sent on each IDS request. The JWT is generated using the private 
 
 ### Receiving IDS requests
 
-Upon recieval, the provider connector verifies the JWT token. To achieve this, the DID URL is resolved from the DID available as the token issuer. The public key is retrieved from the DID document, which is then used by the provider connector to verify the JWT.
+Upon reception, the provider connector verifies the JWT token. To achieve this, the DID URL is resolved from the DID available as the token issuer. The public key is retrieved from the DID document, which is then used by the provider connector to verify the JWT.
 
 No Identity Hub integration is desired at this point. An `EmptyCredentialsVerifier` should be used, returning an empty claim collection. Identity Hub integration will be evaluated later together with policies.
 
