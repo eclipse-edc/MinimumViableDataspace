@@ -34,7 +34,7 @@ EDC sends IDS requests with a header containing a [JSON Web Token (JWT)](https:/
 
 Upon reception, the provider connector verifies the JWT. To achieve this, the DID document URL is resolved from the DID available as the token issuer as described in the [DID Web specification](https://w3c-ccg.github.io/did-method-web/#method-specific-identifier). The public key is retrieved from the DID document, which is then used by the provider connector to verify the JWT and thus the identity of the token's signer. 
 
-Note: since tokens are credentials, great care must be taken to prevent security issues. In general, JWTs should not be kept longer than required (expire them as soon as possible).
+Note: since tokens are credentials, great care must be taken to prevent security issues. In general, JWTs should not be kept longer than required (expire them as soon as possible). A spike will be conducted to do further clarifications around security concerns, this ADR will be adapted accordingly. 
 
 No Identity Hub integration is desired at this point. An `EmptyCredentialsVerifier` must be used, returning an empty claim collection. Identity Hub integration will be evaluated later together with policies.
 
