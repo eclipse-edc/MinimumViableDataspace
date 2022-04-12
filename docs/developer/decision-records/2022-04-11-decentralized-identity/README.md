@@ -2,7 +2,11 @@
 
 Decentralized identifiers (DIDs) enable verifiable, decentralized digital identity. DIDs have been designed so that they may be decoupled from centralized registries, identity providers, and certificate authorities. 
 
-[The DID core specification](https://www.w3.org/TR/did-core/) describes syntax, a common meta-model, operations and more, but offers full flexibility to choose any particular technology or cryptography to underpin the generation, persistence, resolution, or interpretation of DIDs. Over a hundred [DID methods](https://www.w3.org/TR/did-core/#methods) with different backing technologies are currently [in development](https://w3c.github.io/did-spec-registries/#did-methods).
+[The DID core specification](https://www.w3.org/TR/did-core/) defines DIDs as "URIs that associate a DID subject with a DID document allowing trustable interactions associated with that subject". The [DID document](https://www.w3.org/TR/did-core/#dfn-did-documents) contains a set of verification methods and/or services, that can be used to prove control of the DID by the [DID subject](https://www.w3.org/TR/did-core/#dfn-did-subjects). DIDs are composed of the following parts:
+
+![Parts of a DID](parts-of-a-did.svg)
+
+The DID core specification offers full flexibility to choose any particular technology or cryptography to underpin the generation, persistence, resolution, or interpretation of DIDs. Over a hundred [DID methods](https://www.w3.org/TR/did-core/#methods) with different backing technologies are currently [in development](https://w3c.github.io/did-spec-registries/#did-methods). 
 
 EDC is based on [DID Web](https://w3c-ccg.github.io/did-method-web/), a DID method that allows bootstrapping trust using a web domain's existing reputation.
 
