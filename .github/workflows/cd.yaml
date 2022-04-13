@@ -124,6 +124,7 @@ jobs:
           TF_VAR_prefix: ${{ github.run_number }}
           TF_VAR_resource_group: rg-${{ matrix.participant }}-${{ github.run_number }}
           TF_VAR_runtime_image: mvd-edc/connector:${{ github.run_number }}
+          TF_VAR_application_sp_object_id: ${{ secrets.APP_OBJECT_ID }}
 
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
