@@ -14,8 +14,137 @@ permissions:
 
 jobs:
 
-  Deploy:
+  # Build runtime image in Azure Container Registry, tagged with the unique run_number.
+  Build:
     runs-on: ubuntu-latest
+    steps:
+      # Checkout MVD code into MVD directory.
+      - uses: actions/checkout@v2
+        with:
+          path: MVD
+
+      # Checkout EDC code into DataSpaceConnector directory.
+      - name: Checkout EDC
+        uses: actions/checkout@v2
+        with:
+          repository: eclipse-dataspaceconnector/DataSpaceConnector
+          path: DataSpaceConnector
+          ref: milestone-3 # tag or commit hash
+
+      # Install Java and cache MVD Gradle build.
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # Cache EDC packages (installed into ~/.m2) in-between runs.
+      # If the latest EDC commit ID has not changed since the last run, this will restore
+      # its Maven packages from the cache.
+      - name: Cache EDC packages
+        uses: actions/cache@v3
+        id: cache
+        with:
+          path: ~/.m2
+          # .git/FETCH_HEAD contains latest commit ID
+          key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}
+
+      # Install EDC packages into ~/.m2.
+      # This action only runs if the packages could not be restored from the cache.
+      - name: Build EDC packages
+        run: |
+          chmod +x ./gradlew
+          ./gradlew publishToMavenLocal
+        if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
+        working-directory: DataSpaceConnector
+
+      # Build MVD runtime JAR locally.
+      # The result is a JAR file in MVD/launcher/build/libs.
+      - name: 'Build runtime JAR'
+        run: |
+          chmod +x ./gradlew
+          ./gradlew launcher:shadowJar
+        working-directory: MVD
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Login to ACR'
+        run: az acr login -n $ACR_NAME
+        env:
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+
+      # Build Docker runtime image remotely on ACR & push it to the registry.
+      - name: 'Build image'
+        run: az acr build --registry $ACR_NAME --image mvd-edc/connector:${{ github.run_number }} .
+        working-directory: MVD/launcher
+        env:
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+
+  # Deploy dataspace participants in parallel.
+  Deploy:
+    needs: Build
+    runs-on: ubuntu-latest
+    outputs:
+      company1_edc_host: ${{ steps.runterraform.outputs.company1_edc_host }}
+      company2_edc_host: ${{ steps.runterraform.outputs.company2_edc_host }}
+
+    strategy:
+      matrix:
+        participant: [company1, company2]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Run terraform'
+        id: runterraform
+        run: |
+          terraform init
+          terraform apply -auto-approve
+          EDC_HOST=$(terraform output -raw edc_host)
+          echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
+          echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
+        working-directory: deployment/terraform
+        env:
+
+          # Authentication settings for Terraform AzureRM provider
+          # See https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+          # Terraform variables
+          TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
+          TF_VAR_participant_name: ${{ matrix.participant }}
+          TF_VAR_prefix: ${{ github.run_number }}
+          TF_VAR_resource_group: rg-${{ matrix.participant }}-${{ github.run_number }}
+          TF_VAR_runtime_image: mvd-edc/connector:${{ github.run_number }}
+
+      - name: 'Verify deployed EDC is healthy'
+        run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
+
+  Verify:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Verify EDCs are ready'
+        run: |
+          curl --retry 6 --fail http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/check/health
+          curl --retry 6 --fail http://${{ needs.Deploy.outputs.company2_edc_host }}:8181/api/check/health
+
+  # Delete deployed Azure resource groups for each dataspace participant.
+  Destroy:
+    needs: [Deploy, Verify]
+    runs-on: ubuntu-latest
+    if: always()
+    strategy:
+      matrix:
+        participant: [company1, company2]
 
     steps:
       - uses: actions/checkout@v2
@@ -23,11 +152,9 @@ jobs:
       - name: 'Az CLI login'
         uses: azure/login@v1
         with:
-          client-id: ${{ secrets.ARM_CLIENT_ID}}
-          tenant-id: ${{ secrets.ARM_TENANT_ID}}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID}}
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
-      - name: "Show that Azure login succeeded"
-        run: az acr show --name $ACR_NAME -o table
-        env:
-          ACR_NAME: ${{ secrets.ACR_NAME }}
+      - name: 'Delete resource group'
+        run: az group delete --name rg-${{matrix.participant}}-${{ github.run_number }} --no-wait --yes
