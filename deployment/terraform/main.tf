@@ -94,6 +94,19 @@ resource "azurerm_storage_account" "assets" {
   account_kind             = "StorageV2"
 }
 
+resource "azurerm_storage_container" "assets_container" {
+  name                 = "src-container"
+  storage_account_name = azurerm_storage_account.assets.name
+}
+
+resource "azurerm_storage_blob" "testfile" {
+  name                   = "text-document.txt"
+  storage_account_name   = azurerm_storage_account.assets.name
+  storage_container_name = azurerm_storage_container.assets_container.name
+  type                   = "Block"
+  source                 = "sample-data/text-document.txt"
+}
+
 resource "azurerm_key_vault_secret" "asset_storage_key" {
   name         = "${azurerm_storage_account.assets.name}-key1"
   value        = azurerm_storage_account.assets.primary_access_key
