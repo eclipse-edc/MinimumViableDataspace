@@ -105,6 +105,8 @@ jobs:
           terraform init
           terraform apply -auto-approve
           EDC_HOST=$(terraform output -raw edc_host)
+          ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
+          echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
         working-directory: deployment/terraform
@@ -128,6 +130,15 @@ jobs:
 
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
+
+      - name: 'Seed data'
+        run: |
+          npm install -g newman
+          newman run \
+            --folder "Publish Master Data" \
+            --env-var data_management_url="http://$EDC_HOST:9191/api/v1/data" \
+            --env-var storage_account="$ASSETS_STORAGE_ACCOUNT" \
+            deployment/data/MVD.postman_collection.json
 
   Verify:
     needs: Deploy
