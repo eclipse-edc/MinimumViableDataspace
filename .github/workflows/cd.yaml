@@ -99,6 +99,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
+      - name: 'Generate key'
+        run: |
+          openssl ecparam -name prime256v1 -genkey -noout -out key.pem
+          openssl ec -in key.pem -pubout -out key.public.pem
+          docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
+
       - name: 'Run terraform'
         id: runterraform
         run: |

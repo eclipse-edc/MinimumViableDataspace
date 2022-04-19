@@ -37,3 +37,8 @@ variable "container_memory" {
 variable "application_sp_object_id" {
   description = "id of application's service principal object"
 }
+
+variable "key_file" {
+  description = "name of a file containing the private key in PEM format"
+  default = "../../key.pem"
+}

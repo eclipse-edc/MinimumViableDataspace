@@ -115,3 +115,12 @@ resource "azurerm_key_vault_secret" "asset_storage_key" {
     azurerm_role_assignment.current-user-secretsofficer
   ]
 }
+
+resource "azurerm_key_vault_secret" "did_key" {
+  name         = var.participant_name
+  value        = file(var.key_file)
+  key_vault_id = azurerm_key_vault.participant.id
+  depends_on = [
+    azurerm_role_assignment.current-user-secretsofficer
+  ]
+}
