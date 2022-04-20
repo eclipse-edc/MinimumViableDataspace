@@ -18,53 +18,16 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
-      # Checkout MVD code into MVD directory.
+      # Checkout MVD code
       - uses: actions/checkout@v2
-        with:
-          path: MVD
 
-      # Checkout EDC code into DataSpaceConnector directory.
-      - name: Checkout EDC
-        uses: actions/checkout@v2
-        with:
-          repository: eclipse-dataspaceconnector/DataSpaceConnector
-          path: DataSpaceConnector
-          ref: milestone-3 # tag or commit hash
-
-      # Install Java and cache MVD Gradle build.
-      - uses: actions/setup-java@v2
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
-
-      # Cache EDC packages (installed into ~/.m2) in-between runs.
-      # If the latest EDC commit ID has not changed since the last run, this will restore
-      # its Maven packages from the cache.
-      - name: Cache EDC packages
-        uses: actions/cache@v3
-        id: cache
-        with:
-          path: ~/.m2
-          # .git/FETCH_HEAD contains latest commit ID
-          key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}
-
-      # Install EDC packages into ~/.m2.
-      # This action only runs if the packages could not be restored from the cache.
-      - name: Build EDC packages
-        run: |
-          chmod +x ./gradlew
-          ./gradlew publishToMavenLocal
-        if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
-        working-directory: DataSpaceConnector
+      - uses: ./.github/actions/gradle-setup
 
       # Build MVD runtime JAR locally.
       # The result is a JAR file in MVD/launcher/build/libs.
       - name: 'Build runtime JAR'
         run: |
-          chmod +x ./gradlew
           ./gradlew launcher:shadowJar
-        working-directory: MVD
 
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -81,7 +44,7 @@ jobs:
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd-edc/connector:${{ github.run_number }} .
-        working-directory: MVD/launcher
+        working-directory: launcher
         env:
           ACR_NAME: ${{ secrets.ACR_NAME }}
 
@@ -167,10 +130,17 @@ jobs:
     needs: Deploy
     runs-on: ubuntu-latest
     steps:
-      - name: 'Verify EDCs are ready'
+      # Checkout MVD code
+      - uses: actions/checkout@v2
+
+      - uses: ./.github/actions/gradle-setup
+
+      - name: 'System tests'
         run: |
-          curl --retry 6 --fail http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/check/health
-          curl --retry 6 --fail http://${{ needs.Deploy.outputs.company2_edc_host }}:8181/api/check/health
+          ./gradlew :system-tests:test
+        env:
+          CONSUMER_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:9191
+          PROVIDER_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
 
   # Delete deployed Azure resource groups for each dataspace participant.
   Destroy:

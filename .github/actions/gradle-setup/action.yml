@@ -1,0 +1,43 @@
+name: "Setup Gradle"
+description: "Setup Gradle"
+runs:
+  using: "composite"
+  steps:
+    # Checkout EDC code into DataSpaceConnector directory.
+    - name: Checkout EDC
+      uses: actions/checkout@v2
+      with:
+        repository: eclipse-dataspaceconnector/DataSpaceConnector
+        path: DataSpaceConnector
+        ref: milestone-3.1 # tag or commit hash
+
+    # Install Java and cache MVD Gradle build.
+    - uses: actions/setup-java@v2
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: 'gradle'
+
+    # Cache EDC packages (installed into ~/.m2) in-between runs.
+    # If the latest EDC commit ID has not changed since the last run, this will restore
+    # its Maven packages from the cache.
+    - name: Cache EDC packages
+      uses: actions/cache@v3
+      id: cache
+      with:
+        path: ~/.m2
+        # .git/FETCH_HEAD contains latest commit ID
+        key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}
+
+    # Install EDC packages into ~/.m2.
+    # This action only runs if the packages could not be restored from the cache.
+    - name: Build EDC packages
+      run: |
+        ./gradlew publishToMavenLocal
+      if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
+      shell: bash
+      working-directory: DataSpaceConnector
+
+    - name: Delete EDC packages
+      run: rm -r DataSpaceConnector
+      shell: bash

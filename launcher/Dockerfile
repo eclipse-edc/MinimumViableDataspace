@@ -25,4 +25,6 @@ ENTRYPOINT java \
     -Dweb.http.path="/api" \
     -Dweb.http.data.port="9191" \
     -Dweb.http.data.path="/api/v1/data" \
+    -Dweb.http.ids.port="8282" \
+    -Dweb.http.ids.path="/api/v1/ids" \
     -jar dataspaceconnector-basic.jar

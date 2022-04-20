@@ -11,4 +11,11 @@ allprojects {
             url = uri("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/")
         }
     }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+        testLogging {
+            showStandardStreams = true
+        }
+    }
 }
