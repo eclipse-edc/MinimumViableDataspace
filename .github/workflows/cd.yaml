@@ -120,9 +120,11 @@ jobs:
           ' >> input.tfvars
           terraform init
           terraform apply -var-file=input.tfvars -auto-approve
+          DID_ENDPOINT=$(terraform output -raw did_endpoint)
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
           echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
+          echo "DID_ENDPOINT=$DID_ENDPOINT" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
         working-directory: deployment/terraform
@@ -135,6 +137,9 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
+          TF_VAR_key_file: "../../key.pem"
+          TF_VAR_public_key_jwk_file: "../../key.public.jwk"
+
       # Publish terraform folder because it contains the state, the provider builds and the input.tfvars file
       - uses: actions/upload-artifact@v3
         name: 'Publish terraform folder'
@@ -142,6 +147,9 @@ jobs:
           name: terraform-${{ matrix.participant }}
           path: deployment/terraform
           retention-days: 1
+
+      - name: 'Verify did endpoint is available'
+        run: curl $DID_ENDPOINT | jq '.id'
 
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
@@ -194,9 +202,6 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
-
-          # Override terraform values defined in file input.tfvars
-          TF_VAR_key_file: /dev/null
 
       - uses: actions/upload-artifact@v3
         name: 'Clear terraform artifact'

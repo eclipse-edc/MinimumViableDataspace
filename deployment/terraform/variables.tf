@@ -4,7 +4,7 @@ variable "prefix" {
 }
 
 variable "participant_name" {
-  default = "testparticipant"
+  default = "participant"
 }
 
 variable "runtime_image" {
@@ -40,5 +40,10 @@ variable "application_sp_object_id" {
 
 variable "key_file" {
   description = "name of a file containing the private key in PEM format"
-  default = "../../key.pem"
+  default     = null
+}
+
+variable "public_key_jwk_file" {
+  description = "name of a file containing the public key in JWK format"
+  default = null
 }

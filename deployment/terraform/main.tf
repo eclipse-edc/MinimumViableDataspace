@@ -90,12 +90,22 @@ resource "azurerm_role_assignment" "current-user-secretsofficer" {
 }
 
 resource "azurerm_storage_account" "assets" {
-  name                     = "${var.prefix}${var.participant_name}"
+  name                     = "${var.prefix}${var.participant_name}assets"
   resource_group_name      = azurerm_resource_group.participant.name
   location                 = azurerm_resource_group.participant.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
+}
+
+resource "azurerm_storage_account" "did" {
+  name                     = "${var.prefix}${var.participant_name}did"
+  resource_group_name      = azurerm_resource_group.participant.name
+  location                 = azurerm_resource_group.participant.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  account_kind             = "StorageV2"
+  static_website {}
 }
 
 resource "azurerm_storage_container" "assets_container" {
@@ -122,9 +132,39 @@ resource "azurerm_key_vault_secret" "asset_storage_key" {
 
 resource "azurerm_key_vault_secret" "did_key" {
   name         = var.participant_name
+  # Create did_key secret only if key_file value is provided. Default key_file value is null.
+  count = var.key_file == null ? 0 : 1
   value        = file(var.key_file)
   key_vault_id = azurerm_key_vault.participant.id
   depends_on = [
     azurerm_role_assignment.current-user-secretsofficer
   ]
+}
+
+resource "azurerm_storage_blob" "did" {
+  name                   = "did.json"
+  storage_account_name   = azurerm_storage_account.did.name
+  # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
+  count = var.public_key_jwk_file == null ? 0 : 1
+  storage_container_name = "$web"
+  type                   = "Block"
+  source_content = jsonencode({
+    id = "did:web:${azurerm_storage_account.did.primary_web_host}:identity",
+    "@context" = ["https://www.w3.org/ns/did/v1",
+      {
+        "@base" = "did:web:${azurerm_storage_account.did.primary_web_host}:identity"
+      }
+    ],
+    "verificationMethod" = [
+      {
+        "id"         = "#identity-key-1",
+        "controller" = "",
+        "type"       = "JsonWebKey2020",
+        "publicKeyJwk" = jsondecode(file(var.public_key_jwk_file))
+      }
+    ],
+    "authentication" : [
+      "#identity-key-1"
+  ] })
+  content_type = "application/json"
 }
