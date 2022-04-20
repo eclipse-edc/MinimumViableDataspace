@@ -56,6 +56,10 @@ resource "azurerm_container_group" "edc" {
       protocol = "TCP"
     }
     ports {
+      port     = 8282
+      protocol = "TCP"
+    }
+    ports {
       port     = 9191
       protocol = "TCP"
     }

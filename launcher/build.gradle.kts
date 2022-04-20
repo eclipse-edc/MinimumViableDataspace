@@ -19,22 +19,22 @@ plugins {
 }
 
 val edcVersion: String by project
-val group = "org.eclipse.dataspaceconnector"
+val edcGroup: String by project
 
 dependencies {
-    implementation("${group}:core:${edcVersion}")
-    implementation("${group}:ids:${edcVersion}")
-    implementation("${group}:control-api:${edcVersion}")
-    implementation("${group}:observability-api:${edcVersion}")
-    implementation("${group}:data-management-api:${edcVersion}")
-    implementation("${group}:assetindex-memory:${edcVersion}")
-    implementation("${group}:transfer-process-store-memory:${edcVersion}")
-    implementation("${group}:contractnegotiation-store-memory:${edcVersion}")
-    implementation("${group}:contractdefinition-store-memory:${edcVersion}")
-    implementation("${group}:iam-mock:${edcVersion}")
-    implementation("${group}:filesystem-configuration:${edcVersion}")
-    implementation("${group}:http:${edcVersion}")
-    implementation("${group}:policy-store-memory:${edcVersion}")
+    implementation("${edcGroup}:core:${edcVersion}")
+    implementation("${edcGroup}:ids:${edcVersion}")
+    implementation("${edcGroup}:control-api:${edcVersion}")
+    implementation("${edcGroup}:observability-api:${edcVersion}")
+    implementation("${edcGroup}:data-management-api:${edcVersion}")
+    implementation("${edcGroup}:assetindex-memory:${edcVersion}")
+    implementation("${edcGroup}:transfer-process-store-memory:${edcVersion}")
+    implementation("${edcGroup}:contractnegotiation-store-memory:${edcVersion}")
+    implementation("${edcGroup}:contractdefinition-store-memory:${edcVersion}")
+    implementation("${edcGroup}:iam-mock:${edcVersion}")
+    implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
+    implementation("${edcGroup}:http:${edcVersion}")
+    implementation("${edcGroup}:policy-store-memory:${edcVersion}")
 }
 
 application {
