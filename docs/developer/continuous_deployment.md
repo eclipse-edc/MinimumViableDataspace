@@ -87,6 +87,8 @@ Configure the following GitHub secrets:
 | `COMMON_RESOURCE_GROUP`          | The Azure resource group name to deploy common resources in, such as Azure Container Registry. |
 | `COMMON_RESOURCE_GROUP_LOCATION` | The location of the Azure resource group name to deploy common resources in. Example: `northeurope`. |
 | `ACR_NAME`                    | The name of the Azure Container Registry to deploy. Use only lowercase letters and numbers. |
+| `TERRAFORM_STATE_STORAGE_ACCOUNT` | The name of the storage account used to store the terraform state container. |
+| `TERRAFORM_STATE_CONTAINER` | The name of the container used to store the terraform state blob. |
 
 ### Deploying CD resources
 

@@ -72,17 +72,15 @@ jobs:
       - name: 'Run terraform'
         id: runterraform
         run: |
+          # Create backend.conf file to retrieve the remote terraform state during terraform init.
           echo '
-            acr_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
-            acr_name = "${{ secrets.ACR_NAME }}"
-            participant_name = "${{ matrix.participant }}"
-            prefix = "${{ github.run_number }}"
-            resource_group = "rg-${{ matrix.participant }}-${{ github.run_number }}"
-            runtime_image = "mvd-edc/connector:${{ github.run_number }}"
-            application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
-          ' >> input.tfvars
-          terraform init
-          terraform apply -var-file=input.tfvars -auto-approve
+            resource_group_name  = "${{ secrets.COMMON_RESOURCE_GROUP }}"
+            storage_account_name = "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}"
+            container_name       = "${{ secrets.TERRAFORM_STATE_CONTAINER }}"
+            key                  = "${{ matrix.participant }}${{ github.run_number }}.tfstate"
+          ' >> backend.conf
+          terraform init -backend-config=backend.conf
+          terraform apply -auto-approve
           DID_ENDPOINT=$(terraform output -raw did_endpoint)
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
@@ -100,15 +98,22 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
+          # Terraform variables.
           TF_VAR_key_file: "../../key.pem"
           TF_VAR_public_key_jwk_file: "../../key.public.jwk"
+          TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
+          TF_VAR_participant_name: ${{ matrix.participant }}
+          TF_VAR_prefix: ${{ github.run_number }}
+          TF_VAR_resource_group: rg-${{ matrix.participant }}-${{ github.run_number }}
+          TF_VAR_runtime_image: mvd-edc/connector:${{ github.run_number }}
+          TF_VAR_application_sp_object_id: ${{ secrets.APP_OBJECT_ID }}
 
-      # Publish terraform folder because it contains the state, the provider builds and the input.tfvars file
       - uses: actions/upload-artifact@v3
-        name: 'Publish terraform folder'
+        name: 'Publish Backend conf'
         with:
-          name: terraform-${{ matrix.participant }}
-          path: deployment/terraform
+          name: terraform-${{ matrix.participant }}-backend-conf
+          path: deployment/terraform/backend.conf
           retention-days: 1
 
       - name: 'Verify did endpoint is available'
@@ -153,17 +158,25 @@ jobs:
         participant: [company1, company2]
 
     steps:
-      - uses: actions/download-artifact@v3
-        name: 'Download terraform folder'
+      - uses: actions/checkout@v2
+      # Az login is needed to delete the blob terraform state.
+      - name: 'Az CLI login'
+        uses: azure/login@v1
         with:
-          name: terraform-${{ matrix.participant }}
-          path: deployment/terraform
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+      - uses: actions/download-artifact@v3
+        name: 'Download backend conf'
+        with:
+          name: terraform-${{ matrix.participant }}-backend-conf
+          path: deployment/terraform/
 
       - name: 'Delete terraform resources'
         run: |
-          : # Make terraform provider binaries executable because file permissions of uploaded artifacts are not maintained.
-          chmod -R +x .terraform/providers
-          terraform destroy -var-file=input.tfvars -auto-approve
+          terraform init -backend-config=backend.conf
+          terraform destroy -auto-approve
+          az storage blob delete --account-name ${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }} -c ${{ secrets.TERRAFORM_STATE_CONTAINER }} -n ${{ matrix.participant }}${{ github.run_number }}.tfstate
         working-directory: deployment/terraform
         env:
           # Authentication settings for Terraform AzureRM provider
@@ -173,8 +186,6 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
-      - uses: actions/upload-artifact@v3
-        name: 'Clear terraform artifact'
-        with:
-          name: terraform-${{ matrix.participant }}
-          path: /dev/null
+          # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
+          TF_VAR_application_sp_object_id: dummy
+          TF_VAR_runtime_image: dummy
