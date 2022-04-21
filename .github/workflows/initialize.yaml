@@ -16,6 +16,8 @@ jobs:
     env:
       COMMON_RESOURCE_GROUP: ${{ secrets.COMMON_RESOURCE_GROUP }}
       COMMON_RESOURCE_GROUP_LOCATION: ${{ secrets.COMMON_RESOURCE_GROUP_LOCATION }}
+      TERRAFORM_STATE_STORAGE_ACCOUNT: ${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+      TERRAFORM_STATE_CONTAINER: ${{ secrets.TERRAFORM_STATE_CONTAINER }}
       ACR_NAME: ${{ secrets.ACR_NAME }}
 
     steps:
@@ -28,6 +30,11 @@ jobs:
 
       - name: "Create resource group"
         run: az group create --name "$COMMON_RESOURCE_GROUP" --location "$COMMON_RESOURCE_GROUP_LOCATION" -o table
+
+      - name: "Create terraform state storage account and container"
+        run: |
+          az storage account create --name ${TERRAFORM_STATE_STORAGE_ACCOUNT} --resource-group ${COMMON_RESOURCE_GROUP}
+          az storage container create --name ${TERRAFORM_STATE_CONTAINER} --account-name ${TERRAFORM_STATE_STORAGE_ACCOUNT}
 
       - name: "Create Azure Container Registry"
         run: az acr create --resource-group "$COMMON_RESOURCE_GROUP" --name "$ACR_NAME" --sku Basic --admin-enabled -o table
