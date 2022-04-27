@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+
+  provider:
+    container_name: provider
+    build:
+      context: ../launcher
+    environment:
+      IDS_WEBHOOK_ADDRESS: http://provider:8282
+      EDC_VAULT_NAME: ${PROVIDER_KEY_VAULT}
+      EDC_VAULT_TENANTID: ${EDC_VAULT_TENANTID}
+      EDC_VAULT_CLIENTID: ${EDC_VAULT_CLIENTID}
+      EDC_VAULT_CLIENTSECRET: ${EDC_VAULT_CLIENTSECRET}
+    ports:
+      - 9191:9191
+
+  consumer:
+    container_name: consumer
+    build:
+      context: ../launcher
+    environment:
+      IDS_WEBHOOK_ADDRESS: http://consumer:8282
+      EDC_VAULT_NAME: ${CONSUMER_KEY_VAULT}
+      EDC_VAULT_TENANTID: ${EDC_VAULT_TENANTID}
+      EDC_VAULT_CLIENTID: ${EDC_VAULT_CLIENTID}
+      EDC_VAULT_CLIENTSECRET: ${EDC_VAULT_CLIENTSECRET}
+    ports:
+      - 9192:9191

@@ -35,6 +35,18 @@ dependencies {
     implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
     implementation("${edcGroup}:http:${edcVersion}")
     implementation("${edcGroup}:policy-store-memory:${edcVersion}")
+
+    // Blob storage container provisioning
+    implementation("${edcGroup}:blobstorage:${edcVersion}")
+    implementation("${edcGroup}:azure-vault:${edcVersion}")
+
+    // Embedded DPF
+    implementation("${edcGroup}:data-plane-transfer-client:${edcVersion}")
+    implementation("${edcGroup}:data-plane-selector-client:${edcVersion}")
+    implementation("${edcGroup}:data-plane-selector-store:${edcVersion}")
+    implementation("${edcGroup}:data-plane-selector-core:${edcVersion}")
+    implementation("${edcGroup}:data-plane-framework:${edcVersion}")
+    implementation("${edcGroup}:data-plane-azure-storage:${edcVersion}")
 }
 
 application {
