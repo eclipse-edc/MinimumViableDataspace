@@ -28,7 +28,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"asset\": {\n        \"properties\": {\n            \"asset:prop:name\": \"text-document\",\n            \"asset:prop:contenttype\": \"text/plain\",\n            \"asset:prop:version\": \"1.0\",\n            \"asset:prop:id\": \"text-document\",\n            \"type\": \"AzureStorage\"\n        }\n    },\n    \"dataAddress\": {\n        \"properties\": {\n            \"type\": \"AzureStorage\",\n            \"account\": \"{{storage_account}}\",\n            \"container\": \"src-container\",\n            \"blobname\": \"text-document.txt\",\n            \"keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
+							"raw": "{\n    \"asset\": {\n        \"properties\": {\n            \"asset:prop:name\": \"test-document\",\n            \"asset:prop:contenttype\": \"text/plain\",\n            \"asset:prop:version\": \"1.0\",\n            \"asset:prop:id\": \"test-document\",\n            \"type\": \"AzureStorage\"\n        }\n    },\n    \"dataAddress\": {\n        \"properties\": {\n            \"type\": \"AzureStorage\",\n            \"account\": \"{{storage_account}}\",\n            \"container\": \"src-container\",\n            \"blobname\": \"text-document.txt\",\n            \"keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -67,7 +67,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"uid\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"permissions\": [\n        {\n            \"edctype\": \"dataspaceconnector:permission\",\n            \"uid\": null,\n            \"target\": \"text-document\",\n            \"action\": {\n                \"type\": \"USE\",\n                \"includedIn\": null,\n                \"constraint\": null\n            },\n            \"assignee\": null,\n            \"assigner\": null,\n            \"constraints\": [],\n            \"duties\": []\n        }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n        \"@policytype\": \"set\"\n    }\n}",
+							"raw": "{\n    \"uid\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"permissions\": [\n        {\n            \"edctype\": \"dataspaceconnector:permission\",\n            \"uid\": null,\n            \"target\": \"test-document\",\n            \"action\": {\n                \"type\": \"USE\",\n                \"includedIn\": null,\n                \"constraint\": null\n            },\n            \"assignee\": null,\n            \"assigner\": null,\n            \"constraints\": [],\n            \"duties\": []\n        }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n        \"@policytype\": \"set\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -106,7 +106,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"4a75736e-001d-4364-8bd4-9888490edb56\",\n    \"accessPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"contractPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n        \"criteria\": [\n            {\n                \"left\": \"asset:prop:id\",\n                \"op\": \"=\",\n                \"right\": \"text-document\"\n            }\n        ]\n}",
+							"raw": "{\n    \"id\": \"4a75736e-001d-4364-8bd4-9888490edb56\",\n    \"accessPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"contractPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n        \"criteria\": [\n            {\n                \"left\": \"asset:prop:id\",\n                \"op\": \"=\",\n                \"right\": \"test-document\"\n            }\n        ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -55,6 +55,8 @@ jobs:
     outputs:
       company1_edc_host: ${{ steps.runterraform.outputs.company1_edc_host }}
       company2_edc_host: ${{ steps.runterraform.outputs.company2_edc_host }}
+      company1_key_vault: ${{ steps.runterraform.outputs.company1_key_vault }}
+      company2_key_vault: ${{ steps.runterraform.outputs.company2_key_vault }}
 
     strategy:
       matrix:
@@ -84,10 +86,12 @@ jobs:
           DID_ENDPOINT=$(terraform output -raw did_endpoint)
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
+          KEY_VAULT=$(terraform output -raw key_vault)
           echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
           echo "DID_ENDPOINT=$DID_ENDPOINT" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
+          echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
         working-directory: deployment/terraform
         env:
 
@@ -108,6 +112,8 @@ jobs:
           TF_VAR_resource_group: rg-${{ matrix.participant }}-${{ github.run_number }}
           TF_VAR_runtime_image: mvd-edc/connector:${{ github.run_number }}
           TF_VAR_application_sp_object_id: ${{ secrets.APP_OBJECT_ID }}
+          TF_VAR_application_sp_client_id: ${{ secrets.APP_CLIENT_ID }}
+          TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
 
       - uses: actions/upload-artifact@v3
         name: 'Publish Backend conf'
@@ -125,11 +131,7 @@ jobs:
       - name: 'Seed data'
         run: |
           npm install -g newman
-          newman run \
-            --folder "Publish Master Data" \
-            --env-var data_management_url="http://$EDC_HOST:9191/api/v1/data" \
-            --env-var storage_account="$ASSETS_STORAGE_ACCOUNT" \
-            deployment/data/MVD.postman_collection.json
+          deployment/seed-data.sh
 
   Verify:
     needs: Deploy
@@ -140,12 +142,21 @@ jobs:
 
       - uses: ./.github/actions/gradle-setup
 
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
       - name: 'System tests'
         run: |
           ./gradlew :system-tests:test
         env:
-          CONSUMER_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:9191
-          PROVIDER_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
+          CONSUMER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:9191
+          PROVIDER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:9191
+          PROVIDER_IDS_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
+          CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
 
   # Delete deployed Azure resource groups for each dataspace participant.
   Destroy:
@@ -188,4 +199,6 @@ jobs:
 
           # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
           TF_VAR_application_sp_object_id: dummy
+          TF_VAR_application_sp_client_id: dummy
+          TF_VAR_application_sp_client_secret: dummy
           TF_VAR_runtime_image: dummy
