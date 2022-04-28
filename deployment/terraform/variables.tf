@@ -44,6 +44,7 @@ variable "application_sp_client_id" {
 
 variable "application_sp_client_secret" {
   description = "client secret of application's service principal object"
+  sensitive   = true
 }
 
 variable "key_file" {
