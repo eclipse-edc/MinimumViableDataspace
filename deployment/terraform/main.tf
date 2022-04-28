@@ -72,13 +72,18 @@ resource "azurerm_container_group" "edc" {
       port     = local.edc_management_port
       protocol = "TCP"
     }
+
     environment_variables = {
-      EDC_IDS_ID             = "urn:connector:${var.prefix}-${var.participant_name}"
-      EDC_VAULT_NAME         = azurerm_key_vault.participant.name
-      EDC_VAULT_TENANTID     = data.azurerm_client_config.current_client.tenant_id
-      EDC_VAULT_CLIENTID     = var.application_sp_client_id
+      EDC_IDS_ID         = "urn:connector:${var.prefix}-${var.participant_name}"
+      EDC_VAULT_NAME     = azurerm_key_vault.participant.name
+      EDC_VAULT_TENANTID = data.azurerm_client_config.current_client.tenant_id
+      EDC_VAULT_CLIENTID = var.application_sp_client_id
+
+      IDS_WEBHOOK_ADDRESS = "http://${local.edc_dns_label}.${var.location}.azurecontainer.io:${local.edc_ids_port}"
+    }
+
+    secure_environment_variables = {
       EDC_VAULT_CLIENTSECRET = var.application_sp_client_secret
-      IDS_WEBHOOK_ADDRESS    = "http://${local.edc_dns_label}.${var.location}.azurecontainer.io:${local.edc_ids_port}"
     }
   }
 }
