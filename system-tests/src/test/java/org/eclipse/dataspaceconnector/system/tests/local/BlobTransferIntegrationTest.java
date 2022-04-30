@@ -56,7 +56,7 @@ public class BlobTransferIntegrationTest {
         var destinationBlob = blobServiceClient2.getBlobContainerClient(container)
                 .getBlobClient(PROVIDER_ASSET_FILE);
         assertThat(destinationBlob.exists())
-                .withFailMessage("Destination blob %s not created", destinationBlob)
+                .withFailMessage("Destination blob %s not created", destinationBlob.getBlobUrl())
                 .isTrue();
     }
 
@@ -89,6 +89,6 @@ public class BlobTransferIntegrationTest {
                 .statusCode(200)
                 .extract().body();
         return body
-                .jsonPath().getString("[0].dataDestination.container");
+                .jsonPath().getString("[0].dataDestination.properties.container");
     }
 }

@@ -15,10 +15,7 @@
 package org.eclipse.dataspaceconnector.system.tests.local;
 
 import io.gatling.javaapi.core.Simulation;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.dataspaceconnector.system.tests.utils.TransferRequestFactory;
-
-import java.util.Objects;
 
 import static io.gatling.javaapi.core.CoreDsl.atOnceUsers;
 import static io.gatling.javaapi.core.CoreDsl.details;
@@ -26,6 +23,7 @@ import static io.gatling.javaapi.core.CoreDsl.global;
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.eclipse.dataspaceconnector.common.configuration.ConfigurationFunctions.propOrEnv;
+import static org.eclipse.dataspaceconnector.system.tests.utils.TestUtils.requiredPropOrEnv;
 import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulationUtils.DESCRIPTION;
 import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulationUtils.TRANSFER_SUCCESSFUL;
 import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulationUtils.contractNegotiationAndTransfer;
@@ -45,17 +43,13 @@ public class TransferLocalSimulation extends Simulation {
     public TransferLocalSimulation(TransferRequestFactory requestFactory) {
         setUp(scenario(DESCRIPTION)
                 .repeat(REPEAT)
-                .on(contractNegotiationAndTransfer(getFromEnv("PROVIDER_IDS_URL"), requestFactory))
+                .on(contractNegotiationAndTransfer(requiredPropOrEnv("PROVIDER_IDS_URL"), requestFactory))
                 .injectOpen(atOnceUsers(AT_ONCE_USERS)))
-                .protocols(http.baseUrl(getFromEnv("CONSUMER_MANAGEMENT_URL") + "/" + CONSUMER_MANAGEMENT_PATH))
+                .protocols(http.baseUrl(requiredPropOrEnv("CONSUMER_MANAGEMENT_URL") + "/" + CONSUMER_MANAGEMENT_PATH))
                 .assertions(
-                        details(TRANSFER_SUCCESSFUL).successfulRequests().count().is((long) (AT_ONCE_USERS * REPEAT)),
+                        details(TRANSFER_SUCCESSFUL).successfulRequests().count().is((long) AT_ONCE_USERS * REPEAT),
                         global().responseTime().max().lt(MAX_RESPONSE_TIME),
                         global().successfulRequests().percent().is(SUCCESS_PERCENTAGE)
                 );
-    }
-
-    private static String getFromEnv(String env) {
-        return Objects.requireNonNull(StringUtils.trimToNull(System.getenv(env)), env);
     }
 }

@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
-import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.doWhileDuring;
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.group;
@@ -99,7 +98,7 @@ public abstract class TransferSimulationUtils {
                 .body(StringBody(loadContractAgreement(connectorAddress)))
                 .header(CONTENT_TYPE, "application/json")
                 .check(status().is(200))
-                .check(bodyString()
+                .check(jmesPath("id")
                         .notNull()
                         .saveAs(CONTRACT_NEGOTIATION_REQUEST_ID));
     }
@@ -174,7 +173,7 @@ public abstract class TransferSimulationUtils {
                 .body(StringBody(session -> requestFactory.apply(new TransferInitiationData(session.getString(CONTRACT_AGREEMENT_ID), connectorAddress))))
                 .header(CONTENT_TYPE, "application/json")
                 .check(status().is(200))
-                .check(bodyString()
+                .check(jmesPath("id")
                         .notNull()
                         .saveAs(TRANSFER_PROCESS_ID));
     }

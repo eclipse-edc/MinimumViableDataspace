@@ -24,6 +24,7 @@ val jupiterVersion: String by project
 val storageBlobVersion: String by project
 val assertj: String by project
 val restAssured: String by project
+val awaitility: String by project
 val azureIdentityVersion: String by project
 
 dependencies {
@@ -48,7 +49,11 @@ dependencies {
     testImplementation("com.azure:azure-storage-blob:${storageBlobVersion}")
     testImplementation("io.rest-assured:rest-assured:${restAssured}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
+    testImplementation("org.awaitility:awaitility:${awaitility}")
+
     testImplementation("com.azure:azure-identity:${azureIdentityVersion}")
     testImplementation("com.azure:azure-security-keyvault-secrets:4.2.3")
+    testImplementation("${edcGroup}:contract-spi:${edcVersion}")
+    testImplementation("${edcGroup}:federated-catalog-spi:${edcVersion}")
 }
 

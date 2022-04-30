@@ -33,9 +33,21 @@ data "azurerm_container_registry" "registry" {
   resource_group_name = var.acr_resource_group
 }
 
+data "azurerm_storage_account" "registry" {
+  name                = var.registry_storage_account
+  resource_group_name = var.registry_resource_group
+}
+
+data "azurerm_storage_share" "registry" {
+  name                 = var.registry_share
+  storage_account_name = data.azurerm_storage_account.registry.name
+}
+
 locals {
+  registry_files_prefix = "${var.prefix}-"
+
   edc_dns_label       = "${var.prefix}-${var.participant_name}-edc-mvd"
-  edc_control_port    = 8181
+  edc_default_port    = 8181
   edc_ids_port        = 8282
   edc_management_port = 9191
 }
@@ -61,29 +73,43 @@ resource "azurerm_container_group" "edc" {
     memory = var.container_memory
 
     ports {
-      port     = local.edc_control_port
+      port     = local.edc_default_port
       protocol = "TCP"
     }
+
     ports {
       port     = local.edc_ids_port
       protocol = "TCP"
     }
+
     ports {
       port     = local.edc_management_port
       protocol = "TCP"
     }
 
     environment_variables = {
-      EDC_IDS_ID         = "urn:connector:${var.prefix}-${var.participant_name}"
+      EDC_IDS_ID = "urn:connector:${var.prefix}-${var.participant_name}"
+
       EDC_VAULT_NAME     = azurerm_key_vault.participant.name
       EDC_VAULT_TENANTID = data.azurerm_client_config.current_client.tenant_id
       EDC_VAULT_CLIENTID = var.application_sp_client_id
 
       IDS_WEBHOOK_ADDRESS = "http://${local.edc_dns_label}.${var.location}.azurecontainer.io:${local.edc_ids_port}"
+
+      NODES_JSON_DIR          = "/registry"
+      NODES_JSON_FILES_PREFIX = local.registry_files_prefix
     }
 
     secure_environment_variables = {
       EDC_VAULT_CLIENTSECRET = var.application_sp_client_secret
+    }
+
+    volume {
+      storage_account_name = data.azurerm_storage_account.registry.name
+      storage_account_key  = data.azurerm_storage_account.registry.primary_access_key
+      share_name           = data.azurerm_storage_share.registry.name
+      mount_path           = "/registry"
+      name                 = "registry"
     }
   }
 }
@@ -193,4 +219,19 @@ resource "azurerm_storage_blob" "did" {
       "#identity-key-1"
   ] })
   content_type = "application/json"
+}
+
+resource "local_file" "registry_entry" {
+  content = jsonencode({
+    name               = var.participant_name,
+    url                = "http://${azurerm_container_group.edc.fqdn}:${local.edc_ids_port}",
+    supportedProtocols = ["ids-multipart"]
+  })
+  filename = "${path.module}/build/${var.participant_name}.json"
+}
+
+resource "azurerm_storage_share_file" "registry_entry" {
+  name             = "${local.registry_files_prefix}${var.participant_name}.json"
+  storage_share_id = data.azurerm_storage_share.registry.id
+  source           = local_file.registry_entry.filename
 }
