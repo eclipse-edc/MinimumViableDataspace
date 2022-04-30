@@ -57,6 +57,12 @@ jobs:
       company2_edc_host: ${{ steps.runterraform.outputs.company2_edc_host }}
       company1_key_vault: ${{ steps.runterraform.outputs.company1_key_vault }}
       company2_key_vault: ${{ steps.runterraform.outputs.company2_key_vault }}
+      company1_edc_aci_name: ${{ steps.runterraform.outputs.company1_edc_aci_name }}
+      company2_edc_aci_name: ${{ steps.runterraform.outputs.company2_edc_aci_name }}
+      company1_resource_group: ${{ steps.runterraform.outputs.company1_resource_group }}
+      company2_resource_group: ${{ steps.runterraform.outputs.company2_resource_group }}
+      company1_assets_storage_account: ${{ steps.runterraform.outputs.company1_assets_storage_account }}
+      company2_assets_storage_account: ${{ steps.runterraform.outputs.company2_assets_storage_account }}
 
     strategy:
       matrix:
@@ -87,11 +93,17 @@ jobs:
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
           KEY_VAULT=$(terraform output -raw key_vault)
+          EDC_ACI_NAME=$(terraform output -raw edc_aci_name)
+          RESOURCE_GROUP=$(terraform output -raw resource_group)
           echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
           echo "DID_ENDPOINT=$DID_ENDPOINT" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
           echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
+          echo "::set-output name=${{ matrix.participant }}_edc_aci_name::${EDC_ACI_NAME}"
+          echo "::set-output name=${{ matrix.participant }}_resource_group::${RESOURCE_GROUP}"
+          echo "::set-output name=${{ matrix.participant }}_assets_storage_account::${ASSETS_STORAGE_ACCOUNT}"
+
         working-directory: deployment/terraform
         env:
 
@@ -114,6 +126,9 @@ jobs:
           TF_VAR_application_sp_object_id: ${{ secrets.APP_OBJECT_ID }}
           TF_VAR_application_sp_client_id: ${{ secrets.APP_CLIENT_ID }}
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
+          TF_VAR_registry_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_registry_storage_account: ${{ secrets.REGISTRY_STORAGE_ACCOUNT }}
+          TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}
 
       - uses: actions/upload-artifact@v3
         name: 'Publish Backend conf'
@@ -128,13 +143,52 @@ jobs:
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
 
+  # Until https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1230 is done,
+  # connectors must be restarted for catalog to be populated (once registry files have all been stored).
+  # Data must be seeded after restart, since in-memory stores are used.
+  # When that EDC feature is delivered, we can merge this with the Deploy job and seed the data immediately.
+  Seed:
+    needs:
+      - Deploy
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        participant: [company1, company2]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Restart'
+        run: az container restart --name "$EDC_ACI_NAME" --resource-group "$RESOURCE_GROUP"
+        env:
+          EDC_ACI_NAME: ${{ needs.Deploy.outputs[format('{0}_edc_aci_name', matrix.participant)] }}
+          RESOURCE_GROUP: ${{ needs.Deploy.outputs[format('{0}_resource_group', matrix.participant)] }}
+
+      - name: 'Verify deployed EDC is up'
+        run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
+        env:
+          EDC_HOST: ${{ needs.Deploy.outputs[format('{0}_edc_host', matrix.participant)] }}
+
       - name: 'Seed data'
         run: |
           npm install -g newman
           deployment/seed-data.sh
+        env:
+          EDC_HOST: ${{ needs.Deploy.outputs[format('{0}_edc_host', matrix.participant)] }}
+          ASSETS_STORAGE_ACCOUNT: ${{ needs.Deploy.outputs[format('{0}_assets_storage_account', matrix.participant)] }}
 
   Verify:
-    needs: Deploy
+    needs:
+      - Deploy
+      - Seed
     runs-on: ubuntu-latest
     steps:
       # Checkout MVD code
@@ -149,6 +203,10 @@ jobs:
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
+      # Extra delay to ensure restarted connectors are up. This can be removed after the restart job becomes unnecessary.
+      - name: 'Delay'
+        run: sleep 60
+
       - name: 'System tests'
         run: |
           ./gradlew :system-tests:test
@@ -157,11 +215,14 @@ jobs:
           PROVIDER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:9191
           PROVIDER_IDS_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
           CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
+          CONSUMER_CATALOG_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/federatedcatalog
 
   # Delete deployed Azure resource groups for each dataspace participant.
   Destroy:
     continue-on-error: true
-    needs: [Deploy, Verify]
+    needs:
+      - Deploy
+      - Verify
     runs-on: ubuntu-latest
     if: always()
     strategy:
@@ -198,7 +259,10 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
           # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
+          TF_VAR_runtime_image: dummy
           TF_VAR_application_sp_object_id: dummy
           TF_VAR_application_sp_client_id: dummy
           TF_VAR_application_sp_client_secret: dummy
-          TF_VAR_runtime_image: dummy
+          TF_VAR_registry_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_registry_storage_account: ${{ secrets.REGISTRY_STORAGE_ACCOUNT }}
+          TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}

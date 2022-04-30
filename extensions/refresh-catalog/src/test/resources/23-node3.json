@@ -1,0 +1,7 @@
+{
+  "name": "node23-3",
+  "url": "http://localhost:8282",
+  "supportedProtocols": [
+    "ids-multipart"
+  ]
+}
