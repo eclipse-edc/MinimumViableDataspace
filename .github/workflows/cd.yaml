@@ -275,3 +275,5 @@ jobs:
           TF_VAR_registry_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
           TF_VAR_registry_storage_account: ${{ secrets.REGISTRY_STORAGE_ACCOUNT }}
           TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}
+          TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
