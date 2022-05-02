@@ -63,6 +63,8 @@ jobs:
       company2_resource_group: ${{ steps.runterraform.outputs.company2_resource_group }}
       company1_assets_storage_account: ${{ steps.runterraform.outputs.company1_assets_storage_account }}
       company2_assets_storage_account: ${{ steps.runterraform.outputs.company2_assets_storage_account }}
+      company1_api_key: ${{ steps.runterraform.outputs.company1_api_key }}
+      company2_api_key: ${{ steps.runterraform.outputs.company2_api_key }}
 
     strategy:
       matrix:
@@ -95,11 +97,16 @@ jobs:
           KEY_VAULT=$(terraform output -raw key_vault)
           EDC_ACI_NAME=$(terraform output -raw edc_aci_name)
           RESOURCE_GROUP=$(terraform output -raw resource_group)
+          WEBAPP_URL=$(terraform output -raw webapp_url)
+          API_KEY=$(terraform output -raw api_key)
+          echo "::notice title=MVD WebApp for ${{ matrix.participant }}::$WEBAPP_URL"
           echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
           echo "DID_ENDPOINT=$DID_ENDPOINT" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
+          echo "API_KEY=$API_KEY" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
           echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
+          echo "::set-output name=${{ matrix.participant }}_api_key::${API_KEY}"
           echo "::set-output name=${{ matrix.participant }}_edc_aci_name::${EDC_ACI_NAME}"
           echo "::set-output name=${{ matrix.participant }}_resource_group::${RESOURCE_GROUP}"
           echo "::set-output name=${{ matrix.participant }}_assets_storage_account::${ASSETS_STORAGE_ACCOUNT}"
@@ -184,6 +191,7 @@ jobs:
         env:
           EDC_HOST: ${{ needs.Deploy.outputs[format('{0}_edc_host', matrix.participant)] }}
           ASSETS_STORAGE_ACCOUNT: ${{ needs.Deploy.outputs[format('{0}_assets_storage_account', matrix.participant)] }}
+          API_KEY: ${{ needs.Deploy.outputs[format('{0}_api_key', matrix.participant)] }}
 
   Verify:
     needs:
@@ -216,6 +224,7 @@ jobs:
           PROVIDER_IDS_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
           CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
           CONSUMER_CATALOG_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/federatedcatalog
+          API_KEY: ${{ needs.Deploy.outputs.company1_api_key }}
 
   # Delete deployed Azure resource groups for each dataspace participant.
   Destroy:

@@ -37,6 +37,9 @@ dependencies {
     implementation("${edcGroup}:http:${edcVersion}")
     implementation("${edcGroup}:policy-store-memory:${edcVersion}")
 
+    // API key authentication (also used for CORS support)
+    implementation("${edcGroup}:auth-tokenbased:${edcVersion}")
+
     // Blob storage container provisioning
     implementation("${edcGroup}:blobstorage:${edcVersion}")
     implementation("${edcGroup}:azure-vault:${edcVersion}")
