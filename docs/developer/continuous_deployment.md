@@ -97,3 +97,9 @@ Configure the following GitHub secrets:
 ### Deploying CD resources
 
 Manually run the `Initialize CD` GitHub Actions workflow.
+
+### Deploying Data Dashboard
+
+Fork the **EDC Data Dashboard** web app and run its deploy action.
+
+Adapt the default value of the Data Dashboard image tag (`data_dashboard_image_tag` variable) in the [Terraform variables](deployment/terraform/variables.tf) to reflect the tag of the **EDC Data Dashboard** web app deployment.

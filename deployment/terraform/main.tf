@@ -23,6 +23,14 @@ data "azurerm_subscription" "current_subscription" {
 data "azurerm_client_config" "current_client" {
 }
 
+resource "random_password" "apikey" {
+  length = 16
+}
+
+locals {
+  api_key = random_password.apikey.result
+}
+
 resource "azurerm_resource_group" "participant" {
   name     = var.resource_group
   location = var.location
@@ -45,6 +53,8 @@ data "azurerm_storage_share" "registry" {
 
 locals {
   registry_files_prefix = "${var.prefix}-"
+
+  connector_id = "urn:connector:${var.prefix}-${var.participant_name}"
 
   edc_dns_label       = "${var.prefix}-${var.participant_name}-edc-mvd"
   edc_default_port    = 8181
@@ -88,13 +98,19 @@ resource "azurerm_container_group" "edc" {
     }
 
     environment_variables = {
-      EDC_IDS_ID = "urn:connector:${var.prefix}-${var.participant_name}"
+      EDC_IDS_ID         = local.connector_id
+      EDC_CONNECTOR_NAME = local.connector_id
 
       EDC_VAULT_NAME     = azurerm_key_vault.participant.name
       EDC_VAULT_TENANTID = data.azurerm_client_config.current_client.tenant_id
       EDC_VAULT_CLIENTID = var.application_sp_client_id
 
+      EDC_WEB_REST_CORS_ENABLED = "true"
+      EDC_WEB_REST_CORS_HEADERS = "origin,content-type,accept,authorization,x-api-key"
+
       IDS_WEBHOOK_ADDRESS = "http://${local.edc_dns_label}.${var.location}.azurecontainer.io:${local.edc_ids_port}"
+
+      EDC_API_AUTH_KEY = local.api_key
 
       NODES_JSON_DIR          = "/registry"
       NODES_JSON_FILES_PREFIX = local.registry_files_prefix
@@ -110,6 +126,46 @@ resource "azurerm_container_group" "edc" {
       share_name           = data.azurerm_storage_share.registry.name
       mount_path           = "/registry"
       name                 = "registry"
+    }
+  }
+}
+
+resource "azurerm_container_group" "webapp" {
+  name                = "${var.prefix}-${var.participant_name}-webapp"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.participant.name
+  ip_address_type     = "Public"
+  dns_name_label      = "${var.prefix}-${var.participant_name}-mvd"
+  os_type             = "Linux"
+
+  image_registry_credential {
+    username = data.azurerm_container_registry.registry.admin_username
+    password = data.azurerm_container_registry.registry.admin_password
+    server   = data.azurerm_container_registry.registry.login_server
+  }
+
+  container {
+    name   = "webapp"
+    image  = "${data.azurerm_container_registry.registry.login_server}/mvd-edc/data-dashboard:${var.data_dashboard_image_tag}"
+    cpu    = 1
+    memory = 1
+
+    ports {
+      port     = 80
+      protocol = "TCP"
+    }
+
+    volume {
+      name       = "appconfig"
+      mount_path = "/usr/share/nginx/html/assets/config"
+      secret = {
+        "app.config.json" = base64encode(jsonencode({
+          "dataManagementApiUrl" = "http://${azurerm_container_group.edc.fqdn}:${local.edc_management_port}/api/v1/data"
+          "catalogUrl"           = "http://${azurerm_container_group.edc.fqdn}:${local.edc_default_port}/api/federatedcatalog"
+          "storageAccount"       = azurerm_storage_account.inbox.name
+          "apiKey"               = local.api_key
+        }))
+      }
     }
   }
 }
@@ -158,6 +214,24 @@ resource "azurerm_storage_account" "did" {
   account_replication_type = "LRS"
   account_kind             = "StorageV2"
   static_website {}
+}
+
+resource "azurerm_storage_account" "inbox" {
+  name                     = "${var.prefix}${var.participant_name}inbox"
+  resource_group_name      = azurerm_resource_group.participant.name
+  location                 = azurerm_resource_group.participant.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  account_kind             = "StorageV2"
+}
+
+resource "azurerm_key_vault_secret" "inbox_storage_key" {
+  name         = "${azurerm_storage_account.inbox.name}-key1"
+  value        = azurerm_storage_account.inbox.primary_access_key
+  key_vault_id = azurerm_key_vault.participant.id
+  depends_on = [
+    azurerm_role_assignment.current-user-secretsofficer
+  ]
 }
 
 resource "azurerm_storage_container" "assets_container" {
@@ -223,7 +297,9 @@ resource "azurerm_storage_blob" "did" {
 
 resource "local_file" "registry_entry" {
   content = jsonencode({
-    name               = var.participant_name,
+    # `name` must be identical to EDC connector EDC_CONNECTOR_NAME setting for catalog asset filtering to
+    # exclude assets from own connector.
+    name               = local.connector_id,
     url                = "http://${azurerm_container_group.edc.fqdn}:${local.edc_ids_port}",
     supportedProtocols = ["ids-multipart"]
   })
