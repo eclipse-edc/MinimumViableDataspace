@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - 'docs/**'
 
+  workflow_dispatch:
+
 # Grant permissions to obtain federated identity credentials
 # see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
 permissions:
