@@ -59,12 +59,6 @@ jobs:
       company2_edc_host: ${{ steps.runterraform.outputs.company2_edc_host }}
       company1_key_vault: ${{ steps.runterraform.outputs.company1_key_vault }}
       company2_key_vault: ${{ steps.runterraform.outputs.company2_key_vault }}
-      company1_edc_aci_name: ${{ steps.runterraform.outputs.company1_edc_aci_name }}
-      company2_edc_aci_name: ${{ steps.runterraform.outputs.company2_edc_aci_name }}
-      company1_resource_group: ${{ steps.runterraform.outputs.company1_resource_group }}
-      company2_resource_group: ${{ steps.runterraform.outputs.company2_resource_group }}
-      company1_assets_storage_account: ${{ steps.runterraform.outputs.company1_assets_storage_account }}
-      company2_assets_storage_account: ${{ steps.runterraform.outputs.company2_assets_storage_account }}
       company1_api_key: ${{ steps.runterraform.outputs.company1_api_key }}
       company2_api_key: ${{ steps.runterraform.outputs.company2_api_key }}
 
@@ -97,8 +91,6 @@ jobs:
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
           KEY_VAULT=$(terraform output -raw key_vault)
-          EDC_ACI_NAME=$(terraform output -raw edc_aci_name)
-          RESOURCE_GROUP=$(terraform output -raw resource_group)
           WEBAPP_URL=$(terraform output -raw webapp_url)
           API_KEY=$(terraform output -raw api_key)
           echo "::notice title=MVD WebApp for ${{ matrix.participant }}::$WEBAPP_URL"
@@ -109,9 +101,6 @@ jobs:
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
           echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
           echo "::set-output name=${{ matrix.participant }}_api_key::${API_KEY}"
-          echo "::set-output name=${{ matrix.participant }}_edc_aci_name::${EDC_ACI_NAME}"
-          echo "::set-output name=${{ matrix.participant }}_resource_group::${RESOURCE_GROUP}"
-          echo "::set-output name=${{ matrix.participant }}_assets_storage_account::${ASSETS_STORAGE_ACCOUNT}"
 
         working-directory: deployment/terraform
         env:
@@ -152,53 +141,13 @@ jobs:
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
 
-  # Until https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1230 is done,
-  # connectors must be restarted for catalog to be populated (once registry files have all been stored).
-  # Data must be seeded after restart, since in-memory stores are used.
-  # When that EDC feature is delivered, we can merge this with the Deploy job and seed the data immediately.
-  Seed:
-    needs:
-      - Deploy
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        participant: [company1, company2]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: 'Az CLI login'
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.ARM_CLIENT_ID }}
-          tenant-id: ${{ secrets.ARM_TENANT_ID }}
-          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-
-      - name: 'Restart'
-        run: az container restart --name "$EDC_ACI_NAME" --resource-group "$RESOURCE_GROUP"
-        env:
-          EDC_ACI_NAME: ${{ needs.Deploy.outputs[format('{0}_edc_aci_name', matrix.participant)] }}
-          RESOURCE_GROUP: ${{ needs.Deploy.outputs[format('{0}_resource_group', matrix.participant)] }}
-
-      - name: 'Verify deployed EDC is up'
-        run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
-        env:
-          EDC_HOST: ${{ needs.Deploy.outputs[format('{0}_edc_host', matrix.participant)] }}
-
       - name: 'Seed data'
         run: |
           npm install -g newman
           deployment/seed-data.sh
-        env:
-          EDC_HOST: ${{ needs.Deploy.outputs[format('{0}_edc_host', matrix.participant)] }}
-          ASSETS_STORAGE_ACCOUNT: ${{ needs.Deploy.outputs[format('{0}_assets_storage_account', matrix.participant)] }}
-          API_KEY: ${{ needs.Deploy.outputs[format('{0}_api_key', matrix.participant)] }}
 
   Verify:
-    needs:
-      - Deploy
-      - Seed
+    needs: Deploy
     runs-on: ubuntu-latest
     steps:
       # Checkout MVD code
@@ -212,10 +161,6 @@ jobs:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
-
-      # Extra delay to ensure restarted connectors are up. This can be removed after the restart job becomes unnecessary.
-      - name: 'Delay'
-        run: sleep 60
 
       - name: 'System tests'
         run: |

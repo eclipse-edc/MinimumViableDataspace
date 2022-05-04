@@ -14,35 +14,31 @@
 
 package org.eclipse.dataspaceconnector.mvd;
 
-import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNodeDirectory;
+import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.spi.monitor.ConsoleMonitor;
 import org.eclipse.dataspaceconnector.spi.types.TypeManager;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
-class RefreshCatalogServiceTest {
+class JsonFileBasedNodeDirectoryTest {
 
     @Test
-    void saveNodeEntries() {
-        var directory = mock(FederatedCacheNodeDirectory.class);
+    void getAll() {
         var sampleFile = getClass().getClassLoader().getResource("24-node1.json");
         assertThat(sampleFile).isNotNull();
         var nodeJsonDir = Path.of(sampleFile.getPath()).getParent();
         var nodeJsonPrefix = "24-";
         var monitor = new ConsoleMonitor();
         var typeManager = new TypeManager();
-        var service = new RefreshCatalogService(directory, nodeJsonDir, nodeJsonPrefix, monitor, typeManager);
+        var service = new JsonFileBasedNodeDirectory(nodeJsonDir, nodeJsonPrefix, monitor, typeManager);
 
-        service.saveNodeEntries();
-
-        verify(directory, times(1)).insert(argThat(n -> "node24-1".equals(n.getName())));
-        verify(directory, times(1)).insert(argThat(n -> "node24-2".equals(n.getName())));
+        List<FederatedCacheNode> cacheNodes = service.getAll();
+        assertThat(cacheNodes).anyMatch(n -> "node24-1".equals(n.getName()));
+        assertThat(cacheNodes).anyMatch(n -> "node24-2".equals(n.getName()));
+        assertThat(cacheNodes).allMatch(n -> n.getName().startsWith("node24-"));
     }
 }
