@@ -9,7 +9,7 @@ val mockitoVersion: String by project
 val assertj: String by project
 
 dependencies {
-    api("${edcGroup}:catalog-cache:${edcVersion}")
+    implementation("${edcGroup}:federated-catalog-spi:${edcVersion}")
 
     testImplementation("org.assertj:assertj-core:${assertj}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")

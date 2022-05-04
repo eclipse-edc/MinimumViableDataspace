@@ -54,7 +54,6 @@ dependencies {
 
     // Federated catalog
     implementation("${edcGroup}:catalog-cache:${edcVersion}")
-    implementation("${edcGroup}:catalog-node-directory-memory:${edcVersion}")
     implementation("${edcGroup}:catalog-cache-store-memory:${edcVersion}")
 }
 
