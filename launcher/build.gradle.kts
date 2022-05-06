@@ -28,14 +28,9 @@ dependencies {
     implementation("${edcGroup}:control-api:${edcVersion}")
     implementation("${edcGroup}:observability-api:${edcVersion}")
     implementation("${edcGroup}:data-management-api:${edcVersion}")
-    implementation("${edcGroup}:assetindex-memory:${edcVersion}")
-    implementation("${edcGroup}:transfer-process-store-memory:${edcVersion}")
-    implementation("${edcGroup}:contractnegotiation-store-memory:${edcVersion}")
-    implementation("${edcGroup}:contractdefinition-store-memory:${edcVersion}")
     implementation("${edcGroup}:iam-mock:${edcVersion}")
     implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
     implementation("${edcGroup}:http:${edcVersion}")
-    implementation("${edcGroup}:policy-store-memory:${edcVersion}")
 
     // API key authentication (also used for CORS support)
     implementation("${edcGroup}:auth-tokenbased:${edcVersion}")
@@ -54,7 +49,6 @@ dependencies {
 
     // Federated catalog
     implementation("${edcGroup}:catalog-cache:${edcVersion}")
-    implementation("${edcGroup}:catalog-cache-store-memory:${edcVersion}")
 }
 
 application {
