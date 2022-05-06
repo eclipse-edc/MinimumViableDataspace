@@ -56,6 +56,8 @@ locals {
 
   connector_id = "urn:connector:${var.prefix}-${var.participant_name}"
 
+  did_url = "did:web:${azurerm_storage_account.did.primary_web_host}:identity"
+
   edc_dns_label       = "${var.prefix}-${var.participant_name}-edc-mvd"
   edc_default_port    = 8181
   edc_ids_port        = 8282
@@ -114,6 +116,10 @@ resource "azurerm_container_group" "edc" {
 
       NODES_JSON_DIR          = "/registry"
       NODES_JSON_FILES_PREFIX = local.registry_files_prefix
+
+      # Refresh catalog frequently to accelerate scenarios
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS  = 10
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS = 10
     }
 
     secure_environment_variables = {
@@ -272,20 +278,20 @@ resource "azurerm_storage_blob" "did" {
   storage_account_name = azurerm_storage_account.did.name
   # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
   count                  = var.public_key_jwk_file == null ? 0 : 1
-  storage_container_name = "$web"
+  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
   type                   = "Block"
   source_content = jsonencode({
-    id = "did:web:${azurerm_storage_account.did.primary_web_host}:identity",
+    id = local.did_url
     "@context" = ["https://www.w3.org/ns/did/v1",
       {
-        "@base" = "did:web:${azurerm_storage_account.did.primary_web_host}:identity"
+        "@base" = local.did_url
       }
     ],
     "verificationMethod" = [
       {
-        "id"           = "#identity-key-1",
-        "controller"   = "",
-        "type"         = "JsonWebKey2020",
+        "id"           = "#identity-key-1"
+        "controller"   = ""
+        "type"         = "JsonWebKey2020"
         "publicKeyJwk" = jsondecode(file(var.public_key_jwk_file))
       }
     ],

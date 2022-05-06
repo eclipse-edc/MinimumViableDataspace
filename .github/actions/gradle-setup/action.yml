@@ -9,7 +9,7 @@ runs:
       with:
         repository: agera-edc/DataSpaceConnector
         path: DataSpaceConnector
-        ref: feature/1183/231-azure-e2e-test
+        ref: 8561416a1fbeacca21f574aa56e76a071a287e75
 
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2
