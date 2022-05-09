@@ -1,0 +1,177 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      resources_prefix:
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        required: true
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      resources_prefix:
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        required: true
+        type: string
+
+# Grant permissions to obtain federated identity credentials
+# see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  RESOURCES_PREFIX: ${{ github.event.inputs.resources_prefix || inputs.resources_prefix }}
+
+jobs:
+
+  # Build runtime image in Azure Container Registry, tagged with the unique run_number.
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout MVD code
+      - uses: actions/checkout@v2
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Login to ACR'
+        run: az acr login -n $ACR_NAME
+        env:
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+
+      - uses: ./.github/actions/gradle-setup
+
+      # Build MVD runtime JAR locally.
+      # The result is a JAR file in MVD/launcher/build/libs.
+      - name: 'Build runtime JAR'
+        run: |
+          ./gradlew launcher:shadowJar
+
+      # Build Docker runtime image remotely on ACR & push it to the registry.
+      - name: 'Build image'
+        run: az acr build --registry $ACR_NAME --image mvd-edc/connector:${{ env.RESOURCES_PREFIX }} .
+        working-directory: launcher
+        env:
+          ACR_NAME: ${{ secrets.ACR_NAME }}
+
+  # Deploy dataspace participants in parallel.
+  Deploy:
+    needs: Build
+    runs-on: ubuntu-latest
+    outputs:
+      company1_edc_host: ${{ steps.runterraform.outputs.company1_edc_host }}
+      company2_edc_host: ${{ steps.runterraform.outputs.company2_edc_host }}
+      company1_key_vault: ${{ steps.runterraform.outputs.company1_key_vault }}
+      company2_key_vault: ${{ steps.runterraform.outputs.company2_key_vault }}
+      company1_api_key: ${{ steps.runterraform.outputs.company1_api_key }}
+      company2_api_key: ${{ steps.runterraform.outputs.company2_api_key }}
+
+    strategy:
+      matrix:
+        participant: [company1, company2]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: 'Generate key'
+        run: |
+          openssl ecparam -name prime256v1 -genkey -noout -out key.pem
+          openssl ec -in key.pem -pubout -out key.public.pem
+          docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
+
+      - name: 'Run terraform'
+        id: runterraform
+        run: |
+          # Create backend.conf file to retrieve the remote terraform state during terraform init.
+          echo '
+            resource_group_name  = "${{ secrets.COMMON_RESOURCE_GROUP }}"
+            storage_account_name = "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}"
+            container_name       = "${{ secrets.TERRAFORM_STATE_CONTAINER }}"
+            key                  = "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfstate"
+          ' >> backend.conf
+          terraform init -backend-config=backend.conf
+          terraform apply -auto-approve
+          DID_ENDPOINT=$(terraform output -raw did_endpoint)
+          EDC_HOST=$(terraform output -raw edc_host)
+          ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
+          KEY_VAULT=$(terraform output -raw key_vault)
+          WEBAPP_URL=$(terraform output -raw webapp_url)
+          API_KEY=$(terraform output -raw api_key)
+          echo "::notice title=MVD WebApp for ${{ matrix.participant }}::$WEBAPP_URL"
+          echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
+          echo "DID_ENDPOINT=$DID_ENDPOINT" >> $GITHUB_ENV
+          echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
+          echo "API_KEY=$API_KEY" >> $GITHUB_ENV
+          echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
+          echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
+          echo "::set-output name=${{ matrix.participant }}_api_key::${API_KEY}"
+
+        working-directory: deployment/terraform
+        env:
+
+          # Authentication settings for Terraform AzureRM provider
+          # See https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+          # Terraform variables.
+          TF_VAR_key_file: "../../key.pem"
+          TF_VAR_public_key_jwk_file: "../../key.public.jwk"
+          TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
+          TF_VAR_participant_name: ${{ matrix.participant }}
+          TF_VAR_prefix: ${{ env.RESOURCES_PREFIX }}
+          TF_VAR_resource_group: rg-${{ matrix.participant }}-${{ env.RESOURCES_PREFIX }}
+          TF_VAR_runtime_image: mvd-edc/connector:${{ env.RESOURCES_PREFIX }}
+          TF_VAR_application_sp_object_id: ${{ secrets.APP_OBJECT_ID }}
+          TF_VAR_application_sp_client_id: ${{ secrets.APP_CLIENT_ID }}
+          TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
+          TF_VAR_registry_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_registry_storage_account: ${{ secrets.REGISTRY_STORAGE_ACCOUNT }}
+          TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}
+
+      - name: 'Verify did endpoint is available'
+        run: curl $DID_ENDPOINT | jq '.id'
+
+      - name: 'Verify deployed EDC is healthy'
+        run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
+
+      - name: 'Seed data'
+        run: |
+          npm install -g newman
+          deployment/seed-data.sh
+
+  Verify:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout MVD code
+      - uses: actions/checkout@v2
+
+      - uses: ./.github/actions/gradle-setup
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'System tests'
+        run: |
+          ./gradlew :system-tests:test
+        env:
+          CONSUMER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:9191
+          PROVIDER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:9191
+          PROVIDER_IDS_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
+          CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
+          CONSUMER_CATALOG_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/federatedcatalog
+          API_KEY: ${{ needs.Deploy.outputs.company1_api_key }}

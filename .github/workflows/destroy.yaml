@@ -1,6 +1,77 @@
 name: Destroy
 
 on:
+  workflow_call:
+    inputs:
+      resources_prefix:
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        required: true
+        type: string
+
   workflow_dispatch:
+    inputs:
+      resources_prefix:
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        required: true
+        type: string
+
+# Grant permissions to obtain federated identity credentials
+# see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  RESOURCES_PREFIX: ${{ github.event.inputs.resources_prefix || inputs.resources_prefix }}
 
 jobs:
+  # Delete deployed Azure resource groups for each dataspace participant.
+  Destroy:
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        participant: [ company1, company2 ]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Az login is needed to delete the blob terraform state.
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Delete terraform resources'
+        run: |
+          # Create backend.conf file to retrieve the remote terraform state during terraform init.
+          echo '
+            resource_group_name  = "${{ secrets.COMMON_RESOURCE_GROUP }}"
+            storage_account_name = "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}"
+            container_name       = "${{ secrets.TERRAFORM_STATE_CONTAINER }}"
+            key                  = "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfstate"
+          ' >> backend.conf
+          terraform init -backend-config=backend.conf
+          terraform destroy -auto-approve
+          az storage blob delete --account-name ${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }} -c ${{ secrets.TERRAFORM_STATE_CONTAINER }} -n ${{ matrix.participant }}${RESOURCES_PREFIX}.tfstate
+        working-directory: deployment/terraform
+        env:
+          # Authentication settings for Terraform AzureRM provider
+          # See https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
+          ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+          # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
+          TF_VAR_runtime_image: dummy
+          TF_VAR_application_sp_object_id: dummy
+          TF_VAR_application_sp_client_id: dummy
+          TF_VAR_application_sp_client_secret: dummy
+          TF_VAR_registry_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_registry_storage_account: ${{ secrets.REGISTRY_STORAGE_ACCOUNT }}
+          TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}
+          TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
+          TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
