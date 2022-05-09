@@ -133,6 +133,13 @@ resource "azurerm_container_group" "edc" {
       mount_path           = "/registry"
       name                 = "registry"
     }
+
+    liveness_probe {
+      http_get {
+        port = 8181
+        path = "/api/check/health"
+      }
+    }
   }
 }
 
