@@ -1,0 +1,7 @@
+{
+  "name": "provider",
+  "supportedProtocols": [
+    "ids-multipart"
+  ],
+  "url": "http://provider:8282"
+}

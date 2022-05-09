@@ -19,12 +19,14 @@ docker-compose -f system-tests/docker-compose.yml build
 docker-compose -f system-tests/docker-compose.yml up
 ```
 
+In the commands below, adapt the variables to the Storage Account and Key Vault used in your deployment. Do not change the API Key value `ApiKeyDefaultValue`, it is hard-coded in the `docker-compose.yml` file.
+
 Seed the provider data:
 ```
-EDC_HOST=localhost ASSETS_STORAGE_ACCOUNT=257company2assets ./deployment/seed-data.sh
+API_KEY=ApiKeyDefaultValue EDC_HOST=localhost ASSETS_STORAGE_ACCOUNT={storage_account} ./deployment/seed-data.sh
 ```
 
 Run test:
 ```
-PROVIDER_MANAGEMENT_URL=http://localhost:9191 CONSUMER_MANAGEMENT_URL=http://localhost:9192 PROVIDER_IDS_URL=http://provider:8282 CONSUMER_KEY_VAULT=kv257company1 ./gradlew :system-tests:test
+API_KEY=ApiKeyDefaultValue PROVIDER_MANAGEMENT_URL=http://localhost:9191 CONSUMER_MANAGEMENT_URL=http://localhost:9192 PROVIDER_IDS_URL=http://provider:8282 CONSUMER_KEY_VAULT={key_vault_name} CONSUMER_CATALOG_URL=http://localhost:8182/api/federatedcatalog ./gradlew :system-tests:test
 ```
