@@ -1,29 +1,26 @@
 # -buster is required to have apt available
 FROM openjdk:17-slim-buster
 
-# by default curl is not available, so install it
-RUN apt update && apt install curl -y
+# Optional JVM arguments, such as memory settings
+ARG JVM_ARGS=""
 
 WORKDIR /app
-COPY ./build/libs/dataspaceconnector-basic.jar /app
+COPY ./build/libs/app.jar /app
 
 EXPOSE 8181
 EXPOSE 9191
+EXPOSE 8282
 
 # health status is determined by the availability of the /health endpoint
 HEALTHCHECK --interval=5s --timeout=5s --retries=10 CMD curl --fail -X GET http://localhost:8181/api/check/health || exit 1
 
-ENTRYPOINT java \
-    -Djava.security.edg=file:/dev/.urandom \
-    -Dedc.ids.id="urn:connector:connector" \
-    -Dedc.ids.title="Eclipse Dataspace Connector" \
-    -Dedc.ids.description="Eclipse Dataspace Connector with IDS extensions" \
-    -Dedc.ids.maintainer="https://example.maintainer.com" \
-    -Dedc.ids.curator="https://example.maintainer.com" \
-    -Dweb.http.port="8181" \
-    -Dweb.http.path="/api" \
-    -Dweb.http.data.port="9191" \
-    -Dweb.http.data.path="/api/v1/data" \
-    -Dweb.http.ids.port="8282" \
-    -Dweb.http.ids.path="/api/v1/ids" \
-    -jar dataspaceconnector-basic.jar
+ENV WEB_HTTP_PORT="8181"
+ENV WEB_HTTP_PATH="/api"
+ENV WEB_HTTP_DATA_PORT="9191"
+ENV WEB_HTTP_DATA_PATH="/api/v1/data"
+ENV WEB_HTTP_IDS_PORT="8282"
+ENV WEB_HTTP_IDS_PATH="/api/v1/ids"
+
+# Use "exec" for graceful termination (SIGINT) to reach JVM.
+ENTRYPOINT [ "sh", "-c", \
+    "exec java $JVM_ARGS -jar app.jar"]
