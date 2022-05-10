@@ -70,7 +70,7 @@ variable "registry_share" {
 
 variable "data_dashboard_image_tag" {
   description = "tag of the Data Dashboard web app image to deploy"
-  default     = "87e92b5200fdd236a263023f6acfa1f51b5e4676"
+  default     = "9f1e9c48c39906b8005a961c52768a7488c988ab"
 }
 
 
