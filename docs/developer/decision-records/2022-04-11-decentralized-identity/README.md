@@ -40,7 +40,7 @@ Upon reception, the provider connector verifies the JWT. To achieve this, the DI
 
 Note: since tokens are credentials, great care must be taken to prevent security issues. In general, JWTs should not be kept longer than required (expire them as soon as possible). A spike will be conducted to do further clarifications around security concerns, this ADR will be adapted accordingly. 
 
-No Identity Hub integration is desired at this point. An `EmptyCredentialsVerifier` must be used, returning an empty claim collection. Identity Hub integration will be evaluated later together with policies.
+No Identity Hub integration is desired at this point. A stub `CredentialsVerifier` implementation must be used, returning a preconfigured claim collection. Identity Hub integration will be evaluated later together with policies.
 
 ![Sending IDS requests](receive-ids-request.png)
 
