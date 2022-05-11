@@ -104,6 +104,8 @@ resource "azurerm_container_group" "edc" {
       EDC_IDS_ID         = local.connector_id
       EDC_CONNECTOR_NAME = local.connector_name
 
+      EDC_MOCK_REGION = var.participant_region
+
       EDC_VAULT_NAME     = azurerm_key_vault.participant.name
       EDC_VAULT_TENANTID = data.azurerm_client_config.current_client.tenant_id
       EDC_VAULT_CLIENTID = var.application_sp_client_id

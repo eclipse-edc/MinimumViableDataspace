@@ -1,1 +1,16 @@
-{ "participant": [ "company1", "company2", "company3" ] }
+{
+  "include": [
+    {
+      "participant": "company1",
+      "region": "eu"
+    },
+    {
+      "participant": "company2",
+      "region": "eu"
+    },
+    {
+      "participant": "company3",
+      "region": "us"
+    }
+  ]
+}
