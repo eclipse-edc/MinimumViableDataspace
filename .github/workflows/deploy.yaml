@@ -140,6 +140,7 @@ jobs:
           TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
           TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
           TF_VAR_participant_name: ${{ matrix.participant }}
+          TF_VAR_participant_region: ${{ matrix.region }}
           TF_VAR_prefix: ${{ env.RESOURCES_PREFIX }}
           TF_VAR_resource_group: rg-${{ matrix.participant }}-${{ env.RESOURCES_PREFIX }}
           TF_VAR_runtime_image: mvd-edc/connector:${{ env.RESOURCES_PREFIX }}

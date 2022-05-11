@@ -7,6 +7,10 @@ variable "participant_name" {
   default = "participant"
 }
 
+variable "participant_region" {
+  default = "eu"
+}
+
 variable "runtime_image" {
 }
 
