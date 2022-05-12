@@ -16,7 +16,7 @@ To perform a data transfer, the Consumer must first have successfully executed a
 
 ## Initiating a transfer
 
-In the *Contracts* pane, click the *Transfer* button under an asset that was successfully negotiated.
+In the *Contracts* pane, locate the [Contract Agreement](contract-agreements.md) to execute. click the *Transfer* button under the agreement.
 
 ![contracts-transfer](contracts-transfer.png)
 
