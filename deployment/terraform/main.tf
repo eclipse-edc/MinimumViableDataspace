@@ -326,7 +326,7 @@ resource "local_file" "registry_entry" {
   content = jsonencode({
     # `name` must be identical to EDC connector EDC_CONNECTOR_NAME setting for catalog asset filtering to
     # exclude assets from own connector.
-    name               = local.connector_id,
+    name               = local.connector_name,
     url                = "http://${azurerm_container_group.edc.fqdn}:${local.edc_ids_port}",
     supportedProtocols = ["ids-multipart"]
   })
