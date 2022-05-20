@@ -22,7 +22,7 @@ public class TestUtils {
     private TestUtils() {
     }
 
-    public static String requiredPropOrEnv(String key) {
-        return Objects.requireNonNull(propOrEnv(key, null), key);
+    public static String requiredPropOrEnv(String key, String defaultValue) {
+        return Objects.requireNonNull(propOrEnv(key, defaultValue), key);
     }
 }

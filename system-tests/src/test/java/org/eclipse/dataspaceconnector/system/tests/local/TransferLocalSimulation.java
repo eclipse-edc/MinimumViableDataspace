@@ -33,22 +33,23 @@ import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulati
  * {@see FileTransferIntegrationTest}.
  */
 public class TransferLocalSimulation extends Simulation {
-    public static final String CONSUMER_MANAGEMENT_PATH = "/api/v1/data";
 
     private static final int REPEAT = Integer.parseInt(propOrEnv("repeat", "1"));
     private static final int AT_ONCE_USERS = Integer.parseInt(propOrEnv("at.once.users", "1"));
     private static final int MAX_RESPONSE_TIME = Integer.parseInt(propOrEnv("max.response.time", "5000"));
     private static final double SUCCESS_PERCENTAGE = Double.parseDouble(propOrEnv("success.percentage", "100.0"));
     public static final String API_KEY_HEADER = "x-api-key";
-    public static final String API_KEY = requiredPropOrEnv("API_KEY");
+    public static final String API_KEY = requiredPropOrEnv("API_KEY", "ApiKeyDefaultValue");
+    public static final String CONSUMER_MANAGEMENT_URL = requiredPropOrEnv("CONSUMER_MANAGEMENT_URL", "http://localhost:9192") + "/api/v1/data";
+    public static final String PROVIDER_IDS_URL = requiredPropOrEnv("PROVIDER_IDS_URL", "http://provider:8282");
 
     public TransferLocalSimulation(TransferRequestFactory requestFactory) {
         var httpProtocol = http
-                .baseUrl(requiredPropOrEnv("CONSUMER_MANAGEMENT_URL") + "/" + CONSUMER_MANAGEMENT_PATH)
+                .baseUrl(CONSUMER_MANAGEMENT_URL)
                 .header(API_KEY_HEADER, API_KEY);
         setUp(scenario(DESCRIPTION)
                 .repeat(REPEAT)
-                .on(contractNegotiationAndTransfer(requiredPropOrEnv("PROVIDER_IDS_URL"), requestFactory))
+                .on(contractNegotiationAndTransfer(PROVIDER_IDS_URL, requestFactory))
                 .injectOpen(atOnceUsers(AT_ONCE_USERS)))
                 .protocols(httpProtocol)
                 .assertions(

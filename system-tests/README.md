@@ -5,28 +5,37 @@ from provider to consumer storage account.
 
 ### Running test locally
 
-Deploy MVD using the GitHub pipeline, adapting it in a branch to skip the destroy step.
-This leaves a storage account and a key vault for each of the consumer and the provider.
+Deploy MVD using the GitHub `Deploy` pipeline. We will run EDC instances locally, connected to the storage accounts and key vaults deployed on Azure.
 
-Copy `system-tests/.env.example` to `system-tests/.env` and adapt the values.
+From the build result, download the artifact named `testing-configuration` and extract the file `.env` into
+the `system-tests` directory (note that the file could be hidden in your file explorer due to its prefix).
 
-Build and run EDC consumer and provider:
+In the file, add the application client secret value under the `APP_CLIENT_SECRET` key. It is used to access Key Vault.
+
+Build the EDC launcher:
 
 ```
 ./gradlew :launcher:shadowJar
-
-docker-compose -f system-tests/docker-compose.yml build
-docker-compose -f system-tests/docker-compose.yml up
 ```
 
-In the commands below, adapt the variables to the Storage Account and Key Vault used in your deployment. Do not change the API Key value `ApiKeyDefaultValue`, it is hard-coded in the `docker-compose.yml` file.
+Run EDC consumer, provider and data seeding:
 
-Seed the provider data:
 ```
-API_KEY=ApiKeyDefaultValue EDC_HOST=localhost ASSETS_STORAGE_ACCOUNT={storage_account} ./deployment/seed-data.sh
+docker-compose -f system-tests/docker-compose.yml up --build
 ```
 
-Run test:
+In the commands below, adapt the variable values marked with `$` to use the value from the `.env` file.
+
+Login in to Azure:
 ```
-API_KEY=ApiKeyDefaultValue PROVIDER_MANAGEMENT_URL=http://localhost:9191 CONSUMER_MANAGEMENT_URL=http://localhost:9192 PROVIDER_IDS_URL=http://provider:8282 CONSUMER_KEY_VAULT={key_vault_name} CONSUMER_CATALOG_URL=http://localhost:8182/api/federatedcatalog ./gradlew :system-tests:test
+az login --service-principal --user "$APP_CLIENT_ID" --password "$APP_CLIENT_SECRET" --tenant "$APP_TENANT_ID"
+```
+
+| ℹ️ Information                                                |
+| :----------------------------------------------------------- |
+| You could also login interactively with your user identity (`az login`), and [grant yourself at least the *Key Vault Secrets User*](https://docs.microsoft.com/azure/key-vault/general/rbac-guide) role to the Key Vault below. A good option is to grant the *Key Vault Secrets Officer* at the subscription level to the whole development team, so they can read and write secrets on MVD deployments as needed. |
+
+Run tests:
+```
+CONSUMER_KEY_VAULT="$CONSUMER_KEY_VAULT" ./gradlew :system-tests:test
 ```

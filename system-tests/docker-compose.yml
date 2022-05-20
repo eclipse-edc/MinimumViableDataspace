@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   provider:
@@ -11,9 +9,9 @@ services:
       EDC_CONNECTOR_NAME: ${PROVIDER_CONNECTOR_NAME}
       EDC_IDENTITY_DID_URL: ${PROVIDER_DID_URL}
       EDC_VAULT_NAME: ${PROVIDER_KEY_VAULT}
-      EDC_VAULT_TENANTID: ${EDC_VAULT_TENANTID}
-      EDC_VAULT_CLIENTID: ${EDC_VAULT_CLIENTID}
-      EDC_VAULT_CLIENTSECRET: ${EDC_VAULT_CLIENTSECRET}
+      EDC_VAULT_TENANTID: ${APP_TENANT_ID}
+      EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
+      EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       NODES_JSON_FILES_PREFIX: registry-
       NODES_JSON_DIR: /resources
@@ -34,9 +32,9 @@ services:
       EDC_CONNECTOR_NAME: ${CONSUMER_CONNECTOR_NAME}
       EDC_IDENTITY_DID_URL: ${CONSUMER_DID_URL}
       EDC_VAULT_NAME: ${CONSUMER_KEY_VAULT}
-      EDC_VAULT_TENANTID: ${EDC_VAULT_TENANTID}
-      EDC_VAULT_CLIENTID: ${EDC_VAULT_CLIENTID}
-      EDC_VAULT_CLIENTSECRET: ${EDC_VAULT_CLIENTSECRET}
+      EDC_VAULT_TENANTID: ${APP_TENANT_ID}
+      EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
+      EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       NODES_JSON_FILES_PREFIX: registry-
       NODES_JSON_DIR: /resources
@@ -47,3 +45,21 @@ services:
       - "8182:8181"
     volumes:
       - ./resources:/resources
+
+  newman:
+    container_name: newman
+    image: postman/newman
+    entrypoint: /bin/sh
+    command: deployment/seed-data.sh
+    volumes:
+      - ../deployment/:/deployment
+    working_dir: /
+    environment:
+      API_KEY: ApiKeyDefaultValue
+      EDC_HOST: provider
+      ASSETS_STORAGE_ACCOUNT: ${PROVIDER_ASSETS_STORAGE_ACCOUNT}
+    depends_on:
+      consumer:
+        condition: service_healthy
+      provider:
+        condition: service_healthy
