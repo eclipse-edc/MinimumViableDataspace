@@ -84,6 +84,12 @@ jobs:
       company2_key_vault: ${{ steps.runterraform.outputs.company2_key_vault }}
       company1_api_key: ${{ steps.runterraform.outputs.company1_api_key }}
       company2_api_key: ${{ steps.runterraform.outputs.company2_api_key }}
+      company1_did_host: ${{ steps.runterraform.outputs.company1_did_host }}
+      company2_did_host: ${{ steps.runterraform.outputs.company2_did_host }}
+      company1_connector_name: ${{ steps.runterraform.outputs.company1_connector_name }}
+      company2_connector_name: ${{ steps.runterraform.outputs.company2_connector_name }}
+      company1_assets_storage_account: ${{ steps.runterraform.outputs.company1_assets_storage_account }}
+      company2_assets_storage_account: ${{ steps.runterraform.outputs.company2_assets_storage_account }}
 
     strategy:
       matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
@@ -109,7 +115,8 @@ jobs:
           ' >> backend.conf
           terraform init -backend-config=backend.conf
           terraform apply -auto-approve
-          DID_ENDPOINT=$(terraform output -raw did_endpoint)
+          CONNECTOR_NAME=$(terraform output -raw connector_name)
+          DID_HOST=$(terraform output -raw did_host)
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
           KEY_VAULT=$(terraform output -raw key_vault)
@@ -117,12 +124,15 @@ jobs:
           API_KEY=$(terraform output -raw api_key)
           echo "::notice title=MVD WebApp for ${{ matrix.participant }}::$WEBAPP_URL"
           echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
-          echo "DID_ENDPOINT=$DID_ENDPOINT" >> $GITHUB_ENV
+          echo "DID_HOST=$DID_HOST" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "API_KEY=$API_KEY" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
           echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
           echo "::set-output name=${{ matrix.participant }}_api_key::${API_KEY}"
+          echo "::set-output name=${{ matrix.participant }}_connector_name::${CONNECTOR_NAME}"
+          echo "::set-output name=${{ matrix.participant }}_did_host::${DID_HOST}"
+          echo "::set-output name=${{ matrix.participant }}_assets_storage_account::${ASSETS_STORAGE_ACCOUNT}"
 
         working-directory: deployment/terraform
         env:
@@ -152,7 +162,7 @@ jobs:
           TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}
 
       - name: 'Verify did endpoint is available'
-        run: curl $DID_ENDPOINT | jq '.id'
+        run: curl https://$DID_HOST/.well-known/did.json | jq '.id'
 
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 6 --fail http://${EDC_HOST}:8181/api/check/health
@@ -188,3 +198,60 @@ jobs:
           CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
           CONSUMER_CATALOG_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/federatedcatalog
           API_KEY: ${{ needs.Deploy.outputs.company1_api_key }}
+
+  # Verify docker-compose setup for local testing
+  VerifyLocalTests:
+    needs: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: ./.github/actions/gradle-setup
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Run EDC instances in docker-compose'
+        run: ./gradlew :launcher:shadowJar
+
+      - name: 'create env file'
+        run: |-
+          cat <<EOF > system-tests/.env
+          CONSUMER_KEY_VAULT=${{ needs.Deploy.outputs.company1_key_vault }}
+          PROVIDER_KEY_VAULT=${{ needs.Deploy.outputs.company2_key_vault }}
+          APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID }}
+          APP_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
+          APP_CLIENT_SECRET=<client secret>
+          CONSUMER_DID_URL=did:web:${{ needs.Deploy.outputs.company1_did_host }}
+          PROVIDER_DID_URL=did:web:${{ needs.Deploy.outputs.company2_did_host }}
+          CONSUMER_CONNECTOR_NAME=${{ needs.Deploy.outputs.company1_connector_name }}
+          PROVIDER_CONNECTOR_NAME=${{ needs.Deploy.outputs.company2_connector_name }}
+          PROVIDER_ASSETS_STORAGE_ACCOUNT=${{ needs.Deploy.outputs.company2_assets_storage_account }}
+          EOF
+
+      - name: 'Publish env file'
+        uses: actions/upload-artifact@v3
+        with:
+          name: testing-configuration
+          path: system-tests/.env
+
+      - name: 'Run EDC instances in docker-compose'
+        run: docker-compose -f system-tests/docker-compose.yml up --build --detach
+        timeout-minutes: 10
+        env:
+          APP_CLIENT_SECRET: ${{ secrets.APP_CLIENT_SECRET }}
+
+      - name: 'Unit and system tests'
+        run: ./gradlew test
+        timeout-minutes: 10
+        env:
+          CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
+
+      - name: 'docker-compose logs'
+        run: docker-compose -f system-tests/docker-compose.yml logs
+        if: always()
+

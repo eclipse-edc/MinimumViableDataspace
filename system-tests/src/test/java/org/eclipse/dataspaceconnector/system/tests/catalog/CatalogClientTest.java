@@ -30,7 +30,7 @@ import static org.eclipse.dataspaceconnector.system.tests.utils.TestUtils.requir
 import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulationUtils.PROVIDER_ASSET_ID;
 
 class CatalogClientTest {
-    static final String CONSUMER_CATALOG_URL = requiredPropOrEnv("CONSUMER_CATALOG_URL");
+    static final String CONSUMER_CATALOG_URL = requiredPropOrEnv("CONSUMER_CATALOG_URL", "http://localhost:8182/api/federatedcatalog");
 
     @Test
     void containsAsset() {
