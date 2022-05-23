@@ -4,6 +4,8 @@ services:
     container_name: provider
     build:
       context: ../launcher
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     environment:
       IDS_WEBHOOK_ADDRESS: http://provider:8282
       EDC_CONNECTOR_NAME: ${PROVIDER_CONNECTOR_NAME}
@@ -20,6 +22,7 @@ services:
     ports:
       - "9191:9191"
       - "8181:8181"
+      - "5005:5005"
     volumes:
       - ./resources:/resources
 
@@ -27,6 +30,8 @@ services:
     container_name: consumer
     build:
       context: ../launcher
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     environment:
       IDS_WEBHOOK_ADDRESS: http://consumer:8282
       EDC_CONNECTOR_NAME: ${CONSUMER_CONNECTOR_NAME}
@@ -43,6 +48,7 @@ services:
     ports:
       - "9192:9191"
       - "8182:8181"
+      - "5006:5006"
     volumes:
       - ./resources:/resources
 
