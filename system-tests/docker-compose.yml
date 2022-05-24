@@ -16,7 +16,7 @@ services:
       EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       NODES_JSON_FILES_PREFIX: registry-
-      NODES_JSON_DIR: /resources
+      NODES_JSON_DIR: /resources/registry
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 1
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 1
     ports:
@@ -42,7 +42,7 @@ services:
       EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       NODES_JSON_FILES_PREFIX: registry-
-      NODES_JSON_DIR: /resources
+      NODES_JSON_DIR: /resources/registry
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 1
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 1
     ports:
