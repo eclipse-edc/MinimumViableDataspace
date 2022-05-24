@@ -28,3 +28,7 @@ You might need to delete the DataSpace created previously.
 - Click on `Run workflow`
 - Provide the resources prefix that you used when you deployed your DataSpace.
 - Click on `Run workflow` to trigger to destroy your MinimumViableDataspace DataSpace.
+
+## Local development setup
+
+Please follow the instructions in [this document](system-tests/README.md) to setup a local MVD environment for development purposes.

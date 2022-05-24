@@ -1,14 +1,12 @@
 ## System tests
 
-The test use the key vault secret to connect to the storage accounts and copy a file
-from provider to consumer storage account.
+The test uses the key vault secret to connect to the storage accounts and copy a file from provider to consumer storage account.
 
 ### Running test locally
 
 Deploy MVD using the GitHub `Deploy` pipeline. We will run EDC instances locally, connected to the storage accounts and key vaults deployed on Azure.
 
-From the build result, download the artifact named `testing-configuration` and extract the file `.env` into
-the `system-tests` directory (note that the file could be hidden in your file explorer due to its prefix).
+From the build result, download the artifact named `testing-configuration` and extract the file `.env` into the `system-tests` directory (note that the file could be hidden in your file explorer due to its prefix).
 
 In the file, add the application client secret value under the `APP_CLIENT_SECRET` key. It is used to access Key Vault.
 
@@ -44,4 +42,8 @@ CONSUMER_KEY_VAULT="$CONSUMER_KEY_VAULT" ./gradlew :system-tests:test
 
 Follow the instructions in the previous sections to run an MVD with a consumer and provider locally using docker-compose. 
 
-Once running, you can use a Java debugger to connect to the consumer (port 5006) and provider (port 5005) instances. If you are using IntelliJ you can use the provided "EDC consumer" or "EDC provider" runtime configurations to remote debug the connector instances. 
+Once running, you can use a Java debugger to connect to the consumer (port 5006) and provider (port 5005) instances. If you are using IntelliJ you can use the provided "EDC consumer" or "EDC provider" [runtime configurations](../.run) to remote debug the connector instances.
+
+### Issuing requests manually with Postman
+
+A [postman collection](../deployment/data/MVD.postman_collection.json) can be used to issue requests to an MVD instance of your choice. You will need to adapt the environment variables accordingly to match your target MVD instance.
