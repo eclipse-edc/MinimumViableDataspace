@@ -47,6 +47,11 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - uses: actions/download-artifact@v3
+        with:
+          name: terraform-variables-${{ env.RESOURCES_PREFIX }}-${{ matrix.participant }}
+          path: deployment/terraform
+
       # Az login is needed to delete the blob terraform state.
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -77,12 +82,4 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
           # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
-          TF_VAR_runtime_image: dummy
-          TF_VAR_application_sp_object_id: dummy
-          TF_VAR_application_sp_client_id: dummy
           TF_VAR_application_sp_client_secret: dummy
-          TF_VAR_registry_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
-          TF_VAR_registry_storage_account: ${{ secrets.REGISTRY_STORAGE_ACCOUNT }}
-          TF_VAR_registry_share: ${{ secrets.REGISTRY_SHARE }}
-          TF_VAR_acr_resource_group: ${{ secrets.COMMON_RESOURCE_GROUP }}
-          TF_VAR_acr_name: ${{ secrets.ACR_NAME }}
