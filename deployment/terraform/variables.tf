@@ -74,7 +74,10 @@ variable "registry_share" {
 
 variable "data_dashboard_image_tag" {
   description = "tag of the Data Dashboard web app image to deploy"
-  default     = "5396bfc0a1c5672e1858d2e9da3f374a436b19dc"
+  default     = "6657d71bca844e0c2fc0a01081b8fd97628d522f"
 }
 
-
+variable "data_dashboard_theme" {
+  description = "theme for the data dashboard ui"
+  default     = "" # Use default theme. Possible theme values are defined in `theme.scss` in the EDCDataDashboard repository.
+}
