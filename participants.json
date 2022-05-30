@@ -2,15 +2,18 @@
   "include": [
     {
       "participant": "company1",
-      "region": "eu"
+      "region": "eu",
+      "data_dashboard_theme": "theme-1"
     },
     {
       "participant": "company2",
-      "region": "eu"
+      "region": "eu",
+      "data_dashboard_theme": "theme-2"
     },
     {
       "participant": "company3",
-      "region": "us"
+      "region": "us",
+      "data_dashboard_theme": "theme-3"
     }
   ]
 }

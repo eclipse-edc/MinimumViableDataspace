@@ -110,6 +110,7 @@ jobs:
           acr_name = "${{ secrets.ACR_NAME }}"
           participant_name = "${{ matrix.participant }}"
           participant_region = "${{ matrix.region }}"
+          data_dashboard_theme = "${{ matrix.data_dashboard_theme }}"
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ matrix.participant }}-${{ env.RESOURCES_PREFIX }}"
           runtime_image = "mvd-edc/connector:${{ env.RESOURCES_PREFIX }}"
