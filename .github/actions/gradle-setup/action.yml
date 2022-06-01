@@ -9,7 +9,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/DataSpaceConnector
         path: DataSpaceConnector
-        ref: db34d77bc86c0013a6f98208fd14f62ff9549dcb
+        ref: 5191d3e6dd9ac5d78264d05ae69edb4d297b606a
 
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2
