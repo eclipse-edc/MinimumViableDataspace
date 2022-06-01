@@ -46,7 +46,7 @@ public class TransferLocalSimulation extends Simulation {
     public TransferLocalSimulation(TransferRequestFactory requestFactory) {
         var httpProtocol = http
                 .baseUrl(CONSUMER_MANAGEMENT_URL)
-                .header(API_KEY_HEADER, API_KEY);
+                .header(API_KEY_HEADER, s -> API_KEY); // use the Function form to avoid special characters to be interpreted as Gatling Expression Language
         setUp(scenario(DESCRIPTION)
                 .repeat(REPEAT)
                 .on(contractNegotiationAndTransfer(PROVIDER_IDS_URL, requestFactory))
