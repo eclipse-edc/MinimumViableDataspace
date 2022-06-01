@@ -47,18 +47,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/download-artifact@v3
-        with:
-          name: terraform-variables-${{ env.RESOURCES_PREFIX }}-${{ matrix.participant }}
-          path: deployment/terraform
-
-      # Az login is needed to delete the blob terraform state.
       - name: 'Az CLI login'
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
           tenant-id: ${{ secrets.ARM_TENANT_ID }}
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Download tfvars file'
+        run: az storage blob download --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f deployment/terraform/terraform.tfvars -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
 
       - name: 'Delete terraform resources'
         run: |
@@ -71,7 +68,6 @@ jobs:
           ' >> backend.conf
           terraform init -backend-config=backend.conf
           terraform destroy -auto-approve
-          az storage blob delete --account-name ${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }} -c ${{ secrets.TERRAFORM_STATE_CONTAINER }} -n ${{ matrix.participant }}${RESOURCES_PREFIX}.tfstate
         working-directory: deployment/terraform
         env:
           # Authentication settings for Terraform AzureRM provider
@@ -83,3 +79,8 @@ jobs:
 
           # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
           TF_VAR_application_sp_client_secret: dummy
+
+      - name: 'Delete state and tfvars blobs'
+        run: |
+          az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
+          az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfstate" --auth-mode key

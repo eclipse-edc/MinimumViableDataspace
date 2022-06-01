@@ -145,10 +145,16 @@ jobs:
           registry_storage_account = "${{ secrets.REGISTRY_STORAGE_ACCOUNT }}"
           registry_share = "${{ secrets.REGISTRY_SHARE }}"
           EOF
-      - uses: actions/upload-artifact@v3
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
         with:
-          name: terraform-variables-${{ env.RESOURCES_PREFIX }}-${{ matrix.participant }}
-          path: deployment/terraform/terraform.tfvars
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Upload tfvars file'
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f deployment/terraform/terraform.tfvars -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
 
       - name: 'Run terraform'
         id: runterraform
