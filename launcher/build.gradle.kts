@@ -25,11 +25,16 @@ dependencies {
     implementation(project(":extensions:refresh-catalog"))
     implementation(project(":extensions:mock-credentials-verifier"))
     implementation("${edcGroup}:core:${edcVersion}")
-    implementation("${edcGroup}:ids:${edcVersion}")
     implementation("${edcGroup}:observability-api:${edcVersion}")
     implementation("${edcGroup}:data-management-api:${edcVersion}")
     implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
     implementation("${edcGroup}:http:${edcVersion}")
+
+    // IDS
+    implementation("${edcGroup}:ids:${edcVersion}") {
+        // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
+        exclude(group = edcGroup, module = "ids-token-validation")
+    }
 
     // API key authentication for Data Management API (also used for CORS support)
     implementation("${edcGroup}:auth-tokenbased:${edcVersion}")
