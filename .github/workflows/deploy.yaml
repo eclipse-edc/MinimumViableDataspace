@@ -38,8 +38,10 @@ jobs:
           echo "::set-output name=matrix::$matrix"
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
-  Build:
+  Build-Connector:
     runs-on: ubuntu-latest
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
     steps:
       # Checkout MVD code
       - uses: actions/checkout@v2
@@ -53,28 +55,50 @@ jobs:
 
       - name: 'Login to ACR'
         run: az acr login -n $ACR_NAME
-        env:
-          ACR_NAME: ${{ secrets.ACR_NAME }}
 
       - uses: ./.github/actions/gradle-setup
 
       # Build MVD runtime JAR locally.
       # The result is a JAR file in MVD/launcher/build/libs.
       - name: 'Build runtime JAR'
-        run: |
-          ./gradlew launcher:shadowJar
+        run: ./gradlew launcher:shadowJar
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd-edc/connector:${{ env.RESOURCES_PREFIX }} .
         working-directory: launcher
-        env:
-          ACR_NAME: ${{ secrets.ACR_NAME }}
+
+  # Build data dashboard webapp
+  Build-Dashboard:
+    runs-on: ubuntu-latest
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+    steps:
+      - name: Checkout EDCDataDashboard
+        uses: actions/checkout@v2
+        with:
+          repository: agera-edc/EDCDataDashboard
+          ref: 6657d71bca844e0c2fc0a01081b8fd97628d522f
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Login to ACR'
+        run: az acr login -n $ACR_NAME
+
+      # Build Docker runtime image remotely on ACR & push it to the registry.
+      - name: 'Build image'
+        run: az acr build --registry $ACR_NAME --image mvd-edc/data-dashboard:${{ env.RESOURCES_PREFIX }} .
 
   # Deploy dataspace participants in parallel.
   Deploy:
     needs:
-      - Build
+      - Build-Connector
+      - Build-Dashboard
       - Matrix
     runs-on: ubuntu-latest
     outputs:
@@ -114,6 +138,7 @@ jobs:
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ matrix.participant }}-${{ env.RESOURCES_PREFIX }}"
           runtime_image = "mvd-edc/connector:${{ env.RESOURCES_PREFIX }}"
+          dashboard_image = "mvd-edc/data-dashboard:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
           registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
