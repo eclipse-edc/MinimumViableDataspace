@@ -34,8 +34,9 @@ az login --service-principal --user "$APP_CLIENT_ID" --password "$APP_CLIENT_SEC
 | You could also login interactively with your user identity (`az login`), and [grant yourself at least the *Key Vault Secrets User*](https://docs.microsoft.com/azure/key-vault/general/rbac-guide) role to the Key Vault below. A good option is to grant the *Key Vault Secrets Officer* at the subscription level to the whole development team, so they can read and write secrets on MVD deployments as needed. |
 
 Run tests:
+
 ```
-CONSUMER_KEY_VAULT="$CONSUMER_KEY_VAULT" ./gradlew :system-tests:test
+CONSUMER_EU_KEY_VAULT="$CONSUMER_EU_KEY_VAULT" CONSUMER_US_KEY_VAULT="$CONSUMER_US_KEY_VAULT" ./gradlew :system-tests:test
 ```
 
 ### Debugging MVD locally

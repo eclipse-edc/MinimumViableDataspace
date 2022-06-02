@@ -104,16 +104,22 @@ jobs:
     outputs:
       company1_edc_host: ${{ steps.runterraform.outputs.company1_edc_host }}
       company2_edc_host: ${{ steps.runterraform.outputs.company2_edc_host }}
+      company3_edc_host: ${{ steps.runterraform.outputs.company3_edc_host }}
       company1_key_vault: ${{ steps.runterraform.outputs.company1_key_vault }}
       company2_key_vault: ${{ steps.runterraform.outputs.company2_key_vault }}
+      company3_key_vault: ${{ steps.runterraform.outputs.company3_key_vault }}
       company1_api_key: ${{ steps.runterraform.outputs.company1_api_key }}
       company2_api_key: ${{ steps.runterraform.outputs.company2_api_key }}
+      company3_api_key: ${{ steps.runterraform.outputs.company3_api_key }}
       company1_did_host: ${{ steps.runterraform.outputs.company1_did_host }}
       company2_did_host: ${{ steps.runterraform.outputs.company2_did_host }}
+      company3_did_host: ${{ steps.runterraform.outputs.company3_did_host }}
       company1_connector_name: ${{ steps.runterraform.outputs.company1_connector_name }}
       company2_connector_name: ${{ steps.runterraform.outputs.company2_connector_name }}
+      company3_connector_name: ${{ steps.runterraform.outputs.company3_connector_name }}
       company1_assets_storage_account: ${{ steps.runterraform.outputs.company1_assets_storage_account }}
       company2_assets_storage_account: ${{ steps.runterraform.outputs.company2_assets_storage_account }}
+      company3_assets_storage_account: ${{ steps.runterraform.outputs.company3_assets_storage_account }}
 
     strategy:
       matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
@@ -233,12 +239,17 @@ jobs:
         run: |
           ./gradlew :system-tests:test
         env:
-          CONSUMER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:9191
-          PROVIDER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:9191
-          PROVIDER_IDS_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8282
-          CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
-          CONSUMER_CATALOG_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:8181/api/federatedcatalog
-          API_KEY: ${{ needs.Deploy.outputs.company1_api_key }}
+          PROVIDER_IDS_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:8282
+          PROVIDER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company1_edc_host }}:9191
+          CONSUMER_MANAGEMENT_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:9191
+          CONSUMER_EU_KEY_VAULT: ${{ needs.Deploy.outputs.company2_key_vault }}
+          CONSUMER_US_KEY_VAULT: ${{ needs.Deploy.outputs.company3_key_vault }}
+          CONSUMER_EU_CATALOG_URL: http://${{ needs.Deploy.outputs.company2_edc_host }}:8181/api/federatedcatalog
+          CONSUMER_US_CATALOG_URL: http://${{ needs.Deploy.outputs.company3_edc_host }}:8181/api/federatedcatalog
+          PROVIDER_DID_URL: did:web:${{ needs.Deploy.outputs.company1_did_host }}
+          CONSUMER_EU_DID_URL: did:web:${{ needs.Deploy.outputs.company2_did_host }}
+          CONSUMER_US_DID_URL: did:web:${{ needs.Deploy.outputs.company3_did_host }}
+          API_KEY: ${{ needs.Deploy.outputs.company2_api_key }}
 
   # Verify docker-compose setup for local testing
   VerifyLocalTests:
@@ -262,16 +273,19 @@ jobs:
       - name: 'create env file'
         run: |-
           cat <<EOF > system-tests/.env
-          CONSUMER_KEY_VAULT=${{ needs.Deploy.outputs.company1_key_vault }}
-          PROVIDER_KEY_VAULT=${{ needs.Deploy.outputs.company2_key_vault }}
+          CONSUMER_EU_KEY_VAULT=${{ needs.Deploy.outputs.company2_key_vault }}
+          CONSUMER_US_KEY_VAULT=${{ needs.Deploy.outputs.company3_key_vault }}
+          PROVIDER_KEY_VAULT=${{ needs.Deploy.outputs.company1_key_vault }}
           APP_CLIENT_ID=${{ secrets.APP_CLIENT_ID }}
           APP_TENANT_ID=${{ secrets.ARM_TENANT_ID }}
           APP_CLIENT_SECRET=<client secret>
-          CONSUMER_DID_URL=did:web:${{ needs.Deploy.outputs.company1_did_host }}
-          PROVIDER_DID_URL=did:web:${{ needs.Deploy.outputs.company2_did_host }}
-          CONSUMER_CONNECTOR_NAME=${{ needs.Deploy.outputs.company1_connector_name }}
-          PROVIDER_CONNECTOR_NAME=${{ needs.Deploy.outputs.company2_connector_name }}
-          PROVIDER_ASSETS_STORAGE_ACCOUNT=${{ needs.Deploy.outputs.company2_assets_storage_account }}
+          PROVIDER_DID_URL=did:web:${{ needs.Deploy.outputs.company1_did_host }}
+          CONSUMER_EU_DID_URL=did:web:${{ needs.Deploy.outputs.company2_did_host }}
+          CONSUMER_US_DID_URL=did:web:${{ needs.Deploy.outputs.company3_did_host }}
+          PROVIDER_CONNECTOR_NAME=${{ needs.Deploy.outputs.company1_connector_name }}
+          CONSUMER_EU_CONNECTOR_NAME=${{ needs.Deploy.outputs.company2_connector_name }}
+          CONSUMER_US_CONNECTOR_NAME=${{ needs.Deploy.outputs.company3_connector_name }}
+          PROVIDER_ASSETS_STORAGE_ACCOUNT=${{ needs.Deploy.outputs.company1_assets_storage_account }}
           EOF
 
       - name: 'Publish env file'
@@ -290,7 +304,8 @@ jobs:
         run: ./gradlew test
         timeout-minutes: 10
         env:
-          CONSUMER_KEY_VAULT: ${{ needs.Deploy.outputs.company1_key_vault }}
+          CONSUMER_EU_KEY_VAULT: ${{ needs.Deploy.outputs.company2_key_vault }}
+          CONSUMER_US_KEY_VAULT: ${{ needs.Deploy.outputs.company3_key_vault }}
 
       - name: 'docker-compose logs'
         run: docker-compose -f system-tests/docker-compose.yml logs

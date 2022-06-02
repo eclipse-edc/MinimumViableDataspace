@@ -23,7 +23,9 @@ val edcGroup: String by project
 
 dependencies {
     implementation(project(":extensions:refresh-catalog"))
+    implementation(project(":extensions:policies"))
     implementation(project(":extensions:mock-credentials-verifier"))
+
     implementation("${edcGroup}:core:${edcVersion}")
     implementation("${edcGroup}:observability-api:${edcVersion}")
     implementation("${edcGroup}:data-management-api:${edcVersion}")
