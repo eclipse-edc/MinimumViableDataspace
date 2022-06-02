@@ -52,6 +52,7 @@ public abstract class TransferSimulationUtils {
     public static final String DESCRIPTION = "[Contract negotiation and file transfer]";
 
     public static final String PROVIDER_ASSET_ID = "test-document";
+    public static final String EU_RESTRICTED_PROVIDER_ASSET_ID = "test-document-2";
     public static final String PROVIDER_ASSET_FILE = "text-document.txt";
 
     public static final String TRANSFER_SUCCESSFUL = "Transfer successful";

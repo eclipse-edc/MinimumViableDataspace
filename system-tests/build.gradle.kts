@@ -55,5 +55,6 @@ dependencies {
     testImplementation("com.azure:azure-security-keyvault-secrets:4.2.3")
     testImplementation("${edcGroup}:contract-spi:${edcVersion}")
     testImplementation("${edcGroup}:federated-catalog-spi:${edcVersion}")
+    testImplementation("${edcGroup}:policy-evaluator:${edcVersion}")
 }
 

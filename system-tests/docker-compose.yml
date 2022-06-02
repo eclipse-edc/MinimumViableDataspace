@@ -17,8 +17,8 @@ services:
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       NODES_JSON_FILES_PREFIX: registry-
       NODES_JSON_DIR: /resources/registry
-      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 1
-      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 1
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
     ports:
       - "9191:9191"
       - "8181:8181"
@@ -26,29 +26,55 @@ services:
     volumes:
       - ./resources:/resources
 
-  consumer:
-    container_name: consumer
+  consumer-eu:
+    container_name: consumer-eu
     build:
       context: ../launcher
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://consumer:8282
-      EDC_CONNECTOR_NAME: ${CONSUMER_CONNECTOR_NAME}
-      EDC_IDENTITY_DID_URL: ${CONSUMER_DID_URL}
-      EDC_VAULT_NAME: ${CONSUMER_KEY_VAULT}
+      IDS_WEBHOOK_ADDRESS: http://consumer-eu:8282
+      EDC_CONNECTOR_NAME: ${CONSUMER_EU_CONNECTOR_NAME}
+      EDC_IDENTITY_DID_URL: ${CONSUMER_EU_DID_URL}
+      EDC_VAULT_NAME: ${CONSUMER_EU_KEY_VAULT}
       EDC_VAULT_TENANTID: ${APP_TENANT_ID}
       EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
       EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       NODES_JSON_FILES_PREFIX: registry-
       NODES_JSON_DIR: /resources/registry
-      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 1
-      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 1
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
     ports:
       - "9192:9191"
       - "8182:8181"
       - "5006:5006"
+    volumes:
+      - ./resources:/resources
+
+  consumer-us:
+    container_name: consumer-us
+    build:
+      context: ../launcher
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
+    environment:
+      IDS_WEBHOOK_ADDRESS: http://consumer-us:8282
+      EDC_CONNECTOR_NAME: ${CONSUMER_US_CONNECTOR_NAME}
+      EDC_IDENTITY_DID_URL: ${CONSUMER_US_DID_URL}
+      EDC_VAULT_NAME: ${CONSUMER_US_KEY_VAULT}
+      EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
+      EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
+      EDC_VAULT_TENANTID: ${APP_TENANT_ID}
+      EDC_API_AUTH_KEY: ApiKeyDefaultValue
+      NODES_JSON_FILES_PREFIX: registry-
+      NODES_JSON_DIR: /resources/registry
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
+    ports:
+      - "9193:9191"
+      - "8183:8181"
+      - "5007:5007"
     volumes:
       - ./resources:/resources
 
@@ -65,7 +91,9 @@ services:
       EDC_HOST: provider
       ASSETS_STORAGE_ACCOUNT: ${PROVIDER_ASSETS_STORAGE_ACCOUNT}
     depends_on:
-      consumer:
+      consumer-eu:
+        condition: service_healthy
+      consumer-us:
         condition: service_healthy
       provider:
         condition: service_healthy

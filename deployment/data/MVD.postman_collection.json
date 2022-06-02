@@ -19,7 +19,8 @@
 									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
 									"});"
 								],
-								"type": "text/javascript"
+								"type": "text/javascript",
+								"id": "ad204d7d-75e4-4734-a43c-b7fde913103a"
 							}
 						}
 					],
@@ -48,11 +49,52 @@
 					"response": []
 				},
 				{
+					"name": "Publish Asset 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "93dbf2b1-50d0-413d-85d0-8417bd21727d",
+								"exec": [
+									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"asset\": {\n        \"properties\": {\n            \"asset:prop:name\": \"test-document-2\",\n            \"asset:prop:contenttype\": \"text/plain\",\n            \"asset:prop:version\": \"1.0\",\n            \"asset:prop:id\": \"test-document-2\",\n            \"type\": \"AzureStorage\"\n        }\n    },\n    \"dataAddress\": {\n        \"properties\": {\n            \"type\": \"AzureStorage\",\n            \"account\": \"{{storage_account}}\",\n            \"container\": \"src-container\",\n            \"blobname\": \"text-document-2.txt\",\n            \"keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{data_management_url}}/assets",
+							"host": [
+								"{{data_management_url}}"
+							],
+							"path": [
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Publish Policy 1",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
+								"id": "63cb94b6-8e55-46fc-91e2-fef811c7ae9a",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
@@ -87,11 +129,52 @@
 					"response": []
 				},
 				{
+					"name": "Publish Policy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6f68ce4b-0a80-4a2a-aea2-6c3a1ec9a351",
+								"exec": [
+									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"uid\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n    \"permissions\": [\n        {\n            \"edctype\": \"dataspaceconnector:permission\",\n            \"uid\": null,\n            \"target\": null,\n            \"action\": {\n                \"type\": \"USE\",\n                \"includedIn\": null,\n                \"constraint\": null\n            },\n            \"assignee\": null,\n            \"assigner\": null,\n            \"constraints\": [\n                {\n                    \"edctype\": \"AtomicConstraint\",\n                    \"leftExpression\": {\n                        \"edctype\": \"dataspaceconnector:literalexpression\",\n                        \"value\": \"ids:absoluteSpatialPosition\"\n                    },\n                    \"rightExpression\": {\n                        \"edctype\": \"dataspaceconnector:literalexpression\",\n                        \"value\": \"eu\"\n                    },\n                    \"operator\": \"EQ\"\n                }\n            ],\n            \"duties\": []\n        }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n        \"@policytype\": \"set\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{data_management_url}}/policies",
+							"host": [
+								"{{data_management_url}}"
+							],
+							"path": [
+								"policies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Publish ContractDefinition 1",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
+								"id": "15c83d1e-55a4-44f3-9f9b-e8b73ed5cc4a",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
@@ -124,8 +207,49 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Publish ContractDefinition 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "611695f4-96a5-4338-838b-2b5749d78a32",
+								"exec": [
+									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"8dfd8f18-09ad-41f9-a2d8-368889d3e36e\",\n    \"accessPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n    \"contractPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n        \"criteria\": [\n            {\n                \"left\": \"asset:prop:id\",\n                \"op\": \"=\",\n                \"right\": \"test-document-2\"\n            }\n        ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{data_management_url}}/contractdefinitions",
+							"host": [
+								"{{data_management_url}}"
+							],
+							"path": [
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {

@@ -41,7 +41,7 @@ import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulati
 import static org.eclipse.dataspaceconnector.system.tests.utils.TransferSimulationUtils.TRANSFER_PROCESSES_PATH;
 
 public class BlobTransferIntegrationTest {
-    public static final String DST_KEY_VAULT_NAME = getEnv("CONSUMER_KEY_VAULT");
+    public static final String DST_KEY_VAULT_NAME = getEnv("CONSUMER_EU_KEY_VAULT");
     public static final String BLOB_STORE_ENDPOINT_TEMPLATE = "https://%s.blob.core.windows.net";
     public static final String KEY_VAULT_ENDPOINT_TEMPLATE = "https://%s.vault.azure.net";
 
