@@ -40,7 +40,7 @@ variable "container_cpu" {
 }
 
 variable "container_memory" {
-  default = "1.5"
+  default = "8"
 }
 
 variable "application_sp_object_id" {
