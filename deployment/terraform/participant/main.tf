@@ -31,11 +31,6 @@ locals {
   api_key = random_password.apikey.result
 }
 
-resource "azurerm_resource_group" "participant" {
-  name     = var.resource_group
-  location = var.location
-}
-
 data "azurerm_container_registry" "registry" {
   name                = var.acr_name
   resource_group_name = var.acr_resource_group
@@ -64,6 +59,11 @@ locals {
   edc_default_port    = 8181
   edc_ids_port        = 8282
   edc_management_port = 9191
+}
+
+resource "azurerm_resource_group" "participant" {
+  name     = var.resource_group
+  location = var.location
 }
 
 resource "azurerm_container_group" "edc" {

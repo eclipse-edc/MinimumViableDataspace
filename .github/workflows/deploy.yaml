@@ -65,7 +65,42 @@ jobs:
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
-        run: az acr build --registry $ACR_NAME --image mvd-edc/connector:${{ env.RESOURCES_PREFIX }} .
+        run: az acr build --registry $ACR_NAME --image mvd/connector:${{ env.RESOURCES_PREFIX }} .
+        working-directory: launcher
+
+  # Build runtime image in Azure Container Registry, tagged with the unique run_number.
+  Build-Registration-Service:
+    runs-on: ubuntu-latest
+    env:
+      ACR_NAME: ${{ secrets.ACR_NAME }}
+    steps:
+      # Checkout Registration service code
+      - name: Checkout Registration Service
+        uses: actions/checkout@v2
+        with:
+          repository: agera-edc/RegistrationService
+          ref: d9f81a3736efb38e47f48d7da0c749653001f0b4
+
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Login to ACR'
+        run: az acr login -n $ACR_NAME
+
+      - uses: ./.github/actions/gradle-setup
+
+      # Build Registration Service runtime JAR locally.
+      # The result is a JAR file in launcher/build/libs.
+      - name: 'Build runtime JAR'
+        run: ./gradlew launcher:shadowJar
+
+      # Build Docker runtime image remotely on ACR & push it to the registry.
+      - name: 'Build image'
+        run: az acr build --registry $ACR_NAME --image mvd/registration-service:${{ env.RESOURCES_PREFIX }} .
         working-directory: launcher
 
   # Build data dashboard webapp
@@ -92,13 +127,16 @@ jobs:
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
-        run: az acr build --registry $ACR_NAME --image mvd-edc/data-dashboard:${{ env.RESOURCES_PREFIX }} .
+        run: az acr build --registry $ACR_NAME --image mvd/data-dashboard:${{ env.RESOURCES_PREFIX }} .
 
   # Deploy shared dataspace components.
   Deploy-Dataspace:
+    needs:
+      - Build-Registration-Service
     runs-on: ubuntu-latest
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
+      registry_host: ${{ steps.runterraform.outputs.registry_host }}
 
     defaults:
       run:
@@ -110,8 +148,14 @@ jobs:
       - name: 'Create tfvars file'
         run: |
           cat > terraform.tfvars <<EOF
+          acr_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
+          acr_name = "${{ secrets.ACR_NAME }}"
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ env.RESOURCES_PREFIX }}"
+          registry_runtime_image = "mvd/registration-service:${{ env.RESOURCES_PREFIX }}"
+          registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
+          registry_storage_account = "${{ secrets.REGISTRY_STORAGE_ACCOUNT }}"
+          registry_share = "${{ secrets.REGISTRY_SHARE }}"
           EOF
 
       - name: 'Az CLI login'
@@ -138,6 +182,9 @@ jobs:
           terraform apply -auto-approve
           app_insights_connection_string=$(terraform output -raw app_insights_connection_string)
           echo "::set-output name=app_insights_connection_string::${app_insights_connection_string}"
+          REGISTRY_HOST=$(terraform output -raw registry_host)
+          echo "REGISTRY_HOST=$REGISTRY_HOST" >> $GITHUB_ENV
+          echo "::set-output name=registry_host::${REGISTRY_HOST}"
 
         env:
           # Authentication settings for Terraform AzureRM provider
@@ -146,6 +193,9 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+      - name: 'Verify deployed Registry Service is healthy'
+        run: curl --retry 6 --fail http://${REGISTRY_HOST}:8181/api/check/health
 
   # Deploy dataspace participants in parallel.
   Deploy-Participants:
@@ -201,8 +251,8 @@ jobs:
           data_dashboard_theme = "${{ matrix.data_dashboard_theme }}"
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ matrix.participant }}-${{ env.RESOURCES_PREFIX }}"
-          runtime_image = "mvd-edc/connector:${{ env.RESOURCES_PREFIX }}"
-          dashboard_image = "mvd-edc/data-dashboard:${{ env.RESOURCES_PREFIX }}"
+          runtime_image = "mvd/connector:${{ env.RESOURCES_PREFIX }}"
+          dashboard_image = "mvd/data-dashboard:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
           registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
