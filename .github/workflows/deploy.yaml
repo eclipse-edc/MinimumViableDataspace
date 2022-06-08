@@ -314,6 +314,7 @@ jobs:
           TF_VAR_key_file: "key.pem"
           TF_VAR_public_key_jwk_file: "key.public.jwk"
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
+          TF_VAR_app_insights_connection_string: ${{ needs.Deploy-Dataspace.outputs.app_insights_connection_string }}
 
       - name: 'Verify did endpoint is available'
         run: curl https://$DID_HOST/.well-known/did.json | jq '.id'
