@@ -122,12 +122,16 @@ resource "azurerm_container_group" "edc" {
       # Refresh catalog frequently to accelerate scenarios
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS  = 10
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS = 10
+
+      APPLICATIONINSIGHTS_ROLE_NAME = local.connector_name
     }
 
     secure_environment_variables = {
       EDC_VAULT_CLIENTSECRET = var.application_sp_client_secret
 
       EDC_API_AUTH_KEY = local.api_key
+
+      APPLICATIONINSIGHTS_CONNECTION_STRING = var.app_insights_connection_string
     }
 
     volume {
@@ -143,6 +147,7 @@ resource "azurerm_container_group" "edc" {
         port = 8181
         path = "/api/check/health"
       }
+      failure_threshold = 6
     }
   }
 }

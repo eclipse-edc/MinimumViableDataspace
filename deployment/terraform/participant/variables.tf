@@ -43,6 +43,11 @@ variable "container_memory" {
   default = "8"
 }
 
+variable "app_insights_connection_string" {
+  description = "optional connection string to Application Insights"
+  default     = null
+}
+
 variable "application_sp_object_id" {
   description = "object id of application's service principal object"
 }
