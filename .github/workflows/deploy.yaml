@@ -74,12 +74,8 @@ jobs:
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
     steps:
-      # Checkout Registration service code
-      - name: Checkout Registration Service
-        uses: actions/checkout@v2
-        with:
-          repository: agera-edc/RegistrationService
-          ref: f47e3ce3c40daa6713778f9a13e1129d053ecbb5
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/gradle-setup
 
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -91,17 +87,16 @@ jobs:
       - name: 'Login to ACR'
         run: az acr login -n $ACR_NAME
 
-      - uses: ./.github/actions/gradle-setup
-
       # Build Registration Service runtime JAR locally.
       # The result is a JAR file in launcher/build/libs.
       - name: 'Build runtime JAR'
         run: ./gradlew launcher:shadowJar
+        working-directory: ${{ runner.temp }}/RegistrationService
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd/registration-service:${{ env.RESOURCES_PREFIX }} .
-        working-directory: launcher
+        working-directory: ${{ runner.temp }}/RegistrationService/launcher
 
   # Build data dashboard webapp
   Build-Dashboard:
@@ -160,8 +155,6 @@ jobs:
           resource_group = "rg-${{ env.RESOURCES_PREFIX }}"
           registry_runtime_image = "mvd/registration-service:${{ env.RESOURCES_PREFIX }}"
           registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
-          registry_storage_account = "${{ secrets.REGISTRY_STORAGE_ACCOUNT }}"
-          registry_share = "${{ secrets.REGISTRY_SHARE }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           EOF
 
@@ -270,8 +263,6 @@ jobs:
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
           registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
-          registry_storage_account = "${{ secrets.REGISTRY_STORAGE_ACCOUNT }}"
-          registry_share = "${{ secrets.REGISTRY_SHARE }}"
           registration_service_api_url = "${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/api"
           EOF
 
@@ -342,6 +333,14 @@ jobs:
           npm install -g newman
           deployment/seed-data.sh
         working-directory: .
+
+      - name: 'Register participant'
+        run: |
+          curl -vfd '{ "name": "${{matrix.participant}}", "supportedProtocols": [ "ids-multipart" ], "url": "http://${{ env.EDC_HOST }}:8282" }' \
+            -HContent-type:application/json \
+            $REGISTRATION_SERVICE_API_URL/registry/participant
+        env:
+          REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/api
 
   Verify:
     needs:

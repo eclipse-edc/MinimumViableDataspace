@@ -75,14 +75,6 @@ variable "registry_resource_group" {
   description = "resource group of the registry JSON documents file share storage account"
 }
 
-variable "registry_storage_account" {
-  description = "name of the registry JSON documents file share storage account"
-}
-
-variable "registry_share" {
-  description = "name of the registry JSON documents file share"
-}
-
 variable "registration_service_api_url" {
   description = "registration api url"
 }
