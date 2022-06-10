@@ -37,7 +37,7 @@ jobs:
           echo "::set-output name=matrix::$matrix"
 
   # Delete deployed Azure resource groups for each dataspace participant.
-  Destroy:
+  Destroy-Participants:
     needs: Matrix
     continue-on-error: true
     runs-on: ubuntu-latest
@@ -83,10 +83,13 @@ jobs:
           # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
           TF_VAR_application_sp_client_secret: dummy
 
-      - name: 'Delete state and tfvars blobs'
-        run: |
-          az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
-          az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfstate" --auth-mode key
+      # The Destroy job uses continue-on-error: true so that if one destroy job fails, the others don't get killed.
+      # This has the side effect of making the overall job (and hence calling workflow) succeed when it should fail.
+      # To solve this, we upload an extra marker blob at the end of the `Destroy-Participants` job,
+      # and delete the blobs in a separate job matrix. That `Post-Destroy-Participants` job will then cause the workflow to fail
+      # if a completion marker blob is not found (meaning that a Destroy job did not succeed).
+      - name: 'Completion marker blob'
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f /dev/null -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.completed" --auth-mode key
 
   # Delete shared deployed Azure resources.
   Destroy-Dataspace:
@@ -129,7 +132,54 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
-      - name: 'Delete state and tfvars blobs'
+      # See Destroy-Participants job for explanation about the completion marker blob
+      - name: 'Completion marker blob'
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f /dev/null -n "${{ env.RESOURCES_PREFIX }}.completed" --auth-mode key
+
+  # Post-Destroy jos must wait for all Destroy jobs to complete, so that their failure does not interrupt in-progress Destroy jobs
+
+  Post-Destroy-Participants:
+    needs:
+      - Matrix
+      - Destroy-Participants
+      - Destroy-Dataspace
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Delete state, tfvars and completion marker blobs'
         run: |
-          az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
-          az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ env.RESOURCES_PREFIX }}.tfstate" --auth-mode key
+          for extension in tfvars tfstate completed
+          do
+            az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.$extension" --auth-mode key
+          done
+
+  Post-Destroy-Dataspace:
+    needs:
+      - Matrix
+      - Destroy-Participants
+      - Destroy-Dataspace
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Delete state, tfvars and completion marker blobs'
+        run: |
+          for extension in tfvars tfstate completed
+          do
+            az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ env.RESOURCES_PREFIX }}.$extension" --auth-mode key
+          done
