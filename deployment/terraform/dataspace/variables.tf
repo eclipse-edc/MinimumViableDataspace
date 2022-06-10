@@ -43,3 +43,16 @@ variable "registry_share" {
   description = "name of the registry JSON documents file share"
 }
 
+variable "application_sp_object_id" {
+  description = "object id of application's service principal object"
+}
+
+variable "key_file" {
+  description = "name of a file containing the private key in PEM format"
+  default     = null
+}
+
+variable "public_key_jwk_file" {
+  description = "name of a file containing the public key in JWK format"
+  default     = null
+}

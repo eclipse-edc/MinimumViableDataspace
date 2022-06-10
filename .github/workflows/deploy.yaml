@@ -145,6 +145,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: 'Generate key'
+        run: |
+          openssl ecparam -name prime256v1 -genkey -noout -out key.pem
+          openssl ec -in key.pem -pubout -out key.public.pem
+          docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
+
       - name: 'Create tfvars file'
         run: |
           cat > terraform.tfvars <<EOF
@@ -156,6 +162,7 @@ jobs:
           registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
           registry_storage_account = "${{ secrets.REGISTRY_STORAGE_ACCOUNT }}"
           registry_share = "${{ secrets.REGISTRY_SHARE }}"
+          application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           EOF
 
       - name: 'Az CLI login'
@@ -182,9 +189,10 @@ jobs:
           terraform apply -auto-approve
           app_insights_connection_string=$(terraform output -raw app_insights_connection_string)
           echo "::set-output name=app_insights_connection_string::${app_insights_connection_string}"
-          REGISTRY_HOST=$(terraform output -raw registry_host)
-          echo "REGISTRY_HOST=$REGISTRY_HOST" >> $GITHUB_ENV
-          echo "::set-output name=registry_host::${REGISTRY_HOST}"
+          registry_host=$(terraform output -raw registry_host)
+          echo "::set-output name=registry_host::${registry_host}"
+          did_host=$(terraform output -raw did_host)
+          echo "::set-output name=did_host::${did_host}"
 
         env:
           # Authentication settings for Terraform AzureRM provider
@@ -193,9 +201,15 @@ jobs:
           ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+          # Terraform variables not included in terraform.tfvars.
+          TF_VAR_key_file: "key.pem"
+          TF_VAR_public_key_jwk_file: "key.public.jwk"
+
+      - name: 'Verify did endpoint is available'
+        run: curl https://${{ steps.runterraform.outputs.did_host }}/.well-known/did.json | jq '.id'
 
       - name: 'Verify deployed Registry Service is healthy'
-        run: curl --retry 6 --fail http://${REGISTRY_HOST}:8181/api/check/health
+        run: curl --retry 6 --fail http://${{ steps.runterraform.outputs.registry_host }}:8181/api/check/health
 
   # Deploy dataspace participants in parallel.
   Deploy-Participants:
