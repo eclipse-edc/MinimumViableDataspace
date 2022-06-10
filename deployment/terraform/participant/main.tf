@@ -116,8 +116,7 @@ resource "azurerm_container_group" "edc" {
 
       IDS_WEBHOOK_ADDRESS = "http://${local.edc_dns_label}.${var.location}.azurecontainer.io:${local.edc_ids_port}"
 
-      NODES_JSON_DIR          = "/registry"
-      NODES_JSON_FILES_PREFIX = local.registry_files_prefix
+      REGISTRATION_SERVICE_API_URL = var.registration_service_api_url
 
       # Refresh catalog frequently to accelerate scenarios
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS  = 10

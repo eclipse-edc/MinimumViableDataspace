@@ -11,6 +11,13 @@ runs:
         path: DataSpaceConnector
         ref: 5191d3e6dd9ac5d78264d05ae69edb4d297b606a
 
+    - name: Checkout Registration Service
+      uses: actions/checkout@v2
+      with:
+        repository: agera-edc/RegistrationService
+        path: RegistrationService
+        ref: f47e3ce3c40daa6713778f9a13e1129d053ecbb5
+
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2
       with:
@@ -27,7 +34,7 @@ runs:
       with:
         path: ~/.m2
         # .git/FETCH_HEAD contains latest commit ID
-        key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}
+        key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}-${{ hashFiles('RegistrationService/.git/FETCH_HEAD') }}
 
     # Install EDC packages into ~/.m2.
     # This action only runs if the packages could not be restored from the cache.
@@ -40,4 +47,17 @@ runs:
 
     - name: Delete EDC packages
       run: rm -r DataSpaceConnector
+      shell: bash
+
+    # Install Registration Service packages into ~/.m2.
+    # This action only runs if the packages could not be restored from the cache.
+    - name: Build Registration Service packages
+      run: |
+        ./gradlew publishToMavenLocal -Pskip.signing
+      if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
+      shell: bash
+      working-directory: RegistrationService
+
+    - name: Delete Registration Service packages
+      run: rm -r RegistrationService
       shell: bash

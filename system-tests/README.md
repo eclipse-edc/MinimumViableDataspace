@@ -2,6 +2,18 @@
 
 The test uses the key vault secret to connect to the storage accounts and copy a file from provider to consumer storage account.
 
+### Building MVD project
+
+One of the MVD dependencies is the Registration Service REST client library. Registration Service is not published to any central artifactory yet so in local 
+development we have to use locally published dependencies.
+
+#### Publish Registration Service to local Maven
+
+Checkout [Registration Service repository](https://github.com/agera-edc/RegistrationService). 
+
+Publish Registration Service libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Registration Service root 
+folder. 
+
 ### Running test locally
 
 Deploy MVD using the GitHub `Deploy` pipeline. We will run EDC instances locally, connected to the storage accounts and key vaults deployed on Azure.

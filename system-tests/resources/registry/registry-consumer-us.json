@@ -1,7 +1,0 @@
-{
-  "name": "consumer-us",
-  "supportedProtocols": [
-    "ids-multipart"
-  ],
-  "url": "http://consumer-us:8282"
-}

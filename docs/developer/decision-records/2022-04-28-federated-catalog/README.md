@@ -2,7 +2,13 @@
 
 ## Decision
 
-Use files in an Azure file share to seed federated catalog of all participant EDC instances.
+Use Registration Service API to seed federated catalog of all participant EDC instances.
+
+#### Registration Service 
+The deployment pipeline deploys one instance of Registration Service in MVD set up. The Registration Service instance is configured to use json 
+files as a data source and exposes the data via REST API.
+
+#### Json files as data source
 
 The deployment pipeline for each participant creates a file in common folder in a file share, with a prefix corresponding to each unique deployment. For example, when deploying participants `company1` and `company2`, the files could be named:
 - `280-company1.json`
@@ -22,8 +28,6 @@ Each file contains a serialized EDC `FederatedCacheNode` object, for example:
 }
 
 ```
-
-The deployed EDC instance is configured with a custom extension that reads all files for a given prefix (here `280-`) and populates the`FederatedCacheNodeDirectory`.
 
 ## Rationale
 
