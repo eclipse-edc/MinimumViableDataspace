@@ -79,7 +79,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: agera-edc/RegistrationService
-          ref: d9f81a3736efb38e47f48d7da0c749653001f0b4
+          ref: f47e3ce3c40daa6713778f9a13e1129d053ecbb5
 
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -136,7 +136,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
-      registry_host: ${{ steps.runterraform.outputs.registry_host }}
+      registration_service_url: ${{ steps.runterraform.outputs.registration_service_url }}
 
     defaults:
       run:
@@ -189,8 +189,8 @@ jobs:
           terraform apply -auto-approve
           app_insights_connection_string=$(terraform output -raw app_insights_connection_string)
           echo "::set-output name=app_insights_connection_string::${app_insights_connection_string}"
-          registry_host=$(terraform output -raw registry_host)
-          echo "::set-output name=registry_host::${registry_host}"
+          registration_service_url=$(terraform output -raw registration_service_url)
+          echo "::set-output name=registration_service_url::${registration_service_url}"
           did_host=$(terraform output -raw did_host)
           echo "::set-output name=did_host::${did_host}"
 
@@ -209,7 +209,7 @@ jobs:
         run: curl https://${{ steps.runterraform.outputs.did_host }}/.well-known/did.json | jq '.id'
 
       - name: 'Verify deployed Registry Service is healthy'
-        run: curl --retry 6 --fail http://${{ steps.runterraform.outputs.registry_host }}:8181/api/check/health
+        run: curl --retry 6 --fail ${{ steps.runterraform.outputs.registration_service_url }}/api/check/health
 
   # Deploy dataspace participants in parallel.
   Deploy-Participants:
@@ -272,6 +272,7 @@ jobs:
           registry_resource_group = "${{ secrets.COMMON_RESOURCE_GROUP }}"
           registry_storage_account = "${{ secrets.REGISTRY_STORAGE_ACCOUNT }}"
           registry_share = "${{ secrets.REGISTRY_SHARE }}"
+          registration_service_api_url = "${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/api"
           EOF
 
       - name: 'Az CLI login'
@@ -343,7 +344,9 @@ jobs:
         working-directory: .
 
   Verify:
-    needs: Deploy-Participants
+    needs:
+      - Deploy-Participants
+      - Deploy-Dataspace
     runs-on: ubuntu-latest
     steps:
       # Checkout MVD code
@@ -376,7 +379,9 @@ jobs:
 
   # Verify docker-compose setup for local testing
   VerifyLocalTests:
-    needs: Deploy-Participants
+    needs:
+      - Deploy-Participants
+      - Deploy-Dataspace
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -409,6 +414,7 @@ jobs:
           CONSUMER_EU_CONNECTOR_NAME=${{ needs.Deploy-Participants.outputs.company2_connector_name }}
           CONSUMER_US_CONNECTOR_NAME=${{ needs.Deploy-Participants.outputs.company3_connector_name }}
           PROVIDER_ASSETS_STORAGE_ACCOUNT=${{ needs.Deploy-Participants.outputs.company1_assets_storage_account }}
+          REGISTRATION_SERVICE_URL=${{ needs.Deploy-Dataspace.outputs.registration_service_url }}
           EOF
 
       - name: 'Publish env file'
