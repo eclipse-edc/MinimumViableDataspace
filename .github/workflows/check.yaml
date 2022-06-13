@@ -16,3 +16,17 @@ jobs:
         run: |
           terraform fmt -recursive
           git diff --exit-code
+
+      # run Checkstyle explicitly (as opposed to within gradle) due to better reporting capabilities
+      - name: Run Checkstyle
+        if: github.event_name == 'pull_request'
+        uses: nikitasavinov/checkstyle-action@0.6.0
+        with:
+          checkstyle_config: resources/checkstyle-config.xml
+          level: error
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tool_name: 'checkstyle'
+          checkstyle_version: '9.0'
+          reporter: 'github-pr-check'
+          # Include only violations on added or modified files
+          filter_mode: 'file'
