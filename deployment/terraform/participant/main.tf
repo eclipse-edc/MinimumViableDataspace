@@ -316,6 +316,17 @@ resource "azurerm_storage_blob" "did" {
   content_type = "application/json"
 }
 
+resource "azurerm_storage_blob" "sdd" {
+  name                 = ".well-known/sdd.json"
+  storage_account_name = azurerm_storage_account.did.name
+  # Create sdd blob only if self_description_file is provided. Default self_description_file value is null.
+  count                  = var.self_description_file == null ? 0 : 1
+  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
+  type                   = "Block"
+  source_content         = file(var.self_description_file)
+  content_type           = "application/json"
+}
+
 resource "local_file" "registry_entry" {
   content = jsonencode({
     # `name` must be identical to EDC connector EDC_CONNECTOR_NAME setting for catalog asset filtering to

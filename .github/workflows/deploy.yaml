@@ -146,6 +146,29 @@ jobs:
           openssl ec -in key.pem -pubout -out key.public.pem
           docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
 
+      - name: 'Prepare GAIA-X self-description signature request'
+        uses: cuchi/jinja2-action@v1.2.0
+        with:
+          template: deployment/terraform/dataspace/WrappedParticipantSelfDescription.json.j2
+          output_file: deployment/terraform/dataspace/WrappedParticipantSelfDescription.json
+          strict: true
+          variables: |
+            registrationNumber=A999999
+            country=NL
+
+      - name: 'Request GAIA-X self-description signature'
+        run: |
+          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
+          --header 'Content-Type: application/json' \
+          --data @WrappedParticipantSelfDescription.json \
+          --output SignedWrappedParticipantSelfDescription.json
+
+      - name: 'Verify GAIA-X self-description signature'
+        run: |
+          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/verify/raw' \
+          --header 'Content-Type: application/json' \
+          --data @SignedWrappedParticipantSelfDescription.json
+
       - name: 'Create tfvars file'
         run: |
           cat > terraform.tfvars <<EOF
@@ -196,6 +219,7 @@ jobs:
           # Terraform variables not included in terraform.tfvars.
           TF_VAR_key_file: "key.pem"
           TF_VAR_public_key_jwk_file: "key.public.jwk"
+          TF_VAR_self_description_file: "SignedWrappedParticipantSelfDescription.json"
 
       - name: 'Verify did endpoint is available'
         run: curl https://${{ steps.runterraform.outputs.did_host }}/.well-known/did.json | jq '.id'
@@ -246,6 +270,29 @@ jobs:
           openssl ecparam -name prime256v1 -genkey -noout -out key.pem
           openssl ec -in key.pem -pubout -out key.public.pem
           docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
+          
+      - name: 'Prepare GAIA-X self-description signature request'
+        uses: cuchi/jinja2-action@v1.2.0
+        with:
+          template: deployment/terraform/participant/WrappedParticipantSelfDescription.json.j2
+          output_file: deployment/terraform/participant/WrappedParticipantSelfDescription.json
+          strict: true
+          variables: |
+            registrationNumber=${{ matrix.registrationNumber }}
+            country=${{ matrix.country }}
+
+      - name: 'Request GAIA-X self-description signature'
+        run: |
+          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
+          --header 'Content-Type: application/json' \
+          --data @WrappedParticipantSelfDescription.json \
+          --output SignedWrappedParticipantSelfDescription.json
+
+      - name: 'Verify GAIA-X self-description signature'
+        run: |
+          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/verify/raw' \
+          --header 'Content-Type: application/json' \
+          --data @SignedWrappedParticipantSelfDescription.json
 
       - name: 'Create tfvars file'
         run: |
@@ -317,6 +364,7 @@ jobs:
           # Terraform variables not included in terraform.tfvars.
           TF_VAR_key_file: "key.pem"
           TF_VAR_public_key_jwk_file: "key.public.jwk"
+          TF_VAR_self_description_file: "SignedWrappedParticipantSelfDescription.json"
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
           TF_VAR_app_insights_connection_string: ${{ needs.Deploy-Dataspace.outputs.app_insights_connection_string }}
 

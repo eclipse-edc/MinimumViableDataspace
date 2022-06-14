@@ -2,16 +2,22 @@
   "include": [
     {
       "participant": "company1",
+      "registrationNumber": "000001",
+      "country": "DE",
       "region": "eu",
       "data_dashboard_theme": "theme-1"
     },
     {
       "participant": "company2",
+      "registrationNumber": "000002",
+      "country": "FR",
       "region": "eu",
       "data_dashboard_theme": "theme-2"
     },
     {
       "participant": "company3",
+      "registrationNumber": "000003",
+      "country": "US",
       "region": "us",
       "data_dashboard_theme": "theme-3"
     }

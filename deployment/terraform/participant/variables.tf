@@ -71,6 +71,11 @@ variable "public_key_jwk_file" {
   default     = null
 }
 
+variable "self_description_file" {
+  description = "name of a file containing the GAIA-X self-description document"
+  default     = null
+}
+
 variable "registration_service_api_url" {
   description = "registration api url"
 }

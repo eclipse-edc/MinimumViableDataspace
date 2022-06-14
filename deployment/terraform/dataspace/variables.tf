@@ -44,3 +44,8 @@ variable "public_key_jwk_file" {
   description = "name of a file containing the public key in JWK format"
   default     = null
 }
+
+variable "self_description_file" {
+  description = "name of a file containing the GAIA-X self-description document"
+  default     = null
+}
