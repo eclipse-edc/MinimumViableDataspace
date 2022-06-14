@@ -14,6 +14,19 @@
 
 package org.eclipse.dataspaceconnector.system.tests.utils;
 
+import java.time.Duration;
+import java.util.Map;
+
+import static io.gatling.javaapi.core.CoreDsl.StringBody;
+import static io.gatling.javaapi.core.CoreDsl.doWhileDuring;
+import static io.gatling.javaapi.core.CoreDsl.exec;
+import static io.gatling.javaapi.core.CoreDsl.group;
+import static io.gatling.javaapi.core.CoreDsl.jmesPath;
+import static io.gatling.javaapi.http.HttpDsl.http;
+import static io.gatling.javaapi.http.HttpDsl.status;
+import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static java.lang.String.format;
+
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
@@ -25,20 +38,6 @@ import org.eclipse.dataspaceconnector.spi.types.TypeManager;
 import org.eclipse.dataspaceconnector.spi.types.domain.contract.negotiation.ContractNegotiationStates;
 import org.eclipse.dataspaceconnector.spi.types.domain.transfer.TransferProcessStates;
 import org.jetbrains.annotations.NotNull;
-
-import java.time.Duration;
-import java.util.Map;
-import java.util.UUID;
-
-import static io.gatling.javaapi.core.CoreDsl.StringBody;
-import static io.gatling.javaapi.core.CoreDsl.doWhileDuring;
-import static io.gatling.javaapi.core.CoreDsl.exec;
-import static io.gatling.javaapi.core.CoreDsl.group;
-import static io.gatling.javaapi.core.CoreDsl.jmesPath;
-import static io.gatling.javaapi.http.HttpDsl.http;
-import static io.gatling.javaapi.http.HttpDsl.status;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
-import static java.lang.String.format;
 
 /**
  * Utility methods for building a Gatling simulation for performing contract negotiation and file transfer.
@@ -219,7 +218,6 @@ public abstract class TransferSimulationUtils {
 
     private static String loadContractAgreement(String providerUrl) {
         var policy = Policy.Builder.newInstance()
-                .id(UUID.randomUUID().toString())
                 .permission(Permission.Builder.newInstance()
                         .target("test-document")
                         .action(Action.Builder.newInstance().type("USE").build())

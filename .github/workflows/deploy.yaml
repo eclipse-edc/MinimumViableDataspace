@@ -154,6 +154,7 @@ jobs:
           variables: |
             registrationNumber=A999999
             country=NL
+
 # TODO: Hackathon #4: sign self-description with compliance API
 #      - name: 'Request GAIA-X self-description signature'
 #        run: |
