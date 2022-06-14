@@ -278,7 +278,7 @@ jobs:
           output_file: deployment/terraform/participant/WrappedParticipantSelfDescription.json
           strict: true
           variables: |
-            registrationNumber=${{ matrix.registrationNumber }}
+            registrationNumber=${{ matrix.registration_number }}
             country=${{ matrix.country }}
 
       - name: 'Output GAIA-X self-description signature request'
