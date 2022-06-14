@@ -281,6 +281,9 @@ jobs:
             registrationNumber=${{ matrix.registrationNumber }}
             country=${{ matrix.country }}
 
+      - name: 'Output GAIA-X self-description signature request'
+        run: cat WrappedParticipantSelfDescription.json
+
       - name: 'Request GAIA-X self-description signature'
         run: |
           curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
