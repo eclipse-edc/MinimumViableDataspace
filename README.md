@@ -32,3 +32,7 @@ You might need to delete the DataSpace created previously.
 ## Local development setup
 
 Please follow the instructions in [this document](system-tests/README.md) to setup a local MVD environment for development purposes.
+
+## Contributing
+
+See [how to contribute](CONTRIBUTING.md).
