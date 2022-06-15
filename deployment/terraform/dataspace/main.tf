@@ -32,16 +32,6 @@ data "azurerm_container_registry" "registry" {
   resource_group_name = var.acr_resource_group
 }
 
-data "azurerm_storage_account" "registry" {
-  name                = var.registry_storage_account
-  resource_group_name = var.registry_resource_group
-}
-
-data "azurerm_storage_share" "registry" {
-  name                 = var.registry_share
-  storage_account_name = data.azurerm_storage_account.registry.name
-}
-
 locals {
   registry_files_prefix = "${var.prefix}-"
 
@@ -66,7 +56,7 @@ resource "azurerm_application_insights" "dataspace" {
 }
 
 resource "azurerm_container_group" "registration-service" {
-  name                = "${var.prefix}-registration-service"
+  name                = "${var.prefix}-registration-mvd"
   location            = var.location
   resource_group_name = azurerm_resource_group.dataspace.name
   ip_address_type     = "Public"
@@ -92,17 +82,6 @@ resource "azurerm_container_group" "registration-service" {
 
     environment_variables = {
       EDC_CONNECTOR_NAME = local.connector_name
-
-      NODES_JSON_DIR          = "/registry"
-      NODES_JSON_FILES_PREFIX = local.registry_files_prefix
-    }
-
-    volume {
-      storage_account_name = data.azurerm_storage_account.registry.name
-      storage_account_key  = data.azurerm_storage_account.registry.primary_access_key
-      share_name           = data.azurerm_storage_share.registry.name
-      mount_path           = "/registry"
-      name                 = "registry"
     }
 
     liveness_probe {

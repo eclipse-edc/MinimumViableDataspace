@@ -36,16 +36,6 @@ data "azurerm_container_registry" "registry" {
   resource_group_name = var.acr_resource_group
 }
 
-data "azurerm_storage_account" "registry" {
-  name                = var.registry_storage_account
-  resource_group_name = var.registry_resource_group
-}
-
-data "azurerm_storage_share" "registry" {
-  name                 = var.registry_share
-  storage_account_name = data.azurerm_storage_account.registry.name
-}
-
 locals {
   registry_files_prefix = "${var.prefix}-"
 
@@ -131,14 +121,6 @@ resource "azurerm_container_group" "edc" {
       EDC_API_AUTH_KEY = local.api_key
 
       APPLICATIONINSIGHTS_CONNECTION_STRING = var.app_insights_connection_string
-    }
-
-    volume {
-      storage_account_name = data.azurerm_storage_account.registry.name
-      storage_account_key  = data.azurerm_storage_account.registry.primary_access_key
-      share_name           = data.azurerm_storage_share.registry.name
-      mount_path           = "/registry"
-      name                 = "registry"
     }
 
     liveness_probe {
@@ -343,10 +325,4 @@ resource "local_file" "registry_entry" {
     supportedProtocols = ["ids-multipart"]
   })
   filename = "${path.module}/build/${var.participant_name}.json"
-}
-
-resource "azurerm_storage_share_file" "registry_entry" {
-  name             = "${local.registry_files_prefix}${var.participant_name}.json"
-  storage_share_id = data.azurerm_storage_share.registry.id
-  source           = local_file.registry_entry.filename
 }
