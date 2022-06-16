@@ -14,62 +14,63 @@
 
 package org.eclipse.dataspaceconnector.mvd;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-import static java.net.URLDecoder.decode;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.stream.Collectors.toMap;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.eclipse.dataspaceconnector.iam.did.spi.credentials.CredentialsVerifier;
 import org.eclipse.dataspaceconnector.iam.did.spi.key.PublicKeyWrapper;
 import org.eclipse.dataspaceconnector.spi.EdcException;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.result.Result;
+import org.eclipse.dataspaceconnector.spi.types.TypeManager;
 
-/**
- * Mock credentials verifier that simply returns claims parsed from the URL configured for the identity hub.
- */
+import java.io.IOException;
+import java.util.Map;
+
 public class MockCredentialsVerifier implements CredentialsVerifier {
     private final Monitor monitor;
+    private final OkHttpClient httpClient;
+    private final TypeManager typeManager;
 
-    public MockCredentialsVerifier(Monitor monitor) {
+    public MockCredentialsVerifier(Monitor monitor, OkHttpClient httpClient, TypeManager typeManager) {
         this.monitor = monitor;
+        this.httpClient = httpClient;
+        this.typeManager = typeManager;
     }
 
     /**
-     * Returns claims parsed from the query string of the URL configured for the identity hub.
-     * <p>
-     * The URL is not accessed, and URL parts other than the query string are unimportant.
-     * <p>
-     * For example, if {@code hubBaseUrl} is {@code http://dummy.site/foo?region=us&tier=GOLD}, the verifier
-     * returns {@code Map.of("region", "us", "tier", "GOLD"}.
+     * Fetch the provided url in order to retrieve the seld-description document of the participant.
      *
-     * @param hubBaseUrl      the URL used to parse the query string.
-     * @param othersPublicKey unused.
-     * @return claims as defined in query string parameters.
+     * @param hubBaseUrl      this url corresponds to the http address of the SDD document.
+     * @param othersPublicKey the hub's public key to encrypt messages with
+     * @return Participant self-description.
      */
     @Override
     public Result<Map<String, Object>> verifyCredentials(String hubBaseUrl, PublicKeyWrapper othersPublicKey) {
-        monitor.debug("Starting (mock) credential verification against hub URL " + hubBaseUrl);
+        monitor.debug("Starting (mock) retrieval of self-description against " + hubBaseUrl);
 
-        try {
-            var url = new URL(hubBaseUrl);
-            var claims = Pattern.compile("&")
-                    .splitAsStream(url.getQuery())
-                    .map(s -> Arrays.copyOf(s.split("=", 2), 2))
-                    .collect(toMap(
-                            s -> decode(s[0], UTF_8),
-                            s -> decode(s[1], UTF_8)
-                    ));
-            monitor.debug("Completing (mock) credential verification. Claims: " + claims);
-            return Result.success(claims.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-        } catch (MalformedURLException e) {
-            throw new EdcException(e);
+        var request = new Request.Builder().url(hubBaseUrl).get().build();
+        try (var response = httpClient.newCall(request).execute()) {
+            String stringBody = null;
+            var body = response.body();
+            if (body != null) {
+                stringBody = body.string();
+            }
+            if (response.isSuccessful()) {
+                if (stringBody == null) {
+                    throw new EdcException("Received null body");
+                }
+
+                var tr = new TypeReference<Map<String, Object>>() {
+                };
+                return Result.success(typeManager.getMapper().readValue(stringBody, tr));
+            } else {
+                var errorMsg = String.format("Failed to retrieve self-description: %s - %s. %s", response.code(), response.message(), stringBody);
+                monitor.severe(errorMsg);
+                return Result.failure(errorMsg);
+            }
+        } catch (IOException e) {
+            throw new EdcException("Call to self-description server failed: " + e);
         }
     }
 }

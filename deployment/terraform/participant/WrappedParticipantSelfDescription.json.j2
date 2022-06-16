@@ -1,36 +1,38 @@
 {
-  "selfDescription": {
-    "@context": {
-      "sh": "http://www.w3.org/ns/shacl#",
-      "xsd": "http://www.w3.org/2001/XMLSchema#",
-      "gx-participant": "http://w3id.org/gaia-x/participant#"
-    },
-    "@type": "gx-participant:LegalPerson",
-    "@id": "http://example.org/participant-{{ registrationNumber }}",
-    "gx-participant:registrationNumber": {
-      "@type": "xsd:string",
-      "@value": "{{ registrationNumber }}"
-    },
-    "gx-participant:legalAddress": {
-      "@type": "gx-participant:Address",
-      "gx-participant:country": {
-        "@type": "xsd:string",
-        "@value": "{{ country }}"
-      }
-    },
-    "gx-participant:headquarterAddress": {
-      "@type": "gx-participant:Address",
-      "gx-participant:country": {
-        "@type": "xsd:string",
-        "@value": "{{ country }}"
+  "selfDescriptionCredential": {
+      "selfDescription": {
+        "@context": {
+          "sh": "http://www.w3.org/ns/shacl#",
+          "xsd": "http://www.w3.org/2001/XMLSchema#",
+          "gx-participant": "http://w3id.org/gaia-x/participant#"
+        },
+        "@type": "gx-participant:LegalPerson",
+        "@id": "http://example.org/participant-{{ registrationNumber }}",
+        "gx-participant:registrationNumber": {
+          "@type": "xsd:string",
+          "@value": "{{ registrationNumber }}"
+        },
+        "gx-participant:legalAddress": {
+          "@type": "gx-participant:Address",
+          "gx-participant:country": {
+            "@type": "xsd:string",
+            "@value": "{{ country }}"
+          }
+        },
+        "gx-participant:headquarterAddress": {
+          "@type": "gx-participant:Address",
+          "gx-participant:country": {
+            "@type": "xsd:string",
+            "@value": "{{ country }}"
+          }
+        }
+      },
+      "proof": {
+        "created": "2022-04-21T15:59:15Z",
+        "proofPurpose": "assertionMethod",
+        "proofValue": "zGwuJiP42jZq2sMFG8K9t2x9dJX73Ky6pek8pUki6yuDqriQgLUVDxGyVhLY2TNwe656BB4qaZZE5SeqCWeMVxWs",
+        "type": "Ed25519Signature2020",
+        "verificationMethod": "did:web:vc.gaia-x.eu:issuer#Ed25519VerificationKey2020"
       }
     }
-  },
-  "proof": {
-    "created": "2022-04-21T15:59:15Z",
-    "proofPurpose": "assertionMethod",
-    "proofValue": "zGwuJiP42jZq2sMFG8K9t2x9dJX73Ky6pek8pUki6yuDqriQgLUVDxGyVhLY2TNwe656BB4qaZZE5SeqCWeMVxWs",
-    "type": "Ed25519Signature2020",
-    "verificationMethod": "did:web:vc.gaia-x.eu:issuer#Ed25519VerificationKey2020"
-  }
 }

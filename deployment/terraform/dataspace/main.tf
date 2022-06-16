@@ -48,13 +48,6 @@ resource "azurerm_resource_group" "dataspace" {
   location = var.location
 }
 
-resource "azurerm_application_insights" "dataspace" {
-  name                = "${var.prefix}-appinsights"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.dataspace.name
-  application_type    = "java"
-}
-
 resource "azurerm_container_group" "registration-service" {
   name                = "${var.prefix}-registration-mvd"
   location            = var.location
@@ -131,25 +124,26 @@ resource "azurerm_storage_account" "did" {
 }
 
 resource "azurerm_key_vault_secret" "did_key" {
-  name = local.connector_name
+  name         = local.connector_name
   # Create did_key secret only if key_file value is provided. Default key_file value is null.
   count        = var.key_file == null ? 0 : 1
   value        = file(var.key_file)
   key_vault_id = azurerm_key_vault.registry.id
-  depends_on = [
+  depends_on   = [
     azurerm_role_assignment.current-user-secretsofficer
   ]
 }
 
 resource "azurerm_storage_blob" "did" {
-  name                 = ".well-known/did.json" # `.well-known` path is defined by did:web specification
-  storage_account_name = azurerm_storage_account.did.name
+  name                   = ".well-known/did.json" # `.well-known` path is defined by did:web specification
+  storage_account_name   = azurerm_storage_account.did.name
   # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
   count                  = var.public_key_jwk_file == null ? 0 : 1
-  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
+  storage_container_name = "$web"
+  # container used to serve static files (see static_website property on storage account)
   type                   = "Block"
-  source_content = jsonencode({
-    id = local.did_url
+  source_content         = jsonencode({
+    id         = local.did_url
     "@context" = [
       "https://www.w3.org/ns/did/v1",
       {
@@ -166,16 +160,18 @@ resource "azurerm_storage_blob" "did" {
     ],
     "authentication" : [
       "#identity-key-1"
-  ] })
+    ]
+  })
   content_type = "application/json"
 }
 
 resource "azurerm_storage_blob" "sdd" {
-  name                 = ".well-known/sdd.json"
-  storage_account_name = azurerm_storage_account.did.name
+  name                   = ".well-known/sdd.json"
+  storage_account_name   = azurerm_storage_account.did.name
   # Create sdd blob only if self_description_file is provided. Default self_description_file value is null.
   count                  = var.self_description_file == null ? 0 : 1
-  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
+  storage_container_name = "$web"
+  # container used to serve static files (see static_website property on storage account)
   type                   = "Block"
   source_content         = file(var.self_description_file)
   content_type           = "application/json"

@@ -1,0 +1,8 @@
+{
+  "type": "test",
+  "scope": "scope-test",
+  "leftOperand": {
+    "type": "foo",
+    "value": "bar"
+  }
+}

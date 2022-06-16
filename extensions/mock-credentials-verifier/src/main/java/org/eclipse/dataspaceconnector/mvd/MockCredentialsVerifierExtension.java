@@ -14,14 +14,12 @@
 
 package org.eclipse.dataspaceconnector.mvd;
 
+import okhttp3.OkHttpClient;
 import org.eclipse.dataspaceconnector.iam.did.spi.credentials.CredentialsVerifier;
-import org.eclipse.dataspaceconnector.spi.EdcException;
+import org.eclipse.dataspaceconnector.spi.system.Inject;
 import org.eclipse.dataspaceconnector.spi.system.Provides;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
-
-import static java.lang.String.format;
-import static org.eclipse.dataspaceconnector.iam.did.spi.document.DidConstants.DID_URL_SETTING;
 
 /**
  * Extension to set up the {@link MockCredentialsVerifier} service to generate stub claims.
@@ -29,9 +27,12 @@ import static org.eclipse.dataspaceconnector.iam.did.spi.document.DidConstants.D
 @Provides(CredentialsVerifier.class)
 public class MockCredentialsVerifierExtension implements ServiceExtension {
 
+    @Inject
+    private OkHttpClient httpClient;
+
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var credentialsVerifier = new MockCredentialsVerifier(context.getMonitor());
+        var credentialsVerifier = new MockCredentialsVerifier(context.getMonitor(), httpClient, context.getTypeManager());
         context.registerService(CredentialsVerifier.class, credentialsVerifier);
     }
 }

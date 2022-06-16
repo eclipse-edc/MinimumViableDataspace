@@ -161,7 +161,7 @@ resource "azurerm_container_group" "webapp" {
     volume {
       name       = "appconfig"
       mount_path = "/usr/share/nginx/html/assets/config"
-      secret = {
+      secret     = {
         "app.config.json" = base64encode(jsonencode({
           "theme"                       = var.data_dashboard_theme
           "dataManagementApiUrl"        = "http://${azurerm_container_group.edc.fqdn}:${local.edc_management_port}/api/v1/data"
@@ -234,7 +234,7 @@ resource "azurerm_key_vault_secret" "inbox_storage_key" {
   name         = "${azurerm_storage_account.inbox.name}-key1"
   value        = azurerm_storage_account.inbox.primary_access_key
   key_vault_id = azurerm_key_vault.participant.id
-  depends_on = [
+  depends_on   = [
     azurerm_role_assignment.current-user-secretsofficer
   ]
 }
@@ -264,32 +264,34 @@ resource "azurerm_key_vault_secret" "asset_storage_key" {
   name         = "${azurerm_storage_account.assets.name}-key1"
   value        = azurerm_storage_account.assets.primary_access_key
   key_vault_id = azurerm_key_vault.participant.id
-  depends_on = [
+  depends_on   = [
     azurerm_role_assignment.current-user-secretsofficer
   ]
 }
 
 resource "azurerm_key_vault_secret" "did_key" {
-  name = local.connector_name
+  name         = local.connector_name
   # Create did_key secret only if key_file value is provided. Default key_file value is null.
   count        = var.key_file == null ? 0 : 1
   value        = file(var.key_file)
   key_vault_id = azurerm_key_vault.participant.id
-  depends_on = [
+  depends_on   = [
     azurerm_role_assignment.current-user-secretsofficer
   ]
 }
 
 resource "azurerm_storage_blob" "did" {
-  name                 = ".well-known/did.json" # `.well-known` path is defined by did:web specification
-  storage_account_name = azurerm_storage_account.did.name
+  name                   = ".well-known/did.json" # `.well-known` path is defined by did:web specification
+  storage_account_name   = azurerm_storage_account.did.name
   # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
   count                  = var.public_key_jwk_file == null ? 0 : 1
-  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
+  storage_container_name = "$web"
+  # container used to serve static files (see static_website property on storage account)
   type                   = "Block"
-  source_content = jsonencode({
-    id = local.did_url
-    "@context" = ["https://www.w3.org/ns/did/v1",
+  source_content         = jsonencode({
+    id         = local.did_url
+    "@context" = [
+      "https://www.w3.org/ns/did/v1",
       {
         "@base" = local.did_url
       }
@@ -298,8 +300,7 @@ resource "azurerm_storage_blob" "did" {
       {
         "id" : "#identity-hub-url",
         "type" : "IdentityHub",
-        // Only the query parameters are used, see MockCredentialsVerifier class
-        "serviceEndpoint" : "http://dummy?region=${urlencode(local.connector_region)}"
+        "serviceEndpoint" : "https://${azurerm_storage_account.did.primary_web_host}/.well-known/sdd.json"
       }
     ],
     "verificationMethod" = [
@@ -312,16 +313,18 @@ resource "azurerm_storage_blob" "did" {
     ],
     "authentication" : [
       "#identity-key-1"
-  ] })
+    ]
+  })
   content_type = "application/json"
 }
 
 resource "azurerm_storage_blob" "sdd" {
-  name                 = ".well-known/sdd.json"
-  storage_account_name = azurerm_storage_account.did.name
+  name                   = ".well-known/sdd.json"
+  storage_account_name   = azurerm_storage_account.did.name
   # Create sdd blob only if self_description_file is provided. Default self_description_file value is null.
   count                  = var.self_description_file == null ? 0 : 1
-  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
+  storage_container_name = "$web"
+  # container used to serve static files (see static_website property on storage account)
   type                   = "Block"
   source_content         = file(var.self_description_file)
   content_type           = "application/json"
