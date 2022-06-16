@@ -1,0 +1,27 @@
+@startuml
+autonumber "<b>0'.'"
+box "Participant A" #LightPink
+Participant "Participant A\nClient" as ParticipantA
+Participant "Participant A\nDID Document" as DID
+Participant "Participant A\nIdentity Hub" as IDHUB
+end box
+box "Participant B" #LightGreen
+Participant "Participant B\nAPI" as B
+end box
+
+ParticipantA -> B ++: Request:\n - DID JWS\n - Hub Token
+activate ParticipantA
+group authorize request
+  B -> DID: Get DID Document (contains Identity Hub URL)
+  B -> B: Verify JWS using public key
+  B -> IDHUB ++: Get credentials:\n - Hub Token
+  group authorize request
+    IDHUB -> IDHUB: Verify token
+  end
+  return Verifiable Credentials
+  B -> B: Apply access policy
+end
+return Response
+deactivate ParticipantA
+
+@enduml
