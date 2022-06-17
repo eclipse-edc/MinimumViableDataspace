@@ -104,11 +104,11 @@ jobs:
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
     steps:
-      - name: Checkout EDCDataDashboard
+      - name: Checkout DataDashboard
         uses: actions/checkout@v2
         with:
-          repository: agera-edc/EDCDataDashboard
-          ref: 6657d71bca844e0c2fc0a01081b8fd97628d522f
+          repository: bscholtes1A/DataDashboard
+          ref: d01280aa973c4799cfd15e7c94ff0f3c1c47789c
 
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -130,7 +130,6 @@ jobs:
       - Build-Registration-Service
     runs-on: ubuntu-latest
     outputs:
-      app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
       registration_service_url: ${{ steps.runterraform.outputs.registration_service_url }}
 
     defaults:
@@ -150,24 +149,24 @@ jobs:
         uses: cuchi/jinja2-action@v1.2.0
         with:
           template: deployment/terraform/dataspace/WrappedParticipantSelfDescription.json.j2
-          output_file: deployment/terraform/dataspace/WrappedParticipantSelfDescription.json
+          output_file: deployment/terraform/dataspace/SignedWrappedParticipantSelfDescription.json
           strict: true
           variables: |
             registrationNumber=A999999
             country=NL
-
-      - name: 'Request GAIA-X self-description signature'
-        run: |
-          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
-          --header 'Content-Type: application/json' \
-          --data @WrappedParticipantSelfDescription.json \
-          --output SignedWrappedParticipantSelfDescription.json
-
-      - name: 'Verify GAIA-X self-description signature'
-        run: |
-          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/verify/raw' \
-          --header 'Content-Type: application/json' \
-          --data @SignedWrappedParticipantSelfDescription.json
+# TODO: Hackathon #4: sign self-description with compliance API
+#      - name: 'Request GAIA-X self-description signature'
+#        run: |
+#          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
+#          --header 'Content-Type: application/json' \
+#          --data @WrappedParticipantSelfDescription.json \
+#          --output SignedWrappedParticipantSelfDescription.json
+#
+#      - name: 'Verify GAIA-X self-description signature'
+#        run: |
+#          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/verify/raw' \
+#          --header 'Content-Type: application/json' \
+#          --data @SignedWrappedParticipantSelfDescription.json
 
       - name: 'Create tfvars file'
         run: |
@@ -202,8 +201,6 @@ jobs:
           ' >> backend.conf
           terraform init -backend-config=backend.conf
           terraform apply -auto-approve
-          app_insights_connection_string=$(terraform output -raw app_insights_connection_string)
-          echo "::set-output name=app_insights_connection_string::${app_insights_connection_string}"
           registration_service_url=$(terraform output -raw registration_service_url)
           echo "::set-output name=registration_service_url::${registration_service_url}"
           did_host=$(terraform output -raw did_host)
@@ -275,27 +272,28 @@ jobs:
         uses: cuchi/jinja2-action@v1.2.0
         with:
           template: deployment/terraform/participant/WrappedParticipantSelfDescription.json.j2
-          output_file: deployment/terraform/participant/WrappedParticipantSelfDescription.json
+          output_file: deployment/terraform/participant/SignedWrappedParticipantSelfDescription.json
           strict: true
           variables: |
             registrationNumber=${{ matrix.registration_number }}
             country=${{ matrix.country }}
 
       - name: 'Output GAIA-X self-description signature request'
-        run: cat WrappedParticipantSelfDescription.json
+        run: cat SignedWrappedParticipantSelfDescription.json
 
-      - name: 'Request GAIA-X self-description signature'
-        run: |
-          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
-          --header 'Content-Type: application/json' \
-          --data @WrappedParticipantSelfDescription.json \
-          --output SignedWrappedParticipantSelfDescription.json
-
-      - name: 'Verify GAIA-X self-description signature'
-        run: |
-          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/verify/raw' \
-          --header 'Content-Type: application/json' \
-          --data @SignedWrappedParticipantSelfDescription.json
+# TODO: Hackathon #4: sign self-description with compliance API
+#      - name: 'Request GAIA-X self-description signature'
+#        run: |
+#          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/signature/sign' \
+#          --header 'Content-Type: application/json' \
+#          --data @WrappedParticipantSelfDescription.json \
+#          --output SignedWrappedParticipantSelfDescription.json
+#
+#      - name: 'Verify GAIA-X self-description signature'
+#        run: |
+#          curl --fail --location 'https://compliance.gaia-x.eu/api/v1/participant/verify/raw' \
+#          --header 'Content-Type: application/json' \
+#          --data @SignedWrappedParticipantSelfDescription.json
 
       - name: 'Create tfvars file'
         run: |
@@ -369,7 +367,6 @@ jobs:
           TF_VAR_public_key_jwk_file: "key.public.jwk"
           TF_VAR_self_description_file: "SignedWrappedParticipantSelfDescription.json"
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
-          TF_VAR_app_insights_connection_string: ${{ needs.Deploy-Dataspace.outputs.app_insights_connection_string }}
 
       - name: 'Verify did endpoint is available'
         run: curl https://$DID_HOST/.well-known/did.json | jq '.id'
