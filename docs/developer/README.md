@@ -4,11 +4,13 @@
 
 - [Continuous Deployment and Initializing an Azure environment for CD](continuous_deployment.md)
 
-## Data Dashboards
+## Local development setup
 
-### Accessing the Data Dashboards
+Please follow the instructions in [this document](system-tests/README.md) to setup a local MVD environment for development purposes.
 
-The Data Dashboard web application for each participant can be accessed at the URLs provided in the GitHub workflow run page. Example:
+## Data Dashboard
+
+The Data Dashboard is a web application (development UI) on top of EDC's DataManagementAPI and is deployed for each participant. It can be accessed at the URLs provided in the GitHub workflow run page. Example:
 
 ![dashboard URLs](dashboard-urls.png)
 
