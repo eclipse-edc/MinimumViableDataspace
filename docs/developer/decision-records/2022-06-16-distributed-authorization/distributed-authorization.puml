@@ -8,17 +8,17 @@ end box
 box "Participant B" #LightGreen
 Participant "Participant B\nAPI" as B
 end box
-
-ParticipantA -> B ++: Request:\n - DID JWS\n - Hub Token
+box "Authority"
+Participant "Authority\nDID Document" as Auth
+end box
+ParticipantA -> B ++: Request:\n - DID JWS
 activate ParticipantA
 group authorize request
   B -> DID: Get DID Document (contains Identity Hub URL)
   B -> B: Verify JWS using public key
-  B -> IDHUB ++: Get credentials:\n - Hub Token
-  group authorize request
-    IDHUB -> IDHUB: Verify token
-  end
-  return Verifiable Credentials
+  B -> IDHUB: Get Verifiable Credentials
+  B -> Auth: Get DID document (contains public key)
+  B -> B: Verify VC using public key
   B -> B: Apply access policy
 end
 return Response
