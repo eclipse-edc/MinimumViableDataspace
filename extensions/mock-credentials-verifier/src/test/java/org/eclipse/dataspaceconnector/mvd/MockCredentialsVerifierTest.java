@@ -32,7 +32,7 @@ class MockCredentialsVerifierTest {
 
     @Test
     void verifyCredentials() {
-        Result<Map<String, String>> actual = verifier.verifyCredentials("http://dummy.site/foo?region=us&tier=GOLD", wrapper);
+        Result<Map<String, Object>> actual = verifier.verifyCredentials("http://dummy.site/foo?region=us&tier=GOLD", wrapper);
         assertThat(actual.succeeded()).isTrue();
         assertThat(actual.getContent())
                 .isEqualTo(Map.of("region", "us", "tier", "GOLD"));

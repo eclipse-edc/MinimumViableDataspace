@@ -53,7 +53,7 @@ public class MockCredentialsVerifier implements CredentialsVerifier {
      * @return claims as defined in query string parameters.
      */
     @Override
-    public Result<Map<String, String>> verifyCredentials(String hubBaseUrl, PublicKeyWrapper othersPublicKey) {
+    public Result<Map<String, Object>> verifyCredentials(String hubBaseUrl, PublicKeyWrapper othersPublicKey) {
         monitor.debug("Starting (mock) credential verification against hub URL " + hubBaseUrl);
 
         try {
@@ -63,7 +63,7 @@ public class MockCredentialsVerifier implements CredentialsVerifier {
                     .map(s -> Arrays.copyOf(s.split("=", 2), 2))
                     .collect(toMap(
                             s -> decode(s[0], UTF_8),
-                            s -> decode(s[1], UTF_8)
+                            s -> (Object) decode(s[1], UTF_8)
                     ));
             monitor.debug("Completing (mock) credential verification. Claims: " + claims);
             return Result.success(claims);
