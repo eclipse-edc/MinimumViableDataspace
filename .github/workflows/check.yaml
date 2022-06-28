@@ -2,7 +2,6 @@ name: Checks
 
 on:
   pull_request:
-    branches: [ main ]
     paths-ignore:
       - 'docs/**'
 
