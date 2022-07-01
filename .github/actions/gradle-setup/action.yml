@@ -9,7 +9,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/DataSpaceConnector
         path: DataSpaceConnector
-        ref: 5191d3e6dd9ac5d78264d05ae69edb4d297b606a
+        ref: 6fc0c00f434547b790a5c09c9f61a4aa8cca7d13
 
     - name: Checkout Registration Service
       uses: actions/checkout@v2

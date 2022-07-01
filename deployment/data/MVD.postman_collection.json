@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "b117dbfc-5ac8-451b-89e6-a11b1f4359c8",
+		"_postman_id": "dbbd12e9-6fbe-4af3-9154-427bf56dbc2a",
 		"name": "MVD",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -20,7 +20,7 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"id": "ad204d7d-75e4-4734-a43c-b7fde913103a"
+								"id": "878f6d69-309b-42f2-85e8-8d867cc7a4c4"
 							}
 						}
 					],
@@ -54,7 +54,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "93dbf2b1-50d0-413d-85d0-8417bd21727d",
+								"id": "f81ae4d4-f84b-4725-aeb1-c60d71d2f958",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
@@ -109,7 +109,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"uid\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"permissions\": [\n        {\n            \"edctype\": \"dataspaceconnector:permission\",\n            \"uid\": null,\n            \"target\": \"test-document\",\n            \"action\": {\n                \"type\": \"USE\",\n                \"includedIn\": null,\n                \"constraint\": null\n            },\n            \"assignee\": null,\n            \"assigner\": null,\n            \"constraints\": [],\n            \"duties\": []\n        }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n        \"@policytype\": \"set\"\n    }\n}",
+							"raw": "{\n  \"uid\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n  \"policy\": {\n    \"permissions\": [\n      {\n        \"edctype\": \"dataspaceconnector:permission\",\n        \"uid\": null,\n        \"target\": \"test-document\",\n        \"action\": {\n          \"type\": \"USE\",\n          \"includedIn\": null,\n          \"constraint\": null\n        },\n        \"assignee\": null,\n        \"assigner\": null,\n        \"constraints\": [],\n        \"duties\": []\n      }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n      \"@policytype\": \"set\"\n    }\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -117,12 +117,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{data_management_url}}/policies",
+							"raw": "{{data_management_url}}/policydefinitions",
 							"host": [
 								"{{data_management_url}}"
 							],
 							"path": [
-								"policies"
+								"policydefinitions"
 							]
 						}
 					},
@@ -149,7 +149,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"uid\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n    \"permissions\": [\n        {\n            \"edctype\": \"dataspaceconnector:permission\",\n            \"uid\": null,\n            \"target\": null,\n            \"action\": {\n                \"type\": \"USE\",\n                \"includedIn\": null,\n                \"constraint\": null\n            },\n            \"assignee\": null,\n            \"assigner\": null,\n            \"constraints\": [\n                {\n                    \"edctype\": \"AtomicConstraint\",\n                    \"leftExpression\": {\n                        \"edctype\": \"dataspaceconnector:literalexpression\",\n                        \"value\": \"ids:absoluteSpatialPosition\"\n                    },\n                    \"rightExpression\": {\n                        \"edctype\": \"dataspaceconnector:literalexpression\",\n                        \"value\": \"eu\"\n                    },\n                    \"operator\": \"EQ\"\n                }\n            ],\n            \"duties\": []\n        }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n        \"@policytype\": \"set\"\n    }\n}",
+							"raw": "{\n  \"uid\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n  \"policy\": {\n    \"permissions\": [\n      {\n        \"edctype\": \"dataspaceconnector:permission\",\n        \"uid\": null,\n        \"target\": null,\n        \"action\": {\n          \"type\": \"USE\",\n          \"includedIn\": null,\n          \"constraint\": null\n        },\n        \"assignee\": null,\n        \"assigner\": null,\n        \"constraints\": [\n          {\n            \"edctype\": \"AtomicConstraint\",\n            \"leftExpression\": {\n              \"edctype\": \"dataspaceconnector:literalexpression\",\n              \"value\": \"ids:absoluteSpatialPosition\"\n            },\n            \"rightExpression\": {\n              \"edctype\": \"dataspaceconnector:literalexpression\",\n              \"value\": \"eu\"\n            },\n            \"operator\": \"EQ\"\n          }\n        ],\n        \"duties\": []\n      }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n      \"@policytype\": \"set\"\n    }\n  }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -157,12 +157,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{data_management_url}}/policies",
+							"raw": "{{data_management_url}}/policydefinitions",
 							"host": [
 								"{{data_management_url}}"
 							],
 							"path": [
-								"policies"
+								"policydefinitions"
 							]
 						}
 					},
@@ -174,7 +174,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "15c83d1e-55a4-44f3-9f9b-e8b73ed5cc4a",
+								"id": "75d95596-ddcb-4861-b94d-d9c0e80a3ed0",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
@@ -214,7 +214,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "611695f4-96a5-4338-838b-2b5749d78a32",
+								"id": "76e38548-88eb-45e4-941b-8f8a7dae0a9f",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
 									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
@@ -266,5 +266,6 @@
 				"type": "string"
 			}
 		]
-	}
+	},
+	"protocolProfileBehavior": {}
 }
