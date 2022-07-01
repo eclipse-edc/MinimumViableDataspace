@@ -104,11 +104,11 @@ jobs:
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
     steps:
-      - name: Checkout EDCDataDashboard
+      - name: Checkout DataDashboard
         uses: actions/checkout@v2
         with:
-          repository: agera-edc/EDCDataDashboard
-          ref: 6657d71bca844e0c2fc0a01081b8fd97628d522f
+          repository: eclipse-dataspaceconnector/DataDashboard
+          ref: 7ceee5f526bc82b443027e02b894d542248f1cd4
 
       - name: 'Az CLI login'
         uses: azure/login@v1
@@ -240,6 +240,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: ./.github/actions/gradle-setup
 
       - name: 'Generate key'
         run: |
@@ -334,9 +335,8 @@ jobs:
 
       - name: 'Register participant'
         run: |
-          curl -vfd '{ "name": "${{matrix.participant}}", "supportedProtocols": [ "ids-multipart" ], "url": "http://${{ env.EDC_HOST }}:8282" }' \
-            -HContent-type:application/json \
-            $REGISTRATION_SERVICE_API_URL/registry/participant
+          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:1.0.0-SNAPSHOT:jar:all -DoutputDirectory=.
+          java -jar registration-service-cli-1.0.0-SNAPSHOT-all.jar -s=$REGISTRATION_SERVICE_API_URL participants add --request='{ "name": "${{matrix.participant}}", "supportedProtocols": [ "ids-multipart" ], "url": "http://${{ env.EDC_HOST }}:8282" }'
         env:
           REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/api
 

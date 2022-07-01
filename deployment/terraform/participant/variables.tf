@@ -77,5 +77,5 @@ variable "registration_service_api_url" {
 
 variable "data_dashboard_theme" {
   description = "theme for the data dashboard ui"
-  default     = "" # Use default theme. Possible theme values are defined in `theme.scss` in the EDCDataDashboard repository.
+  default     = "" # Use default theme. Possible theme values are defined in `theme.scss` in the DataDashboard repository.
 }
