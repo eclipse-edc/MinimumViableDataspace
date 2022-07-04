@@ -1,0 +1,28 @@
+@startuml
+autonumber "<b>0'.'"
+box "Company1" #LightBlue
+Participant Company1
+Participant "Company1\nDID Document &\nSelf-description\nDocument" as DID1
+Participant "Company1\nIdentity Hub" as IDHUB1
+end box
+box "Dataspace Authority" #LightYellow
+Participant "Dataspace\nDID Document" as DID0
+Participant "Registration Service\nIdentity Hub" as IDHUB0
+Participant "Registration Service" as DA
+Database "Participants\nStore" as Registry
+end box
+
+Company1 -> DID0: Get enrollment endpoint
+Company1 -> DA ++: Call enrollment endpoint:\n - DID JWS\n - Hub Token
+group authorize request [Distributed authorization sub-flow]
+  DA -> DID1
+  DA -> IDHUB1
+end
+DA -> Registry: Store participant
+DA -> DA: apply enrollment policy
+DA -> Registry: Update membership status
+DA -> DA: Sign membership certificate
+DA -> IDHUB1 ++: signed membership credential:\n - Hub Token
+IDHUB1 -> IDHUB1: Store membership credential
+
+@enduml

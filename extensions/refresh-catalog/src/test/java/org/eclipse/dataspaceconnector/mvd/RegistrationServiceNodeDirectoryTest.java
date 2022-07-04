@@ -19,7 +19,6 @@ import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.registration.client.api.RegistryApi;
 import org.eclipse.dataspaceconnector.registration.client.models.Participant;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

@@ -1,0 +1,31 @@
+@startuml
+autonumber "<b>0'.'"
+box "Company1" #LightBlue
+Participant "Company1\nEDC" as Company1
+Participant "Company1\nDID Document" as DID1
+Participant "Company1\nIdentity Hub" as IDHUB1
+end box
+box "Dataspace Authority" #LightYellow
+Participant "Dataspace\nDID Document" as DID0
+Participant "Registration Service" as RAPI
+Database "Participants\nStore" as Registry
+end box
+box "Company2 (, 3, etc.)" #LightCyan
+Participant "Company2\nDID Document" as DID2
+Participant "Company2\nEDC" as Company2
+end box
+
+Company1 -> DID0: Get registry endpoint
+Company1 -> RAPI ++: List participants:\n - DID JWS\n - Hub Token
+activate Company1
+group authorize request [Distributed authorization sub-flow]
+  RAPI -> DID1
+  RAPI -> IDHUB1
+end
+RAPI -> RAPI: apply access policy
+RAPI -> Registry: query participants
+return participants (list of DID URIs)
+Company1 -> DID2: Get DID Document (contains URL of Company2 EDC Catalog Endpoint)
+deactivate Company1
+
+@enduml
