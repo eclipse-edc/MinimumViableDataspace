@@ -38,8 +38,8 @@ jobs:
           HAS_AZURE: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         if: "${{ env.HAS_AZURE != '' }}"
         run: echo "::set-output name=defined::true"
-      outputs:
-        has-azure: ${{ steps.has-azure.outputs.defined }}
+    outputs:
+      has-azure: ${{ steps.has-azure.outputs.defined }}
 
   Deploy:
     if: ${{ needs.Check-Cloud-Environments.outputs.has-azure == 'true' }}
