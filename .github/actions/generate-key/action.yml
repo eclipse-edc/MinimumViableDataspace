@@ -1,0 +1,22 @@
+name: "Generate keys"
+description: "Generate openssl public and private keys"
+
+inputs:
+  keyFileNamePrefix:
+    description: 'Prefix of the key file name.'
+    required: true
+  directory:
+    description: 'Path to a directory where the key should be saved.'
+    default: deployment/terraform/dataspace
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Generate key'
+      run: |
+        openssl ecparam -name prime256v1 -genkey -noout -out ${{ inputs.keyFileNamePrefix }}.pem
+        openssl ec -in ${{ inputs.keyFileNamePrefix }}.pem -pubout -out ${{ inputs.keyFileNamePrefix }}.public.pem
+        docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < ${{ inputs.keyFileNamePrefix }}.public.pem > ${{ inputs.keyFileNamePrefix }}.public.jwk
+      shell: bash
+      working-directory: ${{ inputs.directory }}
