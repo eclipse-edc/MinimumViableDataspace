@@ -29,7 +29,7 @@ jobs:
     outputs:
       resources_prefix: ${{ env.CD_RESOURCES_PREFIX }}${{ github.run_number }}
 
-  # Temporary check that checks if the Azure secrets are set up. If not then the deploy of Azure resources will be skipped. Introduced to not fail PR checks from forks.
+  # Temporary step that checks if Azure secrets are set up. If not then the deploy of Azure resources will be skipped. Introduced to not fail checks in PRs from forks.
   Check-Cloud-Environments:
     name: 'Check if Azure secrets are set up'
     runs-on: ubuntu-latest
