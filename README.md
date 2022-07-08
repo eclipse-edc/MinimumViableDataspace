@@ -32,5 +32,13 @@ Follow these steps to delete a dataspace instance and free up the corresponding 
 - Select the tab called `Actions`
 - Select the workflow called `Destroy`
 - Click on `Run workflow`
-- Provide the resources prefix that you used when you deployed your dataspace.
-- Click on `Run workflow` to trigger to destroy your MinimumViableDataspace dataspace.
+- Provide the resources prefix that you used when you deployed your DataSpace.
+- Click on `Run workflow` to trigger to destroy your MinimumViableDataspace DataSpace.
+
+## Local development setup
+
+Please follow the instructions in [this document](system-tests/README.md) to setup a local MVD environment for development purposes.
+
+## Contributing
+
+See [how to contribute](CONTRIBUTING.md).
