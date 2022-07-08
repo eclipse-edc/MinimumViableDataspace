@@ -40,7 +40,7 @@ locals {
   registration_service_dns_label = "${var.prefix}-registration-mvd"
   edc_default_port               = 8181
 
-  authority_did_url = "did:web:${azurerm_storage_account.authority_did.primary_web_host}"
+  dataspace_did_url = "did:web:${azurerm_storage_account.dataspace_did.primary_web_host}"
   gaiax_did_url     = "did:web:${azurerm_storage_account.gaiax_did.primary_web_host}"
 }
 
@@ -121,9 +121,9 @@ resource "azurerm_role_assignment" "current-user-secretsofficer" {
   principal_id         = data.azurerm_client_config.current_client.object_id
 }
 
-# Registration Service resources
-resource "azurerm_storage_account" "authority_did" {
-  name                     = "${var.prefix}authoritydid"
+# Internal Dataspace Authority resources (Dataspace DID)
+resource "azurerm_storage_account" "dataspace_did" {
+  name                     = "${var.prefix}dataspacedid"
   resource_group_name      = azurerm_resource_group.dataspace.name
   location                 = var.location
   account_tier             = "Standard"
@@ -132,7 +132,7 @@ resource "azurerm_storage_account" "authority_did" {
   static_website {}
 }
 
-resource "azurerm_key_vault_secret" "authority_did_key" {
+resource "azurerm_key_vault_secret" "dataspace_did_key" {
   name = local.connector_name
   # Create did_key secret only if key_file value is provided. Default key_file value is null.
   count        = var.key_file_authority == null ? 0 : 1
@@ -143,19 +143,19 @@ resource "azurerm_key_vault_secret" "authority_did_key" {
   ]
 }
 
-resource "azurerm_storage_blob" "authority_did" {
+resource "azurerm_storage_blob" "dataspace_did" {
   name                 = ".well-known/did.json" # `.well-known` path is defined by did:web specification
-  storage_account_name = azurerm_storage_account.authority_did.name
+  storage_account_name = azurerm_storage_account.dataspace_did.name
   # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
   count                  = var.public_key_jwk_file_authority == null ? 0 : 1
   storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
   type                   = "Block"
   source_content = jsonencode({
-    id = local.authority_did_url
+    id = local.dataspace_did_url
     "@context" = [
       "https://www.w3.org/ns/did/v1",
       {
-        "@base" = local.authority_did_url
+        "@base" = local.dataspace_did_url
       }
     ],
     "verificationMethod" = [
