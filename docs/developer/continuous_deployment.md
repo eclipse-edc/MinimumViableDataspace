@@ -33,7 +33,7 @@ Take note of the Application (client) ID.
 
 Below, we create two credentials: one for federated authentication for GitHub Actions, and one with client secret for Terraform (required as Terraform does not yet support Azure CLI login with a service principal).
 
-Follow the instructions to [Configure a federated identity credential]([Configure a federated identity credential](https://docs.microsoft.com/azure/active-directory/develop/workload-identity-federation-create-trust-github?tabs=azure-portal#configure-a-federated-identity-credential)) for the `main` branch.
+Follow the instructions to [Configure a federated identity credential](https://docs.microsoft.com/azure/active-directory/develop/workload-identity-federation-create-trust-github?tabs=azure-portal#configure-a-federated-identity-credential) for the `main` branch.
 
 - For **Entity Type**, select **Branch**.
 - For **GitHub branch name**, enter `main`.
@@ -97,9 +97,3 @@ This prefix should help have unique resource names across fork repositories when
 ### Deploying CD resources
 
 Manually run the `Initialize CD` GitHub Actions workflow.
-
-### Deploying Data Dashboard
-
-Fork the **EDC Data Dashboard** web app and run its deploy action.
-
-Adapt the default value of the Data Dashboard image tag (`data_dashboard_image_tag` variable) in the [Terraform variables](deployment/terraform/variables.tf) to reflect the tag of the **EDC Data Dashboard** web app deployment.
