@@ -140,11 +140,15 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: 'Generate key'
-        run: |
-          openssl ecparam -name prime256v1 -genkey -noout -out key.pem
-          openssl ec -in key.pem -pubout -out key.public.pem
-          docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
+      - name: 'Generate GAIA-X Authority key'
+        uses: ./.github/actions/generate-key
+        with:
+          keyFileNamePrefix: gaiaxkey
+
+      - name: 'Generate Dataspace Authority key'
+        uses: ./.github/actions/generate-key
+        with:
+          keyFileNamePrefix: authoritykey
 
       - name: 'Create tfvars file'
         run: |
@@ -153,7 +157,7 @@ jobs:
           acr_name = "${{ secrets.ACR_NAME }}"
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ env.RESOURCES_PREFIX }}"
-          registry_runtime_image = "mvd/registration-service:${{ env.RESOURCES_PREFIX }}"
+          registrationservice_runtime_image = "mvd/registration-service:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           EOF
 
@@ -183,8 +187,10 @@ jobs:
           echo "::set-output name=app_insights_connection_string::${app_insights_connection_string}"
           registration_service_url=$(terraform output -raw registration_service_url)
           echo "::set-output name=registration_service_url::${registration_service_url}"
-          did_host=$(terraform output -raw did_host)
-          echo "::set-output name=did_host::${did_host}"
+          dataspace_did_host=$(terraform output -raw dataspace_did_host)
+          echo "::set-output name=dataspace_did_host::${dataspace_did_host}"
+          gaiax_did_host=$(terraform output -raw gaiax_did_host)
+          echo "::set-output name=gaiax_did_host::${gaiax_did_host}"
 
         env:
           # Authentication settings for Terraform AzureRM provider
@@ -194,13 +200,17 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           # Terraform variables not included in terraform.tfvars.
-          TF_VAR_key_file: "key.pem"
-          TF_VAR_public_key_jwk_file: "key.public.jwk"
+          TF_VAR_key_file_authority: "authoritykey.pem"
+          TF_VAR_public_key_jwk_file_authority: "authoritykey.public.jwk"
+          TF_VAR_public_key_jwk_file_gaiax: "gaiaxkey.public.jwk"
 
-      - name: 'Verify did endpoint is available'
-        run: curl https://${{ steps.runterraform.outputs.did_host }}/.well-known/did.json | jq '.id'
+      - name: 'Verify GAIA-X Authority DID endpoint is available'
+        run: curl https://${{ steps.runterraform.outputs.gaiax_did_host }}/.well-known/did.json | jq '.id'
 
-      - name: 'Verify deployed Registry Service is healthy'
+      - name: 'Verify Dataspace DID endpoint is available'
+        run: curl https://${{ steps.runterraform.outputs.dataspace_did_host }}/.well-known/did.json | jq '.id'
+
+      - name: 'Verify deployed Registration Service is healthy'
         run: curl --retry 6 --fail ${{ steps.runterraform.outputs.registration_service_url }}/api/check/health
 
   # Deploy dataspace participants in parallel.
@@ -242,11 +252,11 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.github/actions/gradle-setup
 
-      - name: 'Generate key'
-        run: |
-          openssl ecparam -name prime256v1 -genkey -noout -out key.pem
-          openssl ec -in key.pem -pubout -out key.public.pem
-          docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < key.public.pem > key.public.jwk
+      - name: 'Generate Participant key'
+        uses: ./.github/actions/generate-key
+        with:
+          keyFileNamePrefix: key
+          directory: deployment/terraform/participant
 
       - name: 'Create tfvars file'
         run: |

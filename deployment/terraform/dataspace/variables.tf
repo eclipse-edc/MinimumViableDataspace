@@ -11,8 +11,8 @@ variable "resource_group" {
   default = "test-dataspace"
 }
 
-variable "registry_runtime_image" {
-  description = "Image name of the Registry Service to deploy."
+variable "registrationservice_runtime_image" {
+  description = "Image name of the Registration Service to deploy."
 }
 
 variable "acr_name" {
@@ -35,12 +35,17 @@ variable "application_sp_object_id" {
   description = "object id of application's service principal object"
 }
 
-variable "key_file" {
-  description = "name of a file containing the private key in PEM format"
+variable "key_file_authority" {
+  description = "name of a file containing the Registration Service private key in PEM format"
   default     = null
 }
 
-variable "public_key_jwk_file" {
-  description = "name of a file containing the public key in JWK format"
+variable "public_key_jwk_file_authority" {
+  description = "name of a file containing the Registration Service public key in JWK format"
+  default     = null
+}
+
+variable "public_key_jwk_file_gaiax" {
+  description = "name of a file containing the GAIA-X public key in JWK format"
   default     = null
 }
