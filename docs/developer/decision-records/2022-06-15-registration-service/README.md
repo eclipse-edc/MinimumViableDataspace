@@ -52,7 +52,7 @@ In simple scenarios, enrollment could be fast and fully automated. However, in a
 
 #### Post-conditions
 
-1. The _Company1_ Identity Hub contains a VC (X.509 certificate) signed by _the Dataspace Authority_, that establishes membership in _Dataspace D_. This is used by other participants to authorize requests from _Company1_.
+1. The _Company1_ Identity Hub contains a VC signed by _the Dataspace Authority_, that establishes membership in _Dataspace D_. This is used by other participants to authorize requests from _Company1_.
 2. The _Company1_ DID URL is stored in the Registration Service Participants Store. This is used to serve participant requests.
 
 #### Flow sequence
@@ -69,7 +69,7 @@ In simple scenarios, enrollment could be fast and fully automated. However, in a
 5. The Registration Service stores participant information in its store. This includes Company 1's DID URL.
 6. The Registration Service authorizes the request by applying the Dataspace enrollment policy on the obtained Verifiable Credentials.
 7. The Registration Service updates the status of the participant's membership indicating that the participant's onboarding is successful/failed.
-8. The Registration Service issues and signs a membership Verifiable Credential as an X.509 Certificate.
+8. The Registration Service issues and signs a membership Verifiable Credential.
 9. The Registration Service sends the Verifiable Credential to _Company1's_ Identity Hub for storage. It uses the Identity Hub bearer token (from the Distributed authorization
    sub-flow) to authenticate the request.
 10. _Company1's_ Identity Hub validates the bearer token and stores the membership Verifiable Credential.
