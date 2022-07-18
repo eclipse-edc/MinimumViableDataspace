@@ -1,0 +1,29 @@
+{
+	"id": "did:web:provider-did-server:provider",
+	"@context": [
+		"https://www.w3.org/ns/did/v1",
+		{
+			"@base": "did:web:provider-did-server:provider"
+		}
+	],
+	"service": [{
+		"id": "#identity-hub-url",
+		"type": "IdentityHub",
+		"serviceEndpoint": "http://dummy?region=eu"
+	}],
+	"verificationMethod": [{
+		"id": "#my-key-1",
+		"controller": "",
+		"type": "EcdsaSecp256k1VerificationKey2019",
+		"publicKeyJwk": {
+			"kty": "EC",
+			"kid": "uIowOgviyWueDwC2SjwEPnqsBVQkhIN3m6B0Ajs6rlU",
+			"crv": "P-256",
+			"x": "T6VaLBE16dj2WcqcCaF6M1ORlaQhrT5bEhY8JUiDwRA",
+			"y": "hcVb4PnEmH2TMYbPk-ctwHx3o15JNIOhIYPBzR3iYf4"
+		}
+	}],
+	"authentication": [
+		"#my-key-1"
+	]
+}

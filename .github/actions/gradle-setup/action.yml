@@ -7,16 +7,16 @@ runs:
     - name: Checkout EDC
       uses: actions/checkout@v2
       with:
-        repository: eclipse-dataspaceconnector/DataSpaceConnector
+        repository: agera-edc/DataSpaceConnector
         path: DataSpaceConnector
-        ref: 6fc0c00f434547b790a5c09c9f61a4aa8cca7d13
+        ref: feature/1658/56-add-parsers-fs-vault-for-mvd-local-ci
 
     - name: Checkout Registration Service
       uses: actions/checkout@v2
       with:
         repository: eclipse-dataspaceconnector/RegistrationService
         path: RegistrationService
-        ref: ef045e3b6556bf1b1148536a1be30d564fd56bf6
+        ref: 374c14bcca23ddb1dcd7476a27264510e54de7fa
 
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2

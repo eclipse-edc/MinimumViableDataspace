@@ -8,16 +8,21 @@ services:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     environment:
       IDS_WEBHOOK_ADDRESS: http://provider:8282
-      EDC_CONNECTOR_NAME: ${PROVIDER_CONNECTOR_NAME}
-      EDC_IDENTITY_DID_URL: ${PROVIDER_DID_URL}
-      EDC_VAULT_NAME: ${PROVIDER_KEY_VAULT}
-      EDC_VAULT_TENANTID: ${APP_TENANT_ID}
-      EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
-      EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
+      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+      EDC_CONNECTOR_NAME: provider
+      EDC_IDENTITY_DID_URL: did:web:did-server:provider
+      EDC_VAULT: /resources/vault/provider/provider-vault.properties
+      EDC_KEYSTORE: /resources/vault/provider/provider-keystore.jks
+      EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-      REGISTRATION_SERVICE_API_URL: ${REGISTRATION_SERVICE_URL}/api
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8181/api
+    depends_on:
+      - did-server
+      - azurite
+      - registration-service
     ports:
       - "9191:9191"
       - "8181:8181"
@@ -33,16 +38,21 @@ services:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     environment:
       IDS_WEBHOOK_ADDRESS: http://consumer-eu:8282
-      EDC_CONNECTOR_NAME: ${CONSUMER_EU_CONNECTOR_NAME}
-      EDC_IDENTITY_DID_URL: ${CONSUMER_EU_DID_URL}
-      EDC_VAULT_NAME: ${CONSUMER_EU_KEY_VAULT}
-      EDC_VAULT_TENANTID: ${APP_TENANT_ID}
-      EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
-      EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
+      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+      EDC_CONNECTOR_NAME: consumer-eu
+      EDC_IDENTITY_DID_URL: did:web:did-server:consumer-eu
+      EDC_VAULT: /resources/vault/consumer-eu/consumer-eu-vault.properties
+      EDC_KEYSTORE: /resources/vault/consumer-eu/consumer-eu-keystore.jks
+      EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-      REGISTRATION_SERVICE_API_URL: ${REGISTRATION_SERVICE_URL}/api
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8181/api
+    depends_on:
+      - did-server
+      - azurite
+      - registration-service
     ports:
       - "9192:9191"
       - "8182:8181"
@@ -58,16 +68,21 @@ services:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
     environment:
       IDS_WEBHOOK_ADDRESS: http://consumer-us:8282
-      EDC_CONNECTOR_NAME: ${CONSUMER_US_CONNECTOR_NAME}
-      EDC_IDENTITY_DID_URL: ${CONSUMER_US_DID_URL}
-      EDC_VAULT_NAME: ${CONSUMER_US_KEY_VAULT}
-      EDC_VAULT_CLIENTID: ${APP_CLIENT_ID}
-      EDC_VAULT_CLIENTSECRET: ${APP_CLIENT_SECRET}
-      EDC_VAULT_TENANTID: ${APP_TENANT_ID}
+      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+      EDC_CONNECTOR_NAME: consumer-us
+      EDC_IDENTITY_DID_URL: did:web:did-server:consumer-us
+      EDC_VAULT: /resources/vault/consumer-us/consumer-us-vault.properties
+      EDC_KEYSTORE: /resources/vault/consumer-us/consumer-us-keystore.jks
+      EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-      REGISTRATION_SERVICE_API_URL: ${REGISTRATION_SERVICE_URL}/api
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8181/api
+    depends_on:
+      - did-server
+      - azurite
+      - registration-service
     ports:
       - "9193:9191"
       - "8183:8181"
@@ -86,7 +101,7 @@ services:
     environment:
       API_KEY: ApiKeyDefaultValue
       EDC_HOST: provider
-      ASSETS_STORAGE_ACCOUNT: ${PROVIDER_ASSETS_STORAGE_ACCOUNT}
+      ASSETS_STORAGE_ACCOUNT: providerassets
     depends_on:
       consumer-eu:
         condition: service_healthy
@@ -94,3 +109,32 @@ services:
         condition: service_healthy
       provider:
         condition: service_healthy
+
+  did-server:
+    container_name: did-server
+    image: nginx
+    volumes:
+      - ./resources/webdid:/usr/share/nginx/html
+    ports:
+      - "7070:80"
+
+  azurite:
+    container_name: azurite
+    image: mcr.microsoft.com/azure-storage/azurite
+    ports:
+      - 10000:10000
+    environment:
+      AZURITE_ACCOUNTS: providerassets:key1;consumereuassets:key2;consumerusassets:key3
+
+  registration-service:
+    container_name: registration-service
+    build:
+#e.g. /home/user/RegistrationService/launcher
+      context: ${REGISTRATION_SERVICE_LAUNCHER_PATH:?"Registration Service launcher path env var required"}
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
+    environment:
+      EDC_API_AUTH_KEY: ApiKeyDefaultValue
+    ports:
+      - "8184:8181"
+      - "5008:5008"

@@ -48,7 +48,13 @@ dependencies {
 
     // Blob storage container provisioning
     implementation("${edcGroup}:blobstorage:${edcVersion}")
-    implementation("${edcGroup}:azure-vault:${edcVersion}")
+    // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
+    val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
+    if (useFsVault) {
+        implementation("${edcGroup}:filesystem-vault:${edcVersion}")
+    } else {
+        implementation("${edcGroup}:azure-vault:${edcVersion}")
+    }
 
     // Embedded DPF
     implementation("${edcGroup}:data-plane-transfer-client:${edcVersion}")
