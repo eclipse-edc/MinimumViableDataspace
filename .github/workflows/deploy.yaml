@@ -108,7 +108,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: eclipse-dataspaceconnector/DataDashboard
-          ref: 7ceee5f526bc82b443027e02b894d542248f1cd4
+          ref: 6ce10c61d1333e2857b4921d3f02ffb69b4064b7
 
       - name: 'Az CLI login'
         uses: azure/login@v1
