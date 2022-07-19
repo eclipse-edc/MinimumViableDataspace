@@ -16,7 +16,7 @@ development we have to use locally published dependencies, once this is done MVD
 Checkout [Eclipse DataSpaceConnector repository](https://github.com/eclipse-dataspaceconnector/DataSpaceConnector).
 
 Publish EDC libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal -Pskip.signing` from EDC root
-folder.
+folder. On windows powershell command `./gradlew publishToMavenLocal -P"skip.signing"` can be used.
 
 Checkout [Registration Service repository](https://github.com/eclipse-dataspaceconnector/RegistrationService).
 
@@ -49,6 +49,13 @@ First please make sure that you are able to build MVD locally as described in [B
     docker-compose -f system-tests/docker-compose.yml up --build
     ```
 
+  for windows powershell
+
+    ```powershell
+    $Env:REGISTRATION_SERVICE_LAUNCHER_PATH = "Registration service launcher path e.g. /home/user/RegistrationService/launcher"
+    docker-compose -f system-tests/docker-compose.yml up --build
+    ```
+
 - This will start three EDC Connectors, one Registration Service, one HTTP Nginx Server to serve DIDs, Azurite blob storage service and also will seed initial required data using a [postman collection](../deployment/data/MVD.postman_collection.json).
 
 - `newman` docker container will automatically stop after seeding initial data from postman scripts.
@@ -60,10 +67,24 @@ First please make sure that you are able to build MVD locally as described in [B
     ./system-tests/resources/register-participants.sh
     ```
 
+  for windows powershell
+
+    ```powershell
+    $Env:REGISTRATION_SERVICE_CLI_JAR_PATH = "registration service client jar path"
+    # Execute command by copying it from shell script ./system-tests/resources/register-participants.sh or use git-bash to execute this shell script.
+    ```
+
 - Run MVD system tests, and for that environment variable `TEST_ENVIRONMENT` must be set to `local` to enable local blob transfer test.
 
     ```bash
     export TEST_ENVIRONMENT=local
+    ./gradlew :system-tests:test
+    ```
+
+  for windows powershell
+
+    ```powershell
+    $Env:TEST_ENVIRONMENT = "local"
     ./gradlew :system-tests:test
     ```
 
