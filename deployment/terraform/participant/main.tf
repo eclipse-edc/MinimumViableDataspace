@@ -230,15 +230,6 @@ resource "azurerm_storage_account" "inbox" {
   account_kind             = "StorageV2"
 }
 
-resource "azurerm_key_vault_secret" "inbox_storage_key" {
-  name         = "${azurerm_storage_account.inbox.name}-key1"
-  value        = azurerm_storage_account.inbox.primary_access_key
-  key_vault_id = azurerm_key_vault.participant.id
-  depends_on = [
-    azurerm_role_assignment.current-user-secretsofficer
-  ]
-}
-
 resource "azurerm_storage_container" "assets_container" {
   name                 = "src-container"
   storage_account_name = azurerm_storage_account.assets.name
@@ -258,26 +249,6 @@ resource "azurerm_storage_blob" "testfile2" {
   storage_container_name = azurerm_storage_container.assets_container.name
   type                   = "Block"
   source                 = "sample-data/text-document.txt"
-}
-
-resource "azurerm_key_vault_secret" "asset_storage_key" {
-  name         = "${azurerm_storage_account.assets.name}-key1"
-  value        = azurerm_storage_account.assets.primary_access_key
-  key_vault_id = azurerm_key_vault.participant.id
-  depends_on = [
-    azurerm_role_assignment.current-user-secretsofficer
-  ]
-}
-
-resource "azurerm_key_vault_secret" "did_key" {
-  name = local.connector_name
-  # Create did_key secret only if key_file value is provided. Default key_file value is null.
-  count        = var.key_file == null ? 0 : 1
-  value        = file(var.key_file)
-  key_vault_id = azurerm_key_vault.participant.id
-  depends_on = [
-    azurerm_role_assignment.current-user-secretsofficer
-  ]
 }
 
 resource "azurerm_storage_blob" "did" {

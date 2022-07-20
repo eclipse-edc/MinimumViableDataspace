@@ -1,0 +1,65 @@
+name: CLOUD-CD
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+
+# Grant permissions to obtain federated identity credentials
+# see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+permissions:
+  id-token: write
+  contents: read
+
+# Update this value with a unique name to guarantee uniqueness of resource names and avoid conflicts between fork repositories when running CD workflow.
+# CD workflow creates resources with this prefix and destroy them.
+env:
+  CD_RESOURCES_PREFIX: mvd
+
+jobs:
+  # The purpose of this job is only to set up resources_prefix as an output, because env context is not available in arguments to a called workflow
+  # See this discussion for more context: https://github.community/t/reusable-workflow-env-context-not-available-in-jobs-job-id-with/206111/13
+  SetResourcesPrefix:
+    name: 'Set Resources Prefix'
+    runs-on: ubuntu-latest
+    # Added a step doing nothing, because a job needs to have at least one step.
+    steps:
+      - name: 'Empty step.'
+        run: exit 0
+    outputs:
+      resources_prefix: ${{ env.CD_RESOURCES_PREFIX }}${{ github.run_number }}
+
+  # Temporary step that checks if Azure secrets are set up. If not then the deploy of Azure resources will be skipped. Introduced to not fail checks in PRs from forks.
+  Check-Cloud-Environments:
+    name: 'Check if Azure secrets are set up'
+    runs-on: ubuntu-latest
+    steps:
+      - id: has-azure
+        env:
+          HAS_AZURE: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        if: "${{ env.HAS_AZURE != '' }}"
+        run: echo "::set-output name=defined::true"
+    outputs:
+      has-azure: ${{ steps.has-azure.outputs.defined }}
+
+  Deploy:
+    if: ${{ needs.Check-Cloud-Environments.outputs.has-azure == 'true' }}
+    uses: ./.github/workflows/deploy.yaml
+    secrets: inherit
+    needs:
+      - SetResourcesPrefix
+      - Check-Cloud-Environments
+    with:
+      resources_prefix: ${{ needs.SetResourcesPrefix.outputs.resources_prefix }}
+
+  Destroy:
+    # Always run Destroy workflow unless SetResourcesPrefix workflow fails.
+    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true'}}
+    uses: ./.github/workflows/destroy.yaml
+    needs:
+      - SetResourcesPrefix
+      - Deploy
+      - Check-Cloud-Environments
+    secrets: inherit
+    with:
+      resources_prefix: ${{ needs.SetResourcesPrefix.outputs.resources_prefix }}

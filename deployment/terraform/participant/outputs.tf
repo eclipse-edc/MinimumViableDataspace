@@ -6,6 +6,20 @@ output "assets_storage_account" {
   value = azurerm_storage_account.assets.name
 }
 
+output "assets_storage_account_key" {
+  value     = azurerm_storage_account.assets.primary_access_key
+  sensitive = true
+}
+
+output "inbox_storage_account" {
+  value = azurerm_storage_account.inbox.name
+}
+
+output "inbox_storage_account_key" {
+  value     = azurerm_storage_account.inbox.primary_access_key
+  sensitive = true
+}
+
 output "key_vault" {
   value = azurerm_key_vault.participant.name
 }

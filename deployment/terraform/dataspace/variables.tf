@@ -35,11 +35,6 @@ variable "application_sp_object_id" {
   description = "object id of application's service principal object"
 }
 
-variable "key_file_authority" {
-  description = "name of a file containing the Registration Service private key in PEM format"
-  default     = null
-}
-
 variable "public_key_jwk_file_authority" {
   description = "name of a file containing the Registration Service public key in JWK format"
   default     = null

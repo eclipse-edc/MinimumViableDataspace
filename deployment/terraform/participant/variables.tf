@@ -61,11 +61,6 @@ variable "application_sp_client_secret" {
   sensitive   = true
 }
 
-variable "key_file" {
-  description = "name of a file containing the private key in PEM format"
-  default     = null
-}
-
 variable "public_key_jwk_file" {
   description = "name of a file containing the public key in JWK format"
   default     = null
