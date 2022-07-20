@@ -14,7 +14,7 @@ permissions:
 # Update this value with a unique name to guarantee uniqueness of resource names and avoid conflicts between fork repositories when running CD workflow.
 # CD workflow creates resources with this prefix and destroy them.
 env:
-  CD_RESOURCES_PREFIX: mvd
+  CD_RESOURCES_PREFIX: mz
 
 jobs:
   # The purpose of this job is only to set up resources_prefix as an output, because env context is not available in arguments to a called workflow
