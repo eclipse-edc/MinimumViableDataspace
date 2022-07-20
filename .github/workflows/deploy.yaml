@@ -207,7 +207,7 @@ jobs:
           TF_VAR_public_key_jwk_file_authority: "authoritykey.public.jwk"
           TF_VAR_public_key_jwk_file_gaiax: "gaiaxkey.public.jwk"
 
-      - name: 'Az CLI login'
+      - name: 'Az CLI re-login (refresh role assignments)'
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.ARM_CLIENT_ID }}
@@ -354,7 +354,7 @@ jobs:
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
           TF_VAR_app_insights_connection_string: ${{ needs.Deploy-Dataspace.outputs.app_insights_connection_string }}
 
-      - name: 'Az CLI login'
+      - name: 'Az CLI re-login (refresh role assignments)'
         uses: azure/login@v1
         with:
           client-id: ${{ secrets.ARM_CLIENT_ID }}

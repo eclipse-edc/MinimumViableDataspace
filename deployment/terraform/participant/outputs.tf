@@ -7,7 +7,7 @@ output "assets_storage_account" {
 }
 
 output "assets_storage_account_key" {
-  value = azurerm_storage_account.assets.primary_access_key
+  value     = azurerm_storage_account.assets.primary_access_key
   sensitive = true
 }
 
@@ -16,7 +16,7 @@ output "inbox_storage_account" {
 }
 
 output "inbox_storage_account_key" {
-  value = azurerm_storage_account.inbox.primary_access_key
+  value     = azurerm_storage_account.inbox.primary_access_key
   sensitive = true
 }
 
