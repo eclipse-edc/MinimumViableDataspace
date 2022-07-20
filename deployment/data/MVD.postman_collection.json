@@ -189,7 +189,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"4a75736e-001d-4364-8bd4-9888490edb56\",\n    \"accessPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"contractPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n        \"criteria\": [\n            {\n                \"left\": \"asset:prop:id\",\n                \"op\": \"=\",\n                \"right\": \"test-document\"\n            }\n        ]\n}",
+							"raw": "{\n    \"id\": \"4a75736e-001d-4364-8bd4-9888490edb56\",\n    \"accessPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"contractPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n        \"criteria\": [\n            {\n                \"operandLeft\": \"asset:prop:id\",\n                \"operator\": \"=\",\n                \"operandRight\": \"test-document\"\n            }\n        ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -229,7 +229,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"8dfd8f18-09ad-41f9-a2d8-368889d3e36e\",\n    \"accessPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n    \"contractPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n        \"criteria\": [\n            {\n                \"left\": \"asset:prop:id\",\n                \"op\": \"=\",\n                \"right\": \"test-document-2\"\n            }\n        ]\n}",
+							"raw": "{\n    \"id\": \"8dfd8f18-09ad-41f9-a2d8-368889d3e36e\",\n    \"accessPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n    \"contractPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n        \"criteria\": [\n            {\n                \"operandLeft\": \"asset:prop:id\",\n                \"operator\": \"=\",\n                \"operandRight\": \"test-document-2\"\n            }\n        ]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
