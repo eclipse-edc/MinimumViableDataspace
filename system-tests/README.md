@@ -9,10 +9,15 @@ development we have to use locally published dependencies.
 
 #### Publish Registration Service to local Maven
 
-Checkout [Registration Service repository](https://github.com/agera-edc/RegistrationService). 
+Checkout [Registration Service repository](https://github.com/eclipse-dataspaceconnector/RegistrationService). 
 
-Publish Registration Service libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Registration Service root 
-folder. 
+Publish Registration Service libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Registration Service root folder. 
+
+#### Publish Identity Hub to local Maven
+
+Checkout [Identity Hub repository](https://github.com/eclipse-dataspaceconnector/IdentityHub).
+
+Publish Identity Hub libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Identity Hub root folder.
 
 ### Running test locally
 

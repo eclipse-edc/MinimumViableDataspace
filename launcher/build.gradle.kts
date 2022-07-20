@@ -20,6 +20,8 @@ plugins {
 
 val edcVersion: String by project
 val edcGroup: String by project
+val identityHubVersion: String by project
+val identityHubGroup: String by project
 
 dependencies {
     implementation(project(":extensions:refresh-catalog"))
@@ -60,6 +62,9 @@ dependencies {
 
     // Federated catalog
     implementation("${edcGroup}:catalog-cache:${edcVersion}")
+
+    // Identity Hub
+    implementation("${identityHubGroup}:identity-hub:${identityHubVersion}")
 }
 
 application {
