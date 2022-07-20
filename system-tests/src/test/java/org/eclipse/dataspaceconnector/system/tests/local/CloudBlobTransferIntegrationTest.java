@@ -16,7 +16,7 @@
 
 package org.eclipse.dataspaceconnector.system.tests.local;
 
-import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.identity.AzureCliCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -53,7 +53,8 @@ public class CloudBlobTransferIntegrationTest extends AbstractBlobTransferTest {
      * @return storage account name and account key on first and second position of list.
      */
     private List<String> blobAccount(String keyVaultName) {
-        var credential = new DefaultAzureCredentialBuilder().build();
+        // Not using DefaultAzureCredentialBuilder because of agent issue https://github.com/orgs/github-community/discussions/20830
+        var credential = new AzureCliCredentialBuilder().build();
         var vault = new SecretClientBuilder()
                 .vaultUrl(format(KEY_VAULT_ENDPOINT_TEMPLATE, keyVaultName))
                 .credential(credential)
