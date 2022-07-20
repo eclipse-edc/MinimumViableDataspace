@@ -132,17 +132,6 @@ resource "azurerm_storage_account" "dataspace_did" {
   static_website {}
 }
 
-resource "azurerm_key_vault_secret" "dataspace_did_key" {
-  name = local.connector_name
-  # Create did_key secret only if key_file value is provided. Default key_file value is null.
-  count        = var.key_file_authority == null ? 0 : 1
-  value        = file(var.key_file_authority)
-  key_vault_id = azurerm_key_vault.registrationservice.id
-  depends_on = [
-    azurerm_role_assignment.current-user-secretsofficer
-  ]
-}
-
 resource "azurerm_storage_blob" "dataspace_did" {
   name                 = ".well-known/did.json" # `.well-known` path is defined by did:web specification
   storage_account_name = azurerm_storage_account.dataspace_did.name

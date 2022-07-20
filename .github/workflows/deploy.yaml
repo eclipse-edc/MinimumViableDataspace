@@ -183,6 +183,10 @@ jobs:
           ' >> backend.conf
           terraform init -backend-config=backend.conf
           terraform apply -auto-approve
+          connector_name=$(terraform output -raw connector_name)
+          echo "::set-output name=connector_name::${connector_name}"
+          key_vault=$(terraform output -raw key_vault)
+          echo "::set-output name=key_vault::${key_vault}"
           app_insights_connection_string=$(terraform output -raw app_insights_connection_string)
           echo "::set-output name=app_insights_connection_string::${app_insights_connection_string}"
           registration_service_url=$(terraform output -raw registration_service_url)
@@ -200,9 +204,21 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
           # Terraform variables not included in terraform.tfvars.
-          TF_VAR_key_file_authority: "authoritykey.pem"
           TF_VAR_public_key_jwk_file_authority: "authoritykey.public.jwk"
           TF_VAR_public_key_jwk_file_gaiax: "gaiaxkey.public.jwk"
+
+      - name: 'Az CLI re-login (refresh role assignments)'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Upload private key as vault secret'
+        run: az keyvault secret set --name "$name" --vault-name "$vault" --file authoritykey.pem -o none
+        env:
+          name: ${{ steps.runterraform.outputs.connector_name }}
+          vault: ${{ steps.runterraform.outputs.key_vault }}
 
       - name: 'Verify GAIA-X Authority DID endpoint is available'
         run: curl https://${{ steps.runterraform.outputs.gaiax_did_host }}/.well-known/did.json | jq '.id'
@@ -301,14 +317,22 @@ jobs:
           DID_HOST=$(terraform output -raw did_host)
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
+          ASSETS_STORAGE_ACCOUNT_KEY=$(terraform output -raw assets_storage_account_key)
+          INBOX_STORAGE_ACCOUNT=$(terraform output -raw inbox_storage_account)
+          INBOX_STORAGE_ACCOUNT_KEY=$(terraform output -raw inbox_storage_account_key)
           KEY_VAULT=$(terraform output -raw key_vault)
           WEBAPP_URL=$(terraform output -raw webapp_url)
           API_KEY=$(terraform output -raw api_key)
           echo "::notice title=MVD WebApp for ${{ matrix.participant }}::$WEBAPP_URL"
           echo "ASSETS_STORAGE_ACCOUNT=$ASSETS_STORAGE_ACCOUNT" >> $GITHUB_ENV
+          echo "ASSETS_STORAGE_ACCOUNT_KEY=$ASSETS_STORAGE_ACCOUNT_KEY" >> $GITHUB_ENV
+          echo "INBOX_STORAGE_ACCOUNT=$INBOX_STORAGE_ACCOUNT" >> $GITHUB_ENV
+          echo "INBOX_STORAGE_ACCOUNT_KEY=$INBOX_STORAGE_ACCOUNT_KEY" >> $GITHUB_ENV
           echo "DID_HOST=$DID_HOST" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "API_KEY=$API_KEY" >> $GITHUB_ENV
+          echo "CONNECTOR_NAME=$CONNECTOR_NAME" >> $GITHUB_ENV
+          echo "KEY_VAULT=$KEY_VAULT" >> $GITHUB_ENV
           echo "::set-output name=${{ matrix.participant }}_edc_host::${EDC_HOST}"
           echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
           echo "::set-output name=${{ matrix.participant }}_api_key::${API_KEY}"
@@ -326,10 +350,25 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
           # Terraform variables not included in terraform.tfvars.
-          TF_VAR_key_file: "key.pem"
           TF_VAR_public_key_jwk_file: "key.public.jwk"
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
           TF_VAR_app_insights_connection_string: ${{ needs.Deploy-Dataspace.outputs.app_insights_connection_string }}
+
+      - name: 'Az CLI re-login (refresh role assignments)'
+        uses: azure/login@v1
+        with:
+          client-id: ${{ secrets.ARM_CLIENT_ID }}
+          tenant-id: ${{ secrets.ARM_TENANT_ID }}
+          subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+
+      - name: 'Upload private key as vault secret'
+        run: az keyvault secret set --name "$CONNECTOR_NAME" --vault-name "$KEY_VAULT" --file key.pem -o none
+
+      - name: 'Upload asset storage account key as vault secret'
+        run: az keyvault secret set --name "$ASSETS_STORAGE_ACCOUNT-key1" --vault-name "$KEY_VAULT" --value "$ASSETS_STORAGE_ACCOUNT_KEY" -o none
+
+      - name: 'Upload inbox storage account key as vault secret'
+        run: az keyvault secret set --name "$INBOX_STORAGE_ACCOUNT-key1" --vault-name "$KEY_VAULT" --value "$INBOX_STORAGE_ACCOUNT_KEY" -o none
 
       - name: 'Verify did endpoint is available'
         run: curl https://$DID_HOST/.well-known/did.json | jq '.id'
