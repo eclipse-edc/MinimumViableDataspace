@@ -1,5 +1,6 @@
 services:
 
+  # EDC Connector to simulate a dataspace participant acting as a data provider which is located in EU.
   provider:
     container_name: provider
     build:
@@ -30,6 +31,7 @@ services:
     volumes:
       - ./resources:/resources
 
+  # EDC Connector to simulate a dataspace participant acting as a data consumer which is located in EU.
   consumer-eu:
     container_name: consumer-eu
     build:
@@ -60,6 +62,7 @@ services:
     volumes:
       - ./resources:/resources
 
+  # EDC Connector to simulate a dataspace participant acting as a consumer which is located in US.
   consumer-us:
     container_name: consumer-us
     build:
@@ -90,6 +93,7 @@ services:
     volumes:
       - ./resources:/resources
 
+  # Usages postman collections for initial data seeding to connectors.
   newman:
     container_name: newman
     image: postman/newman
@@ -110,6 +114,7 @@ services:
       provider:
         condition: service_healthy
 
+  # A nginx based HTTP server to serve dataspace participants DIDs.
   did-server:
     container_name: did-server
     image: nginx
@@ -118,6 +123,7 @@ services:
     ports:
       - "7070:80"
 
+  # Azure blob storage simulator.
   azurite:
     container_name: azurite
     image: mcr.microsoft.com/azure-storage/azurite
@@ -126,6 +132,7 @@ services:
     environment:
       AZURITE_ACCOUNTS: providerassets:key1;consumereuassets:key2;consumerusassets:key3
 
+  # Dataspace registration service authority.
   registration-service:
     container_name: registration-service
     build:
