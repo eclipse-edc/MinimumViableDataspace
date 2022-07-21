@@ -74,7 +74,7 @@ runs:
     # This action only runs if the packages could not be restored from the cache.
     - name: Build Identity Hub packages
       run: |
-        ./gradlew publishToMavenLocal
+        ./gradlew publishToMavenLocal -Pskip.signing
       if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
       shell: bash
       working-directory: IdentityHub
