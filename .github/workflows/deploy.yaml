@@ -421,5 +421,8 @@ jobs:
           PROVIDER_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company1_did_host }}
           CONSUMER_EU_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company2_did_host }}
           CONSUMER_US_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company3_did_host }}
+          PROVIDER_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company1_edc_host }}:8181/api/identity-hub
+          CONSUMER_EU_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/identity-hub
+          CONSUMER_US_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/identity-hub
           API_KEY: ${{ needs.Deploy-Participants.outputs.company2_api_key }}
           TEST_ENVIRONMENT: "cloud"

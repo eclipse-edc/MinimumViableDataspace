@@ -11,17 +11,20 @@ development we have to use locally published dependencies, once this is done MVD
 ./gradlew build -x test
 ```
 
-#### Publish EDC and Registration Service to local Maven
+#### Publish EDC Registration Service and Identity Hub to local Maven
 
 Checkout [Eclipse DataSpaceConnector repository](https://github.com/eclipse-dataspaceconnector/DataSpaceConnector).
 
 Publish EDC libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal -Pskip.signing` from EDC root
 folder. On windows powershell command `./gradlew publishToMavenLocal -P"skip.signing"` can be used.
 
-Checkout [Registration Service repository](https://github.com/eclipse-dataspaceconnector/RegistrationService).
+Checkout [Registration Service repository](https://github.com/eclipse-dataspaceconnector/RegistrationService). 
 
-Publish Registration Service libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Registration Service root
-folder.
+Publish Registration Service libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Registration Service root folder.
+
+Checkout [Identity Hub repository](https://github.com/eclipse-dataspaceconnector/IdentityHub).
+
+Publish Identity Hub libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Identity Hub root folder.
 
 ### Running test locally
 

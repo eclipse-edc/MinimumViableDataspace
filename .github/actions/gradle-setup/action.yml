@@ -18,6 +18,13 @@ runs:
         path: RegistrationService
         ref: 374c14bcca23ddb1dcd7476a27264510e54de7fa
 
+    - name: Checkout Identity Hub
+      uses: actions/checkout@v2
+      with:
+        repository: eclipse-dataspaceconnector/IdentityHub
+        path: IdentityHub
+        ref: bc13cf0cb8589b792eef733c7cf7b3422476add5
+
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2
       with:
@@ -34,7 +41,7 @@ runs:
       with:
         path: ~/.m2
         # .git/FETCH_HEAD contains latest commit ID
-        key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}-${{ hashFiles('RegistrationService/.git/FETCH_HEAD') }}
+        key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}-${{ hashFiles('RegistrationService/.git/FETCH_HEAD') }}-${{ hashFiles('IdentityHub/.git/FETCH_HEAD') }}
 
     # Install EDC packages into ~/.m2.
     # This action only runs if the packages could not be restored from the cache.
@@ -45,7 +52,7 @@ runs:
       shell: bash
       working-directory: DataSpaceConnector
 
-    - name: Delete EDC packages
+    - name: Delete local EDC repository
       run: rm -r DataSpaceConnector
       shell: bash
 
@@ -61,4 +68,17 @@ runs:
     # Keep RegistrationService sources as needed for build
     - name: Move Registration Service packages out of build directory
       run: mv RegistrationService ${{ runner.temp }}
+      shell: bash
+
+    # Install Identity Hub packages into ~/.m2.
+    # This action only runs if the packages could not be restored from the cache.
+    - name: Build Identity Hub packages
+      run: |
+        ./gradlew publishToMavenLocal -Pskip.signing
+      if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
+      shell: bash
+      working-directory: IdentityHub
+
+    - name: Delete local Identity Hub repository
+      run: rm -r IdentityHub
       shell: bash
