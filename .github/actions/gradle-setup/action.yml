@@ -23,7 +23,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/IdentityHub
         path: IdentityHub
-        ref: 2561fba2129c9f75417d467c89982fd83a7808cb
+        ref: bc13cf0cb8589b792eef733c7cf7b3422476add5
 
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2
@@ -74,7 +74,7 @@ runs:
     # This action only runs if the packages could not be restored from the cache.
     - name: Build Identity Hub packages
       run: |
-        ./gradlew publishToMavenLocal -Pskip.signing
+        ./gradlew publishToMavenLocal
       if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
       shell: bash
       working-directory: IdentityHub
