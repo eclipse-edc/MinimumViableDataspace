@@ -132,7 +132,6 @@ Once completed, following services will start within their docker containers:
 - A `HTTP Nginx Server` (to serve DIDs) 
 - An `Azurite` blob storage service 
   
-
 _Note, the `Newman` docker container will automatically stop after seeding initial data from postman scripts._
 
 `EDC Connectors` need to be registered using `Registration Service` CLI client jar. After publishing `Registration Service` locally the client jar should be available under the `Registration Service` root project folder in _client-cli/build/libs_.
