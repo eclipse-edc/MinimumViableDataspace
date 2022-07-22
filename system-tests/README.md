@@ -1,119 +1,230 @@
-## System tests
+# System tests
 
-The test copy a file from provider to consumer blob storage account.
+The system tests copy a file from a provider to a consumer blob storage account.
 
-### Building MVD project
+## Publish/Build Tasks
 
-MVD dependencies are Eclipse DataSpaceConnector(EDC) and Registration Service. Both of these dependencies are not published to any central artifactory yet so in local
-development we have to use locally published dependencies, once this is done MVD can be build using
+> ! Important Note !
+> 
+> MVD dependencies are Eclipse DataSpaceConnector(EDC) and Registration Service. Both of these dependencies 
+> are __not__ published to any central artifact repository yet, so in local development we have to use locally 
+> published dependencies.
+>
+>In order to use the correct version of each repo required by the `MVD`, you need to look in [action.yml](./.github/actions/../../../.github/actions/gradle-setup/action.yml) for the hashes of the versions of the `EDC` and the `Registration Service` that are being used by the `MVD`.
+>
+> For Example, the `Registration Service` and `EDC` repository hash can be found in the _Checkout_ steps  (in the `ref` property) of [action.yml](./.github/actions/../../../.github/actions/gradle-setup/action.yml):
+
+```yml
+    - name: Checkout EDC
+      uses: actions/checkout@v2
+      with:
+        repository: eclipse-dataspaceconnector/DataSpaceConnector
+        path: DataSpaceConnector
+        ref: 3ff940b720f44826df28e893fb31344eb6faacef
+
+    - name: Checkout Registration Service
+      uses: actions/checkout@v2
+      with:
+        repository: eclipse-dataspaceconnector/RegistrationService
+        path: RegistrationService
+        ref: 374c14bcca23ddb1dcd7476a27264510e54de7fa
+```
+
+> After you have cloned the `EDC` and `Registration Service` repos locally you should run the command to
+> `reset` to the specific hash.  
+>
+> For Example:
+
+```bash
+# EDC (in the EDC root folder)
+git reset --hard 3ff940b720f44826df28e893fb31344eb6faacef
+
+# Registration Service (in the Registration Service root folder)
+git reset --hard 374c14bcca23ddb1dcd7476a27264510e54de7fa
+```
+
+> Now you can follow the rest of the process below.  
+> Once the publications are available in _Maven Central_ this process will not be necessary
+> 
+<br />
+
+### EDC
+
+<br />
+
+Execute the following command  from `EDC` root folder.
+
+```bash
+./gradlew publishToMavenLocal -Pskip.signing
+```
+
+_Note for Windows PowerShell, the following command should be used:_
+
+```powershell
+./gradlew publishToMavenLocal -P"skip.signing"
+```
+
+<br />
+
+### Registration Service
+
+<br />
+
+Execute the following command from `Registration Service` root folder:
+
+```bash
+./gradlew publishToMavenLocal
+```
+
+<br />
+
+### MVD
+
+<br />
+
+Now that the publishing to the local repositories has been completed, `MVD` can be built by running the following command from the root of the `MVD` project folder:
 
 ```bash
 ./gradlew build -x test
 ```
 
-#### Publish EDC and Registration Service to local Maven
+## Local Test Execution
 
-Checkout [Eclipse DataSpaceConnector repository](https://github.com/eclipse-dataspaceconnector/DataSpaceConnector).
+- `MVD` system tests can be executed locally against a local `MVD` instance. 
+- `MVD` runs three `EDC Connectors` and one `Registration Service`.
 
-Publish EDC libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal -Pskip.signing` from EDC root
-folder. On windows powershell command `./gradlew publishToMavenLocal -P"skip.signing"` can be used.
+_Note: Ensure that you are able to build `MVD` locally as described in the previous [section](#mvd)._
 
-Checkout [Registration Service repository](https://github.com/eclipse-dataspaceconnector/RegistrationService).
+First, we need to build `EDC Connector launcher` and `Registration Service launcher`.
 
-Publish Registration Service libraries to local Maven artifactory by executing gradle command `./gradlew publishToMavenLocal` from Registration Service root
-folder.
+From the `MVD` root folder, execute the following command:
 
-### Running test locally
+```bash
+./gradlew -DuseFsVault="true" :launcher:shadowJar
+```
 
-MVD System tests can be executed locally against a local MVD instance. MVD runs three EDC Connectors and one Registration Service.
+From the `Registration Service` root folder, execute the following command:
 
-First please make sure that you are able to build MVD locally as described in [Building MVD project](#building-mvd-project) section.
+```bash
+./gradlew :launcher:shadowJar
+```
 
-- We need to build EDC Connector launcher and Registration Service launcher.
-- Go to MVD root folder. And execute
+From the `MVD` root folder execute the following commands to set the `Registration Launcher` path environment variable and start `MVD` using the `docker-compose.yml` file.
 
-    ```bash
-    ./gradlew -DuseFsVault="true" :launcher:shadowJar
-    ```
+```bash
+export REGISTRATION_SERVICE_LAUNCHER_PATH=/home/user/RegistrationService/launcher
+docker-compose -f system-tests/docker-compose.yml up --build
+```
 
-- Go to Registration service root folder. And execute
+_Note for Windows PowerShell, the following commands should be used from the `MVD` project root.  (The path will depend on the location of the your `RegistrationService` project root):_
 
-    ```bash
-    ./gradlew :launcher:shadowJar
-    ```
+```powershell
+$Env:REGISTRATION_SERVICE_LAUNCHER_PATH="c:/RegistrationService/launcher"
+docker-compose -f system-tests/docker-compose.yml up --build
+```
 
-- Start MVD using docker-compose.yml file.
+Once completed, following services will start within their docker containers:
+- 3 `EDC Connectors`
+  - _consumer-us_
+  - _consumer-eu_
+  - _provider_ (which will also be seeded with initial required data using a [postman collection](../deployment/data/MVD.postman_collection.json))
+- A `Registration Service`
+- A `HTTP Nginx Server` (to serve DIDs) 
+- An `Azurite` blob storage service 
+  
 
-    ```bash
-    export REGISTRATION_SERVICE_LAUNCHER_PATH=Registration service launcher path e.g. `/home/user/RegistrationService/launcher`.
-    docker-compose -f system-tests/docker-compose.yml up --build
-    ```
+_Note, the `Newman` docker container will automatically stop after seeding initial data from postman scripts._
 
-  for windows powershell
+`EDC Connectors` need to be registered using `Registration Service` CLI client jar. After publishing `Registration Service` locally the client jar should be available under the `Registration Service` root project folder in _client-cli/build/libs_.
 
-    ```powershell
-    $Env:REGISTRATION_SERVICE_LAUNCHER_PATH = "Registration service launcher path e.g. /home/user/RegistrationService/launcher"
-    docker-compose -f system-tests/docker-compose.yml up --build
-    ```
+```bash
+# Replace path according to your local set up
+export REGISTRATION_SERVICE_CLI_JAR_PATH=c:/RegistrationService/client-cli/build/libs/registration-service-cli.jar
 
-- This will start three EDC Connectors, one Registration Service, one HTTP Nginx Server to serve DIDs, Azurite blob storage service and also will seed initial required data using a [postman collection](../deployment/data/MVD.postman_collection.json).
+# Register Participants
+./system-tests/resources/register-participants.sh
+```
 
-- `newman` docker container will automatically stop after seeding initial data from postman scripts.
+_Note for Windows PowerShell, the following commands should be run the the `MVD` root project folder._
 
-- EDC Connectors needs to be registered using Registration Service CLI client jar. After publishing RegistrationService locally the client jar should be available under `RegistrationService-Root/client-cli/build/libs` folder.
+```powershell
+# Replace path according to your local set up
 
-    ```bash
-    export REGISTRATION_SERVICE_CLI_JAR_PATH=registration service client jar path
-    ./system-tests/resources/register-participants.sh
-    ```
+$Env:REGISTRATION_SERVICE_CLI_JAR_PATH = "c:\RegistrationService\client-cli\build\libs\registration-service-cli.jar"
 
-  for windows powershell
+# Register Provider
+java -jar $Env:REGISTRATION_SERVICE_CLI_JAR_PATH -s="http://localhost:8184/api" participants add --request="{ \`"name\`": \`"provider\`", \`"supportedProtocols\`": [ \`"ids-multipart\`" ], \`"url\`": \`"http://provider:8282\`" }"
 
-    ```powershell
-    $Env:REGISTRATION_SERVICE_CLI_JAR_PATH = "registration service client jar path"
-    # Execute command by copying it from shell script ./system-tests/resources/register-participants.sh or use git-bash to execute this shell script.
-    ```
+# Register Consumer-EU
+java -jar $Env:REGISTRATION_SERVICE_CLI_JAR_PATH -s="http://localhost:8184/api" participants add --request="{ \`"name\`": \`"consumer-eu\`", \`"supportedProtocols\`": [ \`"ids-multipart\`" ], \`"url\`": \`"http://consumer-eu:8282\`" }"
 
-- Run MVD system tests, and for that environment variable `TEST_ENVIRONMENT` must be set to `local` to enable local blob transfer test.
+# Register Consumer-US
+java -jar $Env:REGISTRATION_SERVICE_CLI_JAR_PATH -s="http://localhost:8184/api" participants add --request="{ \`"name\`": \`"consumer-us\`", \`"supportedProtocols\`": [ \`"ids-multipart\`" ], \`"url\`": \`"http://consumer-us:8282\`" }"
+```
 
-    ```bash
-    export TEST_ENVIRONMENT=local
-    ./gradlew :system-tests:test
-    ```
+Set the environment variable `TEST_ENVIRONMENT` to `local` to enable local blob transfer test and then run `MVD` system test using the following command:
 
-  for windows powershell
+```bash
+export TEST_ENVIRONMENT=local
+./gradlew :system-tests:test
+```
 
-    ```powershell
-    $Env:TEST_ENVIRONMENT = "local"
-    ./gradlew :system-tests:test
-    ```
+_Note for Windows PowerShell, the following commands should be used:_
 
-- [Storage Explorer](https://azure.microsoft.com/features/storage-explorer/) can be used to connect to Azurite storage container on `127.0.0.1:10000` port and under `consumereuassets` account transferred blob can be viewed.
+```powershell
+$Env:TEST_ENVIRONMENT = "local"
+./gradlew :system-tests:test
+```
 
-#### Local test resources
+> [Storage Explorer](https://azure.microsoft.com/features/storage-explorer/) can be used to connect to the `Azurite` storage container on `127.0.0.1:10000` port and under `consumereuassets`, account transferred blob can be viewed.
 
-Following test resources are provided in order to run MVD locally.`system-tests/docker-compose.yml` usages it to start MVD.
+### Local Test Resources
 
-- Each EDC Connector has its own set of Private and Public keys with java keystore e.g. `system-tests/resources/provider`.
+The following test resources are provided in order to run `MVD` locally. `system-tests/docker-compose.yml` usages it to start `MVD`.
 
-    ```bash
-    # generate a private key
-    openssl ecparam -name prime256v1 -genkey -noout -out private-key.pem
-    # generate corresponding public key
-    openssl ec -in private-key.pem -pubout -out public-key.pem
-    # create a self-signed certificate
-    openssl req -new -x509 -key private-key.pem -out cert.pem -days 360
-    ```
+<br>
 
-- Generated keys are imported to keystores e.g. `system-tests/resources/provider/provider-keystore.jks`. Each keystore has password `test123`.[KeyStore Explorer](https://keystore-explorer.org/) can be used to manage keystores from UI.
+---
 
-- MVD local instance usage EDC File System Vault and its keys are managed using a java properties file e.g.`system-tests/resources/provider/provider-vault.properties`. *File System Vault is NOT a secure vault and thus should only be used for testing purposes*
+<br>
 
-- Web DIDs are available under `system-tests/resources/webdid` folder. The `publicKeyJwk` section of each `did.json` was generated by converting the corresponding public key to JWK format, for example provider connector public key was converted to JWK using following command:
+Each `EDC Connector` has its own set of Private and Public keys with java keystore e.g. `system-tests/resources/provider`. These were generated using the following commands:
 
-    ```bash
-    docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < system-tests/resources/provider/public-key.pem > key.public.jwk
-    ```
+```bash
+# generate a private key
+openssl ecparam -name prime256v1 -genkey -noout -out private-key.pem
+# generate corresponding public key
+openssl ec -in private-key.pem -pubout -out public-key.pem
+# create a self-signed certificate
+openssl req -new -x509 -key private-key.pem -out cert.pem -days 360
+```
+
+Generated keys are imported to keystores e.g. `system-tests/resources/provider/provider-keystore.jks`. Each keystore has password `test123`.
+
+> [KeyStore Explorer](https://keystore-explorer.org/) can be used to manage keystores from UI.
+
+`MVD` local instance usage `EDC File System Vault` and its keys are managed using a java properties file e.g.`system-tests/resources/provider/provider-vault.properties`.
+
+> ! IMPORTANT !
+> 
+> *File System Vault is NOT a secure vault and thus should only be used for testing purposes*
+
+<br>
+
+---
+
+<br>
+
+Web DIDs are available under `system-tests/resources/webdid` folder. The `publicKeyJwk` section of each `did.json` was generated by converting the corresponding public key to JWK format, for example provider connector public key was converted to JWK using following command:
+
+```bash
+docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < system-tests/resources/provider/public-key.pem > key.public.jwk
+```
+<br>
+
+---
+
+<br>
 
 ### Debugging MVD locally
 
