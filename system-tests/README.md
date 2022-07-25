@@ -144,7 +144,9 @@ From the `Registration Service` root folder, execute the following command:
 ./gradlew :launcher:shadowJar
 ```
 
-From the `MVD` root folder execute the following commands to set the `Registration Launcher` path environment variable and start `MVD` using the `docker-compose.yml` file.
+From the `MVD` root folder execute the following commands to set the `Registration Launcher` path environment variable and start `MVD` using the `docker-compose.yml` file.  
+
+> Note that the value of the path is relative to the build system and is only here for example.
 
 ```bash
 export REGISTRATION_SERVICE_LAUNCHER_PATH=/home/user/RegistrationService/launcher
@@ -171,6 +173,8 @@ Once completed, following services will start within their docker containers:
 _Note, the `Newman` docker container will automatically stop after seeding initial data from postman scripts._
 
 `EDC Connectors` need to be registered using `Registration Service` CLI client jar. After publishing `Registration Service` locally the client jar should be available under the `Registration Service` root project folder in _client-cli/build/libs_.
+
+> Note that the value of the path is relative to the build system and is only here for example.
 
 ```bash
 # Replace path according to your local set up
