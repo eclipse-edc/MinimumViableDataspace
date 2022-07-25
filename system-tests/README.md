@@ -218,7 +218,7 @@ The following test resources are provided in order to run `MVD` locally. `system
 
 <br>
 
-Each `EDC Connector` has its own set of Private and Public keys with java keystore e.g. `system-tests/resources/provider`. These were generated using the following commands:
+Each `EDC Connector` has its own set of Private and Public keys in PEM and Java KeyStore formats, e.g. `system-tests/resources/provider`. These were generated using the following commands:
 
 ```bash
 # generate a private key
