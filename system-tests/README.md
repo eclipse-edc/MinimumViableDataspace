@@ -159,7 +159,7 @@ Once completed, following services will start within their docker containers:
   - _consumer-eu_
   - _provider_ (which will also be seeded with initial required data using a [postman collection](../deployment/data/MVD.postman_collection.json))
 - A `Registration Service`
-- A `HTTP Nginx Server` (to serve DIDs) 
+- A `HTTP Nginx Server` (to serve DID Documents)
 - An `Azurite` blob storage service 
   
 
