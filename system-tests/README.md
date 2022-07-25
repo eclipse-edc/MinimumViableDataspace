@@ -206,7 +206,7 @@ $Env:TEST_ENVIRONMENT = "local"
 ./gradlew :system-tests:test
 ```
 
-> [Storage Explorer](https://azure.microsoft.com/features/storage-explorer/) can be used to connect to the `Azurite` storage container on `127.0.0.1:10000` port and under `consumereuassets`, account transferred blob can be viewed.
+> [Storage Explorer](https://azure.microsoft.com/features/storage-explorer/) can be used to connect to the `Azurite` storage container on `127.0.0.1:10000` port and under the `consumereuassets` account, the transferred blob can be viewed.
 
 ### Local Test Resources
 
