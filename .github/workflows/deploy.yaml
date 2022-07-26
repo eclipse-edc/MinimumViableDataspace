@@ -382,6 +382,19 @@ jobs:
           deployment/seed-data.sh
         working-directory: .
 
+      - name: 'Push region verifiable credential'
+        run: |
+          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:0.0.1-SNAPSHOT:jar:all -DoutputDirectory=.
+          
+          echo "sample uuid: $(uuidgen)"
+          
+          java -jar identity-hub-cli-0.0.1-SNAPSHOT-all.jar -s=${EDC_HOST}/api/identity-hub vc add \
+            -c='{"id":"92bbb5be-085f-4150-99fe-e3180dd0cf2d","credentialSubject":{"region":"${{ matrix.region }}"}}' \
+            -s="did:web:${DID_HOST}" \
+            -i="did:web:${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}" \
+            -k="key.pem"
+          
+          java -jar identity-hub-cli-0.0.1-SNAPSHOT-all.jar -s=${EDC_HOST}/api/identity-hub vc list
       - name: 'Register participant'
         run: |
           mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:1.0.0-SNAPSHOT:jar:all -DoutputDirectory=.
