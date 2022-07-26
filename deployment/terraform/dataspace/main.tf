@@ -91,8 +91,8 @@ resource "azurerm_container_group" "registration-service" {
         path = "/api/check/health"
       }
       initial_delay_seconds = 10
-      failure_threshold = 6
-      timeout_seconds = 3
+      failure_threshold     = 6
+      timeout_seconds       = 3
     }
   }
 }
