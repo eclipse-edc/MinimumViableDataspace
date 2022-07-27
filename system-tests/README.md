@@ -149,7 +149,7 @@ From the `MVD` root folder execute the following commands to set the `Registrati
 > Note that the value of the path is relative to the build system and is only here for example. You **will need to change this**
 
 ```bash
-export REGISTRATION_SERVICE_LAUNCHER_PATH=/home/user/RegistrationService/launcher
+export REGISTRATION_SERVICE_LAUNCHER_PATH=/path/to/your/RegistrationService/launcher
 docker-compose -f system-tests/docker-compose.yml up --build
 ```
 
