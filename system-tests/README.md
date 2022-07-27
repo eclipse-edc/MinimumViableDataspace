@@ -242,7 +242,7 @@ Generated keys are imported to keystores e.g. `system-tests/resources/vault/prov
 
 > [KeyStore Explorer](https://keystore-explorer.org/) can be used to manage keystores from UI.
 
-`MVD` local instance usage `EDC File System Vault` and its keys are managed using a java properties file e.g.`system-tests/resources/vault/provider/provider-vault.properties`.
+`MVD` local instances use a file-system based vault and its keys are managed using a java properties file e.g.`system-tests/resources/vault/provider/provider-vault.properties`.
 
 > ! IMPORTANT !
 > 
