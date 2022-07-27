@@ -12,7 +12,7 @@ output "app_insights_connection_string" {
 }
 
 output "registration_service_url" {
-  value = "http://${azurerm_container_group.registration-service.fqdn}:${local.edc_default_port}"
+  value = local.registration_service_url
 }
 
 output "dataspace_did_host" {

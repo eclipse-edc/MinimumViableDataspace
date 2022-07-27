@@ -220,21 +220,11 @@ jobs:
           name: ${{ steps.runterraform.outputs.connector_name }}
           vault: ${{ steps.runterraform.outputs.key_vault }}
 
-      # To support --retry-all-errors flag at least curl version 7.71.0 is required.
-      - name: 'Upgrade Curl'
-        run: sudo -E bash deployment/curl-upgrade.sh
-        working-directory: .
-        env:
-          VERSION: 7.84.0
-
       - name: 'Verify GAIA-X Authority DID endpoint is available'
         run: curl https://${{ steps.runterraform.outputs.gaiax_did_host }}/.well-known/did.json | jq '.id'
 
       - name: 'Verify Dataspace DID endpoint is available'
         run: curl https://${{ steps.runterraform.outputs.dataspace_did_host }}/.well-known/did.json | jq '.id'
-
-      - name: 'Verify deployed Registration Service is healthy'
-        run: curl --retry 10 --retry-all-errors --fail ${{ steps.runterraform.outputs.registration_service_url }}/api/check/health
 
   # Deploy dataspace participants in parallel.
   Deploy-Participants:
@@ -295,7 +285,7 @@ jobs:
           dashboard_image = "mvd/data-dashboard:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
-          registration_service_api_url = "${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/api"
+          registration_service_api_url = "${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/authority"
           EOF
 
       - name: 'Az CLI login'
@@ -398,10 +388,15 @@ jobs:
 
       - name: 'Register participant'
         run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:1.0.0-SNAPSHOT:jar:all -DoutputDirectory=.
-          java -jar registration-service-cli-1.0.0-SNAPSHOT-all.jar -s=$REGISTRATION_SERVICE_API_URL participants add --request='{ "name": "${{matrix.participant}}", "supportedProtocols": [ "ids-multipart" ], "url": "http://${{ env.EDC_HOST }}:8282" }'
+          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:0.0.1-SNAPSHOT:jar:all -DoutputDirectory=.
+          java -jar registration-service-cli-0.0.1-SNAPSHOT-all.jar \
+            -s $REGISTRATION_SERVICE_API_URL \
+            -d did:web:$DID_HOST \
+            -k key.pem \
+            participants add \
+            --ids-url "http://${{ env.EDC_HOST }}:8282"
         env:
-          REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/api
+          REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/authority
 
   Verify:
     needs:

@@ -16,7 +16,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/RegistrationService
         path: RegistrationService
-        ref: 374c14bcca23ddb1dcd7476a27264510e54de7fa
+        ref: daa414856b42c8534e9123279112e33b366039b4
 
     - name: Checkout Identity Hub
       uses: actions/checkout@v2

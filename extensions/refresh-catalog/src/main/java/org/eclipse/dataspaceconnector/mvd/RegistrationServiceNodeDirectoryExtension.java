@@ -15,10 +15,13 @@
 package org.eclipse.dataspaceconnector.mvd;
 
 import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNodeDirectory;
-import org.eclipse.dataspaceconnector.common.configuration.ConfigurationFunctions;
 import org.eclipse.dataspaceconnector.registration.client.ApiClientFactory;
 import org.eclipse.dataspaceconnector.registration.client.api.RegistryApi;
-import org.eclipse.dataspaceconnector.spi.system.Provides;
+import org.eclipse.dataspaceconnector.spi.EdcSetting;
+import org.eclipse.dataspaceconnector.spi.iam.IdentityService;
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
+import org.eclipse.dataspaceconnector.spi.system.Inject;
+import org.eclipse.dataspaceconnector.spi.system.Provider;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtension;
 import org.eclipse.dataspaceconnector.spi.system.ServiceExtensionContext;
 import org.eclipse.dataspaceconnector.spi.types.TypeManager;
@@ -26,18 +29,34 @@ import org.eclipse.dataspaceconnector.spi.types.TypeManager;
 /**
  * Extension to set up federated cache directory using Registration Service API as backend.
  */
-@Provides(FederatedCacheNodeDirectory.class)
 public class RegistrationServiceNodeDirectoryExtension implements ServiceExtension {
 
-    static final String API_URL = "http://localhost:8181/api";
+    @EdcSetting
+    private static final String REGISTRATION_SERVICE_API_URL = "registration.service.api.url";
+    private static final String REGISTRATION_SERVICE_API_URL_DEFAULT = "http://localhost:8182/authority";
+
+    @Inject
+    private Monitor monitor;
+
+    @Inject
+    private TypeManager typeManager;
+
+    @Inject
+    private IdentityService identityService;
+
+    private String registrationServiceApiUrl;
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var monitor = context.getMonitor();
-        TypeManager typeManager = context.getTypeManager();
-        var registrationServiceApiUrl = ConfigurationFunctions.propOrEnv("registration.service.api.url", API_URL);
-        var service = new RegistrationServiceNodeDirectory(new RegistryApi(ApiClientFactory.createApiClient(registrationServiceApiUrl)));
-        context.registerService(FederatedCacheNodeDirectory.class, service);
+        registrationServiceApiUrl = context.getSetting(
+                REGISTRATION_SERVICE_API_URL, REGISTRATION_SERVICE_API_URL_DEFAULT);
+    }
+
+    @Provider
+    public FederatedCacheNodeDirectory federatedCacheNodeDirectory() {
+        var apiClient = ApiClientFactory.createApiClient(registrationServiceApiUrl, identityService::obtainClientCredentials);
+        var registryApiClient = new RegistryApi(apiClient);
+        return new RegistrationServiceNodeDirectory(registryApiClient);
     }
 }
 
