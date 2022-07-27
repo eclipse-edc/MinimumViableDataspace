@@ -128,7 +128,9 @@ resource "azurerm_container_group" "edc" {
         port = 8181
         path = "/api/check/health"
       }
-      failure_threshold = 6
+      initial_delay_seconds = 10
+      failure_threshold     = 6
+      timeout_seconds       = 3
     }
   }
 }
