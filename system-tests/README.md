@@ -71,13 +71,7 @@ git checkout 374c14bcca23ddb1dcd7476a27264510e54de7fa
 Execute the following command  from `EDC` root folder.
 
 ```bash
-./gradlew publishToMavenLocal -Pskip.signing
-```
-
-_Note for Windows PowerShell, the following command should be used:_
-
-```powershell
-./gradlew publishToMavenLocal -P"skip.signing"
+./gradlew publishToMavenLocal -P "skip.signing"
 ```
 
 <br />
@@ -90,13 +84,7 @@ Execute the following command from `Identity Hub` root folder:
 
 
 ```bash
-./gradlew publishToMavenLocal -Pskip.signing
-```
-
-_Note for Windows PowerShell, the following command should be used:_
-
-```powershell
-./gradlew publishToMavenLocal -P"skip.signing"
+./gradlew publishToMavenLocal -P "skip.signing"
 ```
 
 <br />
@@ -130,7 +118,7 @@ Now that the publishing to the local repositories has been completed, `MVD` can 
 
 _Note: Ensure that you are able to build `MVD` locally as described in the previous [section](#mvd)._
 
-First, we need to build the `EDC Connector` (which also includes the `Identity Hub`) and `Registration Service` runtimes.
+First, we need to build the `EDC Connector` (which also includes the `Identity Hub`) and `Registration Service` runtimes.  As we are running `MVD` locally, we include  `useFsVault` to indicate that the system will be using the local file-system based key vault.
 
 From the `MVD` root folder, execute the following command:
 
