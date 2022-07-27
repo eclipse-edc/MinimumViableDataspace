@@ -146,7 +146,7 @@ From the `Registration Service` root folder, execute the following command:
 
 From the `MVD` root folder execute the following commands to set the `Registration Launcher` path environment variable and start `MVD` using the `docker-compose.yml` file.  
 
-> Note that the value of the path is relative to the build system and is only here for example.
+> Note that the value of the path is relative to the build system and is only here for example. You **will need to change this**
 
 ```bash
 export REGISTRATION_SERVICE_LAUNCHER_PATH=/home/user/RegistrationService/launcher
