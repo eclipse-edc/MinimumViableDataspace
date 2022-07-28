@@ -19,7 +19,7 @@ services:
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-      REGISTRATION_SERVICE_API_URL: http://registration-service:8181/api
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
     depends_on:
       - did-server
       - azurite
@@ -50,7 +50,7 @@ services:
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-      REGISTRATION_SERVICE_API_URL: http://registration-service:8181/api
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
     depends_on:
       - did-server
       - azurite
@@ -81,7 +81,7 @@ services:
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-      REGISTRATION_SERVICE_API_URL: http://registration-service:8181/api
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
     depends_on:
       - did-server
       - azurite
@@ -141,7 +141,27 @@ services:
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
     environment:
-      EDC_API_AUTH_KEY: ApiKeyDefaultValue
+      JWT_AUDIENCE: http://registration-service:8184/authority
+      WEB_HTTP_AUTHORITY_PORT: 8184
+      WEB_HTTP_AUTHORITY_PATH: /authority
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
     ports:
-      - "8184:8181"
+      - "8184:8184"
       - "5008:5008"
+
+  # cli-tools to help setup MVD environment e.g. registering participant to authority.
+  cli-tools:
+    container_name: cli-tools
+    build:
+      context: ./resources/cli-tools
+    volumes:
+      - ./resources:/resources
+    depends_on:
+      consumer-eu:
+        condition: service_healthy
+      consumer-us:
+        condition: service_healthy
+      provider:
+        condition: service_healthy
+      registration-service:
+        condition: service_healthy

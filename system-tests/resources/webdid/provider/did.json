@@ -1,9 +1,9 @@
 {
-	"id": "did:web:provider-did-server:provider",
+	"id": "did:web:did-server:provider",
 	"@context": [
 		"https://www.w3.org/ns/did/v1",
 		{
-			"@base": "did:web:provider-did-server:provider"
+			"@base": "did:web:did-server:provider"
 		}
 	],
 	"service": [{
