@@ -285,7 +285,7 @@ jobs:
           dashboard_image = "mvd/data-dashboard:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
-          registration_service_api_url = "${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/authority"
+          registration_service_api_url = "${{ needs.Deploy-Dataspace.outputs.registration_service_url }}"
           EOF
 
       - name: 'Az CLI login'
@@ -396,7 +396,7 @@ jobs:
             participants add \
             --ids-url "http://${{ env.EDC_HOST }}:8282"
         env:
-          REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}/authority
+          REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}
 
   Verify:
     needs:
