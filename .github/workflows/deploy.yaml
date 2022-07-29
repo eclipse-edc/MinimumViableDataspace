@@ -226,6 +226,11 @@ jobs:
       - name: 'Verify Dataspace DID endpoint is available'
         run: curl https://${{ steps.runterraform.outputs.dataspace_did_host }}/.well-known/did.json | jq '.id'
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: gaiaxkey
+          path: deployment/terraform/dataspace/gaiaxkey.pem
+
   # Deploy dataspace participants in parallel.
   Deploy-Participants:
     needs:
@@ -263,12 +268,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - uses: ./.github/actions/gradle-setup
 
       - name: 'Generate Participant key'
         uses: ./.github/actions/generate-key
         with:
-          keyFileNamePrefix: key
+          keyFileNamePrefix: participantkey
           directory: deployment/terraform/participant
 
       - name: 'Create tfvars file'
@@ -347,7 +353,7 @@ jobs:
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
           # Terraform variables not included in terraform.tfvars.
-          TF_VAR_public_key_jwk_file: "key.public.jwk"
+          TF_VAR_public_key_jwk_file: "participantkey.public.jwk"
           TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
           TF_VAR_app_insights_connection_string: ${{ needs.Deploy-Dataspace.outputs.app_insights_connection_string }}
 
@@ -359,7 +365,7 @@ jobs:
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: 'Upload private key as vault secret'
-        run: az keyvault secret set --name "$CONNECTOR_NAME" --vault-name "$KEY_VAULT" --file key.pem -o none
+        run: az keyvault secret set --name "$CONNECTOR_NAME" --vault-name "$KEY_VAULT" --file participantkey.pem -o none
 
       - name: 'Upload asset storage account key as vault secret'
         run: az keyvault secret set --name "$ASSETS_STORAGE_ACCOUNT-key1" --vault-name "$KEY_VAULT" --value "$ASSETS_STORAGE_ACCOUNT_KEY" -o none
@@ -386,13 +392,37 @@ jobs:
           deployment/seed-data.sh
         working-directory: .
 
+      - uses: actions/download-artifact@v3
+        with:
+          name: gaiaxkey
+          path: deployment/terraform/participant
+
+      - name: 'Push region verifiable credential'
+        run: |
+          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:$cli_version:jar:all -DoutputDirectory=.
+          
+          id=$(uuidgen)
+          
+          java -jar identity-hub-cli-$cli_version-all.jar -s=$identityHubUrl vc add \
+            -c='{"id":"'$id'","credentialSubject":{"region":"'$region'"}}' \
+            -b="did:web:$DID_HOST" \
+            -i="did:web:$issuer" \
+            -k="gaiaxkey.pem"
+          
+          java -jar identity-hub-cli-$cli_version-all.jar -s=$identityHubUrl vc list
+        env:
+          cli_version: 0.0.1-SNAPSHOT
+          region: ${{ matrix.region }}
+          issuer: ${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
+          identityHubUrl: http://${{ env.EDC_HOST }}:8181/api/identity-hub
+
       - name: 'Register participant'
         run: |
           mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:0.0.1-SNAPSHOT:jar:all -DoutputDirectory=.
           java -jar registration-service-cli-0.0.1-SNAPSHOT-all.jar \
             -s $REGISTRATION_SERVICE_API_URL \
             -d did:web:$DID_HOST \
-            -k key.pem \
+            -k participantkey.pem \
             participants add \
             --ids-url "http://${{ env.EDC_HOST }}:8282"
         env:

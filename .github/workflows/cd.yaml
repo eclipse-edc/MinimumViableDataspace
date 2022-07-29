@@ -34,8 +34,21 @@ jobs:
         env:
            REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
 
+      - name: 'Copy Identity Hub CLI'
+        run: |
+          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:$IDENTITY_HUB_VERSION:jar:all -DoutputDirectory=.
+          mv identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar identity-hub-cli.jar
+        working-directory: system-tests/resources/cli-tools
+        env:
+          IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
+
+      - name: 'Upgrade docker-compose (for --wait option)'
+        run: |
+          sudo curl -L https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
       - name: 'Run MVD docker-compose'
-        run: docker-compose -f system-tests/docker-compose.yml up --build --detach
+        run: docker-compose -f system-tests/docker-compose.yml up --build --wait
         timeout-minutes: 10
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
