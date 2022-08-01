@@ -381,6 +381,8 @@ jobs:
         run: curl --retry 10 --retry-all-errors --fail http://${EDC_HOST}:8181/api/check/health
 
       - name: 'Seed data'
+        env:
+          PARTICIPANT_ID: ${{ matrix.participant }}
         run: |
           npm install -g newman
           deployment/seed-data.sh
