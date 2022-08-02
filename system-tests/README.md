@@ -126,6 +126,14 @@ From the `MVD` root folder, execute the following command:
 ./gradlew -DuseFsVault="true" :launcher:shadowJar
 ```
 
+From the `Identity Hub` root folder, execute the following command:
+
+```bash
+./gradlew :client-cli:shadowJar
+```
+
+Copy Identity Hub client-cli jar which should be located at `<Identity-Hub-root-folder>/client-cli/build/libs/identity-hub-cli.jar` into MVD at folder location `<MVD-root-folder>/system-tests/resources/cli-tools`. If required then update copied jar file name to `identity-hub-cli.jar`, full path will be `<MVD-root-folder>/system-tests/resources/cli-tools/identity-hub-cli.jar`. This `identity-hub-cli.jar` will be used by `cli-tools` docker container to execute the `Identity Hub` commands.
+
 From the `Registration Service` root folder, execute the following command:
 
 ```bash

@@ -106,6 +106,7 @@ services:
       API_KEY: ApiKeyDefaultValue
       EDC_HOST: provider
       ASSETS_STORAGE_ACCOUNT: providerassets
+      PARTICIPANT_ID: provider
     depends_on:
       consumer-eu:
         condition: service_healthy
