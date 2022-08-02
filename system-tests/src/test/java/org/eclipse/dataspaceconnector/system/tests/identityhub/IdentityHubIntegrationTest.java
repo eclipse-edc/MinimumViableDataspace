@@ -17,6 +17,8 @@ package org.eclipse.dataspaceconnector.system.tests.identityhub;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import org.eclipse.dataspaceconnector.identityhub.client.IdentityHubClientImpl;
+import org.eclipse.dataspaceconnector.spi.monitor.ConsoleMonitor;
+import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -43,11 +45,13 @@ public class IdentityHubIntegrationTest {
             .build();
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    private static final Monitor MONITOR = new ConsoleMonitor();
+
     private IdentityHubClientImpl client;
 
     @BeforeEach
     void setUp() {
-        client = new IdentityHubClientImpl(OK_HTTP_CLIENT, OBJECT_MAPPER);
+        client = new IdentityHubClientImpl(OK_HTTP_CLIENT, OBJECT_MAPPER, MONITOR);
     }
 
     @ParameterizedTest
