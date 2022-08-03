@@ -34,6 +34,9 @@ dependencies {
     implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
     implementation("${edcGroup}:http:${edcVersion}")
 
+    // JDK Logger
+    implementation("${edcGroup}:jdk-logger-monitor:${edcVersion}")
+
     // IDS
     implementation("${edcGroup}:ids:${edcVersion}") {
         // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
