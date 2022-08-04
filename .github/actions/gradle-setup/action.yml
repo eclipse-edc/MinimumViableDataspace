@@ -23,7 +23,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/IdentityHub
         path: IdentityHub
-        ref: 7c6908f9a7448dbc787e1afe505c49370f5f6671
+        ref: 76234800e5ebd7ccfb97aeab305a34961f50cdec
 
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2

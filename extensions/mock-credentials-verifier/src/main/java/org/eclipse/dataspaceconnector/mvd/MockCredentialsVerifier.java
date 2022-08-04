@@ -24,16 +24,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import static java.net.URLDecoder.decode;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toMap;
+import static org.eclipse.dataspaceconnector.identityhub.credentials.VerifiableCredentialsJwtService.VERIFIABLE_CREDENTIALS_KEY;
 
 /**
  * Mock credentials verifier that simply returns claims parsed from the URL configured for the identity hub.
+ * It will be replaced soon by the IdentityHubCredentialsVerifier.
  */
 public class MockCredentialsVerifier implements CredentialsVerifier {
+    private static final String VERIFIABLE_CREDENTIAL_ID_KEY = "id";
+    private static final String CREDENTIAL_SUBJECT_KEY = "credentialSubject";
+    private static final String ISSUER_KEY = "iss";
     private static final String IDENTITY_HUB_SERVICE_TYPE = "IdentityHub";
 
     private final Monitor monitor;
@@ -47,8 +53,10 @@ public class MockCredentialsVerifier implements CredentialsVerifier {
      * <p>
      * The URL is not accessed, and URL parts other than the query string are unimportant.
      * <p>
-     * For example, if the Identity Hub URL is {@code http://dummy.site/foo?region=us&tier=GOLD}, the verifier
-     * returns {@code Map.of("region", "us", "tier", "GOLD"}.
+     * For example, if {@code hubBaseUrl} is {@code http://dummy.site/foo?region=us&tier=GOLD}, the verifier
+     * returns {@code
+     * Map.of("vcId, Map.of("vc", Map.of("credentialSubject", Map.of("region", "us", "tier", "GOLD")),
+     *                            Map.of("iss", "someIssuer")))}
      *
      * @param didDocument the DID document containing the Identity Hub URL.
      * @return claims as defined in query string parameters.
@@ -59,7 +67,7 @@ public class MockCredentialsVerifier implements CredentialsVerifier {
 
         var hubBaseUrlResult = getIdentityHubBaseUrl(didDocument);
         if (hubBaseUrlResult.failed()) {
-            monitor.debug("Failed to get Hub URL from document");
+            monitor.debug(String.join(",", hubBaseUrlResult.getFailureMessages()));
             return Result.failure(hubBaseUrlResult.getFailureMessages());
         }
         var hubBaseUrl = hubBaseUrlResult.getContent();
@@ -76,10 +84,20 @@ public class MockCredentialsVerifier implements CredentialsVerifier {
                             s -> (Object) decode(s[1], UTF_8)
                     ));
             monitor.debug("Completing (mock) credential verification. Claims: " + claims);
-            return Result.success(claims);
+            return Result.success(toMappedVerifiableCredentials(claims));
         } catch (MalformedURLException e) {
             throw new EdcException(e);
         }
+    }
+
+    private Map<String, Object> toMappedVerifiableCredentials(Map<String, Object> regionClaims) {
+        var vcId = UUID.randomUUID().toString();
+        return Map.of(vcId,
+                Map.of(VERIFIABLE_CREDENTIALS_KEY,
+                        Map.of(CREDENTIAL_SUBJECT_KEY, regionClaims,
+                                VERIFIABLE_CREDENTIAL_ID_KEY, vcId),
+                        // issuer will be ignored when applying policies for now.
+                        ISSUER_KEY, String.join("did:web:", UUID.randomUUID().toString())));
     }
 
     private Result<String> getIdentityHubBaseUrl(DidDocument didDocument) {

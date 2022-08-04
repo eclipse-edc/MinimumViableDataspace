@@ -27,8 +27,10 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.eclipse.dataspaceconnector.identityhub.credentials.VerifiableCredentialsJwtService.VERIFIABLE_CREDENTIALS_KEY;
 
 class MockCredentialsVerifierTest {
+    private static final String CREDENTIAL_SUBJECT_KEY = "credentialSubject";
     MockCredentialsVerifier verifier = new MockCredentialsVerifier(new ConsoleMonitor());
 
     @Test
@@ -36,6 +38,9 @@ class MockCredentialsVerifierTest {
         Result<Map<String, Object>> actual = getVerifiedCredentials("http://dummy.site/foo?region=us&tier=GOLD");
         assertThat(actual.succeeded()).isTrue();
         assertThat(actual.getContent())
+                .extracting(c -> c.values().stream().findFirst().get())
+                .extracting(VERIFIABLE_CREDENTIALS_KEY)
+                .extracting(CREDENTIAL_SUBJECT_KEY)
                 .isEqualTo(Map.of("region", "us", "tier", "GOLD"));
     }
 
@@ -43,6 +48,12 @@ class MockCredentialsVerifierTest {
     void verifyCredentials_failsOnMalformedUrl() {
         assertThatThrownBy(() -> getVerifiedCredentials("malformed_url"))
                 .isInstanceOf(EdcException.class);
+    }
+
+    @Test
+    void verifyCredentials_failsOnMissingIdentityHubUrl() {
+        var didDocument = DidDocument.Builder.newInstance().build();
+        assertThat(verifier.getVerifiedCredentials(didDocument).failed());
     }
 
     private Result<Map<String, Object>> getVerifiedCredentials(String identityHubUrl) {
