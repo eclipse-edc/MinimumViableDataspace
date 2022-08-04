@@ -12,7 +12,7 @@ Developer documentation can be found under [docs/developer](docs/developer/), wh
 
 ## Create Dataspace Deployment
 
-To be able to deploy your own dataspace instances, you first need to [fork the MVD repository and set up your environment](docs/developer/continuous_deployment.md).
+To be able to deploy your own dataspace instances, you first need to [fork the MVD repository and set up your environment](docs/developer/continuous-deployment/continuous_deployment.md).
 
 Once your environment is set up, follow these steps to create a new dataspace instance:
 

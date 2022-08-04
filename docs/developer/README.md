@@ -1,8 +1,8 @@
 # Developer documentation
 
-## Environment setup
+## Cloud environment setup
 
-- [Continuous Deployment and Initializing an Azure environment for CD](continuous_deployment.md)
+Please follow the [instructions to set up continuous deployment and initializing an Azure environment](continuous-deployment/continuous_deployment.md).
 
 ## Local development setup
 
