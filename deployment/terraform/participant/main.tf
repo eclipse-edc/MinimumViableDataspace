@@ -273,6 +273,11 @@ resource "azurerm_storage_blob" "did" {
         "type" : "IdentityHub",
         // Only the query parameters are used, see MockCredentialsVerifier class
         "serviceEndpoint" : "http://dummy?region=${urlencode(local.connector_region)}"
+      },
+      {
+        "id" : "#ids-url",
+        "type" : "IDSMessaging",
+        "serviceEndpoint" : "http://${urlencode(azurerm_container_group.edc.fqdn)}:${local.edc_ids_port}"
       }
     ],
     "verificationMethod" = [

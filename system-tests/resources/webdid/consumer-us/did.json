@@ -6,11 +6,18 @@
 			"@base": "did:web:did-server:consumer-us"
 		}
 	],
-	"service": [{
-		"id": "#identity-hub-url",
-		"type": "IdentityHub",
-		"serviceEndpoint": "http://dummy?region=us"
-	}],
+	"service": [
+		{
+			"id": "#identity-hub-url",
+			"type": "IdentityHub",
+			"serviceEndpoint": "http://dummy?region=us"
+		},
+		{
+			"id": "#ids-url",
+			"type": "IDSMessaging",
+			"serviceEndpoint": "http://consumer-us:8282"
+		}
+	],
 	"verificationMethod": [{
 		"id": "#my-key-1",
 		"controller": "",
