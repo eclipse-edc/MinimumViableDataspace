@@ -203,6 +203,7 @@ resource "azurerm_storage_blob" "gaiax_did" {
         "@base" = local.gaiax_did_uri
       }
     ],
+    "service" : [],
     "verificationMethod" = [
       {
         "id"           = "#identity-key-gaiax"

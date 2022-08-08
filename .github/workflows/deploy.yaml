@@ -132,6 +132,7 @@ jobs:
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
       registration_service_url: ${{ steps.runterraform.outputs.registration_service_url }}
+      gaiax_did_host: ${{ steps.runterraform.outputs.gaiax_did_host }}
 
     defaults:
       run:

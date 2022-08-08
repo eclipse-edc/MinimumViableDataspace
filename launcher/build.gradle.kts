@@ -26,7 +26,6 @@ val identityHubGroup: String by project
 dependencies {
     implementation(project(":extensions:refresh-catalog"))
     implementation(project(":extensions:policies"))
-    implementation(project(":extensions:mock-credentials-verifier"))
 
     implementation("${edcGroup}:core:${edcVersion}")
     implementation("${edcGroup}:observability-api:${edcVersion}")
@@ -74,6 +73,7 @@ dependencies {
 
     // Identity Hub
     implementation("${identityHubGroup}:identity-hub:${identityHubVersion}")
+    implementation("${identityHubGroup}:identity-hub-credentials-verifier:${identityHubVersion}")
 }
 
 application {
