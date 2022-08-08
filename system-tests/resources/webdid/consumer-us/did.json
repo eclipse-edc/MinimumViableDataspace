@@ -10,7 +10,7 @@
 		{
 			"id": "#identity-hub-url",
 			"type": "IdentityHub",
-			"serviceEndpoint": "http://dummy?region=us"
+			"serviceEndpoint": "http://consumer-us:8181/api/identity-hub"
 		},
 		{
 			"id": "#ids-url",
