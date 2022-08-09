@@ -447,7 +447,7 @@ jobs:
         run: |
           java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
             -d did:web:$DATASPACE_DID_HOST \
-            -d did:web:$PARTICIPANT_DID_HOST \
+            -c did:web:$PARTICIPANT_DID_HOST \
             -k participantkey.pem \
             participants add \
             --ids-url "http://${{ env.EDC_HOST }}:8282"
