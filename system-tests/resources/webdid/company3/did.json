@@ -9,7 +9,7 @@
 	"service": [{
 		"id": "#identity-hub-url",
 		"type": "IdentityHub",
-		"serviceEndpoint": "http://consumer-us:8181/api/identity-hub"
+		"serviceEndpoint": "http://company3:8181/api/identity-hub"
 	}],
 	"verificationMethod": [{
 		"id": "#my-key-1",
