@@ -27,11 +27,52 @@ You will need to provide the following:
 - Two service principals (instructions to create them below)
 - A fork of the [MVD repository](https://github.com/eclipse-dataspaceconnector/MinimumViableDataspace) and permissions to configure GitHub secrets
 
-## Create a Service Identity for GitHub Actions
+## Option 1: Automatically set up Azure AD using terraform 
+
+This is the easiest way to set up the Service Principals in Azure Active Directory, but it requires that the following tools are installed:
+- Azure CLI: required by Terraform
+- Terraform: used to create App Registrations and Service Principals in Azure AD
+- (optional) Github CLI: if secrets should be stored using the provided shell script
+
+### Log in to Azure CLI
+
+Install and login to the [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli). On a shell execute `az login` - your user must have "Application Administrator" rights in the Azure tenant.
+
+### Initialize terraform
+
+Assuming terraform is installed, simply `cd` to `resources/setup_azure_ad` (located in the repository root) and execute
+```shell
+terraform init
+```
+
+### Customize `variables.tf`
+
+Please change variables in [variables.tf](../../../resources/setup_azure_ad/variables.tf) to reflect your local setup. Note that `tenant_id` and `gihub_repo` **must** be changed.
+Note also that the terraform state file (`terraform.state`) will be stored locally in the same directory. This will contain sensitive information - **do not check it in**!
+
+### Update Github Secrets
+
+_A Github user with permission to write secrets is required for this step!_
+
+This can be done manually using the Github website ([see documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)).
+Alternatively there is a [shell script](../../../resources/setup_azure_ad/set-gh-secrets.sh) that will set all Github Secrets automatically. From the `resources/setup_azure_ad` directory simply execute
+`./set-gh-secrets.sh` on a shell.
+
+_Requirements_:
+- user must be logged in to [Github CLI](https://cli.github.com/manual/gh_auth_login)
+- `terraform` must have completed successfully
+
+
+--> continue with [setting up CI](continuous_deployment.md#deploy-common-cd-resources)
+
+## Option 2: Manually set up Azure AD using the Azure Portal
+In case you're not comfortable with the Azure CLI or don't want to install it, the App Registrations and Service Principals can also be set up manually using the Azure Portal.
+
+### Create a Service Identity for GitHub Actions
 
 Further documentation for the following steps can be found in the Microsoft Docs to [Configure an app to trust a GitHub repo](https://docs.microsoft.com/azure/active-directory/develop/workload-identity-federation-create-trust-github).
 
-### Create App Registration for GitHub Actions
+#### Create App Registration for GitHub Actions
 
 Sign in to the [Azure Portal](https://portal.azure.com/), navigate to *App registrations* and select *New registration*.
 
@@ -47,7 +88,7 @@ Take note of the *Application (client) ID* (will be required to configure a GitH
 
 Next, we create two types of credentials: two federated credentials to authenticate GitHub Actions, and a client secret for Terraform (required as Terraform does not yet support Azure CLI login with a service principal).
 
-### Configure `main` Branch Credentials
+#### Configure `main` Branch Credentials
 
 Select the previously created application (e.g. *"MVD GitHub Actions App"*) and navigate to **Certificates & secrets**.
 
@@ -65,7 +106,7 @@ Click **Add** to create the credential.
 
 ℹ️ *Note: You can add additional credentials to deploy from other branches*
 
-### Configure Pull Request Credentials
+#### Configure Pull Request Credentials
 
 Now, we set up a federated credential for pull requests, which allows to run a cloud deployment to validate pull requests.
 
@@ -82,13 +123,13 @@ Click **Add credential** to add another credential (for the previously created a
 
 Click **Add** to create the credential.
 
-### Create Client Secret for GitHub Actions
+#### Create Client Secret for GitHub Actions
 
 Navigate to the **Client secrets** tab (for the previously created application (e.g. *"MVD GitHub Actions App"*), under **Certificates & secrets**), and select **New client secret**. Create a new client secret by entering a **Description** (e.g. *"mvd-client-secret"*) and clicking **Add**.
 
 Take note of the client secret (**Value**) and keep it safe (will be required to configure a GitHub secret below).
 
-### Grant Permissions for Azure Subscription
+#### Grant Permissions for Azure Subscription
 
 To allow GitHub Actions to deploy resources to your Azure subscription, grant the application created above Owner permissions on your Azure subscription.
 Further documentation for the following steps can be found under [Assign Azure roles using the Azure portal](https://docs.microsoft.com/azure/role-based-access-control/role-assignments-portal).
@@ -105,7 +146,7 @@ Now click on **Select members**, search for the application created above (e.g. 
 
 ⚠️ You need to enter the full application name when searching for the application, the application will not show up if you only enter a partial name (e.g. *"MVD GitHub Act"* in the example above).
 
-### Configure GitHub Secrets for GitHub Actions
+#### Configure GitHub Secrets for GitHub Actions
 
 Finally, the application (client) ID and the application client secret needs to be made available to your GitHub repository using [GitHub secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
@@ -120,11 +161,11 @@ Configure the following GitHub secrets with the values from the steps above:
 | `ARM_CLIENT_ID`     | The application (client) ID of the application created above (e.g. *"MVD GitHub Actions App"*). |
 | `ARM_CLIENT_SECRET` | The application client secret (**Value**) created above. |
 
-## Create Service Identity for MVD Runtimes
+### Create Service Identity for MVD Runtimes
 
 Further documentation for the following steps can be found in the Microsoft Docs to [Create and configure an Azure AD application for the application runtimes](https://docs.microsoft.com/azure/active-directory/develop/workload-identity-federation-create-trust-github).
 
-### Create App Registration for MVD Runtimes
+#### Create App Registration for MVD Runtimes
 
 Sign in to the [Azure Portal](https://portal.azure.com/), navigate to *App registrations* and select *New registration*.
 
@@ -138,13 +179,13 @@ Select **Register** to create the app registration.
 
 Take note of the *Application (client) ID* (will be required to configure a GitHub secret below).
 
-### Create Client Secret for MVD Runtimes
+#### Create Client Secret for MVD Runtimes
 
 Navigate to **Certificates & secrets** and then to the **Client secrets** tab (for the previously created application (e.g. *"MVD Runtimes App"*), and select **New client secret**. Create a new client secret by entering a **Description** (e.g. *"mvd-runtimes-app-client-secret"*) and clicking **Add**.
 
 Take note of the client secret (**Value**) and keep it safe (will be required to configure a GitHub secret below).
 
-### Get Application Object ID
+#### Get Application Object ID
 
 Navigate to **Azure Active Directory** and select **Enterprise Applications**.
 
@@ -154,7 +195,7 @@ Take note of the enterprise application **Object ID**.
 
 ![Application Object ID](application-object-ID.png)
 
-### Configure GitHub Secrets for MVD Runtimes
+#### Configure GitHub Secrets for MVD Runtimes
 
 Configure the following GitHub secrets with the values from the steps above:
 
@@ -166,7 +207,7 @@ Configure the following GitHub secrets with the values from the steps above:
 
 See instructions under [Configure GitHub Secrets for GitHub Actions](#configure-github-secrets-for-github-actions) on how to configure GitHub secrets.
 
-## Configure CD Settings
+### Configure CD Settings
 
 Configure the following GitHub secrets which are required by the CD pipeline:
 
