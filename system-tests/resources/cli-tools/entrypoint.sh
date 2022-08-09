@@ -11,10 +11,16 @@ for participant in "${PARTICIPANTS[@]}"; do
 
     participantName=${participantArray[0]}
     region=${participantArray[1]}
-    did="did:web:did-server:$participantName"
+    participantDid="did:web:did-server:$participantName"
 
     echo "Registering $participantName"
-    java -jar registration-service-cli.jar -d="$did" -k=/resources/vault/$participantName/private-key.pem -s='http://registration-service:8184/authority' participants add --ids-url "http://$participantName:8282"
+    java -jar registration-service-cli.jar \
+                -d="did:web:did-server:registration-service" \
+                --http-scheme \
+                -k=/resources/vault/$participantName/private-key.pem \
+                -c="$participantDid" \
+                 participants add \
+                --ids-url "http://$participantName:8282"
 
    for subject in '"region": "'$region'"' '"gaiaXMember": "true"'
    do
@@ -24,7 +30,7 @@ for participant in "${PARTICIPANTS[@]}"; do
                  -s="http://$participantName:8181/api/identity-hub" \
                  vc add \
                  -c='{"id":"'$vcId'","credentialSubject":{'"$subject"}'}' \
-                 -b="$did" \
+                -b="$participantDid" \
                  -i="did:web:did-server:gaia-x" \
                  -k="/resources/vault/gaia-x/private-key.pem"
    done

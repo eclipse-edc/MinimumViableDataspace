@@ -133,6 +133,7 @@ jobs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
       registration_service_url: ${{ steps.runterraform.outputs.registration_service_url }}
       gaiax_did_host: ${{ steps.runterraform.outputs.gaiax_did_host }}
+      dataspace_did_host: ${{ steps.runterraform.outputs.dataspace_did_host }}
 
     defaults:
       run:
@@ -250,9 +251,9 @@ jobs:
       company1_api_key: ${{ steps.runterraform.outputs.company1_api_key }}
       company2_api_key: ${{ steps.runterraform.outputs.company2_api_key }}
       company3_api_key: ${{ steps.runterraform.outputs.company3_api_key }}
-      company1_did_host: ${{ steps.runterraform.outputs.company1_did_host }}
-      company2_did_host: ${{ steps.runterraform.outputs.company2_did_host }}
-      company3_did_host: ${{ steps.runterraform.outputs.company3_did_host }}
+      company1_participant_did_host: ${{ steps.runterraform.outputs.company1_participant_did_host }}
+      company2_participant_did_host: ${{ steps.runterraform.outputs.company2_participant_did_host }}
+      company3_participant_did_host: ${{ steps.runterraform.outputs.company3_participant_did_host }}
       company1_connector_name: ${{ steps.runterraform.outputs.company1_connector_name }}
       company2_connector_name: ${{ steps.runterraform.outputs.company2_connector_name }}
       company3_connector_name: ${{ steps.runterraform.outputs.company3_connector_name }}
@@ -322,7 +323,7 @@ jobs:
           terraform init -backend-config=backend.conf
           terraform apply -auto-approve
           CONNECTOR_NAME=$(terraform output -raw connector_name)
-          DID_HOST=$(terraform output -raw did_host)
+          PARTICIPANT_DID_HOST=$(terraform output -raw participant_did_host)
           EDC_HOST=$(terraform output -raw edc_host)
           ASSETS_STORAGE_ACCOUNT=$(terraform output -raw assets_storage_account)
           ASSETS_STORAGE_ACCOUNT_KEY=$(terraform output -raw assets_storage_account_key)
@@ -336,7 +337,7 @@ jobs:
           echo "ASSETS_STORAGE_ACCOUNT_KEY=$ASSETS_STORAGE_ACCOUNT_KEY" >> $GITHUB_ENV
           echo "INBOX_STORAGE_ACCOUNT=$INBOX_STORAGE_ACCOUNT" >> $GITHUB_ENV
           echo "INBOX_STORAGE_ACCOUNT_KEY=$INBOX_STORAGE_ACCOUNT_KEY" >> $GITHUB_ENV
-          echo "DID_HOST=$DID_HOST" >> $GITHUB_ENV
+          echo "PARTICIPANT_DID_HOST=$PARTICIPANT_DID_HOST" >> $GITHUB_ENV
           echo "EDC_HOST=$EDC_HOST" >> $GITHUB_ENV
           echo "API_KEY=$API_KEY" >> $GITHUB_ENV
           echo "CONNECTOR_NAME=$CONNECTOR_NAME" >> $GITHUB_ENV
@@ -345,7 +346,7 @@ jobs:
           echo "::set-output name=${{ matrix.participant }}_key_vault::${KEY_VAULT}"
           echo "::set-output name=${{ matrix.participant }}_api_key::${API_KEY}"
           echo "::set-output name=${{ matrix.participant }}_connector_name::${CONNECTOR_NAME}"
-          echo "::set-output name=${{ matrix.participant }}_did_host::${DID_HOST}"
+          echo "::set-output name=${{ matrix.participant }}_did_host::${PARTICIPANT_DID_HOST}"
           echo "::set-output name=${{ matrix.participant }}_assets_storage_account::${ASSETS_STORAGE_ACCOUNT}"
 
         env:
@@ -386,7 +387,7 @@ jobs:
           VERSION: 7.84.0
 
       - name: 'Verify did endpoint is available'
-        run: curl https://$DID_HOST/.well-known/did.json | jq '.id'
+        run: curl https://$PARTICIPANT_DID_HOST/.well-known/did.json | jq '.id'
 
       - name: 'Verify deployed EDC is healthy'
         run: curl --retry 10 --retry-all-errors --fail http://${EDC_HOST}:8181/api/check/health
@@ -418,7 +419,7 @@ jobs:
           id=$(uuidgen)
           java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
             -c='{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' \
-            -b="did:web:$DID_HOST" \
+            -b="did:web:$PARTICIPANT_DID_HOST" \
             -i="$GAIAX_DID" \
             -k="gaiaxkey.pem"
 
@@ -427,7 +428,7 @@ jobs:
           id=$(uuidgen)
           java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
             -c='{"id": "'$id'", "credentialSubject": {"region": "'$region'"}}' \
-            -b="did:web:$DID_HOST" \
+            -b="did:web:$PARTICIPANT_DID_HOST" \
             -i="$GAIAX_DID" \
             -k="gaiaxkey.pem"
         env:
@@ -445,13 +446,14 @@ jobs:
       - name: 'Register participant'
         run: |
           java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
-            -s $REGISTRATION_SERVICE_API_URL \
-            -d did:web:$DID_HOST \
+            -d did:web:$DATASPACE_DID_HOST \
+            -d did:web:$PARTICIPANT_DID_HOST \
             -k participantkey.pem \
             participants add \
             --ids-url "http://${{ env.EDC_HOST }}:8282"
         env:
-          REGISTRATION_SERVICE_API_URL: ${{ needs.Deploy-Dataspace.outputs.registration_service_url }}
+          REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
+          DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}
 
   Verify:
     needs:
@@ -482,9 +484,9 @@ jobs:
           CONSUMER_US_KEY_VAULT: ${{ needs.Deploy-Participants.outputs.company3_key_vault }}
           CONSUMER_EU_CATALOG_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/federatedcatalog
           CONSUMER_US_CATALOG_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/federatedcatalog
-          PROVIDER_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company1_did_host }}
-          CONSUMER_EU_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company2_did_host }}
-          CONSUMER_US_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company3_did_host }}
+          PROVIDER_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company1_participant_did_host }}
+          CONSUMER_EU_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company2_participant_did_host }}
+          CONSUMER_US_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company3_participant_did_host }}
           PROVIDER_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company1_edc_host }}:8181/api/identity-hub
           CONSUMER_EU_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/identity-hub
           CONSUMER_US_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/identity-hub
