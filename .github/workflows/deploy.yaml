@@ -132,6 +132,7 @@ jobs:
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
       registration_service_url: ${{ steps.runterraform.outputs.registration_service_url }}
+      gaiax_did_host: ${{ steps.runterraform.outputs.gaiax_did_host }}
 
     defaults:
       run:
@@ -169,7 +170,7 @@ jobs:
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: 'Upload tfvars file'
-        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key -o none
 
       - name: 'Run terraform'
         id: runterraform
@@ -265,6 +266,10 @@ jobs:
     defaults:
       run:
         working-directory: deployment/terraform/participant
+    env:
+      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
+      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
+      GAIAX_DID: did:web:${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
 
     steps:
       - uses: actions/checkout@v2
@@ -302,7 +307,7 @@ jobs:
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: 'Upload tfvars file'
-        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key -o none
 
       - name: 'Run terraform'
         id: runterraform
@@ -399,29 +404,47 @@ jobs:
           name: gaiaxkey
           path: deployment/terraform/participant
 
+      - name: 'Copy Identity Hub CLI'
+        uses: ./.github/actions/copy-maven-artifact
+        with:
+          artifact: org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${{ env.IDENTITY_HUB_VERSION }}:jar:all
+          directory: deployment/terraform/participant
+
+      - name: 'Set Identity Hub URL'
+        run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:8181/api/identity-hub" >> $GITHUB_ENV
+
+      - name: 'Push GAIA-X membership verifiable credential'
+        run: |
+          id=$(uuidgen)
+          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+            -c='{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' \
+            -b="did:web:$DID_HOST" \
+            -i="$GAIAX_DID" \
+            -k="gaiaxkey.pem"
+
       - name: 'Push region verifiable credential'
         run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:$cli_version:jar:all -DoutputDirectory=.
-          
           id=$(uuidgen)
-          
-          java -jar identity-hub-cli-$cli_version-all.jar -s=$identityHubUrl vc add \
-            -c='{"id":"'$id'","credentialSubject":{"region":"'$region'"}}' \
+          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+            -c='{"id": "'$id'", "credentialSubject": {"region": "'$region'"}}' \
             -b="did:web:$DID_HOST" \
-            -i="did:web:$issuer" \
+            -i="$GAIAX_DID" \
             -k="gaiaxkey.pem"
-          
-          java -jar identity-hub-cli-$cli_version-all.jar -s=$identityHubUrl vc list
         env:
-          cli_version: 0.0.1-SNAPSHOT
           region: ${{ matrix.region }}
-          issuer: ${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
-          identityHubUrl: http://${{ env.EDC_HOST }}:8181/api/identity-hub
+
+      - name: 'Output verifiable credentials'
+        run: java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc list
+
+      - name: 'Copy Registration Service CLI'
+        uses: ./.github/actions/copy-maven-artifact
+        with:
+          artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
+          directory: deployment/terraform/participant
 
       - name: 'Register participant'
         run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:0.0.1-SNAPSHOT:jar:all -DoutputDirectory=.
-          java -jar registration-service-cli-0.0.1-SNAPSHOT-all.jar \
+          java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
             -s $REGISTRATION_SERVICE_API_URL \
             -d did:web:$DID_HOST \
             -k participantkey.pem \
