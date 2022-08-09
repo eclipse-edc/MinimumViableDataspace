@@ -38,9 +38,9 @@ public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
     private List<Runnable> containerCleanup = new ArrayList<>();
     private static final String PROVIDER_CONTAINER_NAME = "src-container";
     public static final String LOCAL_BLOB_STORE_ENDPOINT_TEMPLATE = "http://127.0.0.1:10000/%s";
-    public static final String LOCAL_SOURCE_BLOB_STORE_ACCOUNT = "providerassets";
+    public static final String LOCAL_SOURCE_BLOB_STORE_ACCOUNT = "company1assets";
     public static final String LOCAL_SOURCE_BLOB_STORE_ACCOUNT_KEY = "key1";
-    public static final String LOCAL_DESTINATION_BLOB_STORE_ACCOUNT = "consumereuassets";
+    public static final String LOCAL_DESTINATION_BLOB_STORE_ACCOUNT = "company2assets";
     public static final String LOCAL_DESTINATION_BLOB_STORE_ACCOUNT_KEY = "key2";
 
 

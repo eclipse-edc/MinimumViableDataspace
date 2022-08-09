@@ -1,9 +1,9 @@
 {
-	"id": "did:web:did-server:consumer-us",
+	"id": "did:web:did-server:company3",
 	"@context": [
 		"https://www.w3.org/ns/did/v1",
 		{
-			"@base": "did:web:did-server:consumer-us"
+			"@base": "did:web:did-server:company3"
 		}
 	],
 	"service": [{
