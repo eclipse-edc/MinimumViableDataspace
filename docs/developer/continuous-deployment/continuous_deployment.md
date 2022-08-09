@@ -48,7 +48,16 @@ terraform init
 ### Customize `variables.tf`
 
 Please change variables in [variables.tf](../../../resources/setup_azure_ad/variables.tf) to reflect your local setup. Note that `tenant_id` and `gihub_repo` **must** be changed.
-Note also that the terraform state file (`terraform.state`) will be stored locally in the same directory. This will contain sensitive information - **do not check it in**!
+Note also that the terraform state file (`terraform.state`) will be stored locally in the same directory. This will contain sensitive information - **do not check it in or otherwise share it**!
+
+### Run `terraform`
+
+On a command line execute
+```shell
+terraform apply
+```
+This will take some time, and once it has successfully completed, your Azure Active Directory should contain all the relevant App Registrations and Service Principals
+needed for Github.
 
 ### Update Github Secrets
 
