@@ -23,6 +23,6 @@ resource "azuread_service_principal" "mvd-runtimes-sp" {
 }
 
 # create password for the GH Actions SP
-resource "azuread_service_principal_password" "mvd-runtimes-sp-password" {
-  service_principal_id = azuread_service_principal.mvd-runtimes-sp.object_id
+resource "azuread_application_password" "mvd-runtimes-sp-password" {
+  application_object_id = azuread_application.mvd-runtimes.object_id
 }

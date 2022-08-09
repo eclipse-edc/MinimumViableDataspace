@@ -4,7 +4,7 @@ output "ARM_CLIENT_ID" {
 
 output "ARM_CLIENT_SECRET" {
   sensitive = true
-  value     = azuread_service_principal_password.gh-actions-mvd-sp-password.value
+  value     = azuread_application_password.gh-actions-mvd-sp-password.value
 }
 
 output "ARM_SUBSCRIPTION_ID" {
@@ -24,7 +24,7 @@ output "APP_OBJECT_ID" {
 }
 output "APP_CLIENT_SECRET" {
   sensitive = true
-  value     = azuread_service_principal_password.mvd-runtimes-sp-password.value
+  value     = azuread_application_password.mvd-runtimes-sp-password.value
 }
 
 output "ACR_NAME" {

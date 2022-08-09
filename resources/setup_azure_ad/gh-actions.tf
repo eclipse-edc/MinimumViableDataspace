@@ -19,8 +19,8 @@ resource "azuread_service_principal" "gh-actions-mvd-sp" {
 }
 
 # create password for the GH Actions SP
-resource "azuread_service_principal_password" "gh-actions-mvd-sp-password" {
-  service_principal_id = azuread_service_principal.gh-actions-mvd-sp.object_id
+resource "azuread_application_password" "gh-actions-mvd-sp-password" {
+  application_object_id = azuread_application.gh-actions-mvd.object_id
 }
 
 # Create federated credentials for the main branch, and Pull requests
