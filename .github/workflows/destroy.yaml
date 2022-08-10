@@ -23,6 +23,7 @@ permissions:
 
 env:
   RESOURCES_PREFIX: ${{ github.event.inputs.resources_prefix || inputs.resources_prefix }}
+  ACR_NAME: ${{ secrets.ACR_NAME }}
 
 jobs:
   Matrix:
@@ -136,7 +137,7 @@ jobs:
       - name: 'Completion marker blob'
         run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f /dev/null -n "${{ env.RESOURCES_PREFIX }}.completed" --auth-mode key
 
-  # Post-Destroy jos must wait for all Destroy jobs to complete, so that their failure does not interrupt in-progress Destroy jobs
+  # Post-Destroy jobs must wait for all Destroy jobs to complete, so that their failure does not interrupt in-progress Destroy jobs
 
   Post-Destroy-Participants:
     needs:
@@ -164,7 +165,6 @@ jobs:
 
   Post-Destroy-Dataspace:
     needs:
-      - Matrix
       - Destroy-Participants
       - Destroy-Dataspace
     runs-on: ubuntu-latest
@@ -182,4 +182,11 @@ jobs:
           for extension in tfvars tfstate completed
           do
             az storage blob delete --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -n "${{ env.RESOURCES_PREFIX }}.$extension" --auth-mode key
+          done
+
+      - name: 'Delete ACR images'
+        run: |
+          for image in mvd/connector mvd/registration-service mvd/data-dashboard
+          do
+            az acr repository delete --name $ACR_NAME --image $image:$RESOURCES_PREFIX --yes
           done
