@@ -3,7 +3,7 @@
 # stop on error
 set -euo pipefail
 
-PARTICIPANTS=(provider:eu consumer-eu:eu consumer-us:us)
+PARTICIPANTS=(company1:eu company2:eu company3:us)
 
 # Register dataspace participants
 for participant in "${PARTICIPANTS[@]}"; do
