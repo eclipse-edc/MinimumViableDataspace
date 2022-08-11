@@ -3,7 +3,7 @@
 # stop on error
 set -euo pipefail
 
-PARTICIPANTS=(provider:eu consumer-eu:eu consumer-us:us)
+PARTICIPANTS=(company1:eu company2:eu company3:us)
 
 # Register dataspace participants
 for participant in "${PARTICIPANTS[@]}"; do
@@ -22,11 +22,16 @@ for participant in "${PARTICIPANTS[@]}"; do
                  participants add \
                 --ids-url "http://$participantName:8282"
 
-    echo "Seeding VC for $participantName"
-    vcId=$(uuidgen)
-    java -jar identity-hub-cli.jar -s="http://$participantName:8181/api/identity-hub" vc add \
-                -c='{"id":"'$vcId'","credentialSubject":{"region":"'$region'"}}' \
+   for subject in '"region": "'$region'"' '"gaiaXMember": "true"'
+   do
+     echo "Seeding VC for $participantName: $subject"
+     vcId=$(uuidgen)
+     java -jar identity-hub-cli.jar \
+                 -s="http://$participantName:8181/api/identity-hub" \
+                 vc add \
+                 -c='{"id":"'$vcId'","credentialSubject":{'"$subject"}'}' \
                 -b="$participantDid" \
-                -i="did:web:did-server:gaia-x" \
-                -k="/resources/vault/gaia-x/private-key.pem"
+                 -i="did:web:did-server:gaia-x" \
+                 -k="/resources/vault/gaia-x/private-key.pem"
+   done
 done
