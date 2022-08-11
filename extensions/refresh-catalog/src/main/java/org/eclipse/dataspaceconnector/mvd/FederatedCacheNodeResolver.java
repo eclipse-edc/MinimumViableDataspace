@@ -18,6 +18,7 @@ import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.DidDocument;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.Service;
 import org.eclipse.dataspaceconnector.iam.did.spi.resolution.DidResolverRegistry;
+import org.eclipse.dataspaceconnector.ids.spi.Protocols;
 import org.eclipse.dataspaceconnector.registration.client.models.Participant;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.result.Result;
@@ -33,7 +34,7 @@ import static java.lang.String.format;
 class FederatedCacheNodeResolver {
 
     public static final String IDS_MESSAGING = "IDSMessaging";
-    public static final List<String> IDS_MULTIPART = List.of("ids-multipart");
+    public static final List<String> SUPPORTED_PROTOCOLS = List.of(Protocols.IDS_MULTIPART);
 
     private final DidResolverRegistry resolver;
     private final Monitor monitor;
@@ -44,20 +45,20 @@ class FederatedCacheNodeResolver {
     }
 
     public Result<FederatedCacheNode> toFederatedCacheNode(Participant participant) {
-        String did = participant.getDid();
+        var did = participant.getDid();
         monitor.debug(format("Resolving Did Document for did %s.", did));
-        Result<DidDocument> didDocument = resolver.resolve(did);
+        var didDocument = resolver.resolve(did);
         if (didDocument.failed()) {
             monitor.severe(() -> format("Failed to resolve DID Document for %s. %s", did, didDocument.getFailureDetail()));
             return Result.failure("Can't resolve Did Document for participant: " + did);
         }
-        return getUrl(didDocument)
-                .map(url -> Result.success(new FederatedCacheNode(didDocument.getContent().getId(), url, IDS_MULTIPART)))
+        return getUrl(didDocument.getContent())
+                .map(url -> Result.success(new FederatedCacheNode(didDocument.getContent().getId(), url, SUPPORTED_PROTOCOLS)))
                 .orElseGet(() -> Result.failure(format("Can't resolve Did Document for participant: %s", did)));
     }
 
-    private Optional<String> getUrl(Result<DidDocument> didDocument) {
-        return didDocument.getContent()
+    private Optional<String> getUrl(DidDocument didDocument) {
+        return didDocument
                 .getService().stream()
                 .filter(service -> service.getType().equals(IDS_MESSAGING))
                 .map(Service::getServiceEndpoint)

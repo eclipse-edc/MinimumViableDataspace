@@ -16,6 +16,7 @@ dependencies {
     implementation("${edcGroup}:federated-catalog-spi:${edcVersion}")
     implementation("${edcGroup}:identity-did-core:${edcVersion}")
     implementation("${edcGroup}:identity-did-web:${edcVersion}")
+    implementation("${edcGroup}:ids-spi:${edcVersion}")
     implementation("${registrationServiceGroup}:registration-service-client:${registrationServiceVersion}")
 
     testImplementation("org.assertj:assertj-core:${assertj}")
