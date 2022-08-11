@@ -112,12 +112,8 @@ jobs:
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
     steps:
-      - name: Checkout DataDashboard
-        uses: actions/checkout@v2
-        with:
-          repository: eclipse-dataspaceconnector/DataDashboard
-          ref: ab1b6fd0870fa5ec8c170915a2b44fae63d576bd
-
+      - uses: actions/checkout@v2
+      - uses: ./.github/actions/gradle-setup
       - name: 'Az CLI login'
         uses: azure/login@v1
         with:
@@ -130,7 +126,7 @@ jobs:
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
-        run: az acr build --registry $ACR_NAME --image mvd/data-dashboard:${{ env.RESOURCES_PREFIX }} .
+        run: az acr build --registry $ACR_NAME --image mvd/data-dashboard:${{ env.RESOURCES_PREFIX }} DataDashboard
 
   # Deploy shared dataspace components.
   Deploy-Dataspace:

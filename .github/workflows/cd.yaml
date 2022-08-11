@@ -49,11 +49,12 @@ jobs:
           sudo curl -L https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
-      - name: 'Run MVD docker-compose'
-        run: docker-compose -f system-tests/docker-compose.yml up --build --wait
+      - name: 'Run MVD docker-compose (incl. MVD UI)'
+        run: docker-compose --profile ui -f system-tests/docker-compose.yml up --build --wait
         timeout-minutes: 10
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
+          MVD_UI_PATH: DataDashboard
 
       - name: 'Unit and system tests'
         run: ./gradlew test
@@ -66,3 +67,4 @@ jobs:
         if: always()
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
+          MVD_UI_PATH: DataDashboard
