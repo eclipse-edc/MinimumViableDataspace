@@ -4,14 +4,14 @@ on:
   workflow_call:
     inputs:
       resources_prefix:
-        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces. Must be 3 to 7 lowercase letters and digits, starting with a letter.'
         required: true
         type: string
 
   workflow_dispatch:
     inputs:
       resources_prefix:
-        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces. Must be 3 to 7 lowercase letters and digits, starting with a letter.'
         required: true
         type: string
 
@@ -26,11 +26,13 @@ env:
 
 jobs:
 
-  Matrix:
+  Inputs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
+      - name: 'Check resource prefix format: should be 3 to 7 lowercase letters and digits, starting with a letter.'
+        run: '[[ "$RESOURCES_PREFIX" =~ ^[a-z][a-z0-9]{2,6}$ ]]'
       - uses: actions/checkout@v2
       - id: set-matrix
         run: |
@@ -39,6 +41,8 @@ jobs:
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
   Build-Connector:
+    needs:
+      - Inputs
     runs-on: ubuntu-latest
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
@@ -70,6 +74,8 @@ jobs:
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
   Build-Registration-Service:
+    needs:
+      - Inputs
     runs-on: ubuntu-latest
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
@@ -100,6 +106,8 @@ jobs:
 
   # Build data dashboard webapp
   Build-Dashboard:
+    needs:
+      - Inputs
     runs-on: ubuntu-latest
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
@@ -239,7 +247,7 @@ jobs:
       - Deploy-Dataspace
       - Build-Connector
       - Build-Dashboard
-      - Matrix
+      - Inputs
     runs-on: ubuntu-latest
     outputs:
       company1_edc_host: ${{ steps.runterraform.outputs.company1_edc_host }}
@@ -262,7 +270,7 @@ jobs:
       company3_assets_storage_account: ${{ steps.runterraform.outputs.company3_assets_storage_account }}
 
     strategy:
-      matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.Inputs.outputs.matrix) }}
 
     defaults:
       run:

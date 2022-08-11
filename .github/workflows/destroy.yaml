@@ -25,7 +25,7 @@ env:
   RESOURCES_PREFIX: ${{ github.event.inputs.resources_prefix || inputs.resources_prefix }}
 
 jobs:
-  Matrix:
+  Inputs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -38,11 +38,11 @@ jobs:
 
   # Delete deployed Azure resource groups for each dataspace participant.
   Destroy-Participants:
-    needs: Matrix
+    needs: Inputs
     continue-on-error: true
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.Inputs.outputs.matrix) }}
 
     defaults:
       run:
@@ -140,12 +140,12 @@ jobs:
 
   Post-Destroy-Participants:
     needs:
-      - Matrix
+      - Inputs
       - Destroy-Participants
       - Destroy-Dataspace
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.Inputs.outputs.matrix) }}
 
     steps:
       - name: 'Az CLI login'
@@ -164,7 +164,7 @@ jobs:
 
   Post-Destroy-Dataspace:
     needs:
-      - Matrix
+      - Inputs
       - Destroy-Participants
       - Destroy-Dataspace
     runs-on: ubuntu-latest
