@@ -9,7 +9,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/DataSpaceConnector
         path: DataSpaceConnector
-        ref: v0.0.1-milestone-5
+        ref: v0.0.1-milestone-5.1
 
     - name: Checkout Registration Service
       uses: actions/checkout@v2
