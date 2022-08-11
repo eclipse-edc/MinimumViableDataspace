@@ -10,6 +10,9 @@ on:
 jobs:
 
   VerifyLocalTests:
+    permissions:
+      checks: write
+      pull-requests: write
     runs-on: ubuntu-latest
     env:
       REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
@@ -59,6 +62,7 @@ jobs:
         run: ./gradlew test
         timeout-minutes: 10
         env:
+          JACOCO: "true"
           TEST_ENVIRONMENT: "local"
 
       - name: 'docker-compose logs'
@@ -66,3 +70,19 @@ jobs:
         if: always()
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
+
+      - name: "Publish Gatling report"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Gatling reports (local run)
+          path: '**/build/reports/gatling/**'
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "**/test-results/**/*.xml"
+
+      - name: CodeCov
+        uses: codecov/codecov-action@v3
