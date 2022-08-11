@@ -7,9 +7,12 @@ on:
 
 # Grant permissions to obtain federated identity credentials
 # see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+# Also grant permissions to publish test results
 permissions:
   id-token: write
   contents: read
+  checks: write
+  pull-requests: write
 
 # Update this value with a unique name to guarantee uniqueness of resource names and avoid conflicts between fork repositories when running CD workflow.
 # CD workflow creates resources with this prefix and destroy them.
