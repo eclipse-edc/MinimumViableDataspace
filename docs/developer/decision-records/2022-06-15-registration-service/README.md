@@ -109,4 +109,4 @@ Participants are registered as (currently valid) Dataspace Participants
 
 ## References
 
-- [Identity Hub in MVD](https://github.com/agera-edc/IdentityHub/blob/main/docs/developer/decision-records/2022-06-08-identity-hub/README.md)
+- [Identity Hub in MVD](https://github.com/eclipse-dataspaceconnector/IdentityHub/blob/main/docs/developer/decision-records/2022-06-08-identity-hub/README.md)
