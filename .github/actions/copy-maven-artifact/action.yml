@@ -1,0 +1,19 @@
+name: "Copy maven artifact"
+description: "Copy a maven artifact from the maven repository to the current directory"
+
+inputs:
+  artifact:
+    description: 'Maven artifact to download.'
+    required: true
+  directory:
+    description: 'Path to a directory where the artifact should be saved.'
+    default: .
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: 'Copy artifact'
+      # Run mvn with options to reduce download logs verbosity
+      run: mvn --batch-mode -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn dependency:copy -Dartifact=${{ inputs.artifact }} -DoutputDirectory=${{ inputs.directory }}
+      shell: bash

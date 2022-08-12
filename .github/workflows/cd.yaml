@@ -1,6 +1,11 @@
 name: CD
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'docs/**'
   pull_request:
     paths-ignore:
       - 'docs/**'
@@ -10,7 +15,13 @@ on:
 jobs:
 
   VerifyLocalTests:
+    permissions:
+      checks: write
+      pull-requests: write
     runs-on: ubuntu-latest
+    env:
+      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
+      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
     steps:
       - uses: actions/checkout@v2
 
@@ -27,20 +38,19 @@ jobs:
         working-directory: ${{ runner.temp }}/RegistrationService
 
       - name: 'Copy Registration Service CLI'
-        run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:$REGISTRATION_SERVICE_VERSION:jar:all -DoutputDirectory=.
-          mv registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar registration-service-cli.jar
-        working-directory: system-tests/resources/cli-tools
-        env:
-           REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
+        uses: ./.github/actions/copy-maven-artifact
+        with:
+          artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
 
       - name: 'Copy Identity Hub CLI'
+        uses: ./.github/actions/copy-maven-artifact
+        with:
+          artifact: org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${{ env.IDENTITY_HUB_VERSION }}:jar:all
+
+      - name: 'Move CLI JARs to test directory'
         run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:$IDENTITY_HUB_VERSION:jar:all -DoutputDirectory=.
-          mv identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar identity-hub-cli.jar
-        working-directory: system-tests/resources/cli-tools
-        env:
-          IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
+          mv registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar system-tests/resources/cli-tools/registration-service-cli.jar
+          mv identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar system-tests/resources/cli-tools/identity-hub-cli.jar
 
       - name: 'Upgrade docker-compose (for --wait option)'
         run: |
@@ -57,6 +67,7 @@ jobs:
         run: ./gradlew test
         timeout-minutes: 10
         env:
+          JACOCO: "true"
           TEST_ENVIRONMENT: "local"
 
       - name: 'docker-compose logs'
@@ -64,3 +75,19 @@ jobs:
         if: always()
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
+
+      - name: "Publish Gatling report"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Gatling reports (local run)
+          path: '**/build/reports/gatling/**'
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "**/test-results/**/*.xml"
+
+      - name: CodeCov
+        uses: codecov/codecov-action@v3

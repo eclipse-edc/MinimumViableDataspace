@@ -4,14 +4,14 @@ on:
   workflow_call:
     inputs:
       resources_prefix:
-        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces. Must be 3 to 7 lowercase letters and digits, starting with a letter.'
         required: true
         type: string
 
   workflow_dispatch:
     inputs:
       resources_prefix:
-        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces.'
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces. Must be 3 to 7 lowercase letters and digits, starting with a letter.'
         required: true
         type: string
 
@@ -20,17 +20,21 @@ on:
 permissions:
   id-token: write
   contents: read
+  checks: write
+  pull-requests: write
 
 env:
   RESOURCES_PREFIX: ${{ github.event.inputs.resources_prefix || inputs.resources_prefix }}
 
 jobs:
 
-  Matrix:
+  Inputs:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
+      - name: 'Check resource prefix format: should be 3 to 7 lowercase letters and digits, starting with a letter.'
+        run: '[[ "$RESOURCES_PREFIX" =~ ^[a-z][a-z0-9]{2,6}$ ]]'
       - uses: actions/checkout@v2
       - id: set-matrix
         run: |
@@ -39,6 +43,8 @@ jobs:
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
   Build-Connector:
+    needs:
+      - Inputs
     runs-on: ubuntu-latest
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
@@ -70,6 +76,8 @@ jobs:
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
   Build-Registration-Service:
+    needs:
+      - Inputs
     runs-on: ubuntu-latest
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
@@ -100,6 +108,8 @@ jobs:
 
   # Build data dashboard webapp
   Build-Dashboard:
+    needs:
+      - Inputs
     runs-on: ubuntu-latest
     env:
       ACR_NAME: ${{ secrets.ACR_NAME }}
@@ -171,7 +181,7 @@ jobs:
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: 'Upload tfvars file'
-        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key -o none
 
       - name: 'Run terraform'
         id: runterraform
@@ -239,7 +249,7 @@ jobs:
       - Deploy-Dataspace
       - Build-Connector
       - Build-Dashboard
-      - Matrix
+      - Inputs
     runs-on: ubuntu-latest
     outputs:
       company1_edc_host: ${{ steps.runterraform.outputs.company1_edc_host }}
@@ -262,11 +272,15 @@ jobs:
       company3_assets_storage_account: ${{ steps.runterraform.outputs.company3_assets_storage_account }}
 
     strategy:
-      matrix: ${{ fromJson(needs.Matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.Inputs.outputs.matrix) }}
 
     defaults:
       run:
         working-directory: deployment/terraform/participant
+    env:
+      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
+      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
+      GAIAX_DID: did:web:${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
 
     steps:
       - uses: actions/checkout@v2
@@ -304,7 +318,7 @@ jobs:
           subscription-id: ${{ secrets.ARM_SUBSCRIPTION_ID }}
 
       - name: 'Upload tfvars file'
-        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key
+        run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f terraform.tfvars -n "${{ matrix.participant }}${{ env.RESOURCES_PREFIX }}.tfvars" --auth-mode key -o none
 
       - name: 'Run terraform'
         id: runterraform
@@ -401,28 +415,46 @@ jobs:
           name: gaiaxkey
           path: deployment/terraform/participant
 
+      - name: 'Copy Identity Hub CLI'
+        uses: ./.github/actions/copy-maven-artifact
+        with:
+          artifact: org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${{ env.IDENTITY_HUB_VERSION }}:jar:all
+          directory: deployment/terraform/participant
+
+      - name: 'Set Identity Hub URL'
+        run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:8181/api/identity-hub" >> $GITHUB_ENV
+
+      - name: 'Push GAIA-X membership verifiable credential'
+        run: |
+          id=$(uuidgen)
+          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+            -c='{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' \
+            -b="did:web:$PARTICIPANT_DID_HOST" \
+            -i="$GAIAX_DID" \
+            -k="gaiaxkey.pem"
+
       - name: 'Push region verifiable credential'
         run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:$cli_version:jar:all -DoutputDirectory=.
-          
           id=$(uuidgen)
-          
-          java -jar identity-hub-cli-$cli_version-all.jar -s=$identityHubUrl vc add \
-            -c='{"id":"'$id'","credentialSubject":{"region":"'$region'"}}' \
+          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+            -c='{"id": "'$id'", "credentialSubject": {"region": "'$region'"}}' \
             -b="did:web:$PARTICIPANT_DID_HOST" \
-            -i="did:web:$issuer" \
+            -i="$GAIAX_DID" \
             -k="gaiaxkey.pem"
-          
-          java -jar identity-hub-cli-$cli_version-all.jar -s=$identityHubUrl vc list
         env:
-          cli_version: 0.0.1-SNAPSHOT
           region: ${{ matrix.region }}
-          issuer: ${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
-          identityHubUrl: http://${{ env.EDC_HOST }}:8181/api/identity-hub
+
+      - name: 'Output verifiable credentials'
+        run: java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc list
+
+      - name: 'Copy Registration Service CLI'
+        uses: ./.github/actions/copy-maven-artifact
+        with:
+          artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
+          directory: deployment/terraform/participant
 
       - name: 'Register participant'
         run: |
-          mvn dependency:copy -Dartifact=org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:$REGISTRATION_SERVICE_VERSION:jar:all -DoutputDirectory=.
           java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
             -d did:web:$DATASPACE_DID_HOST \
             -c did:web:$PARTICIPANT_DID_HOST \
@@ -470,3 +502,10 @@ jobs:
           CONSUMER_US_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/identity-hub
           API_KEY: ${{ needs.Deploy-Participants.outputs.company2_api_key }}
           TEST_ENVIRONMENT: "cloud"
+
+      - name: "Publish Gatling report"
+        uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: Gatling reports (cloud run)
+          path: '**/build/reports/gatling/**'

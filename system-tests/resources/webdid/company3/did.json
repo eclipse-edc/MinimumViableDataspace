@@ -1,21 +1,21 @@
 {
-	"id": "did:web:did-server:consumer-eu",
+	"id": "did:web:did-server:company3",
 	"@context": [
 		"https://www.w3.org/ns/did/v1",
 		{
-			"@base": "did:web:did-server:consumer-eu"
+			"@base": "did:web:did-server:company3"
 		}
 	],
 	"service": [
 		{
 			"id": "#identity-hub-url",
 			"type": "IdentityHub",
-			"serviceEndpoint": "http://consumer-eu:8181/api/identity-hub"
+			"serviceEndpoint": "http://company3:8181/api/identity-hub"
 		},
 		{
 			"id": "#ids-url",
 			"type": "IDSMessaging",
-			"serviceEndpoint": "http://consumer-eu:8282"
+			"serviceEndpoint": "http://company3:8282"
 		}
 	],
 	"verificationMethod": [{

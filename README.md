@@ -19,8 +19,8 @@ Once your environment is set up, follow these steps to create a new dataspace in
 - Go to your MVD fork in GitHub.
 - Select the tab called `Actions`.
 - Select the workflow called `Deploy`.
-- Provide your own resources name prefix. Please, use at most 3 characters, composed of lower case letters and numbers.
-  This name prefix guarantees the resources name's uniqueness and avoids resource name conflicts.
+- Provide your own resources name prefix. The prefix must be 3 to 7 lowercase letters and digits, starting with a letter.
+  This name prefix ensures the resources name's uniqueness and avoids resource name conflicts.
   Note down the used prefix.
 - Click on `Run workflow` to trigger the deployment.
 

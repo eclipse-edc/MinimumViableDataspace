@@ -1,21 +1,21 @@
 {
-	"id": "did:web:did-server:provider",
+	"id": "did:web:did-server:company2",
 	"@context": [
 		"https://www.w3.org/ns/did/v1",
 		{
-			"@base": "did:web:did-server:provider"
+			"@base": "did:web:did-server:company2"
 		}
 	],
 	"service": [
 		{
 			"id": "#identity-hub-url",
 			"type": "IdentityHub",
-			"serviceEndpoint": "http://provider:8181/api/identity-hub"
+			"serviceEndpoint": "http://company2:8181/api/identity-hub"
 		},
 		{
 			"id": "#ids-url",
 			"type": "IDSMessaging",
-			"serviceEndpoint": "http://provider:8282"
+			"serviceEndpoint": "http://company2:8282"
 		}
 	],
 	"verificationMethod": [{

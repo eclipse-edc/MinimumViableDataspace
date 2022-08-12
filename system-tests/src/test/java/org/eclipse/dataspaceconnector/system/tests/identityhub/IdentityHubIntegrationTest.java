@@ -18,7 +18,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 import okhttp3.OkHttpClient;
+import org.assertj.core.api.AbstractCollectionAssert;
 import org.assertj.core.api.ObjectAssert;
+import org.assertj.core.api.ThrowingConsumer;
 import org.eclipse.dataspaceconnector.identityhub.client.IdentityHubClientImpl;
 import org.eclipse.dataspaceconnector.spi.monitor.ConsoleMonitor;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +28,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -59,38 +62,40 @@ public class IdentityHubIntegrationTest {
     @ParameterizedTest
     @MethodSource("provideHubUrls")
     void retrieveVerifiableCredentials(String hubUrl, String region) {
-        await().atMost(20, SECONDS).untilAsserted(() -> singleVcInIdentityHub(hubUrl));
+        await().atMost(20, SECONDS).untilAsserted(() -> twoCredentialsInIdentityHub(hubUrl));
 
-        singleVcInIdentityHub(hubUrl)
-                .satisfies(jwt -> {
-                    var claims = jwt.getJWTClaimsSet();
-                    assertThat(claims.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
-                    assertThat(claims.getSubject()).as("Subject is a Web DID").startsWith("did:web:");
-                    assertThat(claims.getClaim("vc")).as("VC")
-                            .isInstanceOfSatisfying(JSONObject.class, t -> {
-
-                                assertThat(t.get("id"))
-                                        .as("VC ID")
-                                        .isInstanceOfSatisfying(String.class, s -> assertThat(s).isNotBlank());
-
-                                assertThat(t.get("credentialSubject"))
-                                        .as("VC credentialSubject")
-                                        .isInstanceOfSatisfying(JSONObject.class,
-                                                s -> assertThat(s.get("region"))
-                                                        .as("region")
-                                                        .isInstanceOfSatisfying(String.class,
-                                                                r -> assertThat(r).isEqualTo(region)));
-
-                            })
-                    ;
-                });
+        twoCredentialsInIdentityHub(hubUrl)
+                .anySatisfy(vcRequirements("region", region))
+                .anySatisfy(vcRequirements("gaiaXMember", "true"));
     }
 
-    private ObjectAssert<SignedJWT> singleVcInIdentityHub(String hubUrl) {
+    private ThrowingConsumer<SignedJWT> vcRequirements(String name, String value) {
+        return jwt -> {
+            var claims = jwt.getJWTClaimsSet();
+            assertThat(claims.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
+            assertThat(claims.getSubject()).as("Subject is a Web DID").startsWith("did:web:");
+            assertThat(claims.getClaim("vc")).as("VC")
+                    .isInstanceOfSatisfying(JSONObject.class, t -> {
+
+                        assertThat(t.get("id"))
+                                .as("VC ID")
+                                .isInstanceOfSatisfying(String.class, s -> assertThat(s).isNotBlank());
+
+                        assertThat(t.get("credentialSubject"))
+                                .as("VC credentialSubject")
+                                .isInstanceOfSatisfying(JSONObject.class, s -> assertThat(s.get(name))
+                                        .as(name)
+                                        .isInstanceOfSatisfying(String.class,
+                                                r -> assertThat(r).isEqualTo(value)));
+                    });
+        };
+    }
+
+    private AbstractCollectionAssert<?, Collection<? extends SignedJWT>, SignedJWT, ObjectAssert<SignedJWT>> twoCredentialsInIdentityHub(String hubUrl) {
         var vcs = client.getVerifiableCredentials(hubUrl);
 
         assertThat(vcs.succeeded()).isTrue();
-        return assertThat(vcs.getContent()).singleElement();
+        return assertThat(vcs.getContent()).hasSize(2);
     }
 
     private static Stream<Arguments> provideHubUrls() {

@@ -41,7 +41,7 @@ public class TransferLocalSimulation extends Simulation {
     public static final String API_KEY_HEADER = "x-api-key";
     public static final String API_KEY = requiredPropOrEnv("API_KEY", "ApiKeyDefaultValue");
     public static final String CONSUMER_MANAGEMENT_URL = requiredPropOrEnv("CONSUMER_MANAGEMENT_URL", "http://localhost:9192") + "/api/v1/data";
-    public static final String PROVIDER_IDS_URL = requiredPropOrEnv("PROVIDER_IDS_URL", "http://provider:8282");
+    public static final String PROVIDER_IDS_URL = requiredPropOrEnv("PROVIDER_IDS_URL", "http://company1:8282");
 
     public TransferLocalSimulation(TransferRequestFactory requestFactory) {
         var httpProtocol = http

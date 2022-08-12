@@ -1,19 +1,19 @@
 services:
 
   # EDC Connector to simulate a dataspace participant acting as a data provider which is located in EU.
-  provider:
-    container_name: provider
+  company1:
+    container_name: company1
     build:
       context: ../launcher
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://provider:8282
+      IDS_WEBHOOK_ADDRESS: http://company1:8282
       EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
-      EDC_CONNECTOR_NAME: provider
-      EDC_IDENTITY_DID_URL: did:web:did-server:provider
-      EDC_VAULT: /resources/vault/provider/provider-vault.properties
-      EDC_KEYSTORE: /resources/vault/provider/provider-keystore.jks
+      EDC_CONNECTOR_NAME: company1
+      EDC_IDENTITY_DID_URL: did:web:did-server:company1
+      EDC_VAULT: /resources/vault/company1/company1-vault.properties
+      EDC_KEYSTORE: /resources/vault/company1/company1-keystore.jks
       EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
@@ -32,19 +32,19 @@ services:
       - ./resources:/resources
 
   # EDC Connector to simulate a dataspace participant acting as a data consumer which is located in EU.
-  consumer-eu:
-    container_name: consumer-eu
+  company2:
+    container_name: company2
     build:
       context: ../launcher
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://consumer-eu:8282
+      IDS_WEBHOOK_ADDRESS: http://company2:8282
       EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
-      EDC_CONNECTOR_NAME: consumer-eu
-      EDC_IDENTITY_DID_URL: did:web:did-server:consumer-eu
-      EDC_VAULT: /resources/vault/consumer-eu/consumer-eu-vault.properties
-      EDC_KEYSTORE: /resources/vault/consumer-eu/consumer-eu-keystore.jks
+      EDC_CONNECTOR_NAME: company2
+      EDC_IDENTITY_DID_URL: did:web:did-server:company2
+      EDC_VAULT: /resources/vault/company2/company2-vault.properties
+      EDC_KEYSTORE: /resources/vault/company2/company2-keystore.jks
       EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
@@ -63,19 +63,19 @@ services:
       - ./resources:/resources
 
   # EDC Connector to simulate a dataspace participant acting as a consumer which is located in US.
-  consumer-us:
-    container_name: consumer-us
+  company3:
+    container_name: company3
     build:
       context: ../launcher
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://consumer-us:8282
+      IDS_WEBHOOK_ADDRESS: http://company3:8282
       EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
-      EDC_CONNECTOR_NAME: consumer-us
-      EDC_IDENTITY_DID_URL: did:web:did-server:consumer-us
-      EDC_VAULT: /resources/vault/consumer-us/consumer-us-vault.properties
-      EDC_KEYSTORE: /resources/vault/consumer-us/consumer-us-keystore.jks
+      EDC_CONNECTOR_NAME: company3
+      EDC_IDENTITY_DID_URL: did:web:did-server:company3
+      EDC_VAULT: /resources/vault/company3/company3-vault.properties
+      EDC_KEYSTORE: /resources/vault/company3/company3-keystore.jks
       EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
@@ -96,23 +96,23 @@ services:
   # Usages postman collections for initial data seeding to connectors.
   newman:
     container_name: newman
-    image: postman/newman
-    entrypoint: /bin/sh
+    image: postman/newman:ubuntu
+    entrypoint: /bin/bash
     command: deployment/seed-data.sh
     volumes:
       - ../deployment/:/deployment
     working_dir: /
     environment:
       API_KEY: ApiKeyDefaultValue
-      EDC_HOST: provider
-      ASSETS_STORAGE_ACCOUNT: providerassets
-      PARTICIPANT_ID: company1
+      EDC_HOST: company1:company2:company3
+      ASSETS_STORAGE_ACCOUNT: company1assets:company2assets:company3assets
+      PARTICIPANT_ID: company1:company2:company3
     depends_on:
-      consumer-eu:
+      company1:
         condition: service_healthy
-      consumer-us:
+      company2:
         condition: service_healthy
-      provider:
+      company3:
         condition: service_healthy
 
   # A nginx based HTTP server to serve dataspace participants DIDs.
@@ -131,7 +131,7 @@ services:
     ports:
       - 10000:10000
     environment:
-      AZURITE_ACCOUNTS: providerassets:key1;consumereuassets:key2;consumerusassets:key3
+      AZURITE_ACCOUNTS: company1assets:key1;company2assets:key2;company3assets:key3
 
   # Dataspace registration service authority.
   registration-service:
@@ -158,11 +158,11 @@ services:
     volumes:
       - ./resources:/resources
     depends_on:
-      consumer-eu:
+      company1:
         condition: service_healthy
-      consumer-us:
+      company2:
         condition: service_healthy
-      provider:
+      company3:
         condition: service_healthy
       registration-service:
         condition: service_healthy
