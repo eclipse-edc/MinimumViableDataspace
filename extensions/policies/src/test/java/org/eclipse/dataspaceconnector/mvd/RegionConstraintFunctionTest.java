@@ -38,8 +38,8 @@ public class RegionConstraintFunctionTest {
     private static final Monitor MONITOR = new ConsoleMonitor();
     private static final RegionConstraintFunction CONSTRAINT_FUNCTION = new RegionConstraintFunction(OBJECT_MAPPER, MONITOR);
     private static final Permission PERMISSION = Permission.Builder.newInstance().build();
-    private static final String REGION_KEY = "region";
-    private static final String EXPECTED_REGION = "eu";
+    private static final String REGION_KEY = "region";//a
+    private static final String EXPECTED_REGION = "eu";//a
     private static final String ISSUER_KEY = "iss";
 
     @Test
