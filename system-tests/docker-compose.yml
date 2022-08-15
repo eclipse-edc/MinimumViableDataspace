@@ -143,12 +143,20 @@ services:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
     environment:
       JWT_AUDIENCE: http://registration-service:8184/authority
+      EDC_CONNECTOR_NAME: registration-service
+      EDC_IDENTITY_DID_URL: did:web:did-server:registration-service
+      EDC_VAULT: /resources/vault/registration-service/registration-service-vault.properties
+      EDC_KEYSTORE: /resources/vault/registration-service/registration-service-keystore.jks
+      EDC_KEYSTORE_PASSWORD: test123
       WEB_HTTP_AUTHORITY_PORT: 8184
       WEB_HTTP_AUTHORITY_PATH: /authority
+      EDC_ERROR_RESPONSE_VERBOSE: "true"
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
     ports:
       - "8184:8184"
       - "5008:5008"
+    volumes:
+      - ./resources:/resources
 
   # cli-tools to help setup MVD environment e.g. registering participant to authority.
   cli-tools:
@@ -166,3 +174,10 @@ services:
         condition: service_healthy
       registration-service:
         condition: service_healthy
+
+  cli-debug:
+    image: openjdk:17-slim-buster
+    tty: true
+    command: "/bin/bash"
+    volumes:
+      - ./resources:/resources

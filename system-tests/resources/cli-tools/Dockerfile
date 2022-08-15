@@ -1,8 +1,8 @@
 FROM openjdk:17-slim-buster
 
-# Install uuidgen, then delete apt indexes to save image space
+# Install uuidgen and jq then delete apt indexes to save image space
 RUN apt update \
-    && apt install -y uuid-runtime \
+    && apt install -y uuid-runtime jq \
     && rm -rf /var/cache/apt/archives /var/lib/apt/lists
 
 WORKDIR /app
