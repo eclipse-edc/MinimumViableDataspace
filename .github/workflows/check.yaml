@@ -23,4 +23,5 @@ jobs:
           git diff --exit-code
 
       - name: Run Checkstyle
-        run: ./gradlew checkstyleMain checkstyleTest checkstyleTestFixtures
+        run: ./gradlew checkstyleMain checkstyleTest
+
