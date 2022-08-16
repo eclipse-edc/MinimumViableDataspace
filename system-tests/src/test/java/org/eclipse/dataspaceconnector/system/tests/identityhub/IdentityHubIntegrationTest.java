@@ -14,11 +14,14 @@
 
 package org.eclipse.dataspaceconnector.system.tests.identityhub;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 import okhttp3.OkHttpClient;
 import org.assertj.core.api.AbstractCollectionAssert;
+import org.assertj.core.api.IterableAssert;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowingConsumer;
 import org.eclipse.dataspaceconnector.identityhub.client.IdentityHubClientImpl;
@@ -38,7 +41,7 @@ import static org.awaitility.Awaitility.await;
 import static org.eclipse.dataspaceconnector.system.tests.utils.TestUtils.requiredPropOrEnv;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class IdentityHubIntegrationTest {
+class IdentityHubIntegrationTest {
 
     static final String PROVIDER_IDENTITY_HUB_URL = requiredPropOrEnv("PROVIDER_IDENTITY_HUB_URL", "http://localhost:8181/api/identity-hub");
     static final String CONSUMER_EU_IDENTITY_HUB_URL = requiredPropOrEnv("CONSUMER_EU_IDENTITY_HUB_URL", "http://localhost:8182/api/identity-hub");
@@ -61,12 +64,32 @@ public class IdentityHubIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("provideHubUrls")
-    void retrieveVerifiableCredentials(String hubUrl, String region) {
+    void retrieveVerifiableCredentials(String hubUrl, String region, String country) {
         await().atMost(20, SECONDS).untilAsserted(() -> twoCredentialsInIdentityHub(hubUrl));
 
         twoCredentialsInIdentityHub(hubUrl)
                 .anySatisfy(vcRequirements("region", region))
                 .anySatisfy(vcRequirements("gaiaXMember", "true"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideHubUrls")
+    void getSelfDescription(String hubUrl, String region, String country) {
+        await().atMost(20, SECONDS).untilAsserted(() -> selfDescriptionRetrieved(hubUrl));
+
+        selfDescriptionRetrieved(hubUrl).anySatisfy(selfDescriptionRequirements(country));
+    }
+
+
+    private ThrowingConsumer<JsonNode> selfDescriptionRequirements(String country) {
+        return json -> {
+            var credentialSubject = getOrThrow(json, "credentialSubject");
+            var headquarterAddress = getOrThrow(credentialSubject, "gx-participant:headquarterAddress");
+            var participantCountry = getOrThrow(headquarterAddress, "gx-participant:country");
+            var countryValue = getOrThrow(participantCountry, "@value");
+            assertThat(countryValue).isInstanceOf(TextNode.class);
+            assertThat(countryValue.asText()).isEqualTo(country);
+        };
     }
 
     private ThrowingConsumer<SignedJWT> vcRequirements(String name, String value) {
@@ -98,11 +121,24 @@ public class IdentityHubIntegrationTest {
         return assertThat(vcs.getContent()).hasSize(3);
     }
 
+    private IterableAssert<JsonNode> selfDescriptionRetrieved(String hubUrl) {
+        var vcs = client.getSelfDescription(hubUrl);
+
+        assertThat(vcs.succeeded()).isTrue();
+        return assertThat(vcs.getContent());
+    }
+
+    private static JsonNode getOrThrow(JsonNode node, String key) {
+        var value = node.get(key);
+        assertThat(value).isNotNull();
+        return value;
+    }
+
     private static Stream<Arguments> provideHubUrls() {
         return Stream.of(
-                arguments(PROVIDER_IDENTITY_HUB_URL, "eu"),
-                arguments(CONSUMER_EU_IDENTITY_HUB_URL, "eu"),
-                arguments(CONSUMER_US_IDENTITY_HUB_URL, "us")
+                arguments(PROVIDER_IDENTITY_HUB_URL, "eu", "FR"),
+                arguments(CONSUMER_EU_IDENTITY_HUB_URL, "eu", "DE"),
+                arguments(CONSUMER_US_IDENTITY_HUB_URL, "us", "US")
         );
     }
 }

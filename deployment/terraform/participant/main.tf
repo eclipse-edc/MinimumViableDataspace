@@ -91,6 +91,16 @@ resource "azurerm_container_group" "edc" {
       protocol = "TCP"
     }
 
+    volume {
+      name       = "shared"
+      mount_path = "/resources"
+      read_only  = true
+      share_name = azurerm_storage_share.share.name
+
+      storage_account_name = azurerm_storage_account.shared.name
+      storage_account_key  = azurerm_storage_account.shared.primary_access_key
+    }
+
     environment_variables = {
       EDC_IDS_ID         = local.connector_id
       EDC_CONNECTOR_NAME = local.connector_name
@@ -113,6 +123,8 @@ resource "azurerm_container_group" "edc" {
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS = 10
 
       APPLICATIONINSIGHTS_ROLE_NAME = local.connector_name
+
+      EDC_SELF_DESCRIPTION_DOCUMENT_PATH = "/resources/sdd.json"
     }
 
     secure_environment_variables = {
@@ -232,6 +244,28 @@ resource "azurerm_storage_account" "inbox" {
   account_kind             = "StorageV2"
 }
 
+resource "azurerm_storage_account" "shared" {
+  name                     = "${var.prefix}${var.participant_name}shared"
+  resource_group_name      = azurerm_resource_group.participant.name
+  location                 = azurerm_resource_group.participant.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  account_kind             = "StorageV2"
+  static_website {}
+}
+
+resource "azurerm_storage_share" "share" {
+  name                 = "share"
+  storage_account_name = azurerm_storage_account.shared.name
+  quota                = 1
+}
+
+resource "azurerm_storage_share_file" "sdd" {
+  name             = "sdd.json"
+  storage_share_id = azurerm_storage_share.share.id
+  source           = "${var.participant_name}-sdd.json"
+}
+
 resource "azurerm_storage_container" "assets_container" {
   name                 = "src-container"
   storage_account_name = azurerm_storage_account.assets.name
@@ -258,11 +292,13 @@ resource "azurerm_storage_blob" "did" {
   storage_account_name = azurerm_storage_account.did.name
   # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
   count                  = var.public_key_jwk_file == null ? 0 : 1
-  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
-  type                   = "Block"
+  storage_container_name = "$web"
+  # container used to serve static files (see static_website property on storage account)
+  type = "Block"
   source_content = jsonencode({
     id = local.did_url
-    "@context" = ["https://www.w3.org/ns/did/v1",
+    "@context" = [
+      "https://www.w3.org/ns/did/v1",
       {
         "@base" = local.did_url
       }
@@ -289,7 +325,8 @@ resource "azurerm_storage_blob" "did" {
     ],
     "authentication" : [
       "#identity-key-1"
-  ] })
+    ]
+  })
   content_type = "application/json"
 }
 

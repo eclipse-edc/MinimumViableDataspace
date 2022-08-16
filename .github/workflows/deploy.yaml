@@ -285,6 +285,16 @@ jobs:
 
       - uses: ./.github/actions/gradle-setup
 
+      - name: 'Generate Gaia-X Self-Description'
+        uses: cuchi/jinja2-action@v1.2.0
+        with:
+          template: deployment/resources/ParticipantSelfDescription.json.j2
+          output_file: deployment/terraform/participant/${{ matrix.participant }}-sdd.json
+          strict: true
+          variables: |
+            participant=${{ matrix.participant }}
+            country=${{ matrix.country }}
+
       - name: 'Generate Participant key'
         uses: ./.github/actions/generate-key
         with:
