@@ -6,9 +6,6 @@ plugins {
 
 allprojects {
     apply(plugin = "java")
-    if (System.getenv("JACOCO") == "true") {
-        apply(plugin = "jacoco")
-    }
 
     repositories {
         mavenCentral()
