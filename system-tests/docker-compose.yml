@@ -20,6 +20,8 @@ services:
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
       REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_WEB_REST_CORS_ENABLED: "true"
+      EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     depends_on:
       - did-server
       - azurite
@@ -51,6 +53,8 @@ services:
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
       REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_WEB_REST_CORS_ENABLED: "true"
+      EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     depends_on:
       - did-server
       - azurite
@@ -82,6 +86,8 @@ services:
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
       REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_WEB_REST_CORS_ENABLED: "true"
+      EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     depends_on:
       - did-server
       - azurite
@@ -166,3 +172,45 @@ services:
         condition: service_healthy
       registration-service:
         condition: service_healthy
+
+  # Data Dashboard (MVD UI) for participant company1
+  company1-datadashboard:
+    container_name: company1-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ./resources/appconfig/company1:/usr/share/nginx/html/assets/config
+    depends_on:
+      company1:
+        condition: service_healthy
+    ports:
+      - "7080:80"
+    profiles: ["ui"]
+
+      # Data Dashboard (MVD UI) for participant company2
+  company2-datadashboard:
+    container_name: company2-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ./resources/appconfig/company2:/usr/share/nginx/html/assets/config
+    depends_on:
+      company2:
+        condition: service_healthy
+    ports:
+      - "7081:80"
+    profiles: ["ui"]
+
+  # Data Dashboard (MVD UI) for participant company3
+  company3-datadashboard:
+    container_name: company3-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ./resources/appconfig/company3:/usr/share/nginx/html/assets/config
+    depends_on:
+      company3:
+        condition: service_healthy
+    ports:
+      - "7082:80"
+    profiles: ["ui"]

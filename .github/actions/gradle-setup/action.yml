@@ -25,6 +25,13 @@ runs:
         path: IdentityHub
         ref: 86025904ee4324edad0cd44070b491045589c2c2
 
+    - name: Checkout EDC Data Dashboard
+      uses: actions/checkout@v2
+      with:
+        repository: eclipse-dataspaceconnector/DataDashboard
+        path: DataDashboard
+        ref: ab1b6fd0870fa5ec8c170915a2b44fae63d576bd
+
     # Install Java and cache MVD Gradle build.
     - uses: actions/setup-java@v2
       with:

@@ -15,14 +15,17 @@ System tests are run both in local deployment (using docker compose) and in the 
 > are __not__ published to any central artifact repository yet, so in local development we have to use locally
 > published dependencies.
 >
->In order to use the correct version of each repo required by the `MVD`, you need to look in [action.yml](./.github/actions/../../../.github/actions/gradle-setup/action.yml) for the hashes of the versions of the `EDC`, `Identity Hub` and the `Registration Service` that are being used by the `MVD`.
+> In order to use the correct version of each repo required by the `MVD`, you need to look
+> in [action.yml](../.github/actions/gradle-setup/action.yml) for the hashes of the versions of the `EDC`, `Identity Hub`
+> and the `Registration Service` that are being used by the `MVD`.
 >
 > For Example for the dependency repositories:
 > - `Registration Service`
 > - `Identity Hub`
 > - `EDC`
 >
->  the hash (which is subject to change from the values presented here as an example) can be found in the _Checkout_ steps  (in the `ref` property) of [action.yml](./.github/actions/gradle-setup/action.yml):
+> the hash (which is subject to change from the values presented here as an example) can be found in the _Checkout_
+> steps (in the `ref` property) of `action.yml`:
 
 ```yml
     - name: Checkout EDC
@@ -101,7 +104,7 @@ Execute the following command from `Identity Hub` root folder:
 Execute the following command from `Registration Service` root folder:
 
 ```bash
-./gradlew publishToMavenLocal
+./gradlew publishToMavenLocal -P "skip.signing"
 ```
 
 <br />
