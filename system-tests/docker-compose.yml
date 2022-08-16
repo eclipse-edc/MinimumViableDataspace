@@ -14,6 +14,7 @@ services:
       EDC_IDENTITY_DID_URL: did:web:did-server:company1
       EDC_VAULT: /resources/vault/company1/company1-vault.properties
       EDC_KEYSTORE: /resources/vault/company1/company1-keystore.jks
+      EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/self-description/company1/sdd.json
       EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
@@ -45,6 +46,7 @@ services:
       EDC_IDENTITY_DID_URL: did:web:did-server:company2
       EDC_VAULT: /resources/vault/company2/company2-vault.properties
       EDC_KEYSTORE: /resources/vault/company2/company2-keystore.jks
+      EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/self-description/company2/sdd.json
       EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
@@ -76,6 +78,7 @@ services:
       EDC_IDENTITY_DID_URL: did:web:did-server:company3
       EDC_VAULT: /resources/vault/company3/company3-vault.properties
       EDC_KEYSTORE: /resources/vault/company3/company3-keystore.jks
+      EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/self-description/company3/sdd.json
       EDC_KEYSTORE_PASSWORD: test123
       EDC_API_AUTH_KEY: ApiKeyDefaultValue
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
