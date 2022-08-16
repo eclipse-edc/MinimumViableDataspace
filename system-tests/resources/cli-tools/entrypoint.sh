@@ -6,7 +6,7 @@ set -euo pipefail
 function waitForOnboarding() {
   local participantName="$1"
   local participantDid="$2"
-  echo "Fetching participant onboarding status..."
+  echo "Fetching $participantName onboarding status..."
   retryCount=0
   maxRetryCount=30
   onboardingCompleted=false
@@ -20,11 +20,11 @@ function waitForOnboarding() {
       status=$($cmd|jq ".status")
       echo "Status is $status"
       if [ "$status" == "\"ONBOARDED\"" ]; then
-          echo "Participant is onboarded successfully"
+          echo "$participantName is onboarded successfully"
           onboardingCompleted=true
           break
       else
-          echo "Onboarding is not completed yet. Waiting for 1 seconds..."
+          echo "Onboarding is not completed yet for $participantName. Waiting for 1 seconds..."
           sleep 1
       fi
       retryCount=$((retryCount+1))
