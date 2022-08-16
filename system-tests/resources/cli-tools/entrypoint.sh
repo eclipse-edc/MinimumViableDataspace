@@ -11,12 +11,12 @@ function waitForOnboarding() {
   maxRetryCount=30
   onboardingCompleted=false
   while [ $retryCount -lt $maxRetryCount ]; do
-      cmd='java -jar registration-service-cli.jar \
-                      -d="did:web:did-server:registration-service" \
+      cmd="java -jar registration-service-cli.jar \
+                      -d=did:web:did-server:registration-service \
                       --http-scheme \
                       -k=/resources/vault/$participantName/private-key.pem \
-                      -c="$participantDid" \
-                      participants get'
+                      -c=$participantDid \
+                      participants get"
       status=$($cmd|jq ".status")
       echo "Status is $status"
       if [ "$status" == "\"ONBOARDED\"" ]; then
