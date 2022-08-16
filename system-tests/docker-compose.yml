@@ -174,10 +174,3 @@ services:
         condition: service_healthy
       registration-service:
         condition: service_healthy
-
-  cli-debug:
-    image: openjdk:17-slim-buster
-    tty: true
-    command: "/bin/bash"
-    volumes:
-      - ./resources:/resources
