@@ -137,7 +137,7 @@ services:
   registration-service:
     container_name: registration-service
     build:
-#e.g. /home/user/RegistrationService/launcher
+      #e.g. /home/user/RegistrationService/launcher
       context: ${REGISTRATION_SERVICE_LAUNCHER_PATH:?"Registration Service launcher path env var required"}
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"

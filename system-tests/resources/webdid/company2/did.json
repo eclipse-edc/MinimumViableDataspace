@@ -6,11 +6,18 @@
 			"@base": "did:web:did-server:company2"
 		}
 	],
-	"service": [{
-		"id": "#identity-hub-url",
-		"type": "IdentityHub",
-		"serviceEndpoint": "http://company2:8181/api/identity-hub"
-	}],
+	"service": [
+		{
+			"id": "#identity-hub-url",
+			"type": "IdentityHub",
+			"serviceEndpoint": "http://company2:8181/api/identity-hub"
+		},
+		{
+			"id": "#ids-url",
+			"type": "IDSMessaging",
+			"serviceEndpoint": "http://company2:8282"
+		}
+	],
 	"verificationMethod": [{
 		"id": "#my-key-1",
 		"controller": "",

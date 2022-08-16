@@ -272,6 +272,11 @@ resource "azurerm_storage_blob" "did" {
         "id" : "#identity-hub-url",
         "type" : "IdentityHub",
         "serviceEndpoint" : "http://${azurerm_container_group.edc.fqdn}:${local.edc_default_port}/api/identity-hub"
+      },
+      {
+        "id" : "#ids-url",
+        "type" : "IDSMessaging",
+        "serviceEndpoint" : "http://${urlencode(azurerm_container_group.edc.fqdn)}:${local.edc_ids_port}"
       }
     ],
     "verificationMethod" = [
