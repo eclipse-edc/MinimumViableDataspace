@@ -18,7 +18,7 @@ import com.github.javafaker.Faker;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.DidDocument;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.Service;
 import org.eclipse.dataspaceconnector.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.dataspaceconnector.registration.client.models.Participant;
+import org.eclipse.dataspaceconnector.registration.client.models.ParticipantDto;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.result.Result;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +55,7 @@ class FederatedCacheNodeResolverTest {
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
-        var result = resolver.toFederatedCacheNode(new Participant().did(did));
+        var result = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
 
         assertThat(result.succeeded()).isTrue();
         var node = result.getContent();
@@ -71,7 +71,7 @@ class FederatedCacheNodeResolverTest {
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
-        var nodeResult = resolver.toFederatedCacheNode(new Participant().did(did));
+        var nodeResult = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
 
         assertThat(nodeResult.failed()).isTrue();
     }
@@ -84,7 +84,7 @@ class FederatedCacheNodeResolverTest {
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
-        var result = resolver.toFederatedCacheNode(new Participant().did(did));
+        var result = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
 
         assertThat(result.succeeded()).isTrue();
         var node = result.getContent();

@@ -35,6 +35,15 @@ variable "application_sp_object_id" {
   description = "object id of application's service principal object"
 }
 
+variable "application_sp_client_id" {
+  description = "client id of application's service principal object"
+}
+
+variable "application_sp_client_secret" {
+  description = "client secret of application's service principal object"
+  sensitive   = true
+}
+
 variable "public_key_jwk_file_authority" {
   description = "name of a file containing the Registration Service public key in JWK format"
   default     = null
