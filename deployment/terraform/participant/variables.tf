@@ -11,6 +11,10 @@ variable "participant_region" {
   default = "eu"
 }
 
+variable "participant_country" {
+  default = "FR"
+}
+
 variable "runtime_image" {
   description = "Image name of the EDC Connector to deploy"
 }

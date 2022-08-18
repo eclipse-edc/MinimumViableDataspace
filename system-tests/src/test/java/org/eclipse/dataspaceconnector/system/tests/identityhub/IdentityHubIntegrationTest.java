@@ -130,7 +130,7 @@ class IdentityHubIntegrationTest {
 
     private static JsonNode getOrThrow(JsonNode node, String key) {
         var value = node.get(key);
-        assertThat(value).isNotNull();
+        assertThat(value).as("Get value for key: %s", key).isNotNull();
         return value;
     }
 
