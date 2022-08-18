@@ -17,7 +17,7 @@ package org.eclipse.dataspaceconnector.mvd;
 import com.github.javafaker.Faker;
 import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.registration.client.api.RegistryApi;
-import org.eclipse.dataspaceconnector.registration.client.models.Participant;
+import org.eclipse.dataspaceconnector.registration.client.models.ParticipantDto;
 import org.eclipse.dataspaceconnector.spi.result.Result;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -85,8 +85,8 @@ class RegistrationServiceNodeDirectoryTest {
     }
 
     @NotNull
-    private Participant getParticipant() {
-        var participant = new Participant();
+    private ParticipantDto getParticipant() {
+        var participant = new ParticipantDto();
         participant.setDid(String.format("did:web:%s", faker.internet().domainName()));
         return participant;
     }

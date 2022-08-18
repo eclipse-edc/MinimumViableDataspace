@@ -95,7 +95,7 @@ public class IdentityHubIntegrationTest {
         var vcs = client.getVerifiableCredentials(hubUrl);
 
         assertThat(vcs.succeeded()).isTrue();
-        return assertThat(vcs.getContent()).hasSize(2);
+        return assertThat(vcs.getContent()).hasSize(3);
     }
 
     private static Stream<Arguments> provideHubUrls() {

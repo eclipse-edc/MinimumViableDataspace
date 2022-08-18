@@ -19,7 +19,7 @@ import org.eclipse.dataspaceconnector.iam.did.spi.document.DidDocument;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.Service;
 import org.eclipse.dataspaceconnector.iam.did.spi.resolution.DidResolverRegistry;
 import org.eclipse.dataspaceconnector.ids.spi.Protocols;
-import org.eclipse.dataspaceconnector.registration.client.models.Participant;
+import org.eclipse.dataspaceconnector.registration.client.models.ParticipantDto;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.result.Result;
 
@@ -44,7 +44,7 @@ class FederatedCacheNodeResolver {
         this.monitor = monitor;
     }
 
-    public Result<FederatedCacheNode> toFederatedCacheNode(Participant participant) {
+    public Result<FederatedCacheNode> toFederatedCacheNode(ParticipantDto participant) {
         var did = participant.getDid();
         monitor.debug(format("Resolving Did Document for did %s.", did));
         var didDocument = resolver.resolve(did);

@@ -17,7 +17,7 @@ package org.eclipse.dataspaceconnector.mvd;
 import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNodeDirectory;
 import org.eclipse.dataspaceconnector.registration.client.api.RegistryApi;
-import org.eclipse.dataspaceconnector.registration.client.models.Participant;
+import org.eclipse.dataspaceconnector.registration.client.models.ParticipantDto;
 import org.eclipse.dataspaceconnector.spi.result.AbstractResult;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirec
      * Constructs {@link RegistrationServiceNodeDirectory}
      *
      * @param apiClient RegistrationService API client.
-     * @param resolver gets {@link FederatedCacheNode} from {@link Participant}
+     * @param resolver gets {@link FederatedCacheNode} from {@link ParticipantDto}
      */
     public RegistrationServiceNodeDirectory(RegistryApi apiClient, FederatedCacheNodeResolver resolver) {
         this.apiClient = apiClient;

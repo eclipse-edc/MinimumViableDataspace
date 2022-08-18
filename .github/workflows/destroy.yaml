@@ -133,6 +133,9 @@ jobs:
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
+          # Passing dummy variables to terraform destroy, because destroy needs input variables to be defined, but uses the state.
+          TF_VAR_application_sp_client_secret: dummy
+
       # See Destroy-Participants job for explanation about the completion marker blob
       - name: 'Completion marker blob'
         run: az storage blob upload --account-name "${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}" -c "${{ secrets.TERRAFORM_STATE_CONTAINER }}" -f /dev/null -n "${{ env.RESOURCES_PREFIX }}.completed" --auth-mode key

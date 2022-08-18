@@ -167,6 +167,7 @@ jobs:
           resource_group = "rg-${{ env.RESOURCES_PREFIX }}"
           registrationservice_runtime_image = "mvd/registration-service:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
+          application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
           EOF
 
       - name: 'Az CLI login'
@@ -214,6 +215,7 @@ jobs:
           # Terraform variables not included in terraform.tfvars.
           TF_VAR_public_key_jwk_file_authority: "authoritykey.public.jwk"
           TF_VAR_public_key_jwk_file_gaiax: "gaiaxkey.public.jwk"
+          TF_VAR_application_sp_client_secret: ${{ secrets.APP_CLIENT_SECRET }}
 
       - name: 'Az CLI re-login (refresh role assignments)'
         uses: azure/login@v1
@@ -455,8 +457,7 @@ jobs:
             -d did:web:$DATASPACE_DID_HOST \
             -c did:web:$PARTICIPANT_DID_HOST \
             -k participantkey.pem \
-            participants add \
-            --ids-url "http://${{ env.EDC_HOST }}:8282"
+            participants add
         env:
           REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
           DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}

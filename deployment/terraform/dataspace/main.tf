@@ -85,10 +85,21 @@ resource "azurerm_container_group" "registration-service" {
     }
 
     environment_variables = {
-      EDC_CONNECTOR_NAME      = local.connector_name
+      EDC_CONNECTOR_NAME = local.connector_name
+
+      EDC_VAULT_NAME     = azurerm_key_vault.registrationservice.name
+      EDC_VAULT_TENANTID = data.azurerm_client_config.current_client.tenant_id
+      EDC_VAULT_CLIENTID = var.application_sp_client_id
+
+      EDC_IDENTITY_DID_URL = local.dataspace_did_uri
+
       JWT_AUDIENCE            = local.registration_service_url
       WEB_HTTP_AUTHORITY_PORT = local.registration_service_port
       WEB_HTTP_AUTHORITY_PATH = local.registration_service_path_prefix
+    }
+
+    secure_environment_variables = {
+      EDC_VAULT_CLIENTSECRET = var.application_sp_client_secret
     }
 
     liveness_probe {
