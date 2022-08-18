@@ -45,6 +45,7 @@ public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirec
     @Override
     public List<FederatedCacheNode> getAll() {
         return apiClient.listParticipants().stream()
+                .filter(participant -> participant.getStatus() == ParticipantDto.StatusEnum.ONBOARDED)
                 .map(resolver::toFederatedCacheNode)
                 .filter(AbstractResult::succeeded)
                 .map(AbstractResult::getContent)
