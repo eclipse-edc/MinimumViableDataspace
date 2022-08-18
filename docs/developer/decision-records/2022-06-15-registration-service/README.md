@@ -39,7 +39,7 @@ Operations that will be supported in future versions of the Registration Service
 
 A Client for _Company1_ initiates the enrollment process by resolving and contacting the enrollment API endpoint for the _Dataspace Authority_. (The client could be e.g. a CLI utility.)
 
-_The Dataspace Authority_ enrollment service obtains Verifiable Credentials from _Company1_ to determine whether it meets enrollment policies. The enrollment service then issues a Verifiable Credential that establishes membership and pushes it to _Company 1's_ Identity Hub, and stores membership and certificate information.
+_The Dataspace Authority_ enrollment service obtains Verifiable Credentials (VCs) from _Company1_ to determine whether it meets enrollment policies. The enrollment service then issues a Verifiable Credential that establishes membership and pushes it to _Company 1's_ Identity Hub, and stores membership and certificate information.
 
 In simple scenarios, enrollment could be fast and fully automated. However, in advanced scenarios, enrollment policies could require interactions with external systems, and even manual processes, therefore, it is implemented asynchronously.
 
@@ -47,8 +47,7 @@ In simple scenarios, enrollment could be fast and fully automated. However, in a
 
 1. _Company1_ has deployed an Identity Hub service, and a DID Document containing the Identity Hub URL.
 2. _Company1_ knows the DID URL of the Dataspace it intends to join.
-3. The _Company1_ Identity Hub contains VCs that satisfy _the Dataspace Authority_ enrollment policy. For example, it could be a credential signed by the German 
-   Government that establishes _Company1_ to be based in Germany, and a credential signed by _Auditor1_ that establishes _Company1_ to be **ISO27001** certified.
+3. The _Company1_ Identity Hub contains VCs that satisfy _the Dataspace Authority_ enrollment policy. In MVD, a credential `{"gaiaXMember": "true"}` is seeded for each deployed participant, signed by a fake GAIA-X authority.
 
 #### Post-conditions
 
@@ -67,7 +66,7 @@ In simple scenarios, enrollment could be fast and fully automated. However, in a
    request...
 4. ... and retrieves credentials from _Company1's_ Identity Hub.
 5. The Registration Service stores participant information in its store. This includes Company 1's DID URL.
-6. The Registration Service authorizes the request by applying the Dataspace enrollment policy on the obtained Verifiable Credentials.
+6. The Registration Service authorizes the request by applying the Dataspace enrollment policy on the obtained Verifiable Credentials. In MVD, the service checks for a credential `{"gaiaXMember": "true"}` signed by any issuer (as the EDC policy engine does not currently allow restricting trusting claims to specific issuers).
 7. The Registration Service updates the status of the participant's membership indicating that the participant's onboarding is successful/failed.
 8. The Registration Service issues and signs a membership Verifiable Credential.
 9. The Registration Service sends the Verifiable Credential to _Company1's_ Identity Hub for storage. It uses the Identity Hub bearer token (from the Distributed authorization
