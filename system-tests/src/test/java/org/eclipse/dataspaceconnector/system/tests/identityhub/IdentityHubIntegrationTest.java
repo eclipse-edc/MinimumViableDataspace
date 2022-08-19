@@ -38,7 +38,7 @@ import static org.awaitility.Awaitility.await;
 import static org.eclipse.dataspaceconnector.system.tests.utils.TestUtils.requiredPropOrEnv;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-public class IdentityHubIntegrationTest {
+class IdentityHubIntegrationTest {
 
     static final String PROVIDER_IDENTITY_HUB_URL = requiredPropOrEnv("PROVIDER_IDENTITY_HUB_URL", "http://localhost:8181/api/identity-hub");
     static final String CONSUMER_EU_IDENTITY_HUB_URL = requiredPropOrEnv("CONSUMER_EU_IDENTITY_HUB_URL", "http://localhost:8182/api/identity-hub");
