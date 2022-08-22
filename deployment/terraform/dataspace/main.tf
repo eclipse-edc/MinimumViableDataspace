@@ -93,13 +93,15 @@ resource "azurerm_container_group" "registration-service" {
 
       EDC_IDENTITY_DID_URL = local.dataspace_did_uri
 
-      JWT_AUDIENCE            = local.registration_service_url
-      WEB_HTTP_AUTHORITY_PORT = local.registration_service_port
-      WEB_HTTP_AUTHORITY_PATH = local.registration_service_path_prefix
+      JWT_AUDIENCE                  = local.registration_service_url
+      WEB_HTTP_AUTHORITY_PORT       = local.registration_service_port
+      WEB_HTTP_AUTHORITY_PATH       = local.registration_service_path_prefix
+      APPLICATIONINSIGHTS_ROLE_NAME = local.connector_name
     }
 
     secure_environment_variables = {
-      EDC_VAULT_CLIENTSECRET = var.application_sp_client_secret
+      APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.dataspace.connection_string
+      EDC_VAULT_CLIENTSECRET                = var.application_sp_client_secret
     }
 
     liveness_probe {
