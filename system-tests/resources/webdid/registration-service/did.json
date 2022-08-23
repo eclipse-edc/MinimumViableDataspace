@@ -6,25 +6,27 @@
 			"@base": "did:web:did-server:registration-service"
 		}
 	],
-	"service" : [
+	"service": [
 		{
-			"id" : "#registration-url",
-			"type" : "RegistrationUrl",
-			"serviceEndpoint" : "http://registration-service:8184/authority"
+			"id": "#registration-url",
+			"type": "RegistrationUrl",
+			"serviceEndpoint": "http://registration-service:8184/authority"
 		}
 	],
-	"verificationMethod": [{
-		"id": "#my-key-1",
-		"controller": "",
-		"type": "EcdsaSecp256k1VerificationKey2019",
-		"publicKeyJwk": {
-			"kty": "EC",
-			"kid": "r2vpmYH0Kn1urn6lrzPCzE_bVP6f4X9wb7qTT-IJODI",
-			"crv": "P-256",
-			"x": "LqW8A9NJSN7d-eLM7JqnxDpTzosTNaM8SZYOJLP7vgA",
-			"y": "ITv8jz0lGnCRx8yAFWVX6VbB57DUzGNG2m-0MxNVnis"
+	"verificationMethod": [
+		{
+			"id": "#my-key-1",
+			"controller": "",
+			"type": "EcdsaSecp256k1VerificationKey2019",
+			"publicKeyJwk": {
+				"kty": "EC",
+				"kid": "P4LiINnctgBg_ALr8eElNHQvxbUR6pZgfZunZWIr9pA",
+				"crv": "P-256",
+				"x": "91-yrni6ZryoL4w4xIKOGo70L0ExEnSeGtgXzGTHBcM",
+				"y": "-PZ0yhxRp3kSfS0Qvv6S0-OROGLLg1Ym76x5fRTn0uM"
+			}
 		}
-	}],
+	],
 	"authentication": [
 		"#my-key-1"
 	]
