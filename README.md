@@ -6,7 +6,7 @@ The MVD allows developers and decision makers to gauge the current progress of t
 
 As a fully decentralized dataspace is hard to imagine, the MVD also serves the purpose of demonstrating how decentralization can be practically implemented.
 
-## MVD Documentation
+## Documentation
 
 Developer documentation can be found under [docs/developer](docs/developer/), where the main concepts and decisions are captured as [decision records](docs/developer/decision-records/).
 
@@ -146,4 +146,4 @@ The following steps initiate and complete a file transfer with the provided test
 
 ## Contributing
 
-See [how to contribute](CONTRIBUTING.md).
+See [how to contribute](https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/blob/main/CONTRIBUTING.md).
