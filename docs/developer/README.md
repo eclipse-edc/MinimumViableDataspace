@@ -6,7 +6,7 @@ Please follow the [instructions to set up continuous deployment and initializing
 
 ## Local development setup
 
-Please follow the instructions in [this document](system-tests/README.md) to setup a local MVD environment for development purposes.
+Please follow the instructions in [this document](../../system-tests/README.md) to setup a local MVD environment for development purposes.
 
 ## Data Dashboard
 
