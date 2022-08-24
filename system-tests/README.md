@@ -145,7 +145,7 @@ Copy Identity Hub client-cli jar which should be located at `<Identity-Hub-root-
 From the `Registration Service` root folder, execute the following command:
 
 ```bash
-./gradlew :launcher:shadowJar
+./gradlew -DuseFsVault="true" shadowJar
 ```
 
 Copy registration service client-cli jar which should be located at `<Registration-Service-root-folder>/client-cli/build/libs/registration-service-cli.jar` into MVD at folder location `<MVD-root-folder>/system-tests/resources/cli-tools`. If required then update copied jar file name to `registration-service-cli.jar`, full path will be `<MVD-root-folder>/system-tests/resources/cli-tools/registration-service-cli.jar`. This `registration-service-cli.jar` will be used by `cli-tools` docker container to execute the `Registration Service` commands.
@@ -178,7 +178,24 @@ Once completed, following services will start within their docker containers:
 
 (EDC Connectors will also be seeded with initial required data using a [postman collection](../deployment/data/MVD.postman_collection.json))
 
-_Note, the `Newman` docker container will automatically stop after seeding initial data from postman scripts and `cli-tools` container will also automatically stop after registering participants._
+> Note, the `Newman` docker container will automatically stop after seeding initial data from postman scripts.
+
+> The container `cli-tools` will turn into the state `healthy` after registering successfully all participants.
+
+Sample for confirming successful run of container `cli-tools`.
+
+Command:
+
+```powershell
+docker ps -a
+```
+
+Output:
+
+```powershell
+CONTAINER ID   IMAGE                                     COMMAND                   CREATED              STATUS                        PORTS                                                                              NAMES
+22345bf0c595   system-tests_cli-tools                    "/bin/sh -c \"/app/en…"   About a minute ago   Up About a minute (healthy)                                                                                      cli-tools
+```
 
 Set the environment variable `TEST_ENVIRONMENT` to `local` to enable local blob transfer test and then run `MVD` system test using the following command:
 
