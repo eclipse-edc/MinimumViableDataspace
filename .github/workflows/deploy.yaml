@@ -298,6 +298,7 @@ jobs:
           acr_name = "${{ secrets.ACR_NAME }}"
           participant_name = "${{ matrix.participant }}"
           participant_region = "${{ matrix.region }}"
+          participant_country = "${{ matrix.country }}"
           data_dashboard_theme = "${{ matrix.data_dashboard_theme }}"
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ matrix.participant }}-${{ env.RESOURCES_PREFIX }}"
@@ -451,13 +452,27 @@ jobs:
           artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
           directory: deployment/terraform/participant
 
-      - name: 'Register participant'
+      - name: 'Request participant registration'
         run: |
           java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
             -d did:web:$DATASPACE_DID_HOST \
             -c did:web:$PARTICIPANT_DID_HOST \
             -k participantkey.pem \
             participants add
+        env:
+          REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
+          DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}
+
+      - name: 'Wait for participant registration'
+        run: |
+          cmd="java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
+                -d=did:web:$DATASPACE_DID_HOST \
+                -k=participantkey.pem \
+                -c=did:web:$PARTICIPANT_DID_HOST \
+                participants get"
+          
+          $GITHUB_WORKSPACE/system-tests/resources/cli-tools/validate_onboarding.sh "$participantDid" "$cmd"
+
         env:
           REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
           DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}

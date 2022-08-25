@@ -6,7 +6,7 @@ The MVD allows developers and decision makers to gauge the current progress of t
 
 As a fully decentralized dataspace is hard to imagine, the MVD also serves the purpose of demonstrating how decentralization can be practically implemented.
 
-## MVD Documentation
+## Documentation
 
 Developer documentation can be found under [docs/developer](docs/developer/), where the main concepts and decisions are captured as [decision records](docs/developer/decision-records/).
 
@@ -81,6 +81,38 @@ standard scenario which can be optionally used with the local development enviro
 > services on the console set `EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS` to a higher value, e.g. 60, for each EDC
 > participant in `system-tests/docker-compose.yml`.
 
+> Note: The container `cli-tools` will turn into the state `healthy` after registering successfully all participants and
+> will keep running as an entrypoint to the services created by Docker compose. This is useful for local development in order
+> to manually check commands against the participants (e.g. `company1`, `company2`, `company3`).
+
+Sample how to enter the container `cli-tools` and test a command manually.
+
+Host:
+
+```powershell
+docker exec -it cli-tools bash
+```
+
+Container:
+
+```bash
+java -jar registration-service-cli.jar \
+>    -d=did:web:did-server:registration-service \
+>    --http-scheme \
+>    -k=/resources/vault/company1/private-key.pem \
+>    -c=did:web:did-server:company1 \
+>    participants get
+```
+
+Output (container)
+
+```json
+{
+  "did" : "did:web:did-server:company1",
+  "status" : "ONBOARDED"
+}
+```
+
 ### Run A Standard Scenario Locally
 
 Prerequisite: create a test document manually:
@@ -146,4 +178,4 @@ The following steps initiate and complete a file transfer with the provided test
 
 ## Contributing
 
-See [how to contribute](CONTRIBUTING.md).
+See [how to contribute](https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/blob/main/CONTRIBUTING.md).

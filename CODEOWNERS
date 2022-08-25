@@ -8,10 +8,7 @@
 
 # The linked persons are automatically added as reviewers when a pull request is opened.
 
-CONTRIBUTING.md @paullatzelsperger
 LICENSE @paullatzelsperger
-pr_etiquette.md @paullatzelsperger
-styleguide.md @paullatzelsperger
 
 .github/actions/ @paullatzelsperger
 .github/ISSUE_TEMPLATE @paullatzelsperger

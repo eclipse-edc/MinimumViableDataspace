@@ -23,7 +23,7 @@ runs:
       with:
         repository: eclipse-dataspaceconnector/IdentityHub
         path: IdentityHub
-        ref: 86025904ee4324edad0cd44070b491045589c2c2
+        ref: 668bbcd5aae04d02c4733ca1dabac37ad9d41a57
 
     - name: Checkout EDC Data Dashboard
       uses: actions/checkout@v2

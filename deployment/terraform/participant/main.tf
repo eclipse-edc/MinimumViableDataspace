@@ -28,7 +28,8 @@ resource "random_password" "apikey" {
 }
 
 locals {
-  api_key = random_password.apikey.result
+  api_key              = random_password.apikey.result
+  edc_resources_folder = "/resources"
 }
 
 data "azurerm_container_registry" "registry" {
@@ -91,6 +92,16 @@ resource "azurerm_container_group" "edc" {
       protocol = "TCP"
     }
 
+    volume {
+      name       = "shared"
+      mount_path = local.edc_resources_folder
+      read_only  = true
+      share_name = azurerm_storage_share.share.name
+
+      storage_account_name = azurerm_storage_account.shared.name
+      storage_account_key  = azurerm_storage_account.shared.primary_access_key
+    }
+
     environment_variables = {
       EDC_IDS_ID         = local.connector_id
       EDC_CONNECTOR_NAME = local.connector_name
@@ -113,6 +124,8 @@ resource "azurerm_container_group" "edc" {
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS = 10
 
       APPLICATIONINSIGHTS_ROLE_NAME = local.connector_name
+
+      EDC_SELF_DESCRIPTION_DOCUMENT_PATH = "${local.edc_resources_folder}/${azurerm_storage_share_file.sdd.name}"
     }
 
     secure_environment_variables = {
@@ -232,6 +245,21 @@ resource "azurerm_storage_account" "inbox" {
   account_kind             = "StorageV2"
 }
 
+resource "azurerm_storage_account" "shared" {
+  name                     = "${var.prefix}${var.participant_name}shared"
+  resource_group_name      = azurerm_resource_group.participant.name
+  location                 = azurerm_resource_group.participant.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  account_kind             = "StorageV2"
+}
+
+resource "azurerm_storage_share" "share" {
+  name                 = "share"
+  storage_account_name = azurerm_storage_account.shared.name
+  quota                = 1
+}
+
 resource "azurerm_storage_container" "assets_container" {
   name                 = "src-container"
   storage_account_name = azurerm_storage_account.assets.name
@@ -258,11 +286,13 @@ resource "azurerm_storage_blob" "did" {
   storage_account_name = azurerm_storage_account.did.name
   # Create did blob only if public_key_jwk_file is provided. Default public_key_jwk_file value is null.
   count                  = var.public_key_jwk_file == null ? 0 : 1
-  storage_container_name = "$web" # container used to serve static files (see static_website property on storage account)
-  type                   = "Block"
+  storage_container_name = "$web"
+  # container used to serve static files (see static_website property on storage account)
+  type = "Block"
   source_content = jsonencode({
     id = local.did_url
-    "@context" = ["https://www.w3.org/ns/did/v1",
+    "@context" = [
+      "https://www.w3.org/ns/did/v1",
       {
         "@base" = local.did_url
       }
@@ -289,7 +319,8 @@ resource "azurerm_storage_blob" "did" {
     ],
     "authentication" : [
       "#identity-key-1"
-  ] })
+    ]
+  })
   content_type = "application/json"
 }
 
@@ -302,4 +333,82 @@ resource "local_file" "registry_entry" {
     supportedProtocols = ["ids-multipart"]
   })
   filename = "${path.module}/build/${var.participant_name}.json"
+}
+
+resource "local_file" "sdd" {
+  content  = <<EOT
+    {
+        "selfDescriptionCredential": {
+            "@context": [
+                "http://www.w3.org/ns/shacl#",
+                "http://www.w3.org/2001/XMLSchema#",
+                "http://w3id.org/gaia-x/participant#",
+                "@nest"
+            ],
+            "@id": "https://compliance.gaia-x.eu/.well-known/participant.json",
+            "@type": [
+                "VerifiableCredential",
+                "LegalPerson"
+            ],
+            "credentialSubject": {
+                "id": "did:compliance.gaia-x.eu",
+                "gx-participant:registrationNumber": {
+                    "@type": "xsd:string",
+                    "@value": "${var.participant_name}"
+                },
+                "gx-participant:headquarterAddress": {
+                    "@type": "gx-participant:Address",
+                    "gx-participant:country": {
+                        "@value": "${var.participant_country}",
+                        "@type": "xsd:string"
+                    }
+                },
+                "gx-participant:legalAddress": {
+                    "@type": "gx-participant:Address",
+                    "gx-participant:country": {
+                        "@value": "${var.participant_country}",
+                        "@type": "xsd:string"
+                    }
+                }
+            },
+            "proof": {
+                "type": "JsonWebKey2020",
+                "created": "2022-07-05T14:43:06.543Z",
+                "proofPurpose": "assertionMethod",
+                "verificationMethod": "did:web:test.delta-dao.com",
+                "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..WkJ7XuHlg2zQxoyFyAkt-QGzMdeCQRhylNbtu8CClGx11B49Z_zKm-HAEZv-NLupapvVYswL2JjoCcEQPhUEqhYruFIXcDwSTkBRpIxo084fytVMZtM2HDHV2snYpn7zUpfVzCOb-T2pkWkbmVvAOcSOg9OLPPWO1ypqUcimaEgdkyEHK-HFAuuqtll7K_5xP0-4_anXbF7Rr4aj0WQ5_glJMD8C2wjGir5DZB_vCOygVuprUL0OSPjdxB-4k6F1UPGr8MJ-IClfXpRaV0zdjkCZseCm4dIi9SOKGYTK609atCbhG3iQdukuZLhYJ8XhHyYv_5vGjkIVeayES78R1Q"
+            }
+        },
+        "complianceCredential": {
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1"
+            ],
+            "@type": [
+                "VerifiableCredential",
+                "ParticipantCredential"
+            ],
+            "id": "https://catalogue.gaia-x.eu/credentials/ParticipantCredential/1657032187885",
+            "issuer": "did:web:compliance.gaia-x.eu",
+            "issuanceDate": "2022-07-05T14:43:07.885Z",
+            "credentialSubject": {
+                "id": "did:compliance.gaia-x.eu",
+                "hash": "bd3a7c2819c80b2a4ccf24151ea2212aeffd5aecafce2a4f9672b7f707ed76a3"
+            },
+            "proof": {
+                "type": "JsonWebKey2020",
+                "created": "2022-07-05T14:43:07.885Z",
+                "proofPurpose": "assertionMethod",
+                "jws": "eyJhbGciOiJQUzI1NiIsImI2NCI6ZmFsc2UsImNyaXQiOlsiYjY0Il19..Sfbi2OjSoS4MLJA_ZHbAxjeWp5rD9t652mo7tV-zEV2sJjOYGOEGS7of9P8BDyHb1QJ1tNScJQu83aIEEN-NiYZGpWHfHQ39n0TnZHRiUI0GkbX8W2XDaL2wDIa62Q30v_-PdcnOruApcOIyIBVVFfel9b8OZU3L0lb0z71AO17kgDYWVMauchn9DFQrPcbPycn39dzwwoh2ojnIn6HZ5JtIeBsjzeLq2EnzNgkSjXiubHZRPjjPwM9ZqMl_Bmo0Nta18Kk8r3j5X0974xvbV63f7dfbHglNBnvc4ncEnWiRqIaF1MoMsw_EhUrVETrfrxju4Bm9cFunOIeKf8FuUQ",
+                "verificationMethod": "did:web:compliance.gaia-x.eu"
+            }
+        }
+    }
+  EOT
+  filename = "${path.module}/build/${var.participant_name}-sdd.json"
+}
+
+resource "azurerm_storage_share_file" "sdd" {
+  name             = "sdd.json"
+  storage_share_id = azurerm_storage_share.share.id
+  source           = local_file.sdd.filename
 }
