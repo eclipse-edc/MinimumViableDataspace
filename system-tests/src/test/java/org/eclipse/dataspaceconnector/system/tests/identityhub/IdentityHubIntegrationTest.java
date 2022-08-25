@@ -43,9 +43,10 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class IdentityHubIntegrationTest {
 
-    static final String PROVIDER_IDENTITY_HUB_URL = requiredPropOrEnv("PROVIDER_IDENTITY_HUB_URL", "http://localhost:8181/api/identity-hub");
-    static final String CONSUMER_EU_IDENTITY_HUB_URL = requiredPropOrEnv("CONSUMER_EU_IDENTITY_HUB_URL", "http://localhost:8182/api/identity-hub");
-    static final String CONSUMER_US_IDENTITY_HUB_URL = requiredPropOrEnv("CONSUMER_US_IDENTITY_HUB_URL", "http://localhost:8183/api/identity-hub");
+    static final String COMPANY1_IDENTITY_HUB_URL = requiredPropOrEnv("COMPANY1_IDENTITY_HUB_URL", "http://localhost:8181/api/identity-hub");
+    static final String COMPANY2_IDENTITY_HUB_URL = requiredPropOrEnv("COMPANY2_IDENTITY_HUB_URL", "http://localhost:8182/api/identity-hub");
+    static final String COMPANY3_IDENTITY_HUB_URL = requiredPropOrEnv("COMPANY3_IDENTITY_HUB_URL", "http://localhost:8183/api/identity-hub");
+    static final String AUTHORITY_IDENTITY_HUB_URL = requiredPropOrEnv("AUTHORITY_IDENTITY_HUB_URL", "http://localhost:8185/api/identity-hub");
 
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
@@ -63,7 +64,7 @@ class IdentityHubIntegrationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideHubUrls")
+    @MethodSource("provideParticipantHubUrls")
     void retrieveVerifiableCredentials(String hubUrl, String region, String country) {
         await().atMost(20, SECONDS).untilAsserted(() -> twoCredentialsInIdentityHub(hubUrl));
 
@@ -73,7 +74,7 @@ class IdentityHubIntegrationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideHubUrls")
+    @MethodSource("provideAllHubUrls")
     void getSelfDescription(String hubUrl, String region, String country) {
         await().atMost(20, SECONDS).untilAsserted(() -> selfDescriptionRetrieved(hubUrl));
 
@@ -134,11 +135,20 @@ class IdentityHubIntegrationTest {
         return value;
     }
 
-    private static Stream<Arguments> provideHubUrls() {
+    private static Stream<Arguments> provideParticipantHubUrls() {
         return Stream.of(
-                arguments(PROVIDER_IDENTITY_HUB_URL, "eu", "FR"),
-                arguments(CONSUMER_EU_IDENTITY_HUB_URL, "eu", "DE"),
-                arguments(CONSUMER_US_IDENTITY_HUB_URL, "us", "US")
+                arguments(COMPANY1_IDENTITY_HUB_URL, "eu", "FR"),
+                arguments(COMPANY2_IDENTITY_HUB_URL, "eu", "DE"),
+                arguments(COMPANY3_IDENTITY_HUB_URL, "us", "US")
+        );
+    }
+
+    private static Stream<Arguments> provideAllHubUrls() {
+        return Stream.concat(
+                provideParticipantHubUrls(),
+                Stream.of(
+                        arguments(AUTHORITY_IDENTITY_HUB_URL, "eu", "ES")
+                )
         );
     }
 }

@@ -137,6 +137,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
+      registration_service_host: ${{ steps.runterraform.outputs.registration_service_host }}
       registration_service_url: ${{ steps.runterraform.outputs.registration_service_url }}
       gaiax_did_host: ${{ steps.runterraform.outputs.gaiax_did_host }}
       dataspace_did_host: ${{ steps.runterraform.outputs.dataspace_did_host }}
@@ -165,6 +166,7 @@ jobs:
           acr_name = "${{ secrets.ACR_NAME }}"
           prefix = "${{ env.RESOURCES_PREFIX }}"
           resource_group = "rg-${{ env.RESOURCES_PREFIX }}"
+          dataspace_authority_country = "ES"
           registrationservice_runtime_image = "mvd/registration-service:${{ env.RESOURCES_PREFIX }}"
           application_sp_object_id = "${{ secrets.APP_OBJECT_ID }}"
           application_sp_client_id = "${{ secrets.APP_CLIENT_ID }}"
@@ -204,6 +206,8 @@ jobs:
           echo "::set-output name=dataspace_did_host::${dataspace_did_host}"
           gaiax_did_host=$(terraform output -raw gaiax_did_host)
           echo "::set-output name=gaiax_did_host::${gaiax_did_host}"
+          registration_service_host=$(terraform output -raw registration_service_host)
+          echo "::set-output name=registration_service_host::${registration_service_host}"
 
         env:
           # Authentication settings for Terraform AzureRM provider
@@ -509,9 +513,10 @@ jobs:
           PROVIDER_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company1_participant_did_host }}
           CONSUMER_EU_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company2_participant_did_host }}
           CONSUMER_US_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company3_participant_did_host }}
-          PROVIDER_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company1_edc_host }}:8181/api/identity-hub
-          CONSUMER_EU_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/identity-hub
-          CONSUMER_US_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/identity-hub
+          COMPANY1_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company1_edc_host }}:8181/api/identity-hub
+          COMPANY2_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/identity-hub
+          COMPANY3_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/identity-hub
+          AUTHORITY_IDENTITY_HUB_URL: http://${{ needs.Deploy-Dataspace.outputs.registration_service_host }}:8181/api/identity-hub
           API_KEY: ${{ needs.Deploy-Participants.outputs.company2_api_key }}
           TEST_ENVIRONMENT: "cloud"
 
