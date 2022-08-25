@@ -31,6 +31,10 @@ variable "container_memory" {
   default = "8"
 }
 
+variable "dataspace_authority_country" {
+  default = "DE"
+}
+
 variable "application_sp_object_id" {
   description = "object id of application's service principal object"
 }
