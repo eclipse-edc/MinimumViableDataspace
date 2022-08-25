@@ -11,6 +11,10 @@ output "app_insights_connection_string" {
   sensitive = true
 }
 
+output "registration_service_host" {
+  value = local.registration_service_host
+}
+
 output "registration_service_url" {
   value = local.registration_service_url
 }

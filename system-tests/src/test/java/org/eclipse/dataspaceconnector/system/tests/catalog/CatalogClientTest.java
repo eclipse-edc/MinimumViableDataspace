@@ -78,6 +78,7 @@ class CatalogClientTest {
                 .then()
                 .statusCode(200)
                 .extract().body().asString();
-        return typeManager.readValue(nodesJson, new TypeReference<List<ContractOffer>>(){});
+        return typeManager.readValue(nodesJson, new TypeReference<>() {
+        });
     }
 }
