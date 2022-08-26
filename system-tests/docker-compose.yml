@@ -176,6 +176,7 @@ services:
       context: ./resources/cli-tools
     volumes:
       - ./resources:/resources
+      - ../resources:/common-resources
     depends_on:
       company1:
         condition: service_healthy

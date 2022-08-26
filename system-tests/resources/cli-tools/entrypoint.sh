@@ -28,36 +28,29 @@ function seedVerifiedCredentials() {
      java -jar identity-hub-cli.jar \
                  -s="http://$participantName:8181/api/identity-hub" \
                  vc add \
-                 -c='{"id":"'$vcId'","credentialSubject":{'"$subject"'}}' \
+                 -c='{"id":"'"$vcId"'","credentialSubject":{'"$subject"'}}' \
                 -b="$participantDid" \
                  -i="did:web:did-server:gaia-x" \
                  -k="/resources/vault/gaia-x/private-key.pem"
    done
 }
 
-PARTICIPANTS=(company1:eu company2:eu company3:us)
-
-# Seed VCs and register participants.
-for participant in "${PARTICIPANTS[@]}"; do
-  participantArray=(${participant//:/ })
-
-  participantName=${participantArray[0]}
-  region=${participantArray[1]}
-  participantDid="did:web:did-server:$participantName"
+function seedAndRegisterParticipant() {
+  local participantName="$1"
+  local region="$2"
+  local participantDid="did:web:did-server:$participantName"
 
   # seed vc for participant
   seedVerifiedCredentials "$participantName" "$participantDid" "$region"
 
   # Register dataspace participants
   registerParticipant "$participantName" "$participantDid"
-done
+}
 
-# Await registrations of participants.
-for participant in "${PARTICIPANTS[@]}"; do
-  participantArray=(${participant//:/ })
-
-  participantName=${participantArray[0]}
-  participantDid="did:web:did-server:$participantName"
+function awaitParticipantRegistration() {
+  local participantName="$1"
+  local region="$2"
+  local participantDid="did:web:did-server:$participantName"
 
   cmd="java -jar registration-service-cli.jar \
                   -d=did:web:did-server:registration-service \
@@ -68,7 +61,24 @@ for participant in "${PARTICIPANTS[@]}"; do
 
   # Wait for participant registration.
   ./validate_onboarding.sh "$participantDid" "$cmd"
-done
+}
+
+# Read participants from participants.json file.
+# $participants will contain participants and regions in a shell readable format e.g.:
+# 'company1' 'eu' \n 'company2' 'eu' \n 'company3' 'us'
+participants=$(jq -r '.include | map([.participant, .region])[] | @sh' /common-resources/participants.json)
+
+# Seed VCs and register participants.
+while read -r i; do
+  # shellcheck disable=SC2086 # disable IDE warning: allow word splitting on jq @sh output
+  eval seedAndRegisterParticipant $i
+done <<< "$participants"
+
+# Await registrations of participants.
+while read -r i; do
+  # shellcheck disable=SC2086 # disable IDE warning: allow word splitting on jq @sh output
+  eval awaitParticipantRegistration $i
+done <<< "$participants"
 
 # flag for healthcheck by Docker
 echo "finished" > finished.flag
