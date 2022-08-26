@@ -64,15 +64,13 @@ needed for Github.
 _A Github user with permission to write secrets is required for this step!_
 
 This can be done manually using the Github website ([see documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)).
-Alternatively there is a [shell script](../../../resources/setup_azure_ad/set-gh-secrets.sh) that will set all Github Secrets automatically. From the `resources/setup_azure_ad` directory simply execute
-`./set-gh-secrets.sh` on a shell.
+Alternatively there is a [shell script](../../../resources/setup_azure_ad/set-gh-secrets.sh) that will set the relevant Github Secrets automatically. From the `resources/setup_azure_ad` directory, execute`./set-gh-secrets.sh` in a shell.
 
 _Requirements_:
 - user must be logged in to [Github CLI](https://cli.github.com/manual/gh_auth_login)
 - `terraform` must have completed successfully
 
-
---> continue with [setting up CI](continuous_deployment.md#deploy-common-cd-resources)
+Continue with [Configure CD Settings](#configure-cd-settings).
 
 ## Option 2: Manually set up Azure AD using the Azure Portal
 In case you're not comfortable with the Azure CLI or don't want to install it, the App Registrations and Service Principals can also be set up manually using the Azure Portal.
@@ -229,13 +227,11 @@ Configure the following GitHub secrets which are required by the CD pipeline:
 | `ACR_NAME`                    | The name of the Azure Container Registry to deploy. Use only lowercase letters and numbers. |
 | `TERRAFORM_STATE_STORAGE_ACCOUNT` | The name of the storage account used to store the Terraform state container, e.g. *mvdterraformstates*. |
 | `TERRAFORM_STATE_CONTAINER` | The name of the container used to store the Terraform state blob, e.g. *mvdterraformstates*. |
-
-Update the value of the `CD_RESOURCES_PREFIX` env in the [cloud-cd.yaml](../../../.github/workflows/cloud-cd.yaml) file.
-This prefix allows to have unique resource names across fork repositories when running CD workflows.
+| `CD_RESOURCES_PREFIX_REVERSED` | A string, that when reversed, is a globally unique sequence of 3 to 4 lowercase letters and digits, starting with a letter, that will be used to name Azure resources. For example, the value `vmde` will result in the string `edmv` being used in Azure resource names. This prefix allows to have unique resource names across fork repositories when running CD workflows.<br />*Note: The reason the prefix is stored as a reversed string is to avoid the value being excluded from GitHub job outputs.* |
 
 See instructions under [Configure GitHub Secrets for GitHub Actions](#configure-github-secrets-for-github-actions) on how to configure GitHub secrets.
 
-For further information on Azure resouce naming, please refer to [naming conventions](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) and [naming rules and restrictions for Azure resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules).
+For further information on Azure resource naming, please refer to [naming conventions](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) and [naming rules and restrictions for Azure resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules).
 
 ## Deploy Common CD Resources
 

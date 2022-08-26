@@ -19,11 +19,6 @@ permissions:
   checks: write
   pull-requests: write
 
-# Update this value with a unique name to guarantee uniqueness of resource names and avoid conflicts between fork repositories when running CD workflow.
-# CD workflow creates resources with this prefix and destroy them.
-env:
-  CD_RESOURCES_PREFIX: mvd
-
 jobs:
   # The purpose of this job is only to set up resources_prefix as an output, because env context is not available in arguments to a called workflow
   # See this discussion for more context: https://github.community/t/reusable-workflow-env-context-not-available-in-jobs-job-id-with/206111/13
@@ -32,10 +27,14 @@ jobs:
     runs-on: ubuntu-latest
     # Added a step doing nothing, because a job needs to have at least one step.
     steps:
-      - name: 'Empty step.'
-        run: exit 0
+      - name: 'Build prefix'
+        run: echo cd_resources_prefix=$(rev <<< "$cd_resources_prefix_reversed") >> $GITHUB_ENV
+        env:
+          cd_resources_prefix_reversed: ${{ secrets.CD_RESOURCES_PREFIX_REVERSED }}
+      - name: 'Check secret value CD_RESOURCES_PREFIX_REVERSED format: should be 3 to 4 lowercase letters and digits, starting with a letter.'
+        run: '[[ "$cd_resources_prefix" =~ ^[a-z][a-z0-9]{2,3}$ ]]'
     outputs:
-      resources_prefix: ${{ env.CD_RESOURCES_PREFIX }}${{ github.run_number }}
+      resources_prefix: ${{ env.cd_resources_prefix }}${{ github.run_number }}
 
   # Temporary step that checks if Azure secrets are set up. If not then the deploy of Azure resources will be skipped. Introduced to not fail checks in PRs from forks.
   Check-Cloud-Environments:
