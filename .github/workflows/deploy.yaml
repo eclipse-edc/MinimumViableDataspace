@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v2
       - id: set-matrix
         run: |
-          matrix=$(jq -c . participants.json)
+          matrix=$(jq -c . resources/participants.json)
           echo "::set-output name=matrix::$matrix"
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
