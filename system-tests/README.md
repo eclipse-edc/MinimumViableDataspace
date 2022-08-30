@@ -16,7 +16,7 @@ System tests are run both in local deployment (using docker compose) and in the 
 > published dependencies.
 >
 > In order to use the correct version of each repo required by the `MVD`, you need to look
-> in [action.yml](../.github/actions/gradle-setup/action.yml) for the hashes of the versions of the `EDC`, `Identity Hub`
+> in [action.yml](../.github/actions/gradle-setup/action.yml) for the correct versions of the `EDC`, `Identity Hub`
 > and the `Registration Service` that are being used by the `MVD`.
 >
 > For Example for the dependency repositories:
@@ -33,7 +33,7 @@ System tests are run both in local deployment (using docker compose) and in the 
       with:
         repository: eclipse-dataspaceconnector/DataSpaceConnector
         path: DataSpaceConnector
-        ref: 3ff940b720f44826df28e893fb31344eb6faacef
+        ref: v0.0.1-milestone-5.1
 
     - name: Checkout Registration Service
       uses: actions/checkout@v2
@@ -57,8 +57,8 @@ System tests are run both in local deployment (using docker compose) and in the 
 > For Example:
 
 ```bash
-# EDC (in the EDC root folder)
-git checkout 3ff940b720f44826df28e893fb31344eb6faacef
+# EDC (in the EDC root folder, checkout the release tag to a local branch)
+git checkout tags/v0.0.1-milestone-5.1 -b ms5
 
 # Identity Hub (in the Identity Hub root folder)
 git checkout bc13cf0cb8589b792eef733c7cf7b3422476add5
