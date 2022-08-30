@@ -11,6 +11,11 @@
 			"id": "#registration-url",
 			"type": "RegistrationUrl",
 			"serviceEndpoint": "http://registration-service:8184/authority"
+		},
+		{
+			"id": "#self-description-url",
+			"type": "SelfDescription",
+			"serviceEndpoint": "http://registration-service:8181/api/identity-hub/self-description"
 		}
 	],
 	"verificationMethod": [
