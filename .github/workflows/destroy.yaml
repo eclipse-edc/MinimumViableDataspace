@@ -74,10 +74,9 @@ jobs:
           terraform init -backend-config=backend.conf
           terraform destroy -auto-approve
         env:
-          # Authentication settings for Terraform AzureRM provider
+          # Authentication settings for Terraform AzureRM provider using OpenID Connect
           # See https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
@@ -126,10 +125,9 @@ jobs:
           terraform init -backend-config=backend.conf
           terraform destroy -auto-approve
         env:
-          # Authentication settings for Terraform AzureRM provider
+          # Authentication settings for Terraform AzureRM provider using OpenID Connect
           # See https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs
           ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
-          ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
           ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
           ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
