@@ -2,11 +2,6 @@ output "ARM_CLIENT_ID" {
   value = azuread_application.gh-actions-mvd.application_id
 }
 
-output "ARM_CLIENT_SECRET" {
-  sensitive = true
-  value     = azuread_application_password.gh-actions-mvd-sp-password.value
-}
-
 output "ARM_SUBSCRIPTION_ID" {
   value = data.azurerm_subscription.primary.subscription_id
 }

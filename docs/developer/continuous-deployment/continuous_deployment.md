@@ -132,12 +132,6 @@ Click **Add credential** to add another credential (for the previously created a
 
 Click **Add** to create the credential.
 
-#### Create Client Secret for GitHub Actions
-
-Navigate to the **Client secrets** tab (for the previously created application (e.g. *"MVD GitHub Actions App"*), under **Certificates & secrets**), and select **New client secret**. Create a new client secret by entering a **Description** (e.g. *"mvd-client-secret"*) and clicking **Add**.
-
-Take note of the client secret (**Value**) and keep it safe (will be required to configure a GitHub secret below).
-
 #### Grant Permissions for Azure Subscription
 
 To allow GitHub Actions to deploy resources to your Azure subscription, grant the application created above Owner permissions on your Azure subscription.
@@ -157,18 +151,17 @@ Now click on **Select members**, search for the application created above (e.g. 
 
 #### Configure GitHub Secrets for GitHub Actions
 
-Finally, the application (client) ID and the application client secret needs to be made available to your GitHub repository using [GitHub secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
+Finally, the application (client) ID needs to be made available to your GitHub repository using [GitHub secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets).
 
 To configure GitHub Secrets, navigate to your `MinimumViableDataspace` repository, select **Settings**, navigate to **Secrets** and then **Actions**, and click **New repository secret** to create a new secret.
 
 ![GitHub Actions secrets](GitHub-Actions-secrets.png)
 
-Configure the following GitHub secrets with the values from the steps above:
+Configure the following GitHub secrets with the value from the steps above:
 
 | Secret name         | Value                          |
 | ------------------- | ------------------------------ |
 | `ARM_CLIENT_ID`     | The application (client) ID of the application created above (e.g. *"MVD GitHub Actions App"*). |
-| `ARM_CLIENT_SECRET` | The application client secret (**Value**) created above. |
 
 ### Create Service Identity for MVD Runtimes
 
