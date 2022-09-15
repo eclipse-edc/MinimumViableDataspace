@@ -14,7 +14,6 @@
 
 package org.eclipse.dataspaceconnector.mvd;
 
-import com.github.javafaker.Faker;
 import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.registration.client.api.RegistryApi;
 import org.eclipse.dataspaceconnector.registration.client.models.ParticipantDto;
@@ -23,14 +22,13 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class RegistrationServiceNodeDirectoryTest {
-
-    static Faker faker = new Faker();
 
     private final RegistryApi registryApi = mock(RegistryApi.class);
     private final FederatedCacheNodeResolver resolver = mock(FederatedCacheNodeResolver.class);
@@ -81,13 +79,13 @@ class RegistrationServiceNodeDirectoryTest {
     }
 
     private FederatedCacheNode node() {
-        return new FederatedCacheNode(faker.lorem().word(), faker.internet().url(), List.of("ids-multipart"));
+        return new FederatedCacheNode("test-name", "http://test.target.url", List.of("ids-multipart"));
     }
 
     @NotNull
     private ParticipantDto getParticipant() {
         var participant = new ParticipantDto();
-        participant.setDid(String.format("did:web:%s", faker.internet().domainName()));
+        participant.setDid(String.format("did:web:%s", "test-domainname-" + UUID.randomUUID()));
         return participant;
     }
 }
