@@ -1,1 +1,0 @@
-Dataspace Management Vision Demonstrator
