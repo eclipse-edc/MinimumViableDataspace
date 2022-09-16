@@ -14,7 +14,6 @@
 
 package org.eclipse.dataspaceconnector.mvd;
 
-import com.github.javafaker.Faker;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.DidDocument;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.Service;
 import org.eclipse.dataspaceconnector.iam.did.spi.resolution.DidResolverRegistry;
@@ -39,10 +38,9 @@ import static org.mockito.Mockito.when;
 class FederatedCacheNodeResolverTest {
 
     static final String IDS_MESSAGING = "IDSMessaging";
-    static final Faker FAKER = Faker.instance();
     public static final String SUPPORTED_PROTOCOL = "ids-multipart";
-    static String did = "did:web:" + FAKER.internet().domainName();
-    static String idsUrl = FAKER.internet().url();
+    static String did = "did:web:" + "test-domainname";
+    static String idsUrl = "test.ids.url";
 
     FederatedCacheNodeResolver resolver;
     DidResolverRegistry didResolver = mock(DidResolverRegistry.class);
@@ -78,8 +76,8 @@ class FederatedCacheNodeResolverTest {
 
     @Test
     void getNode_success_twoIdsMessagingServices() {
-        String url1 = FAKER.internet().url();
-        String url2 = FAKER.internet().url();
+        String url1 = "url1.com";
+        String url2 = "url2.com";
         when(didResolver.resolve(did)).thenReturn(Result.success(getDidDocument(of(idsMessagingService(url2), idsMessagingService(url1)))));
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
@@ -110,14 +108,14 @@ class FederatedCacheNodeResolverTest {
         return Stream.of(
                 arguments(Result.failure("failure")),
                 arguments(Result.success(getDidDocument(of(fakeService(), fakeService())))),
-                arguments(Result.success(getDidDocument(of(service(idsUrl, FAKER.lorem().word()))))),
+                arguments(Result.success(getDidDocument(of(service(idsUrl, "test-type"))))),
                 arguments(Result.success(getDidDocument(of())))
         );
     }
 
     @NotNull
     private static Service fakeService() {
-        return service(FAKER.internet().url(), FAKER.lorem().word());
+        return service("test-url", "test-type");
     }
 
     @NotNull
@@ -127,7 +125,7 @@ class FederatedCacheNodeResolverTest {
 
     @NotNull
     private static Service service(String url, String type) {
-        return new Service(FAKER.lorem().word(), type, url);
+        return new Service("test-url", type, url);
     }
 
 }
