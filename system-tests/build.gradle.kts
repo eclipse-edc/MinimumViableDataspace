@@ -44,7 +44,6 @@ dependencies {
     }
 
     testImplementation("org.apache.commons:commons-lang3:3.12.0")
-    testImplementation("${edcGroup}:spi:${edcVersion}")
     testImplementation("${edcGroup}:blob-core:${edcVersion}")
     testImplementation("${edcGroup}:common-util:${edcVersion}")
     testImplementation("org.assertj:assertj-core:${assertj}")

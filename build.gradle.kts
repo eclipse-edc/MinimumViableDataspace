@@ -5,6 +5,39 @@ plugins {
     checkstyle
 }
 
+val downloadArtifact: Configuration by configurations.creating {
+    isTransitive = false
+}
+
+
+val identityHubVersion: String by project;
+val registrationServiceVersion: String by project;
+dependencies {
+    downloadArtifact("org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${identityHubVersion}:all")
+    downloadArtifact("org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${registrationServiceVersion}:all")
+}
+
+// task that downloads the RegSrv CLI and IH CLI
+val getJars by tasks.registering(Copy::class) {
+    outputs.upToDateWhen { false } //always download
+
+    from(downloadArtifact)
+        // strip away the version string
+        .rename { s -> s.replace("-${identityHubVersion}", "")
+            .replace("-${registrationServiceVersion}", "")
+            .replace("-all", "")
+        }
+    into(layout.projectDirectory.dir("system-tests/resources/cli-tools"))
+}
+
+// run the download jars task after the "jar" task
+tasks{
+    jar {
+        finalizedBy(getJars)
+    }
+}
+
+
 allprojects {
     apply(plugin = "java")
     apply(plugin = "checkstyle")
@@ -22,8 +55,8 @@ allprojects {
         maven {
             url = uri("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/")
         }
-        maven{
-            url= uri("https://oss.sonatype.org/content/repositories/snapshots/")
+        maven {
+            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
         }
     }
 

@@ -3,27 +3,6 @@ description: "Setup Gradle"
 runs:
   using: "composite"
   steps:
-    # Checkout EDC code into DataSpaceConnector directory.
-    - name: Checkout EDC
-      uses: actions/checkout@v2
-      with:
-        repository: eclipse-dataspaceconnector/DataSpaceConnector
-        path: DataSpaceConnector
-        ref: v0.0.1-milestone-5.1
-
-    - name: Checkout Registration Service
-      uses: actions/checkout@v2
-      with:
-        repository: eclipse-dataspaceconnector/RegistrationService
-        path: RegistrationService
-        ref: ec8c714947d12772ee65cbdadc623bd185ab3331
-
-    - name: Checkout Identity Hub
-      uses: actions/checkout@v2
-      with:
-        repository: eclipse-dataspaceconnector/IdentityHub
-        path: IdentityHub
-        ref: 668bbcd5aae04d02c4733ca1dabac37ad9d41a57
 
     - name: Checkout EDC Data Dashboard
       uses: actions/checkout@v2
@@ -38,54 +17,3 @@ runs:
         java-version: '17'
         distribution: 'temurin'
         cache: 'gradle'
-
-    # Cache EDC packages (installed into ~/.m2) in-between runs.
-    # If the latest EDC commit ID has not changed since the last run, this will restore
-    # its Maven packages from the cache.
-    - name: Cache EDC packages
-      uses: actions/cache@v3
-      id: cache
-      with:
-        path: ~/.m2
-        # .git/FETCH_HEAD contains latest commit ID
-        key: ${{ runner.os }}-m2-${{ hashFiles('DataSpaceConnector/.git/FETCH_HEAD') }}-${{ hashFiles('RegistrationService/.git/FETCH_HEAD') }}-${{ hashFiles('IdentityHub/.git/FETCH_HEAD') }}
-
-    # Install EDC packages into ~/.m2.
-    # This action only runs if the packages could not be restored from the cache.
-    - name: Build EDC packages
-      run: |
-        ./gradlew publishToMavenLocal -Pskip.signing
-      if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
-      shell: bash
-      working-directory: DataSpaceConnector
-
-    - name: Delete local EDC repository
-      run: rm -r DataSpaceConnector
-      shell: bash
-
-    # Install Registration Service packages into ~/.m2.
-    # This action only runs if the packages could not be restored from the cache.
-    - name: Build Registration Service packages
-      run: |
-        ./gradlew publishToMavenLocal -Pskip.signing
-      if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
-      shell: bash
-      working-directory: RegistrationService
-
-    # Keep RegistrationService sources as needed for build
-    - name: Move Registration Service packages out of build directory
-      run: mv RegistrationService ${{ runner.temp }}
-      shell: bash
-
-    # Install Identity Hub packages into ~/.m2.
-    # This action only runs if the packages could not be restored from the cache.
-    - name: Build Identity Hub packages
-      run: |
-        ./gradlew publishToMavenLocal -Pskip.signing
-      if: steps.cache.outputs.cache-hit != 'true' # only on cache miss
-      shell: bash
-      working-directory: IdentityHub
-
-    - name: Delete local Identity Hub repository
-      run: rm -r IdentityHub
-      shell: bash

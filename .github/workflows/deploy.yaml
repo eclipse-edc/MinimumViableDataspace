@@ -67,12 +67,12 @@ jobs:
       # Build MVD runtime JAR locally.
       # The result is a JAR file in MVD/launcher/build/libs.
       - name: 'Build runtime JAR'
-        run: ./gradlew launcher:shadowJar
+        run: ./gradlew launchers:connector:shadowJar
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd/connector:${{ env.RESOURCES_PREFIX }} .
-        working-directory: launcher
+        working-directory: launchers/connector
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
   Build-Registration-Service:
@@ -98,13 +98,12 @@ jobs:
       # Build Registration Service runtime JAR locally.
       # The result is a JAR file in launcher/build/libs.
       - name: 'Build runtime JAR'
-        run: ./gradlew launcher:shadowJar
-        working-directory: ${{ runner.temp }}/RegistrationService
+        run: ./gradlew launchers:registrationservice:shadowJar
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd/registration-service:${{ env.RESOURCES_PREFIX }} .
-        working-directory: ${{ runner.temp }}/RegistrationService/launcher
+        working-directory: ./launchers/registrationservice
 
   # Build data dashboard webapp
   Build-Dashboard:
@@ -134,6 +133,7 @@ jobs:
   Deploy-Dataspace:
     needs:
       - Build-Registration-Service
+      - Build-Connector
     runs-on: ubuntu-latest
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
