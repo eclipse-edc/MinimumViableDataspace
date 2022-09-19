@@ -43,11 +43,10 @@ jobs:
   Check-Cloud-Environments:
     name: 'Check if Azure secrets are set up'
     runs-on: ubuntu-latest
-    env:
-      HAS_AZURE: ${{ secrets.ARM_SUBSCRIPTION_ID }}
     steps:
-      - name: "Check if Azure secrets are present"
-        id: has-azure
+      - id: has-azure
+        env:
+          HAS_AZURE: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         if: "${{ env.HAS_AZURE != '' }}"
         run: echo "::set-output name=defined::true"
     outputs:
