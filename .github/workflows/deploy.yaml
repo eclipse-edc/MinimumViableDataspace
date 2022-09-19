@@ -416,11 +416,10 @@ jobs:
           name: gaiaxkey
           path: deployment/terraform/participant
 
-      - name: 'Copy Identity Hub CLI'
-        uses: ./.github/actions/copy-maven-artifact
-        with:
-          artifact: org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${{ env.IDENTITY_HUB_VERSION }}:jar:all
-          directory: deployment/terraform/participant
+      - name: 'Copy Identity Hub and Registration Service CLI'
+        run: | 
+          ./gradlew getJars 
+          mv system-tests/resources/cli-tools/*-cli.jar deployment/terraform/participant
 
       - name: 'Set Identity Hub URL'
         run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:8181/api/identity-hub" >> $GITHUB_ENV
@@ -446,17 +445,11 @@ jobs:
           region: ${{ matrix.region }}
 
       - name: 'Output verifiable credentials'
-        run: java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc list
-
-      - name: 'Copy Registration Service CLI'
-        uses: ./.github/actions/copy-maven-artifact
-        with:
-          artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
-          directory: deployment/terraform/participant
+        run: java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc list
 
       - name: 'Request participant registration'
         run: |
-          java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
+          java -jar registration-service-cli.jar \
             -d did:web:$DATASPACE_DID_HOST \
             -c did:web:$PARTICIPANT_DID_HOST \
             -k participantkey.pem \
@@ -467,7 +460,7 @@ jobs:
 
       - name: 'Wait for participant registration'
         run: |
-          cmd="java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
+          cmd="java -jar registration-service-cli.jar \
                 -d=did:web:$DATASPACE_DID_HOST \
                 -k=participantkey.pem \
                 -c=did:web:$PARTICIPANT_DID_HOST \
