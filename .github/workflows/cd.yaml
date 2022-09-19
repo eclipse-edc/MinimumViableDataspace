@@ -19,9 +19,6 @@ jobs:
       checks: write
       pull-requests: write
     runs-on: ubuntu-latest
-    env:
-      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
-      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
     steps:
       - uses: actions/checkout@v2
 

@@ -279,8 +279,6 @@ jobs:
       run:
         working-directory: deployment/terraform/participant
     env:
-      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
-      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
       GAIAX_DID: did:web:${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
 
     steps:
@@ -418,8 +416,10 @@ jobs:
 
       - name: 'Copy Identity Hub and Registration Service CLI'
         run: | 
+          pwd
           ./gradlew getJars 
           mv system-tests/resources/cli-tools/*-cli.jar deployment/terraform/participant
+        working-directory: .
 
       - name: 'Set Identity Hub URL'
         run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:8181/api/identity-hub" >> $GITHUB_ENV
@@ -427,7 +427,7 @@ jobs:
       - name: 'Push GAIA-X membership verifiable credential'
         run: |
           id=$(uuidgen)
-          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+          java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc add \
             -c='{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' \
             -b="did:web:$PARTICIPANT_DID_HOST" \
             -i="$GAIAX_DID" \
@@ -436,7 +436,7 @@ jobs:
       - name: 'Push region verifiable credential'
         run: |
           id=$(uuidgen)
-          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+          java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc add \
             -c='{"id": "'$id'", "credentialSubject": {"region": "'$region'"}}' \
             -b="did:web:$PARTICIPANT_DID_HOST" \
             -i="$GAIAX_DID" \
@@ -455,7 +455,6 @@ jobs:
             -k participantkey.pem \
             participants add
         env:
-          REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
           DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}
 
       - name: 'Wait for participant registration'
@@ -469,7 +468,6 @@ jobs:
           $GITHUB_WORKSPACE/system-tests/resources/cli-tools/validate_onboarding.sh "$participantDid" "$cmd"
 
         env:
-          REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
           DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}
 
   Verify:
