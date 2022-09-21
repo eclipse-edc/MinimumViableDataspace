@@ -67,12 +67,12 @@ jobs:
       # Build MVD runtime JAR locally.
       # The result is a JAR file in MVD/launcher/build/libs.
       - name: 'Build runtime JAR'
-        run: ./gradlew launcher:shadowJar
+        run: ./gradlew launchers:connector:shadowJar
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd/connector:${{ env.RESOURCES_PREFIX }} .
-        working-directory: launcher
+        working-directory: launchers/connector
 
   # Build runtime image in Azure Container Registry, tagged with the unique run_number.
   Build-Registration-Service:
@@ -98,13 +98,12 @@ jobs:
       # Build Registration Service runtime JAR locally.
       # The result is a JAR file in launcher/build/libs.
       - name: 'Build runtime JAR'
-        run: ./gradlew launcher:shadowJar
-        working-directory: ${{ runner.temp }}/RegistrationService
+        run: ./gradlew launchers:registrationservice:shadowJar
 
       # Build Docker runtime image remotely on ACR & push it to the registry.
       - name: 'Build image'
         run: az acr build --registry $ACR_NAME --image mvd/registration-service:${{ env.RESOURCES_PREFIX }} .
-        working-directory: ${{ runner.temp }}/RegistrationService/launcher
+        working-directory: ./launchers/registrationservice
 
   # Build data dashboard webapp
   Build-Dashboard:
@@ -134,6 +133,7 @@ jobs:
   Deploy-Dataspace:
     needs:
       - Build-Registration-Service
+      - Build-Connector
     runs-on: ubuntu-latest
     outputs:
       app_insights_connection_string: ${{ steps.runterraform.outputs.app_insights_connection_string }}
@@ -279,8 +279,6 @@ jobs:
       run:
         working-directory: deployment/terraform/participant
     env:
-      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
-      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
       GAIAX_DID: did:web:${{ needs.Deploy-Dataspace.outputs.gaiax_did_host }}
 
     steps:
@@ -416,11 +414,12 @@ jobs:
           name: gaiaxkey
           path: deployment/terraform/participant
 
-      - name: 'Copy Identity Hub CLI'
-        uses: ./.github/actions/copy-maven-artifact
-        with:
-          artifact: org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${{ env.IDENTITY_HUB_VERSION }}:jar:all
-          directory: deployment/terraform/participant
+      - name: 'Copy Identity Hub and Registration Service CLI'
+        run: | 
+          pwd
+          ./gradlew getJars 
+          mv system-tests/resources/cli-tools/*-cli.jar deployment/terraform/participant
+        working-directory: .
 
       - name: 'Set Identity Hub URL'
         run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:8181/api/identity-hub" >> $GITHUB_ENV
@@ -428,7 +427,7 @@ jobs:
       - name: 'Push GAIA-X membership verifiable credential'
         run: |
           id=$(uuidgen)
-          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+          java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc add \
             -c='{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' \
             -b="did:web:$PARTICIPANT_DID_HOST" \
             -i="$GAIAX_DID" \
@@ -437,7 +436,7 @@ jobs:
       - name: 'Push region verifiable credential'
         run: |
           id=$(uuidgen)
-          java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc add \
+          java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc add \
             -c='{"id": "'$id'", "credentialSubject": {"region": "'$region'"}}' \
             -b="did:web:$PARTICIPANT_DID_HOST" \
             -i="$GAIAX_DID" \
@@ -446,28 +445,21 @@ jobs:
           region: ${{ matrix.region }}
 
       - name: 'Output verifiable credentials'
-        run: java -jar identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar -s=$IDENTITY_HUB_URL vc list
-
-      - name: 'Copy Registration Service CLI'
-        uses: ./.github/actions/copy-maven-artifact
-        with:
-          artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
-          directory: deployment/terraform/participant
+        run: java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc list
 
       - name: 'Request participant registration'
         run: |
-          java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
+          java -jar registration-service-cli.jar \
             -d did:web:$DATASPACE_DID_HOST \
             -c did:web:$PARTICIPANT_DID_HOST \
             -k participantkey.pem \
             participants add
         env:
-          REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
           DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}
 
       - name: 'Wait for participant registration'
         run: |
-          cmd="java -jar registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar \
+          cmd="java -jar registration-service-cli.jar \
                 -d=did:web:$DATASPACE_DID_HOST \
                 -k=participantkey.pem \
                 -c=did:web:$PARTICIPANT_DID_HOST \
@@ -476,7 +468,6 @@ jobs:
           $GITHUB_WORKSPACE/system-tests/resources/cli-tools/validate_onboarding.sh "$participantDid" "$cmd"
 
         env:
-          REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
           DATASPACE_DID_HOST: ${{ needs.Deploy-Dataspace.outputs.dataspace_did_host }}
 
   Verify:

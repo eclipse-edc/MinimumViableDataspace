@@ -4,7 +4,7 @@ services:
   company1:
     container_name: company1
     build:
-      context: ../launcher
+      context: ../launchers/connector
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     environment:
@@ -20,6 +20,7 @@ services:
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
+      EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
       REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
       EDC_WEB_REST_CORS_ENABLED: "true"
       EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
@@ -38,7 +39,7 @@ services:
   company2:
     container_name: company2
     build:
-      context: ../launcher
+      context: ../launchers/connector
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     environment:
@@ -54,6 +55,7 @@ services:
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
+      EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
       REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
       EDC_WEB_REST_CORS_ENABLED: "true"
       EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
@@ -72,7 +74,7 @@ services:
   company3:
     container_name: company3
     build:
-      context: ../launcher
+      context: ../launchers/connector
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
     environment:
@@ -88,6 +90,7 @@ services:
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
+      EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
       REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
       EDC_WEB_REST_CORS_ENABLED: "true"
       EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
@@ -147,7 +150,7 @@ services:
     container_name: registration-service
     build:
       #e.g. /home/user/RegistrationService/launcher
-      context: ${REGISTRATION_SERVICE_LAUNCHER_PATH:?"Registration Service launcher path env var required"}
+      context: ./launchers/registrationservice
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
     environment:

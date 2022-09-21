@@ -27,7 +27,7 @@ dependencies {
     implementation(project(":extensions:refresh-catalog"))
     implementation(project(":extensions:policies"))
 
-    implementation("${edcGroup}:core:${edcVersion}")
+    implementation("${edcGroup}:control-plane-core:${edcVersion}")
     implementation("${edcGroup}:observability-api:${edcVersion}")
     implementation("${edcGroup}:data-management-api:${edcVersion}")
     implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
@@ -51,7 +51,8 @@ dependencies {
     implementation("${edcGroup}:identity-did-web:${edcVersion}")
 
     // Blob storage container provisioning
-    implementation("${edcGroup}:blobstorage:${edcVersion}")
+    implementation("${edcGroup}:blob-core:${edcVersion}")
+    implementation("${edcGroup}:blob-provision:${edcVersion}")
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {
@@ -63,7 +64,7 @@ dependencies {
     // Embedded DPF
     implementation("${edcGroup}:data-plane-transfer-client:${edcVersion}")
     implementation("${edcGroup}:data-plane-selector-client:${edcVersion}")
-    implementation("${edcGroup}:data-plane-selector-store:${edcVersion}")
+    implementation("${edcGroup}:data-plane-selector-spi:${edcVersion}")
     implementation("${edcGroup}:data-plane-selector-core:${edcVersion}")
     implementation("${edcGroup}:data-plane-framework:${edcVersion}")
     implementation("${edcGroup}:data-plane-azure-storage:${edcVersion}")

@@ -18,7 +18,7 @@ import org.eclipse.dataspaceconnector.catalog.spi.FederatedCacheNode;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.DidDocument;
 import org.eclipse.dataspaceconnector.iam.did.spi.document.Service;
 import org.eclipse.dataspaceconnector.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.dataspaceconnector.ids.spi.Protocols;
+import org.eclipse.dataspaceconnector.ids.spi.types.MessageProtocol;
 import org.eclipse.dataspaceconnector.registration.client.models.ParticipantDto;
 import org.eclipse.dataspaceconnector.spi.monitor.Monitor;
 import org.eclipse.dataspaceconnector.spi.result.Result;
@@ -34,7 +34,7 @@ import static java.lang.String.format;
 class FederatedCacheNodeResolver {
 
     public static final String IDS_MESSAGING = "IDSMessaging";
-    public static final List<String> SUPPORTED_PROTOCOLS = List.of(Protocols.IDS_MULTIPART);
+    public static final List<String> SUPPORTED_PROTOCOLS = List.of(MessageProtocol.IDS_MULTIPART);
 
     private final DidResolverRegistry resolver;
     private final Monitor monitor;

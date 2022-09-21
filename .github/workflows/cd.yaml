@@ -19,9 +19,6 @@ jobs:
       checks: write
       pull-requests: write
     runs-on: ubuntu-latest
-    env:
-      REGISTRATION_SERVICE_VERSION: 0.0.1-SNAPSHOT
-      IDENTITY_HUB_VERSION: 0.0.1-SNAPSHOT
     steps:
       - uses: actions/checkout@v2
 
@@ -29,28 +26,15 @@ jobs:
 
       # Use EDC FileSystem vault for CI run.
       - name: 'Build launcher'
-        run: ./gradlew -DuseFsVault="true" :launcher:shadowJar
+        run: ./gradlew -DuseFsVault="true" :launchers:connector:shadowJar
 
       # Build Registration Service runtime JAR locally.
-      # The result is a JAR file in launcher/build/libs.
       - name: 'Build Registration Service launcher'
-        run: ./gradlew -DuseFsVault="true" :launcher:shadowJar
-        working-directory: ${{ runner.temp }}/RegistrationService
+        run: ./gradlew -DuseFsVault="true" :launchers:registrationservice:shadowJar
 
-      - name: 'Copy Registration Service CLI'
-        uses: ./.github/actions/copy-maven-artifact
-        with:
-          artifact: org.eclipse.dataspaceconnector.registrationservice:registration-service-cli:${{ env.REGISTRATION_SERVICE_VERSION }}:jar:all
-
-      - name: 'Copy Identity Hub CLI'
-        uses: ./.github/actions/copy-maven-artifact
-        with:
-          artifact: org.eclipse.dataspaceconnector.identityhub:identity-hub-cli:${{ env.IDENTITY_HUB_VERSION }}:jar:all
-
-      - name: 'Move CLI JARs to test directory'
-        run: |
-          mv registration-service-cli-$REGISTRATION_SERVICE_VERSION-all.jar system-tests/resources/cli-tools/registration-service-cli.jar
-          mv identity-hub-cli-$IDENTITY_HUB_VERSION-all.jar system-tests/resources/cli-tools/identity-hub-cli.jar
+      # Download the CLI's into the test directory
+      - name: 'Copy Registration Service and IdentityHub CLI'
+        run: ./gradlew getJars
 
       - name: 'Upgrade docker-compose (for --wait option)'
         run: |
@@ -61,7 +45,7 @@ jobs:
         run: docker-compose --profile ui -f system-tests/docker-compose.yml up --build --wait
         timeout-minutes: 10
         env:
-          REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
+          REGISTRATION_SERVICE_LAUNCHER_PATH: ./launchers/registrationservice
           MVD_UI_PATH: DataDashboard
 
       - name: 'Unit and system tests'
@@ -75,7 +59,7 @@ jobs:
         run: docker-compose -f system-tests/docker-compose.yml logs
         if: always()
         env:
-          REGISTRATION_SERVICE_LAUNCHER_PATH: ${{ runner.temp }}/RegistrationService/launcher
+          REGISTRATION_SERVICE_LAUNCHER_PATH: ./launchers/registrationservice
           MVD_UI_PATH: DataDashboard
 
       - name: "Publish Gatling report"
