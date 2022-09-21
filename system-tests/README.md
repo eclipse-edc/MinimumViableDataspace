@@ -12,8 +12,6 @@ System tests are run both in local deployment (using docker compose) and in the 
 
 ### MVD
 
-<br />
-
 EDC, RegistrationService and IdentityHub are available as Maven artifacts. Thus, `MVD` can be built by running the
 following command from the root of the `MVD` project folder:
 
@@ -28,9 +26,8 @@ following command from the root of the `MVD` project folder:
 
 _Note: Ensure that you are able to build `MVD` locally as described in the previous [section](#mvd)._
 
-First, we need to build the `EDC Connector` (which also includes the `Identity Hub`) and `Registration Service`
-runtimes. As we are running `MVD` locally, we include  `useFsVault` to indicate that the system will be using the local
-file-system based key vault.
+First, we need to build the `EDC Connector` and `RegistrationService` runtimes. As we are running `MVD` locally, we
+include  `useFsVault` to indicate that the system will be using the local file-system based key vault.
 
 From the `MVD` root folder, execute the following command to build the connector JAR and registration service JAR:
 
@@ -39,14 +36,13 @@ From the `MVD` root folder, execute the following command to build the connector
 ./gradlew -DuseFsVault="true" :launchers:registrationservice:shadowJar
 ```
 
-From the `MVD` root folder execute the following commands to start `MVD` using the `docker-compose.yml` file.
+Then, to bring up the dataspace, please execute the following command from the `MVD` root folder:
 
 ```bash
 docker-compose -f system-tests/docker-compose.yml up --build
 ```
 
-_Note for Windows PowerShell, the following commands should be used from the `MVD` project root.  (The path will depend
-on the location of your `RegistrationService` project root):_
+_Note for Windows PowerShell, the following commands should be used from the `MVD` project root:_
 
 ```powershell
 docker-compose -f system-tests/docker-compose.yml up --build
@@ -132,11 +128,11 @@ keystore has password `test123`.
 > [KeyStore Explorer](https://keystore-explorer.org/) can be used to manage keystores from UI.
 
 `MVD` local instances use a file-system based vault and its keys are managed using a java properties file
-e.g.`system-tests/resources/vault/company1/company1-vault.properties`.
+e.g.`system-tests/resources/vault/company[1,2,3]/company[1,2,3]-vault.properties`.
 
 > ! IMPORTANT !
 >
-> *File System Vault is __NOT__ a secure vault and thus should only be used for testing purposes*
+> *File system vault is __NOT__ a secure vault and thus should only be used for testing purposes*
 
 <br>
 
@@ -160,12 +156,12 @@ docker run -i danedmunds/pem-to-jwk:1.2.1 --public --pretty < system-tests/resou
 
 ### Debugging MVD locally
 
-Follow the instructions in the previous sections to run an MVD with a consumer (company2) and provider (company1)
+Follow the instructions in the previous sections to run an MVD with a consumer (`company2`) and provider (`company1`)
 locally using docker-compose.
 
-Once running, you can use a Java debugger to connect to the consumer (port 5006) and provider (port 5005) instances. If
-you are using IntelliJ you can use the provided "EDC consumer" or "EDC provider" [runtime configurations](../.run) to
-remote debug the connector instances.
+Once running, you can use a Java debugger to connect to the consumer (`company2`, port 5006) and provider (`company1`,
+port 5005) instances. If you are using IntelliJ you can use the provided "EDC company1", "EDC company2" or "EDC
+company3" [runtime configurations](../.run) to remote debug the connector instances.
 
 ### Issuing requests manually with Postman
 
