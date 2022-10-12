@@ -150,7 +150,7 @@ services:
     container_name: registration-service
     build:
       #e.g. /home/user/RegistrationService/launcher
-      context: ./launchers/registrationservice
+      context: ../launchers/registrationservice
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
     environment:
