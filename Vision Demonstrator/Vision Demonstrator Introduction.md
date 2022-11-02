@@ -18,7 +18,7 @@ This vision was based on 7 scenarios that we believe are essential to managing a
 All these scenarios will be accompanied by a detailed walkthrough and an explations of the individual screens (tbd). In the current version we are providing the following artifacts:
 
 - [Figma Interactive Click Through Vision](https://www.figma.com/proto/hVkvoEmzIqo33JE9KEpk4G/Dataspaces?page-id=15%3A167&node-id=15%3A2330&viewport=3072%2C438%2C0.16&scaling=min-zoom&starting-point-node-id=15%3A2330&show-proto-sidebar=1)
-- [Export of the Figma Design File](DataspacesManagementVisionDemonstrator.figma)
+- [Export of the Figma Design File](DataspacesManagementVisionDemonstrator?raw=true)
 - PDF Export of all the screens
 - PowerPoint Export of all the screens
 
