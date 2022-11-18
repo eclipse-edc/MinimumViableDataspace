@@ -11,7 +11,7 @@ val mockitoVersion: String by project
 val assertj: String by project
 
 dependencies {
-    implementation("${edcGroup}:common-util:${edcVersion}")
+    implementation("${edcGroup}:util:${edcVersion}")
     implementation("${edcGroup}:federated-catalog-spi:${edcVersion}")
     implementation("${edcGroup}:identity-did-core:${edcVersion}")
     implementation("${edcGroup}:identity-did-web:${edcVersion}")
