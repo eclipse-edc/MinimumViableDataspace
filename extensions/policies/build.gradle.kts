@@ -26,9 +26,10 @@ val identityHubVersion: String by project
 dependencies {
     api("${edcGroup}:ids-spi:${edcVersion}")
     api("${edcGroup}:contract-spi:${edcVersion}")
-    api("${edcGroup}:core-base:${edcVersion}")
+    api("${edcGroup}:connector-core:${edcVersion}")
     implementation("${identityHubGroup}:identity-hub-spi:${identityHubVersion}")
 
+    testImplementation("${edcGroup}:policy-engine:${edcVersion}")
     testImplementation("org.assertj:assertj-core:${assertj}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")

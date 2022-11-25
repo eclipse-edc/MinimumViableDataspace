@@ -28,13 +28,13 @@ dependencies {
     implementation(project(":extensions:policies"))
 
     implementation("${edcGroup}:control-plane-core:${edcVersion}")
-    implementation("${edcGroup}:observability-api:${edcVersion}")
+    implementation("${edcGroup}:api-observability:${edcVersion}")
     implementation("${edcGroup}:data-management-api:${edcVersion}")
-    implementation("${edcGroup}:filesystem-configuration:${edcVersion}")
+    implementation("${edcGroup}:configuration-filesystem:${edcVersion}")
     implementation("${edcGroup}:http:${edcVersion}")
 
     // JDK Logger
-    implementation("${edcGroup}:jdk-logger-monitor:${edcVersion}")
+    implementation("${edcGroup}:monitor-jdk-logger:${edcVersion}")
 
     // IDS
     implementation("${edcGroup}:ids:${edcVersion}") {
@@ -51,14 +51,14 @@ dependencies {
     implementation("${edcGroup}:identity-did-web:${edcVersion}")
 
     // Blob storage container provisioning
-    implementation("${edcGroup}:blob-core:${edcVersion}")
-    implementation("${edcGroup}:blob-provision:${edcVersion}")
+    implementation("${edcGroup}:azure-blob-core:${edcVersion}")
+    implementation("${edcGroup}:provision-blob:${edcVersion}")
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {
-        implementation("${edcGroup}:filesystem-vault:${edcVersion}")
+        implementation("${edcGroup}:vault-filesystem:${edcVersion}")
     } else {
-        implementation("${edcGroup}:azure-vault:${edcVersion}")
+        implementation("${edcGroup}:vault-azure:${edcVersion}")
     }
 
     // Embedded DPF
@@ -70,15 +70,16 @@ dependencies {
     implementation("${edcGroup}:data-plane-azure-storage:${edcVersion}")
 
     // Federated catalog
-    implementation("${edcGroup}:catalog-cache:${edcVersion}")
+    implementation("${edcGroup}:federated-catalog-core:${edcVersion}")
 
     // Identity Hub
     implementation("${identityHubGroup}:identity-hub:${identityHubVersion}")
+    implementation("${identityHubGroup}:identity-hub-api:${identityHubVersion}")
     implementation("${identityHubGroup}:identity-hub-credentials-verifier:${identityHubVersion}")
 }
 
 application {
-    mainClass.set("org.eclipse.dataspaceconnector.boot.system.runtime.BaseRuntime")
+    mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
