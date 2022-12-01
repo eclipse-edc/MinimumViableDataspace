@@ -31,7 +31,7 @@ dependencies {
     implementation(edc.ext.http)
 
     // JDK Logger
-    implementation(edc.ext.jdklogger)
+//    implementation(edc.ext.jdklogger)
 
     // IDS
     implementation(edc.ids) {
@@ -40,7 +40,10 @@ dependencies {
     }
 
     // API key authentication for Data Management API (also used for CORS support)
-    implementation(edc.ext.auth.tokenBased)
+
+    // paul 2022-12-2: uncomment once https://github.com/eclipse-edc/IdentityHub/pull/64 is merged, otherwise the IH API is
+    // hidden behind API Token Authentication
+    //implementation(edc.ext.auth.tokenBased)
 
     // DID authentication for IDS API
     implementation(edc.bundles.identity)
@@ -60,7 +63,8 @@ dependencies {
     implementation(edc.bundles.dpf)
 
     // Federated catalog
-    implementation(edc.core.federatedCatalog)
+    implementation(fcc.core)
+    implementation(fcc.api)
 
     // Identity Hub
     implementation(identityHub.core)
