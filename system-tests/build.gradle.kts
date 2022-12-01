@@ -17,51 +17,37 @@ plugins {
     `java-library`
 }
 
-val edcVersion: String by project
-val edcGroup: String by project
 val gatlingVersion: String by project
-val jupiterVersion: String by project
-val storageBlobVersion: String by project
-val assertj: String by project
-val restAssured: String by project
-val awaitility: String by project
-val azureIdentityVersion: String by project
-val identityHubVersion: String by project
-val identityHubGroup: String by project
-val okHttpVersion: String by project
 
 dependencies {
     testImplementation("io.gatling.highcharts:gatling-charts-highcharts:${gatlingVersion}") {
-        exclude(group = "io.gatling", module="gatling-jms")
-        exclude(group = "io.gatling", module="gatling-jms-java")
-        exclude(group = "io.gatling", module="gatling-mqtt")
-        exclude(group = "io.gatling", module="gatling-mqtt-java")
-        exclude(group = "io.gatling", module="gatling-jdbc")
-        exclude(group = "io.gatling", module="gatling-jdbc-java")
-        exclude(group = "io.gatling", module="gatling-redis")
-        exclude(group = "io.gatling", module="gatling-redis-java")
-        exclude(group = "io.gatling", module="gatling-graphite")
+        exclude(group = "io.gatling", module = "gatling-jms")
+        exclude(group = "io.gatling", module = "gatling-jms-java")
+        exclude(group = "io.gatling", module = "gatling-mqtt")
+        exclude(group = "io.gatling", module = "gatling-mqtt-java")
+        exclude(group = "io.gatling", module = "gatling-jdbc")
+        exclude(group = "io.gatling", module = "gatling-jdbc-java")
+        exclude(group = "io.gatling", module = "gatling-redis")
+        exclude(group = "io.gatling", module = "gatling-redis-java")
+        exclude(group = "io.gatling", module = "gatling-graphite")
     }
 
-    testImplementation("org.apache.commons:commons-lang3:3.12.0")
-    testImplementation("${edcGroup}:azure-blob-core:${edcVersion}")
-    testImplementation("${edcGroup}:util:${edcVersion}")
-    testImplementation("org.assertj:assertj-core:${assertj}")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
-    testImplementation("com.azure:azure-storage-blob:${storageBlobVersion}")
-    testImplementation("io.rest-assured:rest-assured:${restAssured}")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}")
-    testImplementation("org.awaitility:awaitility:${awaitility}")
-    testImplementation("com.squareup.okhttp3:okhttp:${okHttpVersion}")
+    testImplementation(libs.apache.commons.lang3)
 
-    testImplementation("com.azure:azure-identity:${azureIdentityVersion}")
-    testImplementation("com.azure:azure-security-keyvault-secrets:4.2.3")
-    testImplementation("${edcGroup}:contract-spi:${edcVersion}")
-    testImplementation("${edcGroup}:federated-catalog-spi:${edcVersion}")
-    testImplementation("${edcGroup}:policy-evaluator:${edcVersion}")
+    testImplementation(edc.ext.azure.blob.core)
+    testImplementation(edc.util)
+    testImplementation(libs.azure.storageblob)
+    testImplementation(libs.restAssured)
+    testImplementation(libs.awaitility)
+    testImplementation(libs.okhttp)
+
+    testImplementation(libs.azure.identity)
+    testImplementation(libs.azure.keyvault)
+    testImplementation(edc.spi.contract)
+    testImplementation(edc.spi.federatedCatalog)
+    testImplementation(edc.policy.evaluator)
 
     // Identity Hub
-    testImplementation("${identityHubGroup}:identity-hub-client:${identityHubVersion}")
+    testImplementation(identityHub.core.client)
 }
 
