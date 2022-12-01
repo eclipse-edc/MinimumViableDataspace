@@ -18,64 +18,54 @@ plugins {
     id("com.github.johnrengelman.shadow") version "7.0.0"
 }
 
-val edcVersion: String by project
 val edcGroup: String by project
-val identityHubVersion: String by project
-val identityHubGroup: String by project
 
 dependencies {
     implementation(project(":extensions:refresh-catalog"))
     implementation(project(":extensions:policies"))
 
-    implementation("${edcGroup}:control-plane-core:${edcVersion}")
-    implementation("${edcGroup}:api-observability:${edcVersion}")
-    implementation("${edcGroup}:data-management-api:${edcVersion}")
-    implementation("${edcGroup}:configuration-filesystem:${edcVersion}")
-    implementation("${edcGroup}:http:${edcVersion}")
+    implementation(edc.core.controlplane)
+    implementation(edc.api.observability)
+    implementation(edc.api.dataManagement)
+    implementation(edc.config.filesystem)
+    implementation(edc.ext.http)
 
     // JDK Logger
-    implementation("${edcGroup}:monitor-jdk-logger:${edcVersion}")
+    implementation(edc.ext.jdklogger)
 
     // IDS
-    implementation("${edcGroup}:ids:${edcVersion}") {
+    implementation(edc.ids) {
         // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
         exclude(group = edcGroup, module = "ids-token-validation")
     }
 
     // API key authentication for Data Management API (also used for CORS support)
-    implementation("${edcGroup}:auth-tokenbased:${edcVersion}")
+    implementation(edc.ext.auth.tokenBased)
 
     // DID authentication for IDS API
-    implementation("${edcGroup}:identity-did-core:${edcVersion}")
-    implementation("${edcGroup}:identity-did-service:${edcVersion}")
-    implementation("${edcGroup}:identity-did-web:${edcVersion}")
+    implementation(edc.bundles.identity)
 
     // Blob storage container provisioning
-    implementation("${edcGroup}:azure-blob-core:${edcVersion}")
-    implementation("${edcGroup}:provision-blob:${edcVersion}")
+    implementation(edc.ext.azure.blob.core)
+    implementation(edc.provision.blob)
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {
-        implementation("${edcGroup}:vault-filesystem:${edcVersion}")
+        implementation(edc.vault.filesystem)
     } else {
-        implementation("${edcGroup}:vault-azure:${edcVersion}")
+        implementation(edc.vault.azure)
     }
 
     // Embedded DPF
-    implementation("${edcGroup}:data-plane-transfer-client:${edcVersion}")
-    implementation("${edcGroup}:data-plane-selector-client:${edcVersion}")
-    implementation("${edcGroup}:data-plane-selector-spi:${edcVersion}")
-    implementation("${edcGroup}:data-plane-selector-core:${edcVersion}")
-    implementation("${edcGroup}:data-plane-framework:${edcVersion}")
-    implementation("${edcGroup}:data-plane-azure-storage:${edcVersion}")
+    implementation(edc.bundles.dpf)
 
     // Federated catalog
-    implementation("${edcGroup}:federated-catalog-core:${edcVersion}")
+    implementation(edc.core.federatedCatalog)
 
     // Identity Hub
-    implementation("${identityHubGroup}:identity-hub:${identityHubVersion}")
-    implementation("${identityHubGroup}:identity-hub-api:${identityHubVersion}")
-    implementation("${identityHubGroup}:identity-hub-credentials-verifier:${identityHubVersion}")
+    implementation(identityHub.core)
+    implementation(identityHub.ext.api)
+    implementation(identityHub.ext.credentialsVerifier)
 }
 
 application {
