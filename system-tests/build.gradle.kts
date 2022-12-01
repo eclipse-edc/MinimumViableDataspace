@@ -44,8 +44,8 @@ dependencies {
     }
 
     testImplementation("org.apache.commons:commons-lang3:3.12.0")
-    testImplementation("${edcGroup}:blob-core:${edcVersion}")
-    testImplementation("${edcGroup}:common-util:${edcVersion}")
+    testImplementation("${edcGroup}:azure-blob-core:${edcVersion}")
+    testImplementation("${edcGroup}:util:${edcVersion}")
     testImplementation("org.assertj:assertj-core:${assertj}")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${jupiterVersion}")
     testImplementation("org.junit.jupiter:junit-jupiter-params:${jupiterVersion}")
