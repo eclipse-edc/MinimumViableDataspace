@@ -49,5 +49,6 @@ dependencies {
 
     // Identity Hub
     testImplementation(identityHub.core.client)
+    testImplementation(edc.junit)
 }
 

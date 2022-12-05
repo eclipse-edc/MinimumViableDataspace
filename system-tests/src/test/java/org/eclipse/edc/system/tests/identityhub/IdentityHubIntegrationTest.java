@@ -24,6 +24,7 @@ import org.assertj.core.api.IterableAssert;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowingConsumer;
 import org.eclipse.edc.identityhub.client.IdentityHubClientImpl;
+import org.eclipse.edc.junit.annotations.ComponentTest;
 import org.eclipse.edc.spi.monitor.ConsoleMonitor;
 import org.eclipse.edc.system.tests.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +43,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+@ComponentTest
 class IdentityHubIntegrationTest {
 
     static final String COMPANY1_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY1_IDENTITY_HUB_URL", "http://localhost:7171/api/v1/identity/identity-hub");

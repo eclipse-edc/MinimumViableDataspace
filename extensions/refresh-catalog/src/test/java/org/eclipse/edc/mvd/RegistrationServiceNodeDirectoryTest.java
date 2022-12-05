@@ -17,6 +17,7 @@ package org.eclipse.edc.mvd;
 import org.eclipse.edc.catalog.spi.FederatedCacheNode;
 import org.eclipse.edc.registration.client.api.RegistryApi;
 import org.eclipse.edc.registration.client.models.ParticipantDto;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.result.Result;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,11 @@ class RegistrationServiceNodeDirectoryTest {
 
     private final RegistryApi registryApi = mock(RegistryApi.class);
     private final FederatedCacheNodeResolver resolver = mock(FederatedCacheNodeResolver.class);
+    private final Monitor monitor = mock(Monitor.class);
 
     @Test
     void getAll_emptyList() {
-        var service = new RegistrationServiceNodeDirectory(registryApi, resolver);
+        var service = new RegistrationServiceNodeDirectory(registryApi, resolver, monitor);
 
         when(registryApi.listParticipants()).thenReturn(List.of());
 
@@ -45,7 +47,7 @@ class RegistrationServiceNodeDirectoryTest {
 
     @Test
     void getAll() {
-        var service = new RegistrationServiceNodeDirectory(registryApi, resolver);
+        var service = new RegistrationServiceNodeDirectory(registryApi, resolver, monitor);
 
         var company1 = getParticipant();
         var company2 = getParticipant();
@@ -63,7 +65,7 @@ class RegistrationServiceNodeDirectoryTest {
 
     @Test
     void getAll_failureResolvingDid() {
-        var service = new RegistrationServiceNodeDirectory(registryApi, resolver);
+        var service = new RegistrationServiceNodeDirectory(registryApi, resolver, monitor);
 
         var company1 = getParticipant();
         var company2 = getParticipant();

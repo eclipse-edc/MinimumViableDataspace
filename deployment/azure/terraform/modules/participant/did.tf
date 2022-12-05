@@ -28,17 +28,17 @@ resource "azurerm_storage_blob" "did" {
       {
         "id" : "#identity-hub-url",
         "type" : "IdentityHub",
-        "serviceEndpoint" : "http://${azurerm_container_group.edc.fqdn}:${local.edc_default_port}/api/identity-hub"
+        "serviceEndpoint" : "http://${var.participant_name}:${local.edc_identity_port}/api/v1/identity/identity-hub"
       },
       {
         "id" : "#ids-url",
         "type" : "IDSMessaging",
-        "serviceEndpoint" : "http://${urlencode(azurerm_container_group.edc.fqdn)}:${local.edc_ids_port}"
+        "serviceEndpoint" : "http://${urlencode(var.participant_name)}:${local.edc_ids_port}"
       },
       {
         "id" : "#self-description-url",
         "type" : "SelfDescription",
-        "serviceEndpoint" : "http://${azurerm_container_group.edc.fqdn}:${local.edc_default_port}/api/identity-hub/self-description"
+        "serviceEndpoint" : "http://${var.participant_name}:${local.edc_default_port}/api/v1/identity/identity-hub/self-description"
       }
     ],
     "verificationMethod" = [

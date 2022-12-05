@@ -218,7 +218,7 @@ Configure the following GitHub secrets which are required by the CD pipeline:
 | `ARM_TENANT_ID`               | The Azure Active Directory **Tenant ID**. Navigate to Azure Active Directory and copy the Tenant ID from the *Overview* page. |
 | `ARM_SUBSCRIPTION_ID`         | The Azure **Subscription ID** to deploy resources to. Navigate to Subscriptions and copy the *Subscription ID* of your subscription. |
 | `COMMON_RESOURCE_GROUP`       | The Azure resource group name to deploy common resources to, such as Azure Container Registry. Choose any valid resource group name, e.g. *rg-mvd-common*. |
-| `COMMON_RESOURCE_GROUP_LOCATION` | The location where common resources should be deployed to, e.g. *northeurope*. |
+| `COMMON_RESOURCE_GROUP_LOCATION` | The location where common resources should be deployed to, e.g. *eastus*. |
 | `ACR_NAME`                    | The name of the Azure Container Registry to deploy. Use only lowercase letters and numbers. |
 | `TERRAFORM_STATE_STORAGE_ACCOUNT` | The name of the storage account used to store the Terraform state container, e.g. *mvdterraformstates*. |
 | `TERRAFORM_STATE_CONTAINER` | The name of the container used to store the Terraform state blob, e.g. *mvdterraformstates*. |

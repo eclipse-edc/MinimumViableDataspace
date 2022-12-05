@@ -23,7 +23,7 @@ dependencies {
 }
 
 // task that downloads the RegSrv CLI and IH CLI
-val getJars by tasks.registering(Copy::class) {
+val getJarsForLocalTest by tasks.registering(Copy::class) {
     outputs.upToDateWhen { false } //always download
 
     from(downloadArtifact)
@@ -36,10 +36,23 @@ val getJars by tasks.registering(Copy::class) {
     into(layout.projectDirectory.dir("system-tests/resources/cli-tools"))
 }
 
+val getJarsForAzureTest by tasks.registering(Copy::class) {
+    outputs.upToDateWhen { false } //always download
+
+    from(downloadArtifact)
+        // strip away the version string
+        .rename { s ->
+            s.replace("-${identityHubVersion}", "")
+                .replace("-${registrationServiceVersion}", "")
+                .replace("-all", "")
+        }
+    into(layout.projectDirectory.dir("deployment/azure"))
+}
+
 // run the download jars task after the "jar" task
 tasks {
     jar {
-        finalizedBy(getJars)
+        finalizedBy(getJarsForLocalTest, getJarsForAzureTest)
     }
 }
 

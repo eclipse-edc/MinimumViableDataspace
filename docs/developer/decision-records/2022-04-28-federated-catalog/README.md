@@ -24,7 +24,7 @@ Each file contains a serialized EDC `FederatedCacheNode` object, for example:
   "supportedProtocols": [
     "ids-multipart"
   ],
-  "url": "http://280-company1-edc-mvd.northeurope.azurecontainer.io:8282"
+  "url": "http://280-company1-edc-mvd.eastus.azurecontainer.io:8282"
 }
 
 ```
