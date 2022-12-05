@@ -41,9 +41,7 @@ dependencies {
 
     // API key authentication for Data Management API (also used for CORS support)
 
-    // paul 2022-12-2: uncomment once https://github.com/eclipse-edc/IdentityHub/pull/64 is merged, otherwise the IH API is
-    // hidden behind API Token Authentication
-    //implementation(edc.ext.auth.tokenBased)
+    implementation(edc.ext.auth.tokenBased)
 
     // DID authentication for IDS API
     implementation(edc.bundles.identity)

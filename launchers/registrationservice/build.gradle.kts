@@ -36,9 +36,6 @@ dependencies {
     implementation(identityHub.ext.api)
     implementation(identityHub.ext.credentialsVerifier)
 
-    // JDK Logger
-    implementation(edc.ext.jdklogger)
-
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {

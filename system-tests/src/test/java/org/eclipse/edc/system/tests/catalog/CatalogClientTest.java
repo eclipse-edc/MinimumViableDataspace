@@ -77,6 +77,7 @@ class CatalogClientTest {
     private List<ContractOffer> getNodesFromCatalog(String consumerCatalogUrl) {
         var nodesJson = given()
                 .contentType("application/json")
+                .header("X-Api-Key", "ApiKeyDefaultValue")
                 .body(FederatedCatalogCacheQuery.Builder.newInstance().build())
                 .when()
                 .post(consumerCatalogUrl)
