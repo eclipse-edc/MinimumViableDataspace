@@ -26,7 +26,7 @@ function seedVerifiedCredentials() {
      echo "Seeding VC for $participantName: $subject"
      vcId=$(uuidgen)
      java -jar identity-hub-cli.jar \
-                 -s="http://$participantName:8181/api/identity-hub" \
+                 -s="http://$participantName:7171/api/v1/identity/identity-hub" \
                  vc add \
                  -c='{"id":"'"$vcId"'","credentialSubject":{'"$subject"'}}' \
                 -b="$participantDid" \

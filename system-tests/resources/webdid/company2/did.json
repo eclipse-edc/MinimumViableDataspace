@@ -10,7 +10,7 @@
 		{
 			"id": "#identity-hub-url",
 			"type": "IdentityHub",
-			"serviceEndpoint": "http://company2:8181/api/identity-hub"
+			"serviceEndpoint": "http://company2:7171/api/v1/identity/identity-hub"
 		},
 		{
 			"id": "#ids-url",
@@ -20,7 +20,7 @@
 		{
 			"id": "#self-description-url",
 			"type": "SelfDescription",
-			"serviceEndpoint": "http://company2:8181/api/identity-hub/self-description"
+			"serviceEndpoint": "http://company2:7171/api/v1/identity/identity-hub/self-description"
 		}
 	],
 	"verificationMethod": [{

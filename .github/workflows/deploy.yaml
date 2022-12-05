@@ -422,7 +422,7 @@ jobs:
         working-directory: .
 
       - name: 'Set Identity Hub URL'
-        run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:8181/api/identity-hub" >> $GITHUB_ENV
+        run: echo "IDENTITY_HUB_URL=http://$EDC_HOST:7171/api/v1/identity/identity-hub" >> $GITHUB_ENV
 
       - name: 'Push GAIA-X membership verifiable credential'
         run: |
@@ -497,15 +497,15 @@ jobs:
           CONSUMER_MANAGEMENT_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:9191
           CONSUMER_EU_KEY_VAULT: ${{ needs.Deploy-Participants.outputs.company2_key_vault }}
           CONSUMER_US_KEY_VAULT: ${{ needs.Deploy-Participants.outputs.company3_key_vault }}
-          CONSUMER_EU_CATALOG_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/federatedcatalog
-          CONSUMER_US_CATALOG_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/federatedcatalog
+          CONSUMER_EU_CATALOG_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:9191/api/v1/data/federatedcatalog
+          CONSUMER_US_CATALOG_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:9191/api/v1/data/federatedcatalog
           PROVIDER_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company1_participant_did_host }}
           CONSUMER_EU_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company2_participant_did_host }}
           CONSUMER_US_DID_URL: did:web:${{ needs.Deploy-Participants.outputs.company3_participant_did_host }}
-          COMPANY1_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company1_edc_host }}:8181/api/identity-hub
-          COMPANY2_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:8181/api/identity-hub
-          COMPANY3_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:8181/api/identity-hub
-          AUTHORITY_IDENTITY_HUB_URL: http://${{ needs.Deploy-Dataspace.outputs.registration_service_host }}:8181/api/identity-hub
+          COMPANY1_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company1_edc_host }}:7171/api/v1/identity/identity-hub
+          COMPANY2_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company2_edc_host }}:7171/api/v1/identity/identity-hub
+          COMPANY3_IDENTITY_HUB_URL: http://${{ needs.Deploy-Participants.outputs.company3_edc_host }}:7171/api/v1/identity/identity-hub
+          AUTHORITY_IDENTITY_HUB_URL: http://${{ needs.Deploy-Dataspace.outputs.registration_service_host }}:7171/api/v1/identity/identity-hub
           API_KEY: ${{ needs.Deploy-Participants.outputs.company2_api_key }}
           TEST_ENVIRONMENT: "cloud"
 

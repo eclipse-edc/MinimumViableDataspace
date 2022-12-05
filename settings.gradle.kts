@@ -23,9 +23,10 @@ dependencyResolutionManagement {
         create("libs") {
             from("org.eclipse.edc:edc-versions:0.0.1-SNAPSHOT")
             library("apache.commons.lang3", "org.apache.commons", "commons-lang3").version("3.12.0")
+            library("gatling-highcharts", "io.gatling.highcharts", "gatling-charts-highcharts").version("3.7.5")
         }
         create("identityHub") {
-            version("identityHub", "0.0.1-20221118-SNAPSHOT")
+            version("identityHub", "0.0.1-SNAPSHOT")
             library("spi-core", "org.eclipse.edc", "identity-hub-spi").versionRef("identityHub")
             library("core", "org.eclipse.edc", "identity-hub").versionRef("identityHub")
             library("core-client", "org.eclipse.edc", "identity-hub-client").versionRef("identityHub")
@@ -38,7 +39,7 @@ dependencyResolutionManagement {
 
         }
         create("registrationService") {
-            version("registrationService", "0.0.1-20221122-SNAPSHOT")
+            version("registrationService", "0.0.1-SNAPSHOT")
             library("core", "org.eclipse.edc", "registration-service").versionRef("registrationService")
             library("core-client", "org.eclipse.edc", "registration-service-client").versionRef("registrationService")
             library(
@@ -54,20 +55,27 @@ dependencyResolutionManagement {
             ).versionRef("registrationService")
 
         }
+
+        create("fcc") {
+            version("catalog", "0.0.1-SNAPSHOT")
+            library("api", "org.eclipse.edc", "federated-catalog-api").versionRef("catalog")
+            library("spi", "org.eclipse.edc", "federated-catalog-spi").versionRef("catalog")
+            library("core", "org.eclipse.edc", "federated-catalog-core").versionRef("catalog")
+
+        }
+
         create("edc") {
-            version("edc", "0.0.1-20221113-SNAPSHOT")
+            version("edc", "0.0.1-SNAPSHOT")
             library("util", "org.eclipse.edc", "util").versionRef("edc")
             library("boot", "org.eclipse.edc", "boot").versionRef("edc")
 
             library("spi-policy-engine", "org.eclipse.edc", "policy-engine-spi").versionRef("edc")
             library("spi-contract", "org.eclipse.edc", "contract-spi").versionRef("edc")
-            library("spi-federatedCatalog", "org.eclipse.edc", "federated-catalog-spi").versionRef("edc")
             library("spi-ids", "org.eclipse.edc", "ids-spi").versionRef("edc")
             library("spi-dpf-selector", "org.eclipse.edc", "data-plane-selector-spi").versionRef("edc")
 
             library("core-connector", "org.eclipse.edc", "connector-core").versionRef("edc")
             library("core-controlplane", "org.eclipse.edc", "control-plane-core").versionRef("edc")
-            library("core-federatedCatalog", "org.eclipse.edc", "federated-catalog-core").versionRef("edc")
             library("core-micrometer", "org.eclipse.edc", "micrometer-core").versionRef("edc")
 
             library("policy-engine", "org.eclipse.edc", "policy-engine").versionRef("edc")
@@ -89,7 +97,7 @@ dependencyResolutionManagement {
             library("vault-azure", "org.eclipse.edc", "vault-azure").versionRef("edc")
             library("provision-blob", "org.eclipse.edc", "provision-blob").versionRef("edc")
             library("ids", "org.eclipse.edc", "ids").versionRef("edc")
-            
+
 
             library("ext-azure-blob-core", "org.eclipse.edc", "azure-blob-core").versionRef("edc")
             library("ext-jdklogger", "org.eclipse.edc", "monitor-jdk-logger").versionRef("edc")

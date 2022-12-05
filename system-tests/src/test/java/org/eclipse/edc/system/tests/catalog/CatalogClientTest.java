@@ -27,13 +27,14 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.eclipse.edc.system.tests.utils.TestUtils.requiredPropOrEnv;
 
 class CatalogClientTest {
-    static final String CONSUMER_EU_CATALOG_URL = requiredPropOrEnv("CONSUMER_EU_CATALOG_URL", "http://localhost:8182/api/federatedcatalog");
-    static final String CONSUMER_US_CATALOG_URL = requiredPropOrEnv("CONSUMER_US_CATALOG_URL", "http://localhost:8183/api/federatedcatalog");
+    static final String CONSUMER_EU_CATALOG_URL = requiredPropOrEnv("CONSUMER_EU_CATALOG_URL", "http://localhost:9192/api/v1/data/federatedcatalog");
+    static final String CONSUMER_US_CATALOG_URL = requiredPropOrEnv("CONSUMER_US_CATALOG_URL", "http://localhost:9193/api/v1/data/federatedcatalog");
     static final String NON_RESTRICTED_ASSET_PREFIX = "test-document_";
     static final String RESTRICTED_ASSET_PREFIX = "test-document-2_";
 
@@ -46,32 +47,37 @@ class CatalogClientTest {
 
     @Test
     void containsOnlyNonRestrictedAsset() {
-        await().atMost(2, MINUTES).untilAsserted(() -> {
-            var nodes = getNodesFromCatalog(CONSUMER_US_CATALOG_URL);
-            assertThat(nodes)
-                    .isNotEmpty()
-                    .allSatisfy(
-                            n -> assertThat(n.getAsset().getProperty(Asset.PROPERTY_ID)).asString().startsWith(NON_RESTRICTED_ASSET_PREFIX));
-        });
+        await().atMost(2, MINUTES)
+                .pollInterval(2, SECONDS)
+                .untilAsserted(() -> {
+                    var nodes = getNodesFromCatalog(CONSUMER_US_CATALOG_URL);
+                    assertThat(nodes)
+                            .isNotEmpty()
+                            .allSatisfy(
+                                    n -> assertThat(n.getAsset().getProperty(Asset.PROPERTY_ID)).asString().startsWith(NON_RESTRICTED_ASSET_PREFIX));
+                });
     }
 
     @Test
     void containsAllAssets() {
-        await().atMost(2, MINUTES).untilAsserted(() -> {
-            var nodes = getNodesFromCatalog(CONSUMER_EU_CATALOG_URL);
-            assertThat(nodes)
-                    .isNotEmpty()
-                    .allSatisfy(
-                            n -> assertThat(n.getAsset().getId()).asString()
-                                    .satisfiesAnyOf(
-                                            s -> assertThat(s).startsWith(NON_RESTRICTED_ASSET_PREFIX),
-                                            s -> assertThat(s).startsWith(RESTRICTED_ASSET_PREFIX)));
-        });
+        await().atMost(2, MINUTES)
+                .pollInterval(2, SECONDS)
+                .untilAsserted(() -> {
+                    var nodes = getNodesFromCatalog(CONSUMER_EU_CATALOG_URL);
+                    assertThat(nodes)
+                            .isNotEmpty()
+                            .allSatisfy(
+                                    n -> assertThat(n.getAsset().getId()).asString()
+                                            .satisfiesAnyOf(
+                                                    s -> assertThat(s).startsWith(NON_RESTRICTED_ASSET_PREFIX),
+                                                    s -> assertThat(s).startsWith(RESTRICTED_ASSET_PREFIX)));
+                });
     }
 
     private List<ContractOffer> getNodesFromCatalog(String consumerCatalogUrl) {
         var nodesJson = given()
                 .contentType("application/json")
+                .header("X-Api-Key", "ApiKeyDefaultValue")
                 .body(FederatedCatalogCacheQuery.Builder.newInstance().build())
                 .when()
                 .post(consumerCatalogUrl)

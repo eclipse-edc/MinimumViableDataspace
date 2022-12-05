@@ -15,7 +15,7 @@
 		{
 			"id": "#self-description-url",
 			"type": "SelfDescription",
-			"serviceEndpoint": "http://registration-service:8181/api/identity-hub/self-description"
+			"serviceEndpoint": "http://registration-service:7171/api/v1/identity/identity-hub/self-description"
 		}
 	],
 	"verificationMethod": [
