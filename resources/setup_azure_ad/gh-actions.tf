@@ -34,7 +34,7 @@ resource "azuread_application_federated_identity_credential" "gh-actions-fc-pull
   description           = "Github Actions federated credential for your fork (Pullrequests)"
   audiences             = ["api://AzureADTokenExchange"]
   issuer                = "https://token.actions.githubusercontent.com"
-  subject               = "repo:${var.github_repo}:pullrequest"
+  subject               = "repo:${var.github_repo}:pull_request"
 }
 
 # grant GH Actions app "Owner" access to subscription
