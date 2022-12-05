@@ -34,8 +34,12 @@ jobs:
     runs-on: ubuntu-latest
     # Added a step doing nothing, because a job needs to have at least one step.
     steps:
-      - name: 'Empty step.'
-        run: exit 0
+      - name: 'Set resources prefix'
+        run: |
+          # creates a random string consisting of 3 lower case characters
+          echo "CD_RESOURCES_PREFIX=$(tr -dc a-z </dev/urandom | tail -n +1 | head -c 3; echo '')" >> $GITHUB_ENV
+      - name: 'Test resources prefix'
+        run: echo $CD_RESOURCES_PREFIX
     outputs:
       resources_prefix: ${{ env.CD_RESOURCES_PREFIX }}${{ github.run_number }}
 
