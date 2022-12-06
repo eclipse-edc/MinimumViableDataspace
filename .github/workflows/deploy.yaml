@@ -447,6 +447,7 @@ jobs:
 
       - name: 'Output verifiable credentials'
         run: java -jar identity-hub-cli.jar -s=$IDENTITY_HUB_URL vc list
+        continue-on-error: true
 
       - name: 'Request participant registration'
         run: |
