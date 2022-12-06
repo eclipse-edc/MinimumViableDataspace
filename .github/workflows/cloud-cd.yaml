@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - fix/azure_deployment
     paths-ignore:
       - 'docs/**'
       - '**.md'
@@ -68,7 +69,7 @@ jobs:
 
   Destroy:
     # Always run Destroy workflow unless SetResourcesPrefix workflow fails.
-    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true'}}
+    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true' && false}}
     uses: ./.github/workflows/destroy.yaml
     needs:
       - SetResourcesPrefix
