@@ -17,7 +17,6 @@ package org.eclipse.edc.system.tests.identityhub;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 import okhttp3.OkHttpClient;
 import org.assertj.core.api.AbstractCollectionAssert;
@@ -33,6 +32,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -127,7 +127,7 @@ class IdentityHubIntegrationTest {
             assertThat(claims.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
             assertThat(claims.getSubject()).as("Subject is a Web DID").startsWith("did:web:");
             assertThat(claims.getClaim("vc")).as("VC")
-                    .isInstanceOfSatisfying(JSONObject.class, t -> {
+                    .isInstanceOfSatisfying(Map.class, t -> {
 
                         assertThat(t.get("id"))
                                 .as("VC ID")
@@ -135,7 +135,7 @@ class IdentityHubIntegrationTest {
 
                         assertThat(t.get("credentialSubject"))
                                 .as("VC credentialSubject")
-                                .isInstanceOfSatisfying(JSONObject.class, s -> assertThat(s.get(name))
+                                .isInstanceOfSatisfying(Map.class, s -> assertThat(s.get(name))
                                         .as(name)
                                         .isInstanceOfSatisfying(String.class,
                                                 r -> assertThat(r).isEqualTo(value)));
