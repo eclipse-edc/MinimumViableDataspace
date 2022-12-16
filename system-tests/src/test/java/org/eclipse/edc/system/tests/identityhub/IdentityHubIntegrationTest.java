@@ -17,7 +17,6 @@ package org.eclipse.edc.system.tests.identityhub;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jwt.SignedJWT;
 import okhttp3.OkHttpClient;
 import org.assertj.core.api.AbstractCollectionAssert;
@@ -33,9 +32,11 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -43,10 +44,10 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class IdentityHubIntegrationTest {
 
-    static final String COMPANY1_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY1_IDENTITY_HUB_URL", "http://localhost:8181/api/identity-hub");
-    static final String COMPANY2_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY2_IDENTITY_HUB_URL", "http://localhost:8182/api/identity-hub");
-    static final String COMPANY3_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY3_IDENTITY_HUB_URL", "http://localhost:8183/api/identity-hub");
-    static final String AUTHORITY_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("AUTHORITY_IDENTITY_HUB_URL", "http://localhost:8185/api/identity-hub");
+    static final String COMPANY1_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY1_IDENTITY_HUB_URL", "http://localhost:7171/api/v1/identity/identity-hub");
+    static final String COMPANY2_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY2_IDENTITY_HUB_URL", "http://localhost:7172/api/v1/identity/identity-hub");
+    static final String COMPANY3_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY3_IDENTITY_HUB_URL", "http://localhost:7173/api/v1/identity/identity-hub");
+    static final String AUTHORITY_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("AUTHORITY_IDENTITY_HUB_URL", "http://localhost:7174/api/v1/identity/identity-hub");
 
     private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
@@ -89,7 +90,10 @@ class IdentityHubIntegrationTest {
     @ParameterizedTest
     @MethodSource("provideParticipantHubUrls")
     void retrieveVerifiableCredentials(String hubUrl, String region, String country) {
-        await().atMost(20, SECONDS).untilAsserted(() -> twoCredentialsInIdentityHub(hubUrl));
+        await()
+                .atMost(20, SECONDS)
+                .pollInterval(2, SECONDS)
+                .untilAsserted(() -> twoCredentialsInIdentityHub(hubUrl));
 
         twoCredentialsInIdentityHub(hubUrl)
                 .anySatisfy(vcRequirements("region", region))
@@ -99,7 +103,9 @@ class IdentityHubIntegrationTest {
     @ParameterizedTest
     @MethodSource("provideAllHubUrls")
     void getSelfDescription(String hubUrl, String region, String country) {
-        await().atMost(20, SECONDS).untilAsserted(() -> selfDescriptionRetrieved(hubUrl));
+        await().atMost(20, SECONDS)
+                .pollInterval(2, SECONDS)
+                .untilAsserted(() -> selfDescriptionRetrieved(hubUrl));
 
         selfDescriptionRetrieved(hubUrl).anySatisfy(selfDescriptionRequirements(country));
     }
@@ -121,7 +127,7 @@ class IdentityHubIntegrationTest {
             assertThat(claims.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
             assertThat(claims.getSubject()).as("Subject is a Web DID").startsWith("did:web:");
             assertThat(claims.getClaim("vc")).as("VC")
-                    .isInstanceOfSatisfying(JSONObject.class, t -> {
+                    .isInstanceOfSatisfying(Map.class, t -> {
 
                         assertThat(t.get("id"))
                                 .as("VC ID")
@@ -129,7 +135,7 @@ class IdentityHubIntegrationTest {
 
                         assertThat(t.get("credentialSubject"))
                                 .as("VC credentialSubject")
-                                .isInstanceOfSatisfying(JSONObject.class, s -> assertThat(s.get(name))
+                                .isInstanceOfSatisfying(Map.class, s -> assertThat(s.get(name))
                                         .as(name)
                                         .isInstanceOfSatisfying(String.class,
                                                 r -> assertThat(r).isEqualTo(value)));
@@ -147,7 +153,7 @@ class IdentityHubIntegrationTest {
     private IterableAssert<JsonNode> selfDescriptionRetrieved(String hubUrl) {
         var vcs = client.getSelfDescription(hubUrl);
 
-        assertThat(vcs.succeeded()).isTrue();
+        assertThat(vcs.succeeded()).withFailMessage(ofNullable(vcs.getFailureDetail()).orElse("")).isTrue();
         return assertThat(vcs.getContent());
     }
 }

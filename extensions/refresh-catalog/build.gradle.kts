@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(edc.spi.federatedCatalog)
+    implementation(fcc.spi)
     implementation(edc.spi.ids)
     implementation(edc.util)
     implementation(edc.identity.did.core)

@@ -20,7 +20,7 @@ plugins {
 val gatlingVersion: String by project
 
 dependencies {
-    testImplementation("io.gatling.highcharts:gatling-charts-highcharts:${gatlingVersion}") {
+    testImplementation(libs.gatling.highcharts) {
         exclude(group = "io.gatling", module = "gatling-jms")
         exclude(group = "io.gatling", module = "gatling-jms-java")
         exclude(group = "io.gatling", module = "gatling-mqtt")
@@ -44,7 +44,7 @@ dependencies {
     testImplementation(libs.azure.identity)
     testImplementation(libs.azure.keyvault)
     testImplementation(edc.spi.contract)
-    testImplementation(edc.spi.federatedCatalog)
+    testImplementation(fcc.spi)
     testImplementation(edc.policy.evaluator)
 
     // Identity Hub

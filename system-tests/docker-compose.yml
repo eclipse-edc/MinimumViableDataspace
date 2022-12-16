@@ -32,6 +32,7 @@ services:
       - "9191:9191"
       - "8181:8181"
       - "5005:5005"
+      - "7171:7171"
     volumes:
       - ./resources:/resources
 
@@ -67,6 +68,7 @@ services:
       - "9192:9191"
       - "8182:8181"
       - "5006:5006"
+      - "7172:7171"
     volumes:
       - ./resources:/resources
 
@@ -102,6 +104,7 @@ services:
       - "9193:9191"
       - "8183:8181"
       - "5007:5007"
+      - "7173:7171"
     volumes:
       - ./resources:/resources
 
@@ -169,6 +172,7 @@ services:
       - "8184:8184"
       - "8185:8181"
       - "5008:5008"
+      - "7174:7171"
     volumes:
       - ./resources:/resources
 

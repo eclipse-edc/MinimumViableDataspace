@@ -7,8 +7,8 @@ Var=$(lsb_release -r)
 NumOnly=$(cut -f2 <<< "$Var")
 
 if [ "$NumOnly" != "20.04" ]; then
-  echo "This curl upgrade script is only verified on Ubuntu 20.04, please check if you are running this on the correct version of Ubuntu"
-  exit 1
+  echo "WARNING: This curl upgrade script is only verified on Ubuntu 20.04, please check if you are running this on the correct version of Ubuntu"
+#  exit 1
 fi
 
 echo "Current installed version of cURL is: $(curl -V)"
