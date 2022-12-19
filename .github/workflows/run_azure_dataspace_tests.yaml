@@ -61,6 +61,7 @@ jobs:
       - name: 'Create Dataspace with Terraform'
         run: |
           ./create_azure_dataspace.sh
+          az storage blob upload -c $TERRAFORM_STATE_CONTAINER --account-name $TERRAFORM_STATE_STORAGE_ACCOUNT -f terraform/terraform.tfvars -n terraform.tfvars
 
       - name: 'Upgrade docker-compose (for --wait option)'
         run: |
@@ -86,7 +87,9 @@ jobs:
 
       - name: 'Delete Terraform state'
         run: |
-          az storage blob delete -c ${{ env.TERRAFORM_STATE_CONTAINER }} -n ${{ env.RESOURCE_PREFIX }} --account-name ${{ env.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+          az storage blob delete -c ${{ env.TERRAFORM_STATE_CONTAINER }} -n ${{ env.RESOURCES_PREFIX }} --account-name ${{ env.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+          az storage blob delete -c ${{ env.TERRAFORM_STATE_CONTAINER }} -n terraform.tfvars --account-name ${{ env.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+          
 
 #  Destroy-Dataspace:
 #    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true'}}
