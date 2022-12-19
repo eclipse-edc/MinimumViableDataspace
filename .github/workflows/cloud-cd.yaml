@@ -52,7 +52,7 @@ jobs:
         env:
           HAS_AZURE: ${{ secrets.ARM_SUBSCRIPTION_ID }}
         if: "${{ env.HAS_AZURE != '' }}"
-        run: echo "::set-output name=defined::true"
+        run: echo "defined=true" >> $GITHUB_OUTPUT
     outputs:
       has-azure: ${{ steps.has-azure.outputs.defined }}
 

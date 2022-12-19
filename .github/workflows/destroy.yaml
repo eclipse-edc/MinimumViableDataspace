@@ -35,7 +35,7 @@ jobs:
       - id: set-matrix
         run: |
           matrix=$(jq -c . resources/participants.json)
-          echo "::set-output name=matrix::$matrix"
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   # Delete deployed Azure resource groups for each dataspace participant.
   Destroy-Participants:

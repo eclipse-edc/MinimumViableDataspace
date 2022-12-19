@@ -84,6 +84,10 @@ jobs:
         run: |
           ./shutdown_azure_dataspace.sh
 
+      - name: 'Delete Terraform state'
+        run: |
+          az storage blob delete -c ${{ env.TERRAFORM_STATE_CONTAINER }} -n ${{ env.RESOURCE_PREFIX }} --account-name ${{ env.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+
 #  Destroy-Dataspace:
 #    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true'}}
 #    runs-on: ubuntu-latest
