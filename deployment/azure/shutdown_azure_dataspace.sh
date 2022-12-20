@@ -6,7 +6,7 @@ echo "#########################"
 
 
 echo "Stop running Dataspace participants"
-docker-compose -f docker/docker-compose.yml down
+docker-compose -f docker/docker-compose.yml down --remove-orphans
 echo
 
 echo "Destroy resources for dataspace"

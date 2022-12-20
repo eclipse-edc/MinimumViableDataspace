@@ -1,6 +1,5 @@
 {
   "apiKey": "ApiKeyDefaultValue",
-  "catalogUrl": "http://localhost:8181/api/federatedcatalog",
   "dataManagementApiUrl": "http://localhost:9191/api/v1/data",
   "storageAccount": "company1assets",
   "storageExplorerLinkTemplate": "storageexplorer://v=1",

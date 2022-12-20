@@ -65,17 +65,3 @@ jobs:
       - Check-Cloud-Environments
     with:
       resources_prefix: ${{ needs.SetResourcesPrefix.outputs.resources_prefix }}
-
-#  Destroy:
-#    # Always run Destroy workflow unless SetResourcesPrefix workflow fails.
-#    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true' && false}}
-#    uses: ./.github/workflows/destroy.yaml
-#    needs:
-#      - SetResourcesPrefix
-#      - Deploy
-#      - Check-Cloud-Environments
-#    secrets: inherit
-#    with:
-#      resources_prefix: ${{ needs.SetResourcesPrefix.outputs.resources_prefix }}
-
-

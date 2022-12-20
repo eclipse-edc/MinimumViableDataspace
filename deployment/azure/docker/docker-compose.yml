@@ -78,45 +78,45 @@ services:
     volumes:
       - ../resources/self-description/registration-service:/resources
 
-#  # Data Dashboard (MVD UI) for participant company1
-#  company1-datadashboard:
-#    container_name: company1-datadashboard
-#    build:
-#      context: ${MVD_UI_PATH}
-#    volumes:
-#      - ./resources/appconfig/company1:/usr/share/nginx/html/assets/config
-#    depends_on:
-#      company1:
-#        condition: service_healthy
-#    ports:
-#      - "7080:80"
-#    profiles: ["ui"]
-#
-#      # Data Dashboard (MVD UI) for participant company2
-#
-#  company2-datadashboard:
-#    container_name: company2-datadashboard
-#    build:
-#      context: ${MVD_UI_PATH}
-#    volumes:
-#      - ./resources/appconfig/company2:/usr/share/nginx/html/assets/config
-#    depends_on:
-#      company2:
-#        condition: service_healthy
-#    ports:
-#      - "7081:80"
-#    profiles: ["ui"]
-#
-#  # Data Dashboard (MVD UI) for participant company3
-#  company3-datadashboard:
-#    container_name: company3-datadashboard
-#    build:
-#      context: ${MVD_UI_PATH}
-#    volumes:
-#      - ./resources/appconfig/company3:/usr/share/nginx/html/assets/config
-#    depends_on:
-#      company3:
-#        condition: service_healthy
-#    ports:
-#      - "7082:80"
-#    profiles: ["ui"]
+  # Data Dashboard (MVD UI) for participant company1
+  company1-datadashboard:
+    container_name: company1-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ../../../system-tests/resources/appconfig/company1:/usr/share/nginx/html/assets/config
+    depends_on:
+      company1:
+        condition: service_healthy
+    ports:
+      - "7080:80"
+    profiles: [ "ui" ]
+
+    # Data Dashboard (MVD UI) for participant company2
+
+  company2-datadashboard:
+    container_name: company2-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ../../../system-tests/resources/appconfig/company2:/usr/share/nginx/html/assets/config
+    depends_on:
+      company2:
+        condition: service_healthy
+    ports:
+      - "7081:80"
+    profiles: [ "ui" ]
+
+  # Data Dashboard (MVD UI) for participant company3
+  company3-datadashboard:
+    container_name: company3-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ../../../system-tests/resources/appconfig/company3:/usr/share/nginx/html/assets/config
+    depends_on:
+      company3:
+        condition: service_healthy
+    ports:
+      - "7082:80"
+    profiles: [ "ui" ]

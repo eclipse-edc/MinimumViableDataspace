@@ -67,7 +67,7 @@ resource "azurerm_role_assignment" "current-user-cryptoofficer" {
 }
 
 resource "azurerm_storage_account" "assets" {
-  name                     = "${var.prefix}${var.participant_name}assets"
+  name                     = "${var.participant_name}assets"
   resource_group_name      = azurerm_resource_group.participant.name
   location                 = azurerm_resource_group.participant.location
   account_tier             = "Standard"
@@ -76,7 +76,7 @@ resource "azurerm_storage_account" "assets" {
 }
 
 resource "azurerm_storage_account" "inbox" {
-  name                     = "${var.prefix}${var.participant_name}inbox"
+  name                     = "${var.participant_name}inbox"
   resource_group_name      = azurerm_resource_group.participant.name
   location                 = azurerm_resource_group.participant.location
   account_tier             = "Standard"
@@ -85,7 +85,7 @@ resource "azurerm_storage_account" "inbox" {
 }
 
 resource "azurerm_storage_account" "shared" {
-  name                     = "${var.prefix}${var.participant_name}shared"
+  name                     = "${var.participant_name}shared"
   resource_group_name      = azurerm_resource_group.participant.name
   location                 = azurerm_resource_group.participant.location
   account_tier             = "Standard"
