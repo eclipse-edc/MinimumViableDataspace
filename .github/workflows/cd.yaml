@@ -35,7 +35,7 @@ jobs:
 
       # Download the CLI's into the test directory
       - name: 'Copy Registration Service and IdentityHub CLI'
-        run: ./gradlew getJars
+        run: ./gradlew getJarsForLocalTest getJarsForAzureTest
 
       - name: 'Upgrade docker-compose (for --wait option)'
         run: |
@@ -50,7 +50,7 @@ jobs:
           MVD_UI_PATH: DataDashboard
 
       - name: 'Unit and system tests'
-        run: ./gradlew test
+        run: ./gradlew test -DincludeTags="ComponentTest,EndToEndTest"
         timeout-minutes: 10
         env:
           JACOCO: "true"

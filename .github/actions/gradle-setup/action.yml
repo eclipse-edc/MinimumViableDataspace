@@ -5,14 +5,14 @@ runs:
   steps:
 
     - name: Checkout EDC Data Dashboard
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: eclipse-dataspaceconnector/DataDashboard
         path: DataDashboard
         ref: ab1b6fd0870fa5ec8c170915a2b44fae63d576bd
 
     # Install Java and cache MVD Gradle build.
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'temurin'

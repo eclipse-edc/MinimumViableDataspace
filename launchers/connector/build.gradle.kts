@@ -30,8 +30,6 @@ dependencies {
     implementation(edc.config.filesystem)
     implementation(edc.ext.http)
 
-    // JDK Logger
-//    implementation(edc.ext.jdklogger)
 
     // IDS
     implementation(edc.ids) {

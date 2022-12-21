@@ -22,10 +22,6 @@ output "APP_CLIENT_SECRET" {
   value     = azuread_application_password.mvd-runtimes-sp-password.value
 }
 
-output "ACR_NAME" {
-  value = var.acr_name
-}
-
 output "COMMON_RESOURCE_GROUP" {
   value = var.common_resourcegroup
 }
@@ -44,4 +40,9 @@ output "TERRAFORM_STATE_STORAGE_ACCOUNT" {
 
 output "GH_REPO" {
   value = var.github_repo
+}
+
+output "ARM_CLIENT_SECRET" {
+  sensitive = true
+  value     = azuread_application_password.gh-actions-mvd-pwd.value
 }

@@ -68,6 +68,7 @@ dependencyResolutionManagement {
             version("edc", "0.0.1-SNAPSHOT")
             library("util", "org.eclipse.edc", "util").versionRef("edc")
             library("boot", "org.eclipse.edc", "boot").versionRef("edc")
+            library("junit", "org.eclipse.edc", "junit").versionRef("edc")
 
             library("spi-policy-engine", "org.eclipse.edc", "policy-engine-spi").versionRef("edc")
             library("spi-contract", "org.eclipse.edc", "contract-spi").versionRef("edc")

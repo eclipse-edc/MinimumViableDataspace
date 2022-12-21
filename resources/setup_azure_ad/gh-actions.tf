@@ -13,6 +13,12 @@ resource "azuread_application" "gh-actions-mvd" {
   }
 }
 
+# Create client secret for Azure AD app
+
+resource "azuread_application_password" "gh-actions-mvd-pwd" {
+  application_object_id = azuread_application.gh-actions-mvd.object_id
+}
+
 # Create a service principal
 resource "azuread_service_principal" "gh-actions-mvd-sp" {
   application_id = azuread_application.gh-actions-mvd.application_id
@@ -34,7 +40,7 @@ resource "azuread_application_federated_identity_credential" "gh-actions-fc-pull
   description           = "Github Actions federated credential for your fork (Pullrequests)"
   audiences             = ["api://AzureADTokenExchange"]
   issuer                = "https://token.actions.githubusercontent.com"
-  subject               = "repo:${var.github_repo}:pullrequest"
+  subject               = "repo:${var.github_repo}:pull_request"
 }
 
 # grant GH Actions app "Owner" access to subscription

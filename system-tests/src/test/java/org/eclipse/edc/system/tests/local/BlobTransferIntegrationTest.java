@@ -19,6 +19,7 @@ package org.eclipse.edc.system.tests.local;
 import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
+import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.system.tests.utils.TransferSimulationUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,7 @@ import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@EndToEndTest
 @EnabledIfEnvironmentVariable(named = "TEST_ENVIRONMENT", matches = "local")
 public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
     private List<Runnable> containerCleanup = new ArrayList<>();

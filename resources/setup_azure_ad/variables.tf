@@ -38,7 +38,3 @@ variable "common_resourcegroup_location" {
 variable "common_resourcegroup" {
   default = "mvd-common"
 }
-# Name of the Azure Container Registry that'll hold all docker images
-variable "acr_name" {
-  default = "acrmvd"
-}

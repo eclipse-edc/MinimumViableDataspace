@@ -62,7 +62,7 @@ public class RegistrationServiceNodeDirectoryExtension implements ServiceExtensi
         var apiClient = ApiClientFactory.createApiClient(registrationServiceApiUrl, identityService::obtainClientCredentials);
         var registryApiClient = new RegistryApi(apiClient);
         var resolver = new FederatedCacheNodeResolver(didResolverRegistry, monitor);
-        return new RegistrationServiceNodeDirectory(registryApiClient, resolver);
+        return new RegistrationServiceNodeDirectory(registryApiClient, resolver, monitor);
     }
 }
 

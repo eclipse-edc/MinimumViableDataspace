@@ -1,10 +1,10 @@
 REPO=$(terraform output -raw GH_REPO)
 gh="gh --repo $REPO"
 
-$gh secret set ACR_NAME --body "$(terraform output -raw ACR_NAME)"
 $gh secret set ARM_CLIENT_ID --body "$(terraform output -raw ARM_CLIENT_ID)"
 $gh secret set ARM_SUBSCRIPTION_ID --body "$(terraform output -raw ARM_SUBSCRIPTION_ID)"
 $gh secret set ARM_TENANT_ID --body "$(terraform output -raw ARM_TENANT_ID)"
+$gh secret set ARM_CLIENT_SECRET --body "$(terraform output -raw ARM_CLIENT_SECRET)"
 $gh secret set APP_CLIENT_ID --body "$(terraform output -raw APP_CLIENT_ID)"
 $gh secret set APP_CLIENT_SECRET --body "$(terraform output -raw APP_CLIENT_SECRET)"
 $gh secret set APP_OBJECT_ID --body "$(terraform output -raw APP_OBJECT_ID)"
