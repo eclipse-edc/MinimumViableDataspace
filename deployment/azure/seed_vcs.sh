@@ -1,12 +1,17 @@
 #!/bin/bash
 
-if [ "$#" -lt 6 ]; then
-  echo "Usage: sh $0 <PARTICIPANT_NAME> <REGION> <MGMT_API_PORT> <IDENTITY_PORT> <PARTICIPANT_DID_HOST> <GAIAX_DID_HOST>"
+if [ "$#" -lt 7 ]; then
+  echo "Usage: sh $0 <PARTICIPANT_NAME> <REGION> <MGMT_API_PORT> <IDENTITY_PORT> <PARTICIPANT_DID_HOST> <GAIAX_DID_HOST> <ASSET_STORAGE_ACCOUNT>"
   exit 1
 fi
 
+participant="$1"
+region="$2"
+dataPort="$3"
+identityPort="$4"
 participant_did_host="$5"
 gaiax_did_host="$6"
+asset_account="$7"
 
 
 ## Function declarations to be used later
@@ -37,10 +42,7 @@ checkCredentials() {
 # variables
 gaiax_did="did:web:$gaiax_did_host"
 
-participant="$1"
-region="$2"
-dataPort="$3"
-identityPort="$4"
+
 ihUrl="http://localhost:${identityPort}/api/v1/identity/identity-hub"
 
 echo "### Handling participant \"$participant\" in region \"$region\""
@@ -52,7 +54,7 @@ api_key=$(grep "EDC_API_AUTH_KEY" "docker/$participant.env" | cut -d "=" -f2 | t
 newman run \
   --folder "Publish Master Data" \
   --env-var data_management_url="http://localhost:$dataPort/api/v1/data" \
-  --env-var storage_account="${participant}assets" \
+  --env-var storage_account="${asset_account}" \
   --env-var participant_id="${participant}" \
   --env-var api_key="$api_key" \
   ../data/MVD.postman_collection.json

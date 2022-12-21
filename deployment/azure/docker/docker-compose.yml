@@ -84,7 +84,7 @@ services:
     build:
       context: ${MVD_UI_PATH}
     volumes:
-      - ../../../system-tests/resources/appconfig/company1:/usr/share/nginx/html/assets/config
+      - ../resources/appconfig/company1:/usr/share/nginx/html/assets/config
     depends_on:
       company1:
         condition: service_healthy
@@ -99,7 +99,7 @@ services:
     build:
       context: ${MVD_UI_PATH}
     volumes:
-      - ../../../system-tests/resources/appconfig/company2:/usr/share/nginx/html/assets/config
+      - ../resources/appconfig/company2:/usr/share/nginx/html/assets/config
     depends_on:
       company2:
         condition: service_healthy
@@ -113,7 +113,7 @@ services:
     build:
       context: ${MVD_UI_PATH}
     volumes:
-      - ../../../system-tests/resources/appconfig/company3:/usr/share/nginx/html/assets/config
+      - ../resources/appconfig/company3:/usr/share/nginx/html/assets/config
     depends_on:
       company3:
         condition: service_healthy

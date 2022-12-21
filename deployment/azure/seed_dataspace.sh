@@ -21,9 +21,10 @@ for row in $(echo "${participant_json}" | jq -r '.[] | @base64'); do
   p1did=$(_jq '.didhost')
   name=$(_jq '.participant.name')
   region=$(_jq '.participant.region')
+  asset_account=$(_jq '.assets_account')
 
   echo "Seed data and VC"
-  ./seed_vcs.sh $name $region $p1 $p2 "$p1did" "$gxdid"
+  ./seed_vcs.sh $name $region $p1 $p2 "$p1did" "$gxdid" "$asset_account"
 
   echo "Register participant with dataspace"
   java -jar registration-service-cli.jar \

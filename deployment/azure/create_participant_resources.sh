@@ -17,6 +17,7 @@ for row in $(echo "${data_json}" | jq -r '.[] | @base64'); do
   did_host=""$(_jq '.didhost')
   conn_name=$(_jq '.connector_name')
   participant_name=$(_jq '.participant.name')
+  assets_account=$(_jq '.assets_account')
 
   echo "Update Docker-compose environment variables for Participant"
   env_file="./docker/${participant_name}.env"
@@ -30,4 +31,10 @@ for row in $(echo "${data_json}" | jq -r '.[] | @base64'); do
   echo "Verify that the DID Endpoint is ready"
   curl -sSl --fail https://$did_host/.well-known/did.json | jq '.id'
   echo
+
+  echo "Update UI App Config file"
+  appCfgFile="./resources/appconfig/${participant_name}/app.config.json"
+  echo "processing file $appCfgFile"
+
+  $sed "s/\"storageAccount\": *\".*\"/\"storageAccount\": \"${assets_account}\"/g" "$appCfgFile"
 done
