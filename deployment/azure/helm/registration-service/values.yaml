@@ -1,11 +1,10 @@
-fullnameOverride: "${PARTICIPANT}"
 service:
   type: NodePort
 
 replicaCount: 1
 
 image:
-  repository: acrmvdpaul.azurecr.io/mvd/connector
+  repository: acrmvdpaul.azurecr.io/mvd/registration-service
   tag: ${RESOURCES_PREFIX}
   pullPolicy: Always
 
@@ -29,26 +28,21 @@ securityContext: {}
 ports:
   http:
     containerPort: 8181
-    servicePort: 80
+    servicePort: 8181
     path: /api
-  ids:
-    containerPort: 8282
-    servicePort: 8282
-    path: /api/v1/ids
-  http-mgmt:
-    containerPort: 9191
-    servicePort: 9191
-    path: /api/v1/management
   identity:
     containerPort: 7171
     servicePort: 7171
     path: /api/v1/identity
+  authority:
+    containerPort: 8184
+    path: /authority
 
 volumes:
   - name: sdd
     hostPath:
       # TOOD: make this relative
-      path: /Users/paullatzelsperger/dev/mvd/deployment/azure/resources/self-description/${PARTICIPANT}/
+      path: /Users/paullatzelsperger/dev/mvd/deployment/azure/resources/self-description/registration-service/
   # Define a volume that can then be mounted into a container. Please refer to https://kubernetes.io/docs/concepts/storage/volumes/
   # for more details. Below example will create a volume from the content of the `log-config` ConfigMap keyed with `log_level`:
   # - name: config-vol
@@ -62,21 +56,17 @@ edc:
   env:
     # use "envsubst" on a shell to replace the env vars with their actual value
 
-    REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
-    EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
-    EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
-    EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
+    JWT_AUDIENCE: http://registration-service:8184/authority
     EDC_WEB_REST_CORS_ENABLED: "true"
     EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     EDC_IAM_DID_WEB_USE_HTTPS: true
 
-    IDS_WEBHOOK_ADDRESS: http://${PARTICIPANT}-dataspace-connector:8282
-    EDC_CONNECTOR_NAME: "connector-${PARTICIPANT}"
+    EDC_CONNECTOR_NAME: "registration-service"
     EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/sdd.json
 
     # these are set dynamically
-    EDC_IDENTITY_DID_URL: "did:web:${RESOURCES_PREFIX}${PARTICIPANT}did.z13.web.core.windows.net"
-    EDC_VAULT_NAME: "kv${RESOURCES_PREFIX}${PARTICIPANT}"
+    EDC_IDENTITY_DID_URL: "did:web:${RESOURCES_PREFIX}dataspacedid.z13.web.core.windows.net"
+    EDC_VAULT_NAME: "kv${RESOURCES_PREFIX}registration"
     EDC_VAULT_CLIENTID: "${APP_CLIENT_ID}"
     EDC_VAULT_TENANTID: "${ARM_TENANT_ID}"
 
@@ -89,9 +79,10 @@ edc:
     WEB_HTTP_MANAGEMENT_PATH: /api/v1/management
     WEB_HTTP_IDENTITY_PORT: 7171
     WEB_HTTP_IDENTITY_PATH: /api/v1/identity
+    WEB_HTTP_AUTHORITY_PORT: 8184
+    WEB_HTTP_AUTHORITY_PATH: /authority
 
   envSecrets:
-    EDC_API_CONTROL_AUTH_APIKEY_VALUE: ApiKeyDefaultValue
     EDC_VAULT_CLIENTSECRET: "${APP_CLIENT_SECRET}"
     EDC_API_AUTH_KEY: "ApiKeyDefaultValue"
 
@@ -116,13 +107,13 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: dataspace-connector.local
+    - host: registration-service.local
       paths: []
 
   tls: []
-  #  - secretName: dataspace-connector-tls
+  #  - secretName: registration-service-tls
   #    hosts:
-  #      - dataspace-connector.local
+  #      - registration-service.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
