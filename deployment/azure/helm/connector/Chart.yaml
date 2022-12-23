@@ -10,7 +10,7 @@ description: A Helm chart to deploy the Eclipse Dataspace Connector to Kubernete
 # Library charts provide useful utilities or functions for the chart developer. They're included as
 # a dependency of application charts to inject those utilities and functions into the rendering
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
-type: library
+type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
@@ -21,3 +21,8 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 appVersion: "0.0.1-SNAPSHOT"
+
+dependencies:
+  - name: dashboard
+    repository: "file://../dashboard"
+    version: 0.1.0

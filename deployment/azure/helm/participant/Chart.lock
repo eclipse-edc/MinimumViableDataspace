@@ -1,9 +1,0 @@
-dependencies:
-- name: connector
-  repository: file://../connector
-  version: 0.1.0
-- name: dashboard
-  repository: file://../dashboard
-  version: 0.1.0
-digest: sha256:2f440bea4f76e9612b0a6b07ff865a8bf9304bb150f34c0314bc2890c5af8b69
-generated: "2022-12-23T11:24:18.425686+01:00"
