@@ -1,16 +1,7 @@
-fullnameOverride: "${PARTICIPANT}"
 service:
   type: NodePort
 
 replicaCount: 1
-
-image:
-  repository: acrmvdpaul.azurecr.io/mvd/connector
-  tag: ${RESOURCES_PREFIX}
-  pullPolicy: Always
-
-
-imagePullSecrets: [{name: acr-creds}]
 nameOverride: ""
 
 podAnnotations: {}
@@ -19,12 +10,6 @@ podSecurityContext: {}
   # fsGroup: 2000
 
 securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 ports:
   http:
@@ -49,14 +34,6 @@ volumes:
     hostPath:
       # TOOD: make this relative
       path: /Users/paullatzelsperger/dev/mvd/deployment/azure/resources/self-description/${PARTICIPANT}/
-  # Define a volume that can then be mounted into a container. Please refer to https://kubernetes.io/docs/concepts/storage/volumes/
-  # for more details. Below example will create a volume from the content of the `log-config` ConfigMap keyed with `log_level`:
-  # - name: config-vol
-  #   configMap:
-  #     name: log-config
-  #     items:
-  #     - key: log_level
-  #       path: log_level
 
 edc:
   env:
@@ -70,7 +47,7 @@ edc:
     EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     EDC_IAM_DID_WEB_USE_HTTPS: true
 
-    IDS_WEBHOOK_ADDRESS: http://${PARTICIPANT}-dataspace-connector:8282
+    IDS_WEBHOOK_ADDRESS: http://${PARTICIPANT}-connector:8282
     EDC_CONNECTOR_NAME: "connector-${PARTICIPANT}"
     EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/sdd.json
 
@@ -116,13 +93,13 @@ ingress:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: dataspace-connector.local
+    - host: connector.local
       paths: []
 
   tls: []
-  #  - secretName: dataspace-connector-tls
+  #  - secretName: connector-tls
   #    hosts:
-  #      - dataspace-connector.local
+  #      - connector.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

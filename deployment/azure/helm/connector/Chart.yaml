@@ -1,5 +1,5 @@
 apiVersion: v2
-name: dataspace-connector
+name: connector
 description: A Helm chart to deploy the Eclipse Dataspace Connector to Kubernetes
 
 # A chart can be either an 'application' or a 'library' chart.
@@ -10,7 +10,7 @@ description: A Helm chart to deploy the Eclipse Dataspace Connector to Kubernete
 # Library charts provide useful utilities or functions for the chart developer. They're included as
 # a dependency of application charts to inject those utilities and functions into the rendering
 # pipeline. Library charts do not define any templates and therefore cannot be deployed.
-type: application
+type: library
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.

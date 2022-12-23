@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "connector.fullname" . }}
+  name: {{ include "participant.fullname" . }}
   labels:
-    {{- include "connector.labels" . | nindent 4 }}
+    {{- include "participant.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "connector.selectorLabels" . | nindent 6 }}
+      {{- include "participant.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -18,16 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "connector.selectorLabels" . | nindent 8 }}
+        {{- include "participant.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.volumes }}
-      volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      serviceAccountName: {{ include "participant.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -37,35 +34,19 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
-            {{- range $k, $v := .Values.ports }}
-            - containerPort: {{ $v.containerPort }}
-              name: {{ $k }}
-            {{- end }}
-          envFrom:
-            - configMapRef:
-                name: {{ include "connector.fullname" . }}-envvars
-            - secretRef:
-                name: {{ include "connector.fullname" . }}-envvars
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
           livenessProbe:
             httpGet:
-              path: /api/check/liveness
+              path: /
               port: http
-            initialDelaySeconds: 10
           readinessProbe:
             httpGet:
-              path: /api/check/readiness
+              path: /
               port: http
-            initialDelaySeconds: 10
-          startupProbe:
-            httpGet:
-              path: /api/check/liveness
-              port: http
-            failureThreshold: 60
-            initialDelaySeconds: 10
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          volumeMounts:
-            {{- toYaml .Values.edc.volumeMounts | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

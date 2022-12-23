@@ -1,0 +1,17 @@
+apiVersion: v2
+name: participant
+description: A participant in an exemplary dataspace
+
+type: application
+
+version: 0.1.0
+
+appVersion: "0.0.1-SNAPSHOT"
+
+dependencies:
+  - name: connector
+    repository: "file://../connector"
+    version: 0.1.0
+  - name: dashboard
+    repository: "file://../dashboard"
+    version: 0.1.0
