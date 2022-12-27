@@ -78,3 +78,5 @@ terraform.rc
 **/.terraform.lock.hcl
 
 deployment/azure/terraform/backend.conf
+
+deployment/docker/terraform/backend.conf

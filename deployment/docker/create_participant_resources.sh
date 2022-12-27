@@ -20,7 +20,7 @@ for row in $(echo "${data_json}" | jq -r '.[] | @base64'); do
   assets_account=$(_jq '.assets_account')
 
   echo "Update Docker-compose environment variables for Participant"
-  env_file="./docker/${participant_name}.env"
+  env_file="./${participant_name}.env"
   echo "processing file $env_file"
   $sed "s/EDC_VAULT_NAME=\".*\"/EDC_VAULT_NAME=\"$vault_name\"/g" "$env_file"
   $sed "s/EDC_VAULT_CLIENTSECRET=\".*\"/EDC_VAULT_CLIENTSECRET=\"${APP_CLIENT_SECRET}\"/g" "$env_file"

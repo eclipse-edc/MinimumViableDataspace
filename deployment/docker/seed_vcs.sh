@@ -50,7 +50,7 @@ echo "### Push seed data    "
 
 # read the API KEY from the .env file that was generated during the resource generation phase
 # cut into tokens at the "=" with cut and remove all double-quotes with tr
-api_key=$(grep "EDC_API_AUTH_KEY" "docker/$participant.env" | cut -d "=" -f2 | tr -d '"')
+api_key=$(grep "EDC_API_AUTH_KEY" "$participant.env" | cut -d "=" -f2 | tr -d '"')
 newman run \
   --folder "Publish Master Data" \
   --env-var data_management_url="http://localhost:$dataPort/api/v1/data" \
@@ -60,7 +60,7 @@ newman run \
   ../data/MVD.postman_collection.json
 echo
 
-# hack - assume all containers have sequential management api dataPort configurations, check docker/docker-compose.yml for details!!!
+# hack - assume all containers have sequential management api dataPort configurations, check docker-compose.yml for details!!!
 
 id=$(uuidgen)
 pushCredential "$participant" '{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' "$gaiax_did"

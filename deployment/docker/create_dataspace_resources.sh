@@ -18,7 +18,7 @@ curl -sSl --fail "https://$dataspace_did_host/.well-known/did.json" | jq '.id'
 echo
 
 echo "- Update Docker-compose environment variables for RegistrationService"
-env_file="docker/reg.env"
+env_file="reg.env"
 $sed "s/EDC_VAULT_NAME=\".*\"/EDC_VAULT_NAME=\"$vault_name\"/g" $env_file
 $sed "s/EDC_VAULT_CLIENTSECRET=\".*\"/EDC_VAULT_CLIENTSECRET=\"${APP_CLIENT_SECRET}\"/g" $env_file
 $sed "s/EDC_VAULT_CLIENTID=\".*\"/EDC_VAULT_CLIENTID=\"${APP_CLIENT_ID}\"/g" $env_file
