@@ -1,3 +1,10 @@
+image:
+  repository: acrmvdpaul.azurecr.io/mvd/connector
+  tag: helm42
+  pullPolicy: Always
+
+imagePullSecrets: [{name: acr-creds}]
+
 service:
   type: NodePort
 
@@ -14,13 +21,13 @@ securityContext: {}
 ports:
   http:
     containerPort: 8181
-    servicePort: 80
+    servicePort: 8181
     path: /api
   ids:
     containerPort: 8282
     servicePort: 8282
     path: /api/v1/ids
-  http-mgmt:
+  mgmt:
     containerPort: 9191
     servicePort: 9191
     path: /api/v1/management
@@ -32,8 +39,7 @@ ports:
 volumes:
   - name: sdd
     hostPath:
-      # TOOD: make this relative
-      path: /Users/paullatzelsperger/dev/mvd/deployment/azure/resources/self-description/${PARTICIPANT}/
+      path: /host/resources/self-description/${PARTICIPANT}/
 
 edc:
   env:

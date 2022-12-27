@@ -48,18 +48,27 @@ spec:
                 name: {{ include "connector.fullname" . }}-envvars
           livenessProbe:
             httpGet:
-              path: /api/check/liveness
-              port: http
+              path: /api/v1/management/check/liveness
+              port: mgmt
+              httpHeaders:
+                - name: X-Api-Key
+                  value: ApiKeyDefaultValue
             initialDelaySeconds: 10
           readinessProbe:
             httpGet:
-              path: /api/check/readiness
-              port: http
+              path: /api/v1/management/check/readiness
+              port: mgmt
+              httpHeaders:
+                - name: X-Api-Key
+                  value: ApiKeyDefaultValue
             initialDelaySeconds: 10
           startupProbe:
             httpGet:
-              path: /api/check/liveness
-              port: http
+              path: /api/v1/management/check/liveness
+              port: mgmt
+              httpHeaders:
+                - name: X-Api-Key
+                  value: ApiKeyDefaultValue
             failureThreshold: 60
             initialDelaySeconds: 10
           resources:

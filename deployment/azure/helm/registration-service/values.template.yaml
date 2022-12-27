@@ -37,20 +37,16 @@ ports:
   authority:
     containerPort: 8184
     path: /authority
+  mgmt:
+    containerPort: 9191
+    servicePort: 9191
+    path: /api/v1/management
 
 volumes:
   - name: sdd
     hostPath:
       # TOOD: make this relative
-      path: /Users/paullatzelsperger/dev/mvd/deployment/azure/resources/self-description/registration-service/
-  # Define a volume that can then be mounted into a container. Please refer to https://kubernetes.io/docs/concepts/storage/volumes/
-  # for more details. Below example will create a volume from the content of the `log-config` ConfigMap keyed with `log_level`:
-  # - name: config-vol
-  #   configMap:
-  #     name: log-config
-  #     items:
-  #     - key: log_level
-  #       path: log_level
+      path: /host/resources/self-description/registration-service/
 
 edc:
   env:

@@ -19,8 +19,6 @@ dashboard:
   volumeMounts:
     - name: appconfig
       mountPath: /usr/share/nginx/html/assets/config
-  env:
-    YOMAMA: sofat
 
 serviceAccount:
   # Specifies whether a service account should be created
