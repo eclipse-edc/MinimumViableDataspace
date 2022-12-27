@@ -13,7 +13,6 @@ image:
 imagePullSecrets: [{name: acr-creds}]
 
 nameOverride: ""
-fullnameOverride: "${PARTICIPANT}-ui"
 
 dashboard:
   volumeMounts:

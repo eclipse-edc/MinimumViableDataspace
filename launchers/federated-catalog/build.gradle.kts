@@ -21,46 +21,32 @@ plugins {
 val edcGroup: String by project
 
 dependencies {
-    implementation(project(":extensions:policies"))
-
-    implementation(edc.core.controlplane)
-    implementation(edc.api.observability)
-    implementation(edc.api.dataManagement)
-    implementation(edc.config.filesystem)
-    implementation(edc.ext.http)
-
-
-    // IDS
-    implementation(edc.ids) {
-        // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
-        exclude(group = edcGroup, module = "ids-token-validation")
-    }
-
-    // API key authentication for Data Management API (also used for CORS support)
-
-    implementation(edc.ext.auth.tokenBased)
+    runtimeOnly(edc.api.observability)
+    runtimeOnly(edc.config.filesystem)
+    runtimeOnly(edc.ext.http)
+    runtimeOnly(edc.boot)
 
     // DID authentication for IDS API
-    implementation(edc.bundles.identity)
+    runtimeOnly(edc.bundles.identity)
 
-    // Blob storage container provisioning
-    implementation(edc.ext.azure.blob.core)
-    implementation(edc.provision.blob)
+    // API key authentication for Data Management API (also used for CORS support)
+//    implementation(edc.ext.auth.tokenBased)
+
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {
-        implementation(edc.vault.filesystem)
+        runtimeOnly(edc.vault.filesystem)
     } else {
-        implementation(edc.vault.azure)
+        runtimeOnly(edc.vault.azure)
     }
 
-    // Embedded DPF
-    implementation(edc.bundles.dpf)
+    // Federated catalog
+    runtimeOnly(fcc.core)
+    runtimeOnly(fcc.api)
+    runtimeOnly(project(":extensions:refresh-catalog"))
 
-    // Identity Hub
-    implementation(identityHub.core)
-    implementation(identityHub.ext.api)
-    implementation(identityHub.ext.credentialsVerifier)
+    // DID authentication for IDS API
+    runtimeOnly(identityHub.ext.credentialsVerifier)
 }
 
 application {

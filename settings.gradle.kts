@@ -138,6 +138,7 @@ dependencyResolutionManagement {
 }
 
 include(":launchers:connector")
+include(":launchers:federated-catalog")
 include(":launchers:registrationservice")
 include(":system-tests")
 include(":extensions:refresh-catalog")

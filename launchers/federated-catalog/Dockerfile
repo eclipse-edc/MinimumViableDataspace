@@ -13,21 +13,22 @@ WORKDIR /app
 
 COPY ./build/libs/app.jar /app
 
-EXPOSE 8182
+EXPOSE 8181
 EXPOSE 9191
+EXPOSE 8282
 
 # health status is determined by the availability of the /health endpoint
 HEALTHCHECK --interval=5s --timeout=5s --retries=10 CMD curl --fail http://localhost:9191/api/v1/management/check/health
 
 ENV WEB_HTTP_PORT="8181"
 ENV WEB_HTTP_PATH="/api"
-ENV WEB_HTTP_IDENTITY_PORT="7171"
-ENV WEB_HTTP_IDENTITY_PATH="/api/v1/identity"
 ENV WEB_HTTP_MANAGEMENT_PORT="9191"
 ENV WEB_HTTP_MANAGEMENT_PATH="/api/v1/management"
+ENV WEB_HTTP_IDS_PORT="8282"
+ENV WEB_HTTP_IDS_PATH="/api/v1/ids"
 
 # Use "exec" for graceful termination (SIGINT) to reach JVM.
-# ARG can not be used in ENTRYPOINT so storing value in an ENV variable
-ENV ENV_JVM_ARGS=$JVM_ARGS
+# ARG can not be used in ENTRYPOINT so storing values in ENV variables
+ENV JVM_ARGS=$JVM_ARGS
 ENTRYPOINT [ "sh", "-c", \
-    "exec java $ENV_JVM_ARGS -jar app.jar"]
+    "exec java $JVM_ARGS -jar app.jar"]

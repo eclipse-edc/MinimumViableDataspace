@@ -1,6 +1,6 @@
 apiVersion: v2
-name: connector
-description: A Helm chart to deploy the Eclipse Dataspace Connector to Kubernetes
+name: catalog
+description: A Helm chart to deploy the Eclipse Dataspace Federated Catalog
 
 # A chart can be either an 'application' or a 'library' chart.
 #
@@ -21,11 +21,3 @@ version: 0.1.0
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 appVersion: "0.0.1-SNAPSHOT"
-
-dependencies:
-  - name: dashboard
-    repository: "file://../dashboard"
-    version: 0.1.0
-  - name: catalog
-    repository: "file://../catalog"
-    version: 0.1.0

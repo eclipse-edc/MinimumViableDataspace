@@ -1,5 +1,5 @@
 image:
-  repository: acrmvdpaul.azurecr.io/mvd/connector
+  repository: acrmvdpaul.azurecr.io/mvd/catalog
   tag: ${RESOURCES_PREFIX}
   pullPolicy: Always
 
@@ -36,16 +36,10 @@ ports:
     servicePort: 7171
     path: /api/v1/identity
 
-volumes:
-  - name: sdd
-    hostPath:
-      path: /host/resources/self-description/${PARTICIPANT}/
 
-
-# use "envsubst" on a shell to replace the env vars with their actual value
-
-edc:
+fcc:
   env:
+    # use "envsubst" on a shell to replace the env vars with their actual value
 
     REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
     EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
@@ -57,7 +51,6 @@ edc:
 
     IDS_WEBHOOK_ADDRESS: http://${PARTICIPANT}-connector:8282
     EDC_CONNECTOR_NAME: "connector-${PARTICIPANT}"
-    EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/sdd.json
 
     # these are set dynamically
     EDC_IDENTITY_DID_URL: "did:web:${RESOURCES_PREFIX}${PARTICIPANT}did.z13.web.core.windows.net"
@@ -72,24 +65,9 @@ edc:
     WEB_HTTP_IDS_PATH: /api/v1/ids
     WEB_HTTP_MANAGEMENT_PORT: 9191
     WEB_HTTP_MANAGEMENT_PATH: /api/v1/management
-    WEB_HTTP_IDENTITY_PORT: 7171
-    WEB_HTTP_IDENTITY_PATH: /api/v1/identity
 
   envSecrets:
-    EDC_API_CONTROL_AUTH_APIKEY_VALUE: ApiKeyDefaultValue
     EDC_VAULT_CLIENTSECRET: "${APP_CLIENT_SECRET}"
-    EDC_API_AUTH_KEY: "ApiKeyDefaultValue"
-
-  volumeMounts:
-    - name: sdd
-      mountPath: /resources
-      readOnly: true
-  # Mount the provided volume in the POD filesystem at the specific path. Please refer to
-  # https://kubernetes.io/fr/docs/concepts/storage/volumes/ for more details.
-  # Example:
-  # - name: config-vol
-  #   mountPath: /etc/config
-  # will mount the `config-vol` volume at /etc/config
 
 #service:
 #  type: ClusterIP
@@ -98,28 +76,13 @@ ingress:
   enabled: false
   ingressClassName: ""
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
   hosts:
     - host: connector.local
       paths: []
 
   tls: []
-  #  - secretName: connector-tls
-  #    hosts:
-  #      - connector.local
 
 resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
 
 autoscaling:
   enabled: false

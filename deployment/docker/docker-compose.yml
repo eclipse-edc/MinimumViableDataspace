@@ -19,7 +19,9 @@ services:
       - "5005:5005"
       - "7171:7171"
     volumes:
-      - ../resources/self-description/company1:/resources
+      - ./resources/self-description/company1:/resources
+
+
 
   # EDC Connector to simulate a dataspace participant acting as a data consumer which is located in EU.
   company2:
@@ -38,7 +40,7 @@ services:
       - "5006:5006"
       - "7172:7171"
     volumes:
-      - ../resources/self-description/company2:/resources
+      - ./resources/self-description/company2:/resources
 
   # EDC Connector to simulate a dataspace participant acting as a consumer which is located in US.
   company3:
@@ -65,7 +67,7 @@ services:
     container_name: registration-service
     build:
       #e.g. /home/user/RegistrationService/launcher
-      context: ../../../launchers/registrationservice
+      context: ../../launchers/registrationservice
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
     env_file: reg.env
@@ -76,7 +78,7 @@ services:
       - "5008:5008"
       - "7174:7171"
     volumes:
-      - ../resources/self-description/registration-service:/resources
+      - ./resources/self-description/registration-service:/resources
 
   # Data Dashboard (MVD UI) for participant company1
   company1-datadashboard:
@@ -84,7 +86,7 @@ services:
     build:
       context: ${MVD_UI_PATH}
     volumes:
-      - ../resources/appconfig/company1:/usr/share/nginx/html/assets/config
+      - ./resources/appconfig/company1:/usr/share/nginx/html/assets/config
     depends_on:
       company1:
         condition: service_healthy
@@ -99,7 +101,7 @@ services:
     build:
       context: ${MVD_UI_PATH}
     volumes:
-      - ../resources/appconfig/company2:/usr/share/nginx/html/assets/config
+      - ./resources/appconfig/company2:/usr/share/nginx/html/assets/config
     depends_on:
       company2:
         condition: service_healthy
@@ -113,7 +115,7 @@ services:
     build:
       context: ${MVD_UI_PATH}
     volumes:
-      - ../resources/appconfig/company3:/usr/share/nginx/html/assets/config
+      - ./resources/appconfig/company3:/usr/share/nginx/html/assets/config
     depends_on:
       company3:
         condition: service_healthy
