@@ -1,0 +1,7 @@
+{
+  "dataManagementApiUrl": "http://company1.connector/api/v1/management",
+  "catalogUrl": "http://company1.catalog/api/v1/management",
+  "storageAccount": "helm42company1assets",
+  "storageExplorerLinkTemplate": "storageexplorer://v=1",
+  "theme": "theme-1"
+}

@@ -1,9 +1,9 @@
 image:
-   repository: acrmvdpaul.azurecr.io/mvd/connector
-   tag: ${RESOURCES_PREFIX}
-   pullPolicy: Always
+  repository: acrmvdpaul.azurecr.io/mvd/connector
+  tag: ${RESOURCES_PREFIX}
+  pullPolicy: Always
 
-imagePullSecrets: [{name: acr-creds}]
+imagePullSecrets: [ { name: acr-creds } ]
 
 service:
   type: ClusterIP
@@ -11,12 +11,12 @@ service:
 replicaCount: 1
 nameOverride: ""
 
-podAnnotations: {}
+podAnnotations: { }
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: { }
+# fsGroup: 2000
 
-securityContext: {}
+securityContext: { }
 
 ports:
   http:
@@ -85,31 +85,33 @@ edc:
       readOnly: true
 
 ingress:
-  enabled: false
-  ingressClassName: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
+  enabled: true
+  ingressClassName: "nginx"
+  annotations:
+#    kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: connector.local
-      paths: []
+    - host: ${PARTICIPANT}.connector
+      paths:
+        - path: /api/v1/management
+          pathType: Prefix
+          port: 9191
 
-  tls: []
+        - path: /api/v1/ids
+          pathType: Prefix
+          port: 8282
+
+        - path: /api/v1/identity
+          pathType: Prefix
+          port: 7171
+
+
+  tls: [ ]
   #  - secretName: connector-tls
   #    hosts:
   #      - connector.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+resources: { }
 
 autoscaling:
   enabled: false
@@ -118,20 +120,34 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }
 
 # config values for the dependencies
 
 catalog:
   image:
     repository: acrmvdpaul.azurecr.io/mvd/catalog
-    tag: helm42
+    tag: ${RESOURCES_PREFIX}
     pullPolicy: Always
-  imagePullSecrets: [{name: acr-creds}]
+  imagePullSecrets: [ { name: acr-creds } ]
+
+# Declare an ingress that redirects to the catalog service
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+    #    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: ${PARTICIPANT}.catalog
+        paths:
+          - path: /api/v1/management/federatedcatalog
+            pathType: Exact
+            port: 9191
 
   fcc:
     env:
@@ -172,13 +188,24 @@ dashboard:
   image:
     repository: acrmvdpaul.azurecr.io/mvd/dashboard
     tag: ${RESOURCES_PREFIX}
-    pullPolicy: IfNotPresent
-
+    pullPolicy: Always
 
   imagePullSecrets: [ { name: acr-creds } ]
 
   volumes:
     - name: appconfig
       hostPath:
-        # TOOD: make this relative
-        path: /host/resources/appconfig/${PARTICIPANT}/
+        path: /host/resources/appconfig/
+
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+      - host: ${PARTICIPANT}.dashboard
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 80

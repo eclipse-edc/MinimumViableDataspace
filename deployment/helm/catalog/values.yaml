@@ -1,15 +1,21 @@
+image:
+  repository: acrmvdpaul.azurecr.io/mvd/catalog
+  tag: ${RESOURCES_PREFIX}
+  pullPolicy: Always
+imagePullSecrets: [ { name: acr-creds } ]
+
 service:
   type: ClusterIP
 
 replicaCount: 1
 nameOverride: ""
 
-podAnnotations: {}
+podAnnotations: { }
 
-podSecurityContext: {}
-  # fsGroup: 2000
+podSecurityContext: { }
+# fsGroup: 2000
 
-securityContext: {}
+securityContext: { }
 
 ports:
   http:
@@ -30,17 +36,56 @@ ports:
     path: /api/v1/identity
 
 
-ingress:
-  enabled: false
-  ingressClassName: ""
-  annotations: {}
-  hosts:
-    - host: connector.local
-      paths: []
 
-  tls: []
+resources: { }
 
-resources: {}
+catalog:
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+    #    kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: catalog
+        paths:
+          - path: /api/v1/management/federatedcatalog
+            pathType: Exact
+            port: 9191
+  fcc:
+    env:
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
+      EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
+      EDC_WEB_REST_CORS_ENABLED: "true"
+      EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
+      EDC_IAM_DID_WEB_USE_HTTPS: true
+
+      IDS_WEBHOOK_ADDRESS: http://${PARTICIPANT}-connector:8282
+      EDC_CONNECTOR_NAME: "connector-${PARTICIPANT}"
+      EDC_SELF_DESCRIPTION_DOCUMENT_PATH: /resources/sdd.json
+
+      # these are set dynamically
+      EDC_IDENTITY_DID_URL: "did:web:${RESOURCES_PREFIX}${PARTICIPANT}did.z13.web.core.windows.net"
+      EDC_VAULT_NAME: "kv${RESOURCES_PREFIX}${PARTICIPANT}"
+      EDC_VAULT_CLIENTID: "${APP_CLIENT_ID}"
+      EDC_VAULT_TENANTID: "${ARM_TENANT_ID}"
+
+      # Web context configuration:
+      WEB_HTTP_PORT: 8181
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_IDS_PORT: 8282
+      WEB_HTTP_IDS_PATH: /api/v1/ids
+      WEB_HTTP_MANAGEMENT_PORT: 9191
+      WEB_HTTP_MANAGEMENT_PATH: /api/v1/management
+      WEB_HTTP_IDENTITY_PORT: 7171
+      WEB_HTTP_IDENTITY_PATH: /api/v1/identity
+
+    envSecrets:
+      EDC_API_CONTROL_AUTH_APIKEY_VALUE: ApiKeyDefaultValue
+      EDC_VAULT_CLIENTSECRET: "${APP_CLIENT_SECRET}"
+      EDC_API_AUTH_KEY: "ApiKeyDefaultValue"
 
 autoscaling:
   enabled: false
@@ -49,8 +94,8 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+nodeSelector: { }
 
-tolerations: []
+tolerations: [ ]
 
-affinity: {}
+affinity: { }

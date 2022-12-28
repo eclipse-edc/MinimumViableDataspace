@@ -46,7 +46,7 @@ val getJarsForAzureTest by tasks.registering(Copy::class) {
                 .replace("-${registrationServiceVersion}", "")
                 .replace("-all", "")
         }
-    into(layout.projectDirectory.dir("deployment/azure"))
+    into(layout.projectDirectory.dir("deployment/docker"))
 }
 
 // run the download jars task after the "jar" task
