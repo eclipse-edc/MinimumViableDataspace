@@ -4,13 +4,7 @@
 
 replicaCount: 1
 
-image:
-  repository: acrmvdpaul.azurecr.io/mvd/dashboard
-  tag: ${RESOURCES_PREFIX}
-  pullPolicy: IfNotPresent
 
-
-imagePullSecrets: [{name: acr-creds}]
 
 nameOverride: ""
 
@@ -75,8 +69,3 @@ tolerations: []
 
 affinity: {}
 
-volumes:
-  - name: appconfig
-    hostPath:
-      # TOOD: make this relative
-      path: /Users/paullatzelsperger/dev/mvd/deployment/azure/resources/appconfig/${PARTICIPANT}/

@@ -1,0 +1,56 @@
+service:
+  type: ClusterIP
+
+replicaCount: 1
+nameOverride: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+
+ports:
+  http:
+    containerPort: 8181
+    servicePort: 8181
+    path: /api
+  ids:
+    containerPort: 8282
+    servicePort: 8282
+    path: /api/v1/ids
+  mgmt:
+    containerPort: 9191
+    servicePort: 9191
+    path: /api/v1/management
+  identity:
+    containerPort: 7171
+    servicePort: 7171
+    path: /api/v1/identity
+
+
+ingress:
+  enabled: false
+  ingressClassName: ""
+  annotations: {}
+  hosts:
+    - host: connector.local
+      paths: []
+
+  tls: []
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
