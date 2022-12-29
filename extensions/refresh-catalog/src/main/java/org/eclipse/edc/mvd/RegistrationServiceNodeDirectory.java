@@ -54,7 +54,7 @@ public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirec
                     .map(AbstractResult::getContent)
                     .collect(Collectors.toList());
         } catch (Exception ex) {
-            monitor.severe("RegistrationServiceNodeDirectory.getAll() threw an exception: " + ex.getMessage());
+            monitor.severe("RegistrationServiceNodeDirectory.getAll() threw an exception: ", ex);
             return List.of();
         }
     }

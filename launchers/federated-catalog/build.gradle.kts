@@ -21,6 +21,7 @@ plugins {
 val edcGroup: String by project
 
 dependencies {
+    runtimeOnly(edc.core.controlplane)
     runtimeOnly(edc.api.observability)
     runtimeOnly(edc.config.filesystem)
     runtimeOnly(edc.ext.http)

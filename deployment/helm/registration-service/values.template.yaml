@@ -97,19 +97,17 @@ edc:
 #  type: ClusterIP
 
 ingress:
-  enabled: false
-  ingressClassName: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  enabled: true
+  ingressClassName: "nginx"
+  annotations:
+  #    kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true"
   hosts:
-    - host: registration-service.local
-      paths: []
-
-  tls: []
-  #  - secretName: registration-service-tls
-  #    hosts:
-  #      - registration-service.local
+    - host: "registration-service"
+      paths:
+        - path: /authority
+          pathType: Prefix
+          port: 8184
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
