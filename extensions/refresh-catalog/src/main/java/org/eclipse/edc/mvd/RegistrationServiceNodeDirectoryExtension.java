@@ -15,6 +15,9 @@
 package org.eclipse.edc.mvd;
 
 import org.eclipse.edc.catalog.spi.FederatedCacheNodeDirectory;
+import org.eclipse.edc.connector.contract.spi.offer.ContractOfferQuery;
+import org.eclipse.edc.connector.contract.spi.offer.ContractOfferResolver;
+import org.eclipse.edc.connector.contract.spi.types.offer.ContractOffer;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
 import org.eclipse.edc.registration.client.ApiClientFactory;
 import org.eclipse.edc.registration.client.api.RegistryApi;
@@ -26,6 +29,9 @@ import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.stream.Stream;
 
 
 /**
@@ -39,9 +45,6 @@ public class RegistrationServiceNodeDirectoryExtension implements ServiceExtensi
 
     @Inject
     private Monitor monitor;
-
-    @Inject
-    private TypeManager typeManager;
 
     @Inject
     private IdentityService identityService;
@@ -63,6 +66,17 @@ public class RegistrationServiceNodeDirectoryExtension implements ServiceExtensi
         var registryApiClient = new RegistryApi(apiClient);
         var resolver = new FederatedCacheNodeResolver(didResolverRegistry, monitor);
         return new RegistrationServiceNodeDirectory(registryApiClient, resolver, monitor);
+    }
+
+    /**
+     * The IDS Multipart dispatcher module needs a ContractOfferResolver, which is not directly used, so we can supply a dummy
+     */
+    @Provider
+    public ContractOfferResolver dummyResolver(ServiceExtensionContext context){
+        return query -> {
+            context.getMonitor().warning("Received a ContractOfferQuery, which is entirely unexpected!");
+            return Stream.of();
+        };
     }
 }
 

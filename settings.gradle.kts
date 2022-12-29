@@ -97,7 +97,9 @@ dependencyResolutionManagement {
             library("vault-filesystem", "org.eclipse.edc", "vault-filesystem").versionRef("edc")
             library("vault-azure", "org.eclipse.edc", "vault-azure").versionRef("edc")
             library("provision-blob", "org.eclipse.edc", "provision-blob").versionRef("edc")
-            library("ids", "org.eclipse.edc", "ids").versionRef("edc")
+            library("ids-all", "org.eclipse.edc", "ids").versionRef("edc")
+            library("ids-multipart-dispatcher", "org.eclipse.edc", "ids-api-multipart-dispatcher-v1").versionRef("edc")
+            library("ids-multipart-endpoint", "org.eclipse.edc", "ids-api-multipart-endpoint-v1").versionRef("edc")
 
 
             library("ext-azure-blob-core", "org.eclipse.edc", "azure-blob-core").versionRef("edc")

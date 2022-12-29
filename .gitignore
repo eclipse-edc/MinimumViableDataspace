@@ -80,3 +80,5 @@ terraform.rc
 deployment/azure/terraform/backend.conf
 
 deployment/docker/terraform/backend.conf
+
+deployment/docker/terraform/modules/participant/resources/self-description/company3/sdd.json

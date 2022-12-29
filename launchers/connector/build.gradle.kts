@@ -31,7 +31,7 @@ dependencies {
 
 
     // IDS
-    implementation(edc.ids) {
+    implementation(edc.ids.all) {
         // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
         exclude(group = edcGroup, module = "ids-token-validation")
     }
