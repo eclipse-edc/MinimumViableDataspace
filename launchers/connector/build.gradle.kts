@@ -65,7 +65,7 @@ dependencies {
     // Identity Hub
     implementation(identityHub.core)
     implementation(identityHub.ext.api)
-    implementation(identityHub.ext.credentialsVerifier)
+    implementation(identityHub.core.verifier)
 }
 
 application {

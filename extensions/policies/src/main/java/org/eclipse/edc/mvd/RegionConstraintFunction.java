@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.eclipse.edc.identityhub.spi.credentials.VerifiableCredentialsJwtService.VERIFIABLE_CREDENTIALS_KEY;
+import static org.eclipse.edc.identityhub.verifier.jwt.VerifiableCredentialsJwtService.VERIFIABLE_CREDENTIALS_KEY;
 
 public class RegionConstraintFunction implements AtomicConstraintFunction<Permission> {
     private static final String REGION_KEY = "region";

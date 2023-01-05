@@ -34,7 +34,7 @@ dependencies {
     runtimeOnly(edc.micrometer.jersey)
     implementation(edc.config.filesystem)
     implementation(identityHub.ext.api)
-    implementation(identityHub.ext.credentialsVerifier)
+    implementation(identityHub.core.verifier)
 
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()

@@ -20,6 +20,7 @@ dependencies {
     api(edc.spi.ids)
     api(edc.spi.contract)
     api(edc.core.connector)
+    api(identityHub.ext.verifier.jwt)
     implementation(identityHub.spi.core)
 
     testImplementation(edc.policy.engine)
