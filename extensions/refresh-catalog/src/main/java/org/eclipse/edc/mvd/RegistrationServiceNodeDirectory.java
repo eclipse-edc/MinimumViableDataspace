@@ -36,6 +36,7 @@ public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirec
     /**
      * Constructs {@link RegistrationServiceNodeDirectory}
      *
+     * @param monitor   monitor
      * @param apiClient RegistrationService API client.
      * @param resolver  gets {@link FederatedCacheNode} from {@link ParticipantDto}
      */

@@ -17,80 +17,61 @@ package org.eclipse.edc.system.tests.identityhub;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.nimbusds.jwt.SignedJWT;
 import okhttp3.OkHttpClient;
 import org.assertj.core.api.AbstractCollectionAssert;
 import org.assertj.core.api.IterableAssert;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.ThrowingConsumer;
 import org.eclipse.edc.identityhub.client.IdentityHubClientImpl;
+import org.eclipse.edc.identityhub.credentials.jwt.JwtCredentialEnvelope;
+import org.eclipse.edc.identityhub.credentials.jwt.JwtCredentialEnvelopeTransformer;
+import org.eclipse.edc.identityhub.spi.credentials.model.CredentialEnvelope;
+import org.eclipse.edc.identityhub.spi.credentials.transformer.CredentialEnvelopeTransformerRegistryImpl;
 import org.eclipse.edc.junit.annotations.ComponentTest;
 import org.eclipse.edc.spi.monitor.ConsoleMonitor;
 import org.eclipse.edc.system.tests.utils.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.eclipse.edc.junit.testfixtures.TestUtils.testOkHttpClient;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @ComponentTest
 class IdentityHubIntegrationTest {
 
-    static final String COMPANY1_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY1_IDENTITY_HUB_URL", "http://localhost:7171/api/v1/identity/identity-hub");
-    static final String COMPANY2_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY2_IDENTITY_HUB_URL", "http://localhost:7172/api/v1/identity/identity-hub");
-    static final String COMPANY3_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY3_IDENTITY_HUB_URL", "http://localhost:7173/api/v1/identity/identity-hub");
-    static final String AUTHORITY_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("AUTHORITY_IDENTITY_HUB_URL", "http://localhost:7174/api/v1/identity/identity-hub");
+    private static final String COMPANY1_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY1_IDENTITY_HUB_URL", "http://localhost:7171/api/v1/identity/identity-hub");
+    private static final String COMPANY2_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY2_IDENTITY_HUB_URL", "http://localhost:7172/api/v1/identity/identity-hub");
+    private static final String COMPANY3_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("COMPANY3_IDENTITY_HUB_URL", "http://localhost:7173/api/v1/identity/identity-hub");
+    private static final String AUTHORITY_IDENTITY_HUB_URL = TestUtils.requiredPropOrEnv("AUTHORITY_IDENTITY_HUB_URL", "http://localhost:7174/api/v1/identity/identity-hub");
 
-    private static final OkHttpClient OK_HTTP_CLIENT = new OkHttpClient.Builder()
-            .connectTimeout(1, TimeUnit.MINUTES)
-            .writeTimeout(1, TimeUnit.MINUTES)
-            .readTimeout(1, TimeUnit.MINUTES)
-            .build();
+    private static final OkHttpClient OK_HTTP_CLIENT = testOkHttpClient();
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final ConsoleMonitor CONSOLE_MONITOR = new ConsoleMonitor();
 
     private IdentityHubClientImpl client;
 
-    private static JsonNode getOrThrow(JsonNode node, String key) {
-        var value = node.get(key);
-        assertThat(value).as("Get value for key: %s", key).isNotNull();
-        return value;
-    }
-
-    private static Stream<Arguments> provideParticipantHubUrls() {
-        return Stream.of(
-                arguments(COMPANY1_IDENTITY_HUB_URL, "eu", "FR"),
-                arguments(COMPANY2_IDENTITY_HUB_URL, "eu", "DE"),
-                arguments(COMPANY3_IDENTITY_HUB_URL, "us", "US")
-        );
-    }
-
-    private static Stream<Arguments> provideAllHubUrls() {
-        return Stream.concat(
-                provideParticipantHubUrls(),
-                Stream.of(
-                        arguments(AUTHORITY_IDENTITY_HUB_URL, "eu", "ES")
-                )
-        );
-    }
 
     @BeforeEach
     void setUp() {
-        client = new IdentityHubClientImpl(OK_HTTP_CLIENT, OBJECT_MAPPER, CONSOLE_MONITOR);
+        var transformerRegistry = new CredentialEnvelopeTransformerRegistryImpl();
+        transformerRegistry.register(new JwtCredentialEnvelopeTransformer(OBJECT_MAPPER));
+        client = new IdentityHubClientImpl(OK_HTTP_CLIENT, OBJECT_MAPPER, CONSOLE_MONITOR, transformerRegistry);
     }
 
     @ParameterizedTest
-    @MethodSource("provideParticipantHubUrls")
+    @ArgumentsSource(ParticipantsIdentityHubsUrlProvider.class)
     void retrieveVerifiableCredentials(String hubUrl, String region, String country) {
         await()
                 .atMost(20, SECONDS)
@@ -103,13 +84,38 @@ class IdentityHubIntegrationTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideAllHubUrls")
+    @ArgumentsSource(DataspaceIdentityHubsUrlProvider.class)
     void getSelfDescription(String hubUrl, String region, String country) {
         await().atMost(20, SECONDS)
                 .pollInterval(2, SECONDS)
                 .untilAsserted(() -> selfDescriptionRetrieved(hubUrl));
 
         selfDescriptionRetrieved(hubUrl).anySatisfy(selfDescriptionRequirements(country));
+    }
+
+    private static final class ParticipantsIdentityHubsUrlProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(
+                    arguments(COMPANY1_IDENTITY_HUB_URL, "eu", "FR"),
+                    arguments(COMPANY2_IDENTITY_HUB_URL, "eu", "DE"),
+                    arguments(COMPANY3_IDENTITY_HUB_URL, "us", "US")
+            );
+        }
+    }
+
+    private static final class DataspaceIdentityHubsUrlProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.concat(
+                    new ParticipantsIdentityHubsUrlProvider().provideArguments(extensionContext),
+                    Stream.of(
+                            arguments(AUTHORITY_IDENTITY_HUB_URL, "eu", "ES")
+                    )
+            );
+        }
     }
 
     private ThrowingConsumer<JsonNode> selfDescriptionRequirements(String country) {
@@ -123,14 +129,15 @@ class IdentityHubIntegrationTest {
         };
     }
 
-    private ThrowingConsumer<SignedJWT> vcRequirements(String name, String value) {
-        return jwt -> {
+    private ThrowingConsumer<CredentialEnvelope> vcRequirements(String name, String value) {
+        return envelope -> {
+            assertThat(envelope).isInstanceOf(JwtCredentialEnvelope.class);
+            var jwt = ((JwtCredentialEnvelope) envelope).getJwtVerifiableCredentials();
             var claims = jwt.getJWTClaimsSet();
             assertThat(claims.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
             assertThat(claims.getSubject()).as("Subject is a Web DID").startsWith("did:web:");
             assertThat(claims.getClaim("vc")).as("VC")
                     .isInstanceOfSatisfying(Map.class, t -> {
-
                         assertThat(t.get("id"))
                                 .as("VC ID")
                                 .isInstanceOfSatisfying(String.class, s -> assertThat(s).isNotBlank());
@@ -145,9 +152,14 @@ class IdentityHubIntegrationTest {
         };
     }
 
-    private AbstractCollectionAssert<?, Collection<? extends SignedJWT>, SignedJWT, ObjectAssert<SignedJWT>> twoCredentialsInIdentityHub(String hubUrl) {
-        var vcs = client.getVerifiableCredentials(hubUrl);
+    private static JsonNode getOrThrow(JsonNode node, String key) {
+        var value = node.get(key);
+        assertThat(value).as("Get value for key: %s", key).isNotNull();
+        return value;
+    }
 
+    private AbstractCollectionAssert<?, Collection<? extends CredentialEnvelope>, CredentialEnvelope, ObjectAssert<CredentialEnvelope>> twoCredentialsInIdentityHub(String hubUrl) {
+        var vcs = client.getVerifiableCredentials(hubUrl);
         assertThat(vcs.succeeded()).isTrue();
         return assertThat(vcs.getContent()).hasSize(3);
     }

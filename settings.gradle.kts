@@ -30,11 +30,16 @@ dependencyResolutionManagement {
             library("spi-core", "org.eclipse.edc", "identity-hub-spi").versionRef("identityHub")
             library("core", "org.eclipse.edc", "identity-hub").versionRef("identityHub")
             library("core-client", "org.eclipse.edc", "identity-hub-client").versionRef("identityHub")
+            library(
+                "core-verifier", "org.eclipse.edc", "identity-hub-credentials-verifier"
+            ).versionRef("identityHub")
+
             library("ext-api", "org.eclipse.edc", "identity-hub-api").versionRef("identityHub")
             library(
-                "ext-credentialsVerifier",
-                "org.eclipse.edc",
-                "identity-hub-credentials-verifier"
+                "ext-verifier-jwt", "org.eclipse.edc", "identity-hub-verifier-jwt"
+            ).versionRef("identityHub")
+            library(
+                "ext-credentials-jwt", "org.eclipse.edc", "identity-hub-credentials-jwt"
             ).versionRef("identityHub")
 
         }
