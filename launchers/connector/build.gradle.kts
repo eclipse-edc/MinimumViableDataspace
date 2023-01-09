@@ -66,6 +66,7 @@ dependencies {
     implementation(identityHub.core)
     implementation(identityHub.ext.api)
     implementation(identityHub.core.verifier)
+    implementation(identityHub.ext.credentials.jwt)
 }
 
 application {

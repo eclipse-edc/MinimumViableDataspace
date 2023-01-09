@@ -35,6 +35,7 @@ dependencies {
     implementation(edc.config.filesystem)
     implementation(identityHub.ext.api)
     implementation(identityHub.core.verifier)
+    implementation(identityHub.ext.credentials.jwt)
 
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
