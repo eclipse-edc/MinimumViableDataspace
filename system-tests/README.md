@@ -242,11 +242,11 @@ cd <project-root>/deployment/azure
 ./shutdown_azure_dataspace.sh
 ```
 
-<br>
+<br/>
 
 ---
 
-<br>
+<br/>
 
 ## Debugging MVD locally
 
