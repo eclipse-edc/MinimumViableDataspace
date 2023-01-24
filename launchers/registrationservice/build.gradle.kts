@@ -20,8 +20,8 @@ plugins {
 
 dependencies {
     implementation(registrationService.core)
-    implementation(registrationService.ext.participantVerifier)
-    implementation(registrationService.ext.registrationPolicy.gaiaxMember)
+    implementation(registrationService.core.credential.service)
+    implementation(registrationService.ext.api)
 
     implementation(edc.identity.did.web)
     implementation(edc.identity.did.core)
@@ -34,8 +34,10 @@ dependencies {
     runtimeOnly(edc.micrometer.jersey)
     implementation(edc.config.filesystem)
     implementation(identityHub.ext.api)
+    implementation(identityHub.ext.selfdescription.api)
     implementation(identityHub.core.verifier)
     implementation(identityHub.ext.credentials.jwt)
+    implementation(identityHub.ext.verifier.jwt)
 
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()

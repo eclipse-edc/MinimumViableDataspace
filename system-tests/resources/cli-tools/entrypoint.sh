@@ -21,15 +21,14 @@ function seedVerifiedCredentials() {
   local participantDid="$2"
   local region="$3"
 
-   for subject in '"region": "'$region'"' '"gaiaXMember": "true"'
+   for subject in '"region": "'$region'"'
    do
      echo "Seeding VC for $participantName: $subject"
-     vcId=$(uuidgen)
      java -jar identity-hub-cli.jar \
                  -s="http://$participantName:7171/api/v1/identity/identity-hub" \
                  vc add \
-                 -c='{"id":"'"$vcId"'","credentialSubject":{'"$subject"'}}' \
-                -b="$participantDid" \
+                 -c="{ $subject }" \
+                 -b="$participantDid" \
                  -i="did:web:did-server:gaia-x" \
                  -k="/resources/vault/gaia-x/private-key.pem"
    done
