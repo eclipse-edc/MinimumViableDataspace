@@ -17,15 +17,15 @@ asset_account="$7"
 ## Function declarations to be used later
 pushCredential() {
   local participant="$1"
-  local credential="$2"
-  echo "Push credentials to $participant at port $identityPort"
-  echo "    credential: ${credential}"
+  local claims="$2"
+  echo "Push claims to $participant at port $identityPort"
+  echo "    claims: ${claims}"
   echo
   local participant_did="did:web:$participant_did_host"
   local gaiax_did="$3"
 
   java -jar identity-hub-cli.jar -s="$ihUrl" vc add \
-    -c="$credential" \
+    -c="$claims" \
     -b="$participant_did" \
     -i="$gaiax_did" \
     -k="terraform/generated/dataspace/gaiaxkey.pem"
@@ -62,9 +62,6 @@ echo
 
 # hack - assume all containers have sequential management api dataPort configurations, check docker/docker-compose.yml for details!!!
 
-id=$(uuidgen)
-pushCredential "$participant" '{"id": "'$id'", "credentialSubject": {"gaiaXMember": "true"}}' "$gaiax_did"
-id=$(uuidgen)
-pushCredential "$participant" '{"id": "'$id'", "credentialSubject": {"region": "'$region'"}}' "$gaiax_did"
+pushCredential "$participant" '{"region": "'"$region"'"}' "$gaiax_did"
 
 checkCredentials

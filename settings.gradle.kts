@@ -35,6 +35,7 @@ dependencyResolutionManagement {
             ).versionRef("identityHub")
 
             library("ext-api", "org.eclipse.edc", "identity-hub-api").versionRef("identityHub")
+            library("ext-selfdescription-api", "org.eclipse.edc", "self-description-api").versionRef("identityHub")
             library(
                 "ext-verifier-jwt", "org.eclipse.edc", "identity-hub-verifier-jwt"
             ).versionRef("identityHub")
@@ -46,19 +47,13 @@ dependencyResolutionManagement {
         create("registrationService") {
             version("registrationService", "0.0.1-SNAPSHOT")
             library("core", "org.eclipse.edc", "registration-service").versionRef("registrationService")
+            library(
+                "core-credential-service",
+                "org.eclipse.edc",
+                "registration-service-credential-service"
+            ).versionRef("registrationService")
             library("core-client", "org.eclipse.edc", "registration-service-client").versionRef("registrationService")
-            library(
-                "ext-participantVerifier",
-                "org.eclipse.edc",
-                "participant-verifier"
-            ).versionRef("registrationService")
-
-            library(
-                "ext-registrationPolicy-gaiaxMember",
-                "org.eclipse.edc",
-                "registration-policy-gaiax-member"
-            ).versionRef("registrationService")
-
+            library("ext-api", "org.eclipse.edc", "registration-service-api").versionRef("registrationService")
         }
 
         create("fcc") {
@@ -66,7 +61,6 @@ dependencyResolutionManagement {
             library("api", "org.eclipse.edc", "federated-catalog-api").versionRef("catalog")
             library("spi", "org.eclipse.edc", "federated-catalog-spi").versionRef("catalog")
             library("core", "org.eclipse.edc", "federated-catalog-core").versionRef("catalog")
-
         }
 
         create("edc") {
