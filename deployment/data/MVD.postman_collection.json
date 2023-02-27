@@ -16,7 +16,7 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 									"});"
 								],
 								"type": "text/javascript",
@@ -57,7 +57,7 @@
 								"id": "f81ae4d4-f84b-4725-aeb1-c60d71d2f958",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 									"});"
 								],
 								"type": "text/javascript"
@@ -97,7 +97,7 @@
 								"id": "63cb94b6-8e55-46fc-91e2-fef811c7ae9a",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 									"});"
 								],
 								"type": "text/javascript"
@@ -137,7 +137,7 @@
 								"id": "6f68ce4b-0a80-4a2a-aea2-6c3a1ec9a351",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 									"});"
 								],
 								"type": "text/javascript"
@@ -177,7 +177,7 @@
 								"id": "75d95596-ddcb-4861-b94d-d9c0e80a3ed0",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 									"});"
 								],
 								"type": "text/javascript"
@@ -217,7 +217,7 @@
 								"id": "76e38548-88eb-45e4-941b-8f8a7dae0a9f",
 								"exec": [
 									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([204, 409])",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 									"});"
 								],
 								"type": "text/javascript"

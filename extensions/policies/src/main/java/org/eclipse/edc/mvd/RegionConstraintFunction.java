@@ -14,8 +14,7 @@
 
 package org.eclipse.edc.mvd;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.edc.identityhub.spi.credentials.model.VerifiableCredential;
+import org.eclipse.edc.identityhub.spi.credentials.model.Credential;
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
@@ -28,15 +27,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.eclipse.edc.identityhub.spi.credentials.VerifiableCredentialsJwtService.VERIFIABLE_CREDENTIALS_KEY;
-
 public class RegionConstraintFunction implements AtomicConstraintFunction<Permission> {
+    
     private static final String REGION_KEY = "region";
-    private final ObjectMapper objectMapper;
     private final Monitor monitor;
 
-    public RegionConstraintFunction(ObjectMapper objectMapper, Monitor monitor) {
-        this.objectMapper = objectMapper;
+    public RegionConstraintFunction(Monitor monitor) {
         this.monitor = monitor;
     }
 
@@ -70,9 +66,8 @@ public class RegionConstraintFunction implements AtomicConstraintFunction<Permis
     }
 
     private String getRegion(Object object) {
-        var vcObject = (Map<String, Object>) object;
-        var verifiableCredentialMap = vcObject.get(VERIFIABLE_CREDENTIALS_KEY);
-        var verifiableCredential = objectMapper.convertValue(verifiableCredentialMap, VerifiableCredential.class);
-        return (String) (verifiableCredential.getCredentialSubject().get(REGION_KEY));
+        var credential = (Credential) object;
+        var claims = credential.getCredentialSubject().getClaims();
+        return (String) claims.get(REGION_KEY);
     }
 }

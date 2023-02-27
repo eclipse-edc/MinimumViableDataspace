@@ -1,0 +1,111 @@
+name: Run Azure Dataspace Tests
+
+on:
+  workflow_call:
+    inputs:
+      resources_prefix:
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces. Must be 3 to 7 lowercase letters and digits, starting with a letter.'
+        required: true
+        type: string
+
+  workflow_dispatch:
+    inputs:
+      resources_prefix:
+        description: 'Resources name prefix used to avoid naming conflicts between resources of different DataSpaces. Must be 3 to 7 lowercase letters and digits, starting with a letter.'
+        required: true
+        type: string
+
+# Grant permissions to obtain federated identity credentials
+# see https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-azure
+permissions:
+  id-token: write
+  contents: read
+  checks: write
+  pull-requests: write
+
+env:
+  RESOURCES_PREFIX: ${{ github.event.inputs.resources_prefix || inputs.resources_prefix }}
+  APP_OBJECT_ID: ${{ secrets.APP_OBJECT_ID }}
+  APP_CLIENT_ID: ${{ secrets.APP_CLIENT_ID }}
+  APP_CLIENT_SECRET: ${{ secrets.APP_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  COMMON_RESOURCE_GROUP: ${{ secrets.COMMON_RESOURCE_GROUP }}
+  TERRAFORM_STATE_CONTAINER: ${{ secrets.TERRAFORM_STATE_CONTAINER }}
+  TERRAFORM_STATE_STORAGE_ACCOUNT: ${{ secrets.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+
+jobs:
+  Run-Azure-Dataspace-Tests:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: deployment/azure
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/gradle-setup
+
+      - name: 'Copy IdentityHub and RegistrationService CLI Jars'
+        run: |
+          ./gradlew getJarsForLocalTest getJarsForAzureTest
+        working-directory: .
+
+      - name: 'Build runtimes'
+        run: |
+          ./gradlew shadowJar
+        working-directory: .
+
+      - name: 'Create Dataspace with Terraform'
+        run: |
+          ./create_azure_dataspace.sh
+          az storage blob upload -c $TERRAFORM_STATE_CONTAINER --account-name $TERRAFORM_STATE_STORAGE_ACCOUNT -f terraform/terraform.tfvars -n terraform.tfvars
+
+      - name: 'Upgrade docker-compose (for --wait option)'
+        run: |
+          sudo curl -L https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+
+      - name: 'Run Dataspace in Docker'
+        run: |
+          docker-compose -f docker/docker-compose.yml up --build --wait
+
+      - name: 'Seed Credentials and master data'
+        run: |
+          ./seed_dataspace.sh
+
+      - name: 'Run all tests'
+        run: |
+          ./gradlew test -DincludeTags="EndToEndTest,ComponentTest"
+        working-directory: .
+
+      - name: 'Destroy dataspace again'
+        run: |
+          ./shutdown_azure_dataspace.sh
+
+      - name: 'Delete Terraform state'
+        run: |
+          az storage blob delete -c ${{ env.TERRAFORM_STATE_CONTAINER }} -n ${{ env.RESOURCES_PREFIX }} --account-name ${{ env.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+          az storage blob delete -c ${{ env.TERRAFORM_STATE_CONTAINER }} -n terraform.tfvars --account-name ${{ env.TERRAFORM_STATE_STORAGE_ACCOUNT }}
+          
+
+#  Destroy-Dataspace:
+#    if: ${{ always() && needs.SetResourcesPrefix.result == 'success' && needs.Check-Cloud-Environments.outputs.has-azure == 'true'}}
+#    runs-on: ubuntu-latest
+#    needs:
+#      - SetResourcesPrefix
+#      - Deploy
+#      - Check-Cloud-Environments
+#    defaults:
+#      run:
+#        working-directory: deployment/azure
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: ./.github/actions/gradle-setup
+#
+#      - name: 'Destroy Dataspace with Terraform'
+#        run: |
+#          ./shutdown_azure_dataspace.sh
+

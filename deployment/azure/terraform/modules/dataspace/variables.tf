@@ -4,31 +4,11 @@ variable "prefix" {
 }
 
 variable "location" {
-  default = "northeurope"
+  default = "eastus"
 }
 
 variable "resource_group" {
   default = "test-dataspace"
-}
-
-variable "registrationservice_runtime_image" {
-  description = "Image name of the Registration Service to deploy."
-}
-
-variable "acr_name" {
-  default = "ageramvd"
-}
-
-variable "acr_resource_group" {
-  default = "agera-mvd-common"
-}
-
-variable "container_cpu" {
-  default = "0.5"
-}
-
-variable "container_memory" {
-  default = "8"
 }
 
 variable "dataspace_authority_country" {
@@ -56,4 +36,8 @@ variable "public_key_jwk_file_authority" {
 variable "public_key_jwk_file_gaiax" {
   description = "name of a file containing the GAIA-X public key in JWK format"
   default     = null
+}
+
+variable "private_key_pem_file" {
+  description = "path to the registration service's PEM encoded private key"
 }

@@ -18,6 +18,7 @@ package org.eclipse.edc.system.tests.local;
 
 import com.azure.identity.AzureCliCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
+import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.system.tests.utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static java.lang.String.format;
 
+@EndToEndTest
 @EnabledIfEnvironmentVariable(named = "TEST_ENVIRONMENT", matches = "cloud")
 public class CloudBlobTransferIntegrationTest extends AbstractBlobTransferTest {
     private static final String DST_KEY_VAULT_NAME = TestUtils.requiredPropOrEnv("consumer.eu.key.vault", null);

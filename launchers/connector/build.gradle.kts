@@ -29,10 +29,7 @@ dependencies {
     implementation(edc.api.dataManagement)
     implementation(edc.config.filesystem)
     implementation(edc.ext.http)
-
-    // JDK Logger
-//    implementation(edc.ext.jdklogger)
-
+    
     // IDS
     implementation(edc.ids) {
         // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
@@ -67,7 +64,10 @@ dependencies {
     // Identity Hub
     implementation(identityHub.core)
     implementation(identityHub.ext.api)
-    implementation(identityHub.ext.credentialsVerifier)
+    implementation(identityHub.ext.selfdescription.api)
+    implementation(identityHub.core.verifier)
+    implementation(identityHub.ext.credentials.jwt)
+    implementation(identityHub.ext.verifier.jwt)
 }
 
 application {

@@ -30,30 +30,30 @@ dependencyResolutionManagement {
             library("spi-core", "org.eclipse.edc", "identity-hub-spi").versionRef("identityHub")
             library("core", "org.eclipse.edc", "identity-hub").versionRef("identityHub")
             library("core-client", "org.eclipse.edc", "identity-hub-client").versionRef("identityHub")
-            library("ext-api", "org.eclipse.edc", "identity-hub-api").versionRef("identityHub")
             library(
-                "ext-credentialsVerifier",
-                "org.eclipse.edc",
-                "identity-hub-credentials-verifier"
+                "core-verifier", "org.eclipse.edc", "identity-hub-credentials-verifier"
+            ).versionRef("identityHub")
+
+            library("ext-api", "org.eclipse.edc", "identity-hub-api").versionRef("identityHub")
+            library("ext-selfdescription-api", "org.eclipse.edc", "self-description-api").versionRef("identityHub")
+            library(
+                "ext-verifier-jwt", "org.eclipse.edc", "identity-hub-verifier-jwt"
+            ).versionRef("identityHub")
+            library(
+                "ext-credentials-jwt", "org.eclipse.edc", "identity-hub-credentials-jwt"
             ).versionRef("identityHub")
 
         }
         create("registrationService") {
             version("registrationService", "0.0.1-SNAPSHOT")
             library("core", "org.eclipse.edc", "registration-service").versionRef("registrationService")
+            library(
+                "core-credential-service",
+                "org.eclipse.edc",
+                "registration-service-credential-service"
+            ).versionRef("registrationService")
             library("core-client", "org.eclipse.edc", "registration-service-client").versionRef("registrationService")
-            library(
-                "ext-participantVerifier",
-                "org.eclipse.edc",
-                "participant-verifier"
-            ).versionRef("registrationService")
-
-            library(
-                "ext-registrationPolicy-gaiaxMember",
-                "org.eclipse.edc",
-                "registration-policy-gaiax-member"
-            ).versionRef("registrationService")
-
+            library("ext-api", "org.eclipse.edc", "registration-service-api").versionRef("registrationService")
         }
 
         create("fcc") {
@@ -61,13 +61,13 @@ dependencyResolutionManagement {
             library("api", "org.eclipse.edc", "federated-catalog-api").versionRef("catalog")
             library("spi", "org.eclipse.edc", "federated-catalog-spi").versionRef("catalog")
             library("core", "org.eclipse.edc", "federated-catalog-core").versionRef("catalog")
-
         }
 
         create("edc") {
             version("edc", "0.0.1-SNAPSHOT")
             library("util", "org.eclipse.edc", "util").versionRef("edc")
             library("boot", "org.eclipse.edc", "boot").versionRef("edc")
+            library("junit", "org.eclipse.edc", "junit").versionRef("edc")
 
             library("spi-policy-engine", "org.eclipse.edc", "policy-engine-spi").versionRef("edc")
             library("spi-contract", "org.eclipse.edc", "contract-spi").versionRef("edc")

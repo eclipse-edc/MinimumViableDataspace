@@ -14,94 +14,94 @@
 
 package org.eclipse.edc.mvd;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.eclipse.edc.identityhub.spi.credentials.model.Credential;
+import org.eclipse.edc.identityhub.spi.credentials.model.CredentialSubject;
 import org.eclipse.edc.policy.engine.PolicyContextImpl;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
 import org.eclipse.edc.spi.agent.ParticipantAgent;
-import org.eclipse.edc.spi.monitor.ConsoleMonitor;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Date;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.edc.identityhub.spi.credentials.VerifiableCredentialsJwtService.VERIFIABLE_CREDENTIALS_KEY;
+import static org.mockito.Mockito.mock;
 
-public class RegionConstraintFunctionTest {
-    private static final String VERIFIABLE_CREDENTIAL_ID_KEY = "id";
-    private static final String CREDENTIAL_SUBJECT_KEY = "credentialSubject";
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private static final Monitor MONITOR = new ConsoleMonitor();
-    private static final RegionConstraintFunction CONSTRAINT_FUNCTION = new RegionConstraintFunction(OBJECT_MAPPER, MONITOR);
+class RegionConstraintFunctionTest {
+
+    private static final Monitor MONITOR = mock(Monitor.class);
+    private static final RegionConstraintFunction CONSTRAINT_FUNCTION = new RegionConstraintFunction(MONITOR);
     private static final Permission PERMISSION = Permission.Builder.newInstance().build();
     private static final String REGION_KEY = "region";
     private static final String EXPECTED_REGION = "eu";
-    private static final String ISSUER_KEY = "iss";
 
     @Test
-    public void verifyPolicy_validRegion() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, EXPECTED_REGION));
+    void verifyPolicy_validRegion() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, EXPECTED_REGION);
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.EQ, EXPECTED_REGION, PERMISSION, policyContext)).isTrue();
     }
 
     @Test
-    public void verifyPolicy_invalidRegion() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, "us"));
+    void verifyPolicy_invalidRegion() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, "us");
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.EQ, EXPECTED_REGION, PERMISSION, policyContext)).isFalse();
     }
 
     @Test
-    public void verifyPolicy_invalidClaimFormat() {
+    void verifyPolicy_invalidClaimFormat() {
         var claims = Map.of(UUID.randomUUID().toString(), (Object) UUID.randomUUID().toString());
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.EQ, EXPECTED_REGION, PERMISSION, policyContext)).isFalse();
     }
 
     @Test
-    public void verifyPolicy_invalidRegionFormat() {
+    void verifyPolicy_invalidRegionFormat() {
         // Region is a map instead of a string.
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, Map.of()));
+        var claims = toMappedVerifiableCredentials(REGION_KEY, Map.of());
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.EQ, EXPECTED_REGION, PERMISSION, policyContext)).isFalse();
     }
 
     @Test
-    public void verifyPolicy_unsupportedOperator() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, EXPECTED_REGION));
+    void verifyPolicy_unsupportedOperator() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, EXPECTED_REGION);
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.GT, EXPECTED_REGION, PERMISSION, policyContext)).isFalse();
     }
 
     @Test
-    public void verifyPolicy_NeqOperatorValidRegion() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, "us"));
+    void verifyPolicy_NeqOperatorValidRegion() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, "us");
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.NEQ, EXPECTED_REGION, PERMISSION, policyContext)).isTrue();
     }
 
     @Test
-    public void verifyPolicy_NeqOperatorInvalidRegion() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, EXPECTED_REGION));
+    void verifyPolicy_NeqOperatorInvalidRegion() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, EXPECTED_REGION);
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.NEQ, EXPECTED_REGION, PERMISSION, policyContext)).isFalse();
     }
 
     @Test
-    public void verifyPolicy_InOperatorValidRegion() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, EXPECTED_REGION));
+    void verifyPolicy_InOperatorValidRegion() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, EXPECTED_REGION);
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.IN, List.of(EXPECTED_REGION), PERMISSION, policyContext)).isTrue();
     }
 
     @Test
-    public void verifyPolicy_InOperatorInValidRegion() {
-        var claims = toMappedVerifiableCredentials(Map.of(REGION_KEY, "us"));
+    void verifyPolicy_InOperatorInValidRegion() {
+        var claims = toMappedVerifiableCredentials(REGION_KEY, "us");
         var policyContext = getPolicyContext(claims);
         assertThat(CONSTRAINT_FUNCTION.evaluate(Operator.IN, List.of(EXPECTED_REGION), PERMISSION, policyContext)).isFalse();
     }
@@ -110,12 +110,19 @@ public class RegionConstraintFunctionTest {
         return new PolicyContextImpl(new ParticipantAgent(claims, Map.of()), Map.of());
     }
 
-    private Map<String, Object> toMappedVerifiableCredentials(Map<String, Object> regionClaims) {
-        var vcId = UUID.randomUUID().toString();
-        return Map.of(vcId,
-                Map.of(VERIFIABLE_CREDENTIALS_KEY, Map.of(CREDENTIAL_SUBJECT_KEY, regionClaims,
-                                VERIFIABLE_CREDENTIAL_ID_KEY, vcId),
-                        // issuer will be ignored when applying policies for now.
-                        ISSUER_KEY, String.join("did:web:", UUID.randomUUID().toString())));
+    private Map<String, Object> toMappedVerifiableCredentials(String key, Object value) {
+        var credentialId = UUID.randomUUID().toString();
+        var credential = Credential.Builder.newInstance()
+                .id("test")
+                .context("test")
+                .type("VerifiableCredential")
+                .issuer("did:web:" + UUID.randomUUID())
+                .issuanceDate(Date.from(Instant.now().truncatedTo(ChronoUnit.SECONDS)))
+                .credentialSubject(CredentialSubject.Builder.newInstance()
+                        .id("test")
+                        .claim(key, value)
+                        .build())
+                .build();
+        return Map.of(credentialId, credential);
     }
 }

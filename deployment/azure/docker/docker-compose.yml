@@ -1,0 +1,122 @@
+version: "3"
+name: "mvd-with-azure"
+services:
+
+  # EDC Connector to simulate a dataspace participant acting as a data provider which is located in EU.
+  company1:
+    container_name: company1
+    build:
+      context: ../../launchers/connector
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    env_file:
+      - company1.env
+    depends_on:
+      - registration-service
+    ports:
+      - "9191:9191"
+      - "8181:8181"
+      - "5005:5005"
+      - "7171:7171"
+    volumes:
+      - ../resources/self-description/company1:/resources
+
+  # EDC Connector to simulate a dataspace participant acting as a data consumer which is located in EU.
+  company2:
+    container_name: company2
+    build:
+      context: ../../launchers/connector
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
+    env_file:
+      - company2.env
+    depends_on:
+      - registration-service
+    ports:
+      - "9192:9191"
+      - "8182:8181"
+      - "5006:5006"
+      - "7172:7171"
+    volumes:
+      - ../resources/self-description/company2:/resources
+
+  # EDC Connector to simulate a dataspace participant acting as a consumer which is located in US.
+  company3:
+    container_name: company3
+    build:
+      context: ../../launchers/connector
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
+    env_file:
+      - company3.env
+    depends_on:
+      - registration-service
+    ports:
+      - "9193:9191"
+      - "8183:8181"
+      - "5007:5007"
+      - "7173:7171"
+    volumes:
+      - ../resources/self-description/company3:/resources
+
+
+  # Dataspace registration service authority.
+  registration-service:
+    container_name: registration-service
+    build:
+      #e.g. /home/user/RegistrationService/launcher
+      context: ../../../launchers/registrationservice
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
+    env_file: reg.env
+
+    ports:
+      - "8184:8184"
+      - "8185:8181"
+      - "5008:5008"
+      - "7174:7171"
+    volumes:
+      - ../resources/self-description/registration-service:/resources
+
+  # Data Dashboard (MVD UI) for participant company1
+  company1-datadashboard:
+    container_name: company1-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ../resources/appconfig/company1:/usr/share/nginx/html/assets/config
+    depends_on:
+      company1:
+        condition: service_healthy
+    ports:
+      - "7080:80"
+    profiles: [ "ui" ]
+
+    # Data Dashboard (MVD UI) for participant company2
+
+  company2-datadashboard:
+    container_name: company2-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ../resources/appconfig/company2:/usr/share/nginx/html/assets/config
+    depends_on:
+      company2:
+        condition: service_healthy
+    ports:
+      - "7081:80"
+    profiles: [ "ui" ]
+
+  # Data Dashboard (MVD UI) for participant company3
+  company3-datadashboard:
+    container_name: company3-datadashboard
+    build:
+      context: ${MVD_UI_PATH}
+    volumes:
+      - ../resources/appconfig/company3:/usr/share/nginx/html/assets/config
+    depends_on:
+      company3:
+        condition: service_healthy
+    ports:
+      - "7082:80"
+    profiles: [ "ui" ]
