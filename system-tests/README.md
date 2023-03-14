@@ -42,12 +42,6 @@ Then, to bring up the dataspace, please execute the following command from the `
 docker-compose -f system-tests/docker-compose.yml up --build
 ```
 
-_Note for Windows PowerShell, the following commands should be used from the `MVD` project root:_
-
-```powershell
-docker-compose -f system-tests/docker-compose.yml up --build
-```
-
 Once completed, following services will start within their docker containers:
 
 - 3 `EDC Connectors`
@@ -69,13 +63,13 @@ Sample for confirming successful run of container `cli-tools`.
 
 Command:
 
-```powershell
+```bash
 docker ps -a
 ```
 
 Output:
 
-```powershell
+```bash
 CONTAINER ID   IMAGE                                     COMMAND                   CREATED              STATUS                        PORTS                                                                              NAMES
 22345bf0c595   system-tests_cli-tools                    "/bin/sh -c \"/app/en…"   About a minute ago   Up About a minute (healthy)                                                                                      cli-tools
 ```
@@ -86,13 +80,6 @@ test using the following command:
 ```bash
 export TEST_ENVIRONMENT=local
 ./gradlew :system-tests:test -DincludeTags="ComponentTest,EndToEndTest"
-```
-
-_Note for Windows PowerShell, the following commands should be used:_
-
-```powershell
-$Env:TEST_ENVIRONMENT = "local"
-./gradlew :system-tests:test
 ```
 
 > [Storage Explorer](https://azure.microsoft.com/features/storage-explorer/) can be used to connect to the `Azurite`
@@ -237,7 +224,7 @@ not the case simply re-run the `setup_azure_dataspace.sh` script again. If all t
 won't create new ones.
 To stop the docker containers and destroy all cloud resources, simply execute:
 
-```shell
+```bash
 cd <project-root>/deployment/azure
 ./shutdown_azure_dataspace.sh
 ```
