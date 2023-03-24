@@ -21,12 +21,12 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("org.eclipse.edc:edc-versions:0.0.1-SNAPSHOT")
+            from("org.eclipse.edc:edc-versions:0.0.1-20230301-SNAPSHOT")
             library("apache.commons.lang3", "org.apache.commons", "commons-lang3").version("3.12.0")
             library("gatling-highcharts", "io.gatling.highcharts", "gatling-charts-highcharts").version("3.7.5")
         }
         create("identityHub") {
-            version("identityHub", "0.0.1-SNAPSHOT")
+            version("identityHub", "0.0.1-20230301-SNAPSHOT")
             library("spi-core", "org.eclipse.edc", "identity-hub-spi").versionRef("identityHub")
             library("core", "org.eclipse.edc", "identity-hub").versionRef("identityHub")
             library("core-client", "org.eclipse.edc", "identity-hub-client").versionRef("identityHub")
@@ -45,7 +45,7 @@ dependencyResolutionManagement {
 
         }
         create("registrationService") {
-            version("registrationService", "0.0.1-SNAPSHOT")
+            version("registrationService", "0.0.1-20230301-SNAPSHOT")
             library("core", "org.eclipse.edc", "registration-service").versionRef("registrationService")
             library(
                 "core-credential-service",
@@ -57,14 +57,14 @@ dependencyResolutionManagement {
         }
 
         create("fcc") {
-            version("catalog", "0.0.1-SNAPSHOT")
+            version("catalog", "0.0.1-20230301-SNAPSHOT")
             library("api", "org.eclipse.edc", "federated-catalog-api").versionRef("catalog")
             library("spi", "org.eclipse.edc", "federated-catalog-spi").versionRef("catalog")
             library("core", "org.eclipse.edc", "federated-catalog-core").versionRef("catalog")
         }
 
         create("edc") {
-            version("edc", "0.0.1-SNAPSHOT")
+            version("edc", "0.0.1-20230301-SNAPSHOT")
             library("util", "org.eclipse.edc", "util").versionRef("edc")
             library("boot", "org.eclipse.edc", "boot").versionRef("edc")
             library("junit", "org.eclipse.edc", "junit").versionRef("edc")
@@ -87,7 +87,7 @@ dependencyResolutionManagement {
 
 
             library("ext-auth-tokenBased", "org.eclipse.edc", "auth-tokenbased").versionRef("edc")
-            library("api-dataManagement", "org.eclipse.edc", "data-management-api").versionRef("edc")
+            library("api-dataManagement", "org.eclipse.edc", "management-api").versionRef("edc")
             library("api-observability", "org.eclipse.edc", "api-observability").versionRef("edc")
             library("micrometer-jetty", "org.eclipse.edc", "jetty-micrometer").versionRef("edc")
             library("micrometer-jersey", "org.eclipse.edc", "jersey-micrometer").versionRef("edc")
@@ -108,9 +108,10 @@ dependencyResolutionManagement {
             library("dpf-selector-spi", "org.eclipse.edc", "data-plane-selector-spi").versionRef("edc")
             library("dpf-selector-core", "org.eclipse.edc", "data-plane-selector-core").versionRef("edc")
             library("dpf-framework", "org.eclipse.edc", "data-plane-framework").versionRef("edc")
-            library("dpf-transfer-client", "org.eclipse.edc", "data-plane-transfer-client").versionRef("edc")
+            library("dpf-transfer-client", "org.eclipse.edc", "data-plane-client").versionRef("edc")
             library("dpf-selector-client", "org.eclipse.edc", "data-plane-selector-client").versionRef("edc")
             library("dpf-storage-azure", "org.eclipse.edc", "data-plane-azure-storage").versionRef("edc")
+            library("transfer-data-plane", "org.eclipse.edc", "transfer-data-plane").versionRef("edc")
 
             bundle(
                 "identity",
@@ -129,7 +130,8 @@ dependencyResolutionManagement {
                     "dpf-selector-spi",
                     "dpf-selector-core",
                     "dpf-framework",
-                    "dpf-storage-azure"
+                    "dpf-storage-azure",
+                    "transfer-data-plane"
                 )
             )
         }
