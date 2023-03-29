@@ -50,7 +50,7 @@ jobs:
           MVD_UI_PATH: DataDashboard
 
       - name: 'Unit and system tests'
-        run: ./gradlew test -DincludeTags="ComponentTest,EndToEndTest"
+        run: ./gradlew test -DincludeTags="ComponentTest,EndToEndTest" -PverboseTest=true
         timeout-minutes: 10
         env:
           JACOCO: "true"

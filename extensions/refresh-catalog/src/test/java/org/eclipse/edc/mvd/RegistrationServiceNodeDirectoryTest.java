@@ -15,8 +15,9 @@
 package org.eclipse.edc.mvd;
 
 import org.eclipse.edc.catalog.spi.FederatedCacheNode;
-import org.eclipse.edc.registration.client.api.RegistryApi;
-import org.eclipse.edc.registration.client.models.ParticipantDto;
+import org.eclipse.edc.registration.client.RegistryApiClient;
+import org.eclipse.edc.registration.client.model.ParticipantDto;
+import org.eclipse.edc.registration.client.response.ApiResult;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.result.Result;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.when;
 
 class RegistrationServiceNodeDirectoryTest {
 
-    private final RegistryApi registryApi = mock(RegistryApi.class);
+    private final RegistryApiClient registryApi = mock(RegistryApiClient.class);
     private final FederatedCacheNodeResolver resolver = mock(FederatedCacheNodeResolver.class);
     private final Monitor monitor = mock(Monitor.class);
 
@@ -39,7 +40,7 @@ class RegistrationServiceNodeDirectoryTest {
     void getAll_emptyList() {
         var service = new RegistrationServiceNodeDirectory(registryApi, resolver, monitor);
 
-        when(registryApi.listParticipants()).thenReturn(List.of());
+        when(registryApi.listParticipants()).thenReturn(ApiResult.success(List.of()));
 
         var cacheNodes = service.getAll();
         assertThat(cacheNodes).isEmpty();
@@ -53,7 +54,7 @@ class RegistrationServiceNodeDirectoryTest {
         var company2 = getParticipant();
         var node1 = node();
         var node2 = node();
-        when(registryApi.listParticipants()).thenReturn(List.of(company1, company2));
+        when(registryApi.listParticipants()).thenReturn(ApiResult.success(List.of(company1, company2)));
         when(resolver.toFederatedCacheNode(company1)).thenReturn(Result.success(node1));
         when(resolver.toFederatedCacheNode(company2)).thenReturn(Result.success(node2));
 
@@ -70,7 +71,7 @@ class RegistrationServiceNodeDirectoryTest {
         var company1 = getParticipant();
         var company2 = getParticipant();
         var node1 = node();
-        when(registryApi.listParticipants()).thenReturn(List.of(company1, company2));
+        when(registryApi.listParticipants()).thenReturn(ApiResult.success(List.of(company1, company2)));
         when(resolver.toFederatedCacheNode(company1)).thenReturn(Result.success(node1));
         when(resolver.toFederatedCacheNode(company2)).thenReturn(Result.failure("failure"));
 
@@ -86,8 +87,8 @@ class RegistrationServiceNodeDirectoryTest {
 
     @NotNull
     private ParticipantDto getParticipant() {
-        var participant = new ParticipantDto();
-        participant.setDid(String.format("did:web:%s", "test-domainname-" + UUID.randomUUID()));
+        var participant = new ParticipantDto(String.format("did:web:%s", "test-domainname-" + UUID.randomUUID()),
+                ParticipantDto.OnboardingStatus.ONBOARDING_IN_PROGRESS);
         return participant;
     }
 }

@@ -17,7 +17,7 @@ package org.eclipse.edc.mvd;
 import org.eclipse.edc.iam.did.spi.document.DidDocument;
 import org.eclipse.edc.iam.did.spi.document.Service;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.edc.registration.client.models.ParticipantDto;
+import org.eclipse.edc.registration.client.model.ParticipantDto;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.result.Result;
 import org.jetbrains.annotations.NotNull;
@@ -90,7 +90,7 @@ class FederatedCacheNodeResolverTest {
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
-        var result = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
+        var result = resolver.toFederatedCacheNode(new ParticipantDto(did, ParticipantDto.OnboardingStatus.ONBOARDING_IN_PROGRESS));
 
         assertThat(result.succeeded()).isTrue();
         var node = result.getContent();
@@ -106,7 +106,7 @@ class FederatedCacheNodeResolverTest {
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
-        var nodeResult = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
+        var nodeResult = resolver.toFederatedCacheNode(new ParticipantDto(did, ParticipantDto.OnboardingStatus.ONBOARDING_IN_PROGRESS));
 
         assertThat(nodeResult.failed()).isTrue();
     }
@@ -119,7 +119,7 @@ class FederatedCacheNodeResolverTest {
 
         resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
-        var result = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
+        var result = resolver.toFederatedCacheNode(new ParticipantDto(did, ParticipantDto.OnboardingStatus.ONBOARDING_IN_PROGRESS));
 
         assertThat(result.succeeded()).isTrue();
         var node = result.getContent();

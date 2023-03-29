@@ -20,6 +20,9 @@ plugins {
 val gatlingVersion: String by project
 
 dependencies {
+
+    //todo: this is a workaround: some azure libs depend on it, but don't properly declare it as transitive dependency
+    runtimeOnly("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.14.2")
     testImplementation(libs.gatling.highcharts) {
         exclude(group = "io.gatling", module = "gatling-jms")
         exclude(group = "io.gatling", module = "gatling-jms-java")

@@ -27,6 +27,7 @@ import org.eclipse.edc.spi.types.TypeManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
@@ -134,7 +135,11 @@ public abstract class TransferSimulationUtils {
                         jmesPath("state").saveAs("status")
                 )
                 .checkIf(
-                        session -> ContractNegotiationStates.CONFIRMED.name().equals(session.getString("status"))
+                        session -> {
+                            var status = session.getString("status");
+                            return List.of(ContractNegotiationStates.PROVIDER_AGREED.name(),
+                                ContractNegotiationStates.PROVIDER_FINALIZED.name()).contains(status);
+                        }
                 ).then(
                         jmesPath("contractAgreementId").notNull().saveAs(CONTRACT_AGREEMENT_ID)
                 );
@@ -177,11 +182,11 @@ public abstract class TransferSimulationUtils {
     private static ChainBuilder waitForTransferCompletion() {
         return group("Wait for transfer")
                 .on(exec(session -> session.set("status", "INITIAL"))
-                        .doWhileDuring(session -> transferNotCompleted(session),
+                        .doWhileDuring(TransferSimulationUtils::transferNotCompleted,
                                 Duration.ofSeconds(30))
                         .on(exec(getTransferStatus()).pace(Duration.ofSeconds(1))))
 
-                .exitHereIf(session -> transferNotCompleted(session))
+                .exitHereIf(TransferSimulationUtils::transferNotCompleted)
 
                 // Perform one additional request if the transfer successful.
                 // This allows running Gatling assertions to validate that the transfer actually succeeded
@@ -192,7 +197,8 @@ public abstract class TransferSimulationUtils {
 
     @NotNull
     private static Boolean transferNotCompleted(Session session) {
-        return !session.getString("status").equals(TransferProcessStates.COMPLETED.name());
+        var status = session.getString("status");
+        return !status.equals(TransferProcessStates.COMPLETED.name());
     }
 
     @NotNull
