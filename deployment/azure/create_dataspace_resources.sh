@@ -22,6 +22,7 @@ env_file="docker/reg.env"
 $sed "s/EDC_VAULT_NAME=\".*\"/EDC_VAULT_NAME=\"$vault_name\"/g" $env_file
 $sed "s/EDC_VAULT_CLIENTSECRET=\".*\"/EDC_VAULT_CLIENTSECRET=\"${APP_CLIENT_SECRET}\"/g" $env_file
 $sed "s/EDC_VAULT_CLIENTID=\".*\"/EDC_VAULT_CLIENTID=\"${APP_CLIENT_ID}\"/g" $env_file
+$sed "s/EDC_VAULT_TENANTID=\".*\"/EDC_VAULT_TENANTID=\"${ARM_TENANT_ID}\"/g" "$env_file"
 $sed "s/EDC_IDENTITY_DID_URL=\".*\"/EDC_IDENTITY_DID_URL=\"did:web:$dataspace_did_host\"/g" $env_file
 
 echo
