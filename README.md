@@ -15,8 +15,7 @@ Developer documentation can be found under [docs/developer](docs/developer), whe
 
 The MVD backend and MVD UI (Data Dashboard) can be run locally for testing and development.
 
-1. Check out the
-   repository [eclipse-edc/DataDashboard](https://github.com/eclipse-edc/DataDashboard) or
+1. Check out the repository [eclipse-edc/DataDashboard](https://github.com/eclipse-edc/DataDashboard) or
    your corresponding fork.
 2. Set the environment variable `MVD_UI_PATH` to the path of the DataDashboard repository. (See example below.)
 3. Use the instructions in section `Publish/Build Tasks` [system-tests/README.md](system-tests/README.md) to set up a
@@ -29,7 +28,7 @@ The MVD backend and MVD UI (Data Dashboard) can be run locally for testing and d
 
 ```bash
 export MVD_UI_PATH="/path/to/mvd-datadashboard"
-docker-compose --profile ui -f system-tests/docker-compose.yml up --build
+docker compose --profile ui -f system-tests/docker-compose.yml up --build
 ```
 
 > In Windows Docker Compose expects the path to use forward slashes instead of backslashes.
