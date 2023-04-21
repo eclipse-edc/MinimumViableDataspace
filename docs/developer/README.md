@@ -14,9 +14,9 @@ The Data Dashboard is a web application (development UI) on top of EDC's DataMan
 
 | Participant | URL |
 | --- | --- |
-| Company 1 | http://localhost:7080/ |
-| Company 2 | http://localhost:7081/ |
-| Company 3 | http://localhost:7082/ |
+| Company 1 | http://localhost:7080 |
+| Company 2 | http://localhost:7081 |
+| Company 3 | http://localhost:7082 |
 
 ![dashboard URLs](dashboard-ports-local.png)
 
