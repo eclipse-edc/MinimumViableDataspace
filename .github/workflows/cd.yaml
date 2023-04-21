@@ -11,7 +11,7 @@ on:
     paths-ignore:
       - 'docs/**'
 
-# MVD runs using docker-compose based setup with no dependency on cloud services.
+# MVD runs using docker compose based setup with no dependency on cloud services.
 
 jobs:
 
@@ -37,13 +37,13 @@ jobs:
       - name: 'Copy Registration Service and IdentityHub CLI'
         run: ./gradlew getJarsForLocalTest getJarsForAzureTest
 
-      - name: 'Upgrade docker-compose (for --wait option)'
+      - name: 'Upgrade docker compose (for --wait option)'
         run: |
           sudo curl -L https://github.com/docker/compose/releases/download/v2.6.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
-      - name: 'Run MVD docker-compose (incl. MVD UI)'
-        run: docker-compose --profile ui -f system-tests/docker-compose.yml up --build --wait
+      - name: 'Run MVD docker compose (incl. MVD UI)'
+        run: docker compose --profile ui -f system-tests/docker-compose.yml up --build --wait
         timeout-minutes: 10
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ./launchers/registrationservice
@@ -56,8 +56,8 @@ jobs:
           JACOCO: "true"
           TEST_ENVIRONMENT: "local"
 
-      - name: 'docker-compose logs'
-        run: docker-compose -f system-tests/docker-compose.yml logs
+      - name: 'docker compose logs'
+        run: docker compose -f system-tests/docker-compose.yml logs
         if: always()
         env:
           REGISTRATION_SERVICE_LAUNCHER_PATH: ./launchers/registrationservice
