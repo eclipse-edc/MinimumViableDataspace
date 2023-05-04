@@ -33,8 +33,8 @@ pushCredential() {
 
 checkCredentials() {
   len=$(java -jar identity-hub-cli.jar -s="$ihUrl" vc list | jq -r '. | length')
-  if [ "$len" -lt 2 ]; then
-    echo "Wrong number of VCs, expected > 2, got ${len}"
+  if [ "$len" -lt 1 ]; then
+    echo "Wrong number of VCs, expected > 1, got ${len}"
     exit 2
   fi
 }

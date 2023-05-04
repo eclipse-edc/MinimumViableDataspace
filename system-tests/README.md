@@ -39,7 +39,7 @@ From the `MVD` root folder, execute the following command to build the connector
 Then, to bring up the dataspace, please execute the following command from the `MVD` root folder:
 
 ```bash
-docker-compose -f system-tests/docker-compose.yml up --build
+docker compose -f system-tests/docker-compose.yml up --build
 ```
 
 Once completed, following services will start within their docker containers:
@@ -196,12 +196,12 @@ The script will perform these essential steps:
 ### Running the dataspace + tests
 
 Just like in the [previous chapter](README.md#test-execution-using-embedded-services) we start up our dataspace
-using `docker-compose`. One small difference is that seeding is now done with a separate script instead of inside
+using `docker compose`. One small difference is that seeding is now done with a separate script instead of inside
 another docker container. The reason for this is easier traceability and debuggability.
 
 ```shell
 cd <project-root>/deployment/azure
-docker-compose docker/docker-compose.yaml --build --wait
+docker compose docker/docker-compose.yaml --build --wait
 ./seed_dataspace.sh
 ```
 
@@ -238,7 +238,7 @@ cd <project-root>/deployment/azure
 ## Debugging MVD locally
 
 Follow the instructions in the previous sections to run an MVD with a consumer (`company2`) and provider (`company1`)
-locally using docker-compose.
+locally using `docker compose`.
 
 Once running, you can use a Java debugger to connect to the consumer (`company2`, port 5006) and provider (`company1`,
 port 5005) instances. If you are using IntelliJ you can use the provided "EDC company1", "EDC company2" or "EDC

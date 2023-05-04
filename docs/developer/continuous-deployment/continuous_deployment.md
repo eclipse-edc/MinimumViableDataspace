@@ -240,4 +240,15 @@ Your infrastructure is now set up to run deployments, you can now e.g. run the `
 
 ## Azure Location for MVD Deployments
 
-To change the location where MVD instances will be deployed to, you can optionally change the location in the [variables.tf file](../../../deployment/terraform/dataspace/variables.tf) for the dataspace authority and in the [variables.tf file](../../../deployment/terraform/participant/variables.tf) for dataspace participants.
+To change the location where MVD instances will be deployed to, you can optionally change the location in the [variables.tf file](../../../deployment/azure/terraform/modules/participant/sample-data/text-document.txt) for the dataspace authority and in the [variables.tf file](../../../deployment/azure/terraform/modules/participant/sample-data/text-document.txt) for dataspace participants.
+
+## Pipelines
+| Pipeline name                   | Description                                                        |
+| ----------------------------- | ------------------------------------------------------------ |
+| CD | Deploys the MVD with docker compose and run tests without dependency on Cloud Services. <br> Checks if Azure secrets are set up, if confirmed, runs the Azure Dataspace Tests pipeline. |
+| Initialize CD | Creates a resource group with a terraform state storage account and container in Azure. |
+| Run Azure Dataspace Tests |Deploys the MVD with docker compose and run tests. <br> Resources such as Key Vaults and Participants, RegistrationService Blob Storage Containers will be created in Azure. |
+| CodeQL | Performs [CodeQL](https://codeql.github.com/) analysis. |
+| Discord Webhook | Manages [Discord](https://discord.com/developers/docs/resources/webhook) Webhooks for New Discussion, New Issue and New Pull Request. |
+| Checks | Performs style checks on Java and Terraform files. |
+| Scan Pull Request | Performs check on Pull Requests title. |

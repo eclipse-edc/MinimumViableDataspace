@@ -11,37 +11,11 @@ As a fully decentralized dataspace is hard to imagine, the MVD also serves the p
 
 Developer documentation can be found under [docs/developer](docs/developer), where the main concepts and decisions are captured as [decision records](docs/developer/decision-records/).
 
-## Create Dataspace Deployment
-
-To be able to deploy your own dataspace instances, you first need to [fork the MVD repository and set up your environment](docs/developer/continuous-deployment/continuous_deployment.md).
-
-Once your environment is set up, follow these steps to create a new dataspace instance:
-
-- Go to your MVD fork in GitHub.
-- Select the tab called `Actions`.
-- Select the workflow called `Deploy`.
-- Provide your own resources name prefix. The prefix must be 3 to 7 lowercase letters and digits, starting with a letter.
-  This name prefix ensures the resources name's uniqueness and avoids resource name conflicts.
-  Note down the used prefix.
-- Click on `Run workflow` to trigger the deployment.
-
-## Destroy Dataspace Deployment
-
-Follow these steps to delete a dataspace instance and free up the corresponding resources:
-
-- Go to your MVD fork in GitHub.
-- Select the tab called `Actions`
-- Select the workflow called `Destroy`
-- Click on `Run workflow`
-- Provide the resources prefix that you used when you deployed your DataSpace.
-- Click on `Run workflow` to trigger to destroy your MinimumViableDataspace DataSpace.
-
 ## Local Development Setup
 
 The MVD backend and MVD UI (Data Dashboard) can be run locally for testing and development.
 
-1. Check out the
-   repository [eclipse-edc/DataDashboard](https://github.com/eclipse-edc/DataDashboard) or
+1. Check out the repository [eclipse-edc/DataDashboard](https://github.com/eclipse-edc/DataDashboard) or
    your corresponding fork.
 2. Set the environment variable `MVD_UI_PATH` to the path of the DataDashboard repository. (See example below.)
 3. Use the instructions in section `Publish/Build Tasks` [system-tests/README.md](system-tests/README.md) to set up a
@@ -54,7 +28,7 @@ The MVD backend and MVD UI (Data Dashboard) can be run locally for testing and d
 
 ```bash
 export MVD_UI_PATH="/path/to/mvd-datadashboard"
-docker-compose --profile ui -f system-tests/docker-compose.yml up --build
+docker compose --profile ui -f system-tests/docker-compose.yml up --build
 ```
 
 > In Windows Docker Compose expects the path to use forward slashes instead of backslashes.
