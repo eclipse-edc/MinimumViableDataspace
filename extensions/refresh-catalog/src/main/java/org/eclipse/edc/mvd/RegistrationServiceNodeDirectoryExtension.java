@@ -16,8 +16,7 @@ package org.eclipse.edc.mvd;
 
 import org.eclipse.edc.catalog.spi.FederatedCacheNodeDirectory;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.edc.registration.client.ApiClientFactory;
-import org.eclipse.edc.registration.client.api.RegistryApi;
+import org.eclipse.edc.registration.client.RegistryApiClientFactory;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
@@ -35,7 +34,6 @@ public class RegistrationServiceNodeDirectoryExtension implements ServiceExtensi
 
     @Setting
     private static final String REGISTRATION_SERVICE_API_URL = "registration.service.api.url";
-    private static final String REGISTRATION_SERVICE_API_URL_DEFAULT = "http://localhost:8182/authority";
 
     @Inject
     private Monitor monitor;
@@ -49,20 +47,12 @@ public class RegistrationServiceNodeDirectoryExtension implements ServiceExtensi
     @Inject
     private DidResolverRegistry didResolverRegistry;
 
-    private String registrationServiceApiUrl;
-
-    @Override
-    public void initialize(ServiceExtensionContext context) {
-        registrationServiceApiUrl = context.getSetting(
-                REGISTRATION_SERVICE_API_URL, REGISTRATION_SERVICE_API_URL_DEFAULT);
-    }
-
     @Provider
-    public FederatedCacheNodeDirectory federatedCacheNodeDirectory() {
-        var apiClient = ApiClientFactory.createApiClient(registrationServiceApiUrl, identityService::obtainClientCredentials);
-        var registryApiClient = new RegistryApi(apiClient);
+    public FederatedCacheNodeDirectory federatedCacheNodeDirectory(ServiceExtensionContext context) {
+        var registrationServiceApiUrl = context.getConfig().getString(REGISTRATION_SERVICE_API_URL);
+        var apiClient = RegistryApiClientFactory.createApiClient(registrationServiceApiUrl, identityService::obtainClientCredentials, monitor, typeManager.getMapper());
         var resolver = new FederatedCacheNodeResolver(didResolverRegistry, monitor);
-        return new RegistrationServiceNodeDirectory(registryApiClient, resolver, monitor);
+        return new RegistrationServiceNodeDirectory(apiClient, resolver, monitor);
     }
 }
 

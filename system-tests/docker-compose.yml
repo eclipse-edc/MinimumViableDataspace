@@ -8,9 +8,11 @@ services:
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://company1:8282
-      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+      EDC_DSP_CALLBACK_ADDRESS: http://company1:8282/api/dsp
       EDC_CONNECTOR_NAME: company1
+      EDC_PARTICIPANT_ID: did:web:did-server:company1
+
+      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
       EDC_IDENTITY_DID_URL: did:web:did-server:company1
       EDC_VAULT: /resources/vault/company1/company1-vault.properties
       EDC_KEYSTORE: /resources/vault/company1/company1-keystore.jks
@@ -21,7 +23,8 @@ services:
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
       EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
-      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_DATAPLANE_TOKEN_VALIDATION_ENDPOINT: http://company1:8383/api/control/token
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/api/authority
       EDC_WEB_REST_CORS_ENABLED: "true"
       EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     depends_on:
@@ -44,9 +47,11 @@ services:
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://company2:8282
-      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+      EDC_DSP_CALLBACK_ADDRESS: http://company2:8282/api/dsp
       EDC_CONNECTOR_NAME: company2
+      EDC_PARTICIPANT_ID: did:web:did-server:company2
+
+      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
       EDC_IDENTITY_DID_URL: did:web:did-server:company2
       EDC_VAULT: /resources/vault/company2/company2-vault.properties
       EDC_KEYSTORE: /resources/vault/company2/company2-keystore.jks
@@ -57,7 +62,8 @@ services:
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
       EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
-      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_DATAPLANE_TOKEN_VALIDATION_ENDPOINT: http://company2:8383/api/control/token
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/api/authority
       EDC_WEB_REST_CORS_ENABLED: "true"
       EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     depends_on:
@@ -80,9 +86,11 @@ services:
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
     environment:
-      IDS_WEBHOOK_ADDRESS: http://company3:8282
-      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+      EDC_DSP_CALLBACK_ADDRESS: http://company3:8282/api/dsp
       EDC_CONNECTOR_NAME: company3
+      EDC_PARTICIPANT_ID: did:web:did-server:company3
+
+      EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
       EDC_IDENTITY_DID_URL: did:web:did-server:company3
       EDC_VAULT: /resources/vault/company3/company3-vault.properties
       EDC_KEYSTORE: /resources/vault/company3/company3-keystore.jks
@@ -93,7 +101,8 @@ services:
       EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
       EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 5
       EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: 5
-      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/authority
+      EDC_DATAPLANE_TOKEN_VALIDATION_ENDPOINT: http://company3:8383/api/control/token
+      REGISTRATION_SERVICE_API_URL: http://registration-service:8184/api/authority
       EDC_WEB_REST_CORS_ENABLED: "true"
       EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"
     depends_on:
@@ -157,9 +166,7 @@ services:
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
     environment:
-      JWT_AUDIENCE: http://registration-service:8184/authority
-      WEB_HTTP_AUTHORITY_PORT: 8184
-      WEB_HTTP_AUTHORITY_PATH: /authority
+      JWT_AUDIENCE: http://registration-service:8184/api/authority
       EDC_IAM_DID_WEB_USE_HTTPS: "false"
       EDC_CONNECTOR_NAME: registration-service
       EDC_IDENTITY_DID_URL: did:web:did-server:registration-service

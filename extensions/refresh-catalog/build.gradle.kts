@@ -3,10 +3,12 @@ plugins {
 }
 
 dependencies {
-    implementation(fcc.spi)
-    implementation(edc.spi.ids)
-    implementation(edc.util)
-    implementation(edc.identity.did.core)
-    implementation(edc.identity.did.web)
-    implementation(registrationService.core.client)
+    api(libs.rs.spi.core)
+    api(libs.fc.spi.core)
+
+    implementation(libs.edc.ext.identity.did.core)
+    implementation(libs.edc.ext.identity.did.web)
+    implementation(libs.rs.core.client)
+
+    testImplementation(libs.edc.core.junit)
 }

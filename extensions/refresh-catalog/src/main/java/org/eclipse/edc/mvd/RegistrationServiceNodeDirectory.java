@@ -16,8 +16,7 @@ package org.eclipse.edc.mvd;
 
 import org.eclipse.edc.catalog.spi.FederatedCacheNode;
 import org.eclipse.edc.catalog.spi.FederatedCacheNodeDirectory;
-import org.eclipse.edc.registration.client.api.RegistryApi;
-import org.eclipse.edc.registration.client.models.ParticipantDto;
+import org.eclipse.edc.registration.client.RegistryApiClient;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.result.AbstractResult;
 
@@ -29,7 +28,7 @@ import java.util.stream.Collectors;
  */
 public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirectory {
 
-    private final RegistryApi apiClient;
+    private final RegistryApiClient apiClient;
     private final FederatedCacheNodeResolver resolver;
     private final Monitor monitor;
 
@@ -38,9 +37,9 @@ public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirec
      *
      * @param monitor   monitor
      * @param apiClient RegistrationService API client.
-     * @param resolver  gets {@link FederatedCacheNode} from {@link ParticipantDto}
+     * @param resolver  gets {@link FederatedCacheNode} from {@link org.eclipse.edc.registration.client.model.ParticipantDto}.
      */
-    public RegistrationServiceNodeDirectory(RegistryApi apiClient, FederatedCacheNodeResolver resolver, Monitor monitor) {
+    public RegistrationServiceNodeDirectory(RegistryApiClient apiClient, FederatedCacheNodeResolver resolver, Monitor monitor) {
         this.apiClient = apiClient;
         this.resolver = resolver;
         this.monitor = monitor;
@@ -49,11 +48,16 @@ public class RegistrationServiceNodeDirectory implements FederatedCacheNodeDirec
     @Override
     public List<FederatedCacheNode> getAll() {
         try {
-            return apiClient.listParticipants().stream()
-                    .map(resolver::toFederatedCacheNode)
-                    .filter(AbstractResult::succeeded)
-                    .map(AbstractResult::getContent)
-                    .collect(Collectors.toList());
+            return apiClient.listParticipants()
+                    .map(list -> list.stream()
+                            .map(resolver::toFederatedCacheNode)
+                            .filter(AbstractResult::succeeded)
+                            .map(AbstractResult::getContent)
+                            .collect(Collectors.toList()))
+                    .orElse(apiFailure -> {
+                        monitor.warning("RegistrationServiceNodeDirectory.getAll() failed " + apiFailure.getFailureDetail());
+                        return List.of();
+                    });
         } catch (Exception ex) {
             monitor.severe("RegistrationServiceNodeDirectory.getAll() threw an exception: " + ex.getMessage());
             return List.of();

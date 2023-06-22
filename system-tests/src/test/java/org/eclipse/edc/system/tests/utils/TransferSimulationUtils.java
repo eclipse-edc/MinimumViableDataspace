@@ -44,6 +44,8 @@ import static java.lang.String.format;
  */
 public abstract class TransferSimulationUtils {
 
+    private static final TypeManager TYPE_MANAGER = new TypeManager();
+
     public static final String CONTRACT_AGREEMENT_ID = "contractAgreementId";
     public static final String CONTRACT_NEGOTIATION_REQUEST_ID = "contractNegotiationRequestId";
     public static final String TRANSFER_PROCESS_ID = "transferProcessId";
@@ -72,7 +74,7 @@ public abstract class TransferSimulationUtils {
      * @param requestFactory Factory for creating transfer request payloads.
      */
     public static ChainBuilder contractNegotiationAndTransfer(String providerUrl, TransferRequestFactory requestFactory) {
-        return startContractAgreement(providerUrl)
+        return initiateNegotiation(providerUrl)
                 .exec(waitForContractAgreement())
                 .exec(startTransfer(providerUrl, requestFactory))
                 .exec(waitForTransferCompletion());
@@ -85,14 +87,14 @@ public abstract class TransferSimulationUtils {
      *
      * @param providerUrl URL for the Provider API, as accessed from the Consumer runtime.
      */
-    private static ChainBuilder startContractAgreement(String providerUrl) {
+    private static ChainBuilder initiateNegotiation(String providerUrl) {
         var connectorAddress = format("%s/api/v1/ids/data", providerUrl);
         return group("Contract negotiation")
-                .on(exec(initiateContractNegotiation(connectorAddress)));
+                .on(exec(sendNegotiationRequest(connectorAddress)));
     }
 
     @NotNull
-    private static HttpRequestActionBuilder initiateContractNegotiation(String connectorAddress) {
+    private static HttpRequestActionBuilder sendNegotiationRequest(String connectorAddress) {
         return http("Initiate contract negotiation")
                 .post("/contractnegotiations")
                 .body(StringBody(loadContractAgreement(connectorAddress)))
@@ -114,10 +116,10 @@ public abstract class TransferSimulationUtils {
     private static ChainBuilder waitForContractAgreement() {
         return exec(session -> session.set("status", -1))
                 .group("Wait for agreement")
-                .on(doWhileDuring(session -> contractAgreementNotCompleted(session), Duration.ofSeconds(30))
+                .on(doWhileDuring(TransferSimulationUtils::contractAgreementNotCompleted, Duration.ofSeconds(30))
                         .on(exec(getContractStatus()).pace(Duration.ofSeconds(1)))
                 )
-                .exitHereIf(session -> contractAgreementNotCompleted(session));
+                .exitHereIf(TransferSimulationUtils::contractAgreementNotCompleted);
     }
 
     private static boolean contractAgreementNotCompleted(Session session) {
@@ -134,7 +136,7 @@ public abstract class TransferSimulationUtils {
                         jmesPath("state").saveAs("status")
                 )
                 .checkIf(
-                        session -> ContractNegotiationStates.CONFIRMED.name().equals(session.getString("status"))
+                        session -> ContractNegotiationStates.FINALIZED.name().equals(session.getString("'edc:state'"))
                 ).then(
                         jmesPath("contractAgreementId").notNull().saveAs(CONTRACT_AGREEMENT_ID)
                 );
@@ -177,11 +179,11 @@ public abstract class TransferSimulationUtils {
     private static ChainBuilder waitForTransferCompletion() {
         return group("Wait for transfer")
                 .on(exec(session -> session.set("status", "INITIAL"))
-                        .doWhileDuring(session -> transferNotCompleted(session),
+                        .doWhileDuring(TransferSimulationUtils::transferNotCompleted,
                                 Duration.ofSeconds(30))
                         .on(exec(getTransferStatus()).pace(Duration.ofSeconds(1))))
 
-                .exitHereIf(session -> transferNotCompleted(session))
+                .exitHereIf(TransferSimulationUtils::transferNotCompleted)
 
                 // Perform one additional request if the transfer successful.
                 // This allows running Gatling assertions to validate that the transfer actually succeeded

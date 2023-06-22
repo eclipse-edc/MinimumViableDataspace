@@ -15,8 +15,8 @@
 package org.eclipse.edc.system.tests.catalog;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.eclipse.edc.catalog.spi.Catalog;
 import org.eclipse.edc.catalog.spi.model.FederatedCatalogCacheQuery;
-import org.eclipse.edc.connector.contract.spi.types.offer.ContractOffer;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.policy.model.PolicyRegistrationTypes;
 import org.eclipse.edc.spi.types.TypeManager;
@@ -34,18 +34,18 @@ import static org.eclipse.edc.system.tests.utils.TestUtils.requiredPropOrEnv;
 
 @EndToEndTest
 class CatalogClientTest {
-    static final String CONSUMER_EU_CATALOG_URL = requiredPropOrEnv("CONSUMER_EU_CATALOG_URL", "http://localhost:9192/api/v1/data/federatedcatalog");
-    static final String CONSUMER_US_CATALOG_URL = requiredPropOrEnv("CONSUMER_US_CATALOG_URL", "http://localhost:9193/api/v1/data/federatedcatalog");
-    static final String NON_RESTRICTED_ASSET_PREFIX = "test-document_";
-    static final String RESTRICTED_ASSET_PREFIX = "test-document-2_";
+    private static final String CONSUMER_EU_CATALOG_URL = requiredPropOrEnv("CONSUMER_EU_CATALOG_URL", "http://localhost:9192/api/management/federatedcatalog");
+    private static final String CONSUMER_US_CATALOG_URL = requiredPropOrEnv("CONSUMER_US_CATALOG_URL", "http://localhost:9193/api/management/federatedcatalog");
+    private static final String NON_RESTRICTED_ASSET_PREFIX = "test-document_";
+    private static final String RESTRICTED_ASSET_PREFIX = "test-document-2_";
     private static final Duration TEST_POLL_INTERVAL = Duration.ofMillis(250);
     private static final Duration TEST_TIMEOUT = Duration.ofSeconds(20);
 
-    static TypeManager typeManager = new TypeManager();
+    private static final TypeManager TYPE_MANAGER = new TypeManager();
 
     @BeforeAll
     static void setUp() {
-        PolicyRegistrationTypes.TYPES.forEach(typeManager::registerTypes);
+        PolicyRegistrationTypes.TYPES.forEach(TYPE_MANAGER::registerTypes);
     }
 
     @Test
@@ -53,11 +53,15 @@ class CatalogClientTest {
         await().atMost(TEST_TIMEOUT)
                 .pollInterval(TEST_POLL_INTERVAL)
                 .untilAsserted(() -> {
-                    var nodes = getNodesFromCatalog(CONSUMER_US_CATALOG_URL);
-                    assertThat(nodes)
+                    var datasets = getFederatedCatalog(CONSUMER_US_CATALOG_URL).stream()
+                            .flatMap(catalog -> catalog.getDatasets().stream())
+                            .toList();
+                    assertThat(datasets)
                             .isNotEmpty()
-                            .allSatisfy(
-                                    n -> assertThat(n.getAsset().getProperty(Asset.PROPERTY_ID)).asString().startsWith(NON_RESTRICTED_ASSET_PREFIX));
+                            .allSatisfy(dataset -> assertThat(dataset.getProperty(Asset.PROPERTY_ID))
+                                    .isNotNull()
+                                    .asString()
+                                    .startsWith(NON_RESTRICTED_ASSET_PREFIX));
                 });
     }
 
@@ -66,18 +70,20 @@ class CatalogClientTest {
         await().atMost(TEST_TIMEOUT)
                 .pollInterval(TEST_POLL_INTERVAL)
                 .untilAsserted(() -> {
-                    var nodes = getNodesFromCatalog(CONSUMER_EU_CATALOG_URL);
-                    assertThat(nodes)
+                    var datasets = getFederatedCatalog(CONSUMER_EU_CATALOG_URL).stream()
+                            .flatMap(catalog -> catalog.getDatasets().stream())
+                            .toList();
+                    assertThat(datasets)
                             .isNotEmpty()
                             .allSatisfy(
-                                    n -> assertThat(n.getAsset().getId()).asString()
+                                    dataset -> assertThat(dataset.getProperty(Asset.PROPERTY_ID)).asString()
                                             .satisfiesAnyOf(
                                                     s -> assertThat(s).startsWith(NON_RESTRICTED_ASSET_PREFIX),
                                                     s -> assertThat(s).startsWith(RESTRICTED_ASSET_PREFIX)));
                 });
     }
 
-    private List<ContractOffer> getNodesFromCatalog(String consumerCatalogUrl) {
+    private List<Catalog> getFederatedCatalog(String consumerCatalogUrl) {
         var nodesJson = given()
                 .contentType("application/json")
                 .header("X-Api-Key", "ApiKeyDefaultValue")
@@ -87,7 +93,7 @@ class CatalogClientTest {
                 .then()
                 .statusCode(200)
                 .extract().body().asString();
-        return typeManager.readValue(nodesJson, new TypeReference<>() {
+        return TYPE_MANAGER.readValue(nodesJson, new TypeReference<>() {
         });
     }
 }

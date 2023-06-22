@@ -17,14 +17,16 @@ package org.eclipse.edc.mvd;
 import org.eclipse.edc.iam.did.spi.document.DidDocument;
 import org.eclipse.edc.iam.did.spi.document.Service;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.edc.registration.client.models.ParticipantDto;
+import org.eclipse.edc.registration.client.model.ParticipantDto;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.result.Result;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -37,35 +39,21 @@ import static org.mockito.Mockito.when;
 
 class FederatedCacheNodeResolverTest {
 
-    public static final String SUPPORTED_PROTOCOL = "ids-multipart";
-    static final String IDS_MESSAGING = "IDSMessaging";
-    static String did = "did:web:" + "test-domainname";
-    static String idsUrl = "test.ids.url";
-
-    FederatedCacheNodeResolver resolver;
-    DidResolverRegistry didResolver = mock(DidResolverRegistry.class);
-    Monitor monitor = mock(Monitor.class);
+    private static final String SUPPORTED_PROTOCOL = "dataspace-protocol-http";
+    private static final String DSP_MESSAGING = "DSPMessaging";
+    private static final String DID = "did:web:" + "test-domainname";
+    private static final String DSP_URL = "test.dsp.url";
+    
+    private final DidResolverRegistry didResolver = mock(DidResolverRegistry.class);
+    private final Monitor monitor = mock(Monitor.class);
+    private final FederatedCacheNodeResolver resolver = new FederatedCacheNodeResolver(didResolver, monitor);
 
     @NotNull
-    private static DidDocument getDidDocument(List<Service> services) {
-        return DidDocument.Builder.newInstance().id(did).service(services).build();
-    }
-
-    private static Stream<Arguments> argumentsStreamSuccess() {
-        return Stream.of(
-                arguments(of(idsMessagingService(idsUrl))),
-                arguments(of(idsMessagingService(idsUrl), idsMessagingService(idsUrl))),
-                arguments(of(idsMessagingService(idsUrl), fakeService()))
-        );
-    }
-
-    private static Stream<Arguments> argumentsStreamFailure() {
-        return Stream.of(
-                arguments(Result.failure("failure")),
-                arguments(Result.success(getDidDocument(of(fakeService(), fakeService())))),
-                arguments(Result.success(getDidDocument(of(service(idsUrl, "test-type"))))),
-                arguments(Result.success(getDidDocument(of())))
-        );
+    private static DidDocument createDidDocument(List<Service> services) {
+        return DidDocument.Builder.newInstance()
+                .id(DID)
+                .service(services)
+                .build();
     }
 
     @NotNull
@@ -74,8 +62,8 @@ class FederatedCacheNodeResolverTest {
     }
 
     @NotNull
-    private static Service idsMessagingService(String url) {
-        return service(url, IDS_MESSAGING);
+    private static Service dspMessagingService(String url) {
+        return service(url, DSP_MESSAGING);
     }
 
     @NotNull
@@ -84,48 +72,71 @@ class FederatedCacheNodeResolverTest {
     }
 
     @ParameterizedTest
-    @MethodSource("argumentsStreamSuccess")
+    @ArgumentsSource(StreamSuccessProvider.class)
     void getNode_success(List<Service> services) {
-        when(didResolver.resolve(did)).thenReturn(Result.success(getDidDocument(services)));
+        when(didResolver.resolve(DID)).thenReturn(Result.success(createDidDocument(services)));
 
-        resolver = new FederatedCacheNodeResolver(didResolver, monitor);
-
-        var result = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
+        var result = resolver.toFederatedCacheNode(participantDto(DID));
 
         assertThat(result.succeeded()).isTrue();
         var node = result.getContent();
-        assertThat(node.getName()).isEqualTo(did);
-        assertThat(node.getTargetUrl()).isEqualTo(idsUrl);
+        assertThat(node.getName()).isEqualTo(DID);
+        assertThat(node.getTargetUrl()).isEqualTo(DSP_URL);
         assertThat(node.getSupportedProtocols()).containsExactly(SUPPORTED_PROTOCOL);
     }
 
     @ParameterizedTest
-    @MethodSource("argumentsStreamFailure")
-    void getNode_failure(Result result) {
-        when(didResolver.resolve(did)).thenReturn(result);
+    @ArgumentsSource(StreamFailureProvider.class)
+    void getNode_failure(Result<DidDocument> result) {
+        when(didResolver.resolve(DID)).thenReturn(result);
 
-        resolver = new FederatedCacheNodeResolver(didResolver, monitor);
-
-        var nodeResult = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
+        var nodeResult = resolver.toFederatedCacheNode(participantDto(DID));
 
         assertThat(nodeResult.failed()).isTrue();
     }
 
     @Test
-    void getNode_success_twoIdsMessagingServices() {
-        String url1 = "url1.com";
-        String url2 = "url2.com";
-        when(didResolver.resolve(did)).thenReturn(Result.success(getDidDocument(of(idsMessagingService(url2), idsMessagingService(url1)))));
+    void getNode_success_twoDspMessagingServices() {
+        var url1 = "url1.com";
+        var url2 = "url2.com";
+        when(didResolver.resolve(DID)).thenReturn(Result.success(createDidDocument(of(dspMessagingService(url2), dspMessagingService(url1)))));
 
-        resolver = new FederatedCacheNodeResolver(didResolver, monitor);
-
-        var result = resolver.toFederatedCacheNode(new ParticipantDto().did(did));
+        var result = resolver.toFederatedCacheNode(participantDto(DID));
 
         assertThat(result.succeeded()).isTrue();
         var node = result.getContent();
-        assertThat(node.getName()).isEqualTo(did);
+        assertThat(node.getName()).isEqualTo(DID);
         assertThat(node.getTargetUrl()).isIn(url1, url2);
         assertThat(node.getSupportedProtocols()).containsExactly(SUPPORTED_PROTOCOL);
+    }
+
+    private static class StreamSuccessProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+            return Stream.of(
+                    arguments(of(dspMessagingService(DSP_URL))),
+                    arguments(of(dspMessagingService(DSP_URL), dspMessagingService(DSP_URL))),
+                    arguments(of(dspMessagingService(DSP_URL), fakeService()))
+            );
+        }
+    }
+
+    private static class StreamFailureProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+            return Stream.of(
+                    arguments(Result.failure("failure")),
+                    arguments(Result.success(createDidDocument(of(fakeService(), fakeService())))),
+                    arguments(Result.success(createDidDocument(of(service(DSP_URL, "test-type"))))),
+                    arguments(Result.success(createDidDocument(of())))
+            );
+        }
+    }
+
+    private static ParticipantDto participantDto(String did) {
+        return new ParticipantDto(did, ParticipantDto.OnboardingStatus.ONBOARDED);
     }
 
 }

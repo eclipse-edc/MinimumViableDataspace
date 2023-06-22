@@ -15,7 +15,6 @@
 package org.eclipse.edc.system.tests.local;
 
 import org.eclipse.edc.azure.blob.AzureBlobStoreSchema;
-import org.eclipse.edc.connector.transfer.spi.types.TransferType;
 import org.eclipse.edc.spi.types.TypeManager;
 import org.eclipse.edc.spi.types.domain.DataAddress;
 import org.eclipse.edc.system.tests.utils.TransferRequestFactory;
@@ -46,11 +45,7 @@ public class BlobTransferRequestFactory implements TransferRequestFactory {
                         .type(AzureBlobStoreSchema.TYPE)
                         .property(AzureBlobStoreSchema.ACCOUNT_NAME, accountName)
                         .build(),
-                "managedResources", true,
-                "transferType", TransferType.Builder.transferType()
-                        .contentType("application/octet-stream")
-                        .isFinite(true)
-                        .build()
+                "managedResources", true
         );
 
         return new TypeManager().writeValueAsString(request);
