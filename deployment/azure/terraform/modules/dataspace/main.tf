@@ -17,7 +17,7 @@ locals {
   registration_service_dns_label   = "${var.prefix}-registration-mvd"
   edc_default_port                 = 8181
   registration_service_port        = 8184
-  registration_service_path_prefix = "/authority"
+  registration_service_path_prefix = "/api/authority"
   registration_service_host        = "registration-service"
   registration_service_url         = "http://${local.registration_service_host}:${local.registration_service_port}${local.registration_service_path_prefix}"
 

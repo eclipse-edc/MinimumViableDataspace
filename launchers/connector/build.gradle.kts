@@ -55,6 +55,7 @@ dependencies {
     runtimeOnly(libs.bundles.transfer.dpf)
 
     runtimeOnly(libs.edc.core.dpf.selector)
+    runtimeOnly(libs.edc.ext.dpf.selector.api)
 
     // Embedded DPF
     runtimeOnly(libs.bundles.dpf)

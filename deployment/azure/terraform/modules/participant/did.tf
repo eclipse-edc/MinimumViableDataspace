@@ -31,8 +31,8 @@ resource "azurerm_storage_blob" "did" {
         "serviceEndpoint" : "http://${var.participant_name}:${local.edc_identity_port}/api/identity/identity-hub"
       },
       {
-        "id" : "#ids-url",
-        "type" : "IDSMessaging",
+        "id" : "#dsp-url",
+        "type" : "DSPMessaging",
         "serviceEndpoint" : "http://${urlencode(var.participant_name)}:${local.edc_dsp_port}/api/dsp"
       },
       {

@@ -27,6 +27,7 @@ for row in $(echo "${data_json}" | jq -r '.[] | @base64'); do
   $sed "s/EDC_VAULT_CLIENTID=\".*\"/EDC_VAULT_CLIENTID=\"${APP_CLIENT_ID}\"/g" "$env_file"
   $sed "s/EDC_VAULT_TENANTID=\".*\"/EDC_VAULT_TENANTID=\"${ARM_TENANT_ID}\"/g" "$env_file"
   $sed "s/EDC_IDENTITY_DID_URL=\".*\"/EDC_IDENTITY_DID_URL=\"did:web:$did_host\"/g" "$env_file"
+  $sed "s/EDC_PARTICIPANT_ID=\".*\"/EDC_PARTICIPANT_ID=\"did:web:$did_host\"/g" "$env_file"
   $sed "s/EDC_CONNECTOR_NAME=\".*\"/EDC_CONNECTOR_NAME=\"$conn_name\"/g" "$env_file"
   $sed "s/EDC_API_AUTH_KEY=\".*\"/EDC_API_AUTH_KEY=\"$api_key\"/g" "$env_file"
   echo "Verify that the DID Endpoint is ready"

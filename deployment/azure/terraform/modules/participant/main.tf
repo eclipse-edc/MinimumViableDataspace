@@ -22,7 +22,7 @@ locals {
 
   edc_dns_label       = "${var.prefix}-${var.participant_name}-edc-mvd"
   edc_default_port    = 8181
-  edc_ids_port        = 8282
+  edc_dsp_port        = 8282
   edc_identity_port   = 7171
   edc_management_port = 9191
 }

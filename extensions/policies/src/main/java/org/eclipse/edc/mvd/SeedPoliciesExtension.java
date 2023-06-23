@@ -24,7 +24,8 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
 
 import static org.eclipse.edc.connector.contract.spi.offer.ContractDefinitionResolver.CATALOGING_SCOPE;
-import static org.eclipse.edc.policy.engine.spi.PolicyEngine.ALL_SCOPES;
+import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
+import static org.eclipse.edc.spi.CoreConstants.EDC_NAMESPACE;
 
 /**
  * Extension to initialize the policies.
@@ -32,6 +33,7 @@ import static org.eclipse.edc.policy.engine.spi.PolicyEngine.ALL_SCOPES;
 public class SeedPoliciesExtension implements ServiceExtension {
 
     private static final String REGION_LOCATION = "regionLocation";
+    private static final String REGION_LOCATION_EVALUATION_KEY = EDC_NAMESPACE + REGION_LOCATION;
 
     @Inject
     private RuleBindingRegistry ruleBindingRegistry;
@@ -57,10 +59,10 @@ public class SeedPoliciesExtension implements ServiceExtension {
      */
     @Override
     public void initialize(ServiceExtensionContext context) {
-        ruleBindingRegistry.bind("USE", ALL_SCOPES);
-        ruleBindingRegistry.bind(REGION_LOCATION, CATALOGING_SCOPE);
-
-        policyEngine.registerFunction(ALL_SCOPES, Permission.class, REGION_LOCATION, new RegionConstraintFunction(monitor));
+        ruleBindingRegistry.bind("USE", CATALOGING_SCOPE);
+        ruleBindingRegistry.bind(ODRL_SCHEMA + "use", CATALOGING_SCOPE);
+        ruleBindingRegistry.bind(REGION_LOCATION_EVALUATION_KEY, CATALOGING_SCOPE);
+        policyEngine.registerFunction(CATALOGING_SCOPE, Permission.class, REGION_LOCATION_EVALUATION_KEY, new RegionConstraintFunction());
     }
 
 }

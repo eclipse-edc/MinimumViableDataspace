@@ -29,13 +29,13 @@ import static java.lang.String.format;
 
 @EndToEndTest
 @EnabledIfEnvironmentVariable(named = "TEST_ENVIRONMENT", matches = "cloud")
-public class CloudBlobTransferIntegrationTest extends AbstractBlobTransferTest {
+class CloudBlobTransferIntegrationTest extends AbstractBlobTransferTest {
     private static final String DST_KEY_VAULT_NAME = TestUtils.requiredPropOrEnv("consumer.eu.key.vault", null);
     private static final String BLOB_STORE_ENDPOINT_TEMPLATE = "https://%s.blob.core.windows.net";
     private static final String KEY_VAULT_ENDPOINT_TEMPLATE = "https://%s.vault.azure.net";
 
     @Test
-    public void transferBlob_success() {
+    void transferBlob_success() {
         var blobAccountDetails = blobAccount(DST_KEY_VAULT_NAME);
         var storageAccountName = blobAccountDetails.get(0);
         var storageAccountKey = blobAccountDetails.get(1);

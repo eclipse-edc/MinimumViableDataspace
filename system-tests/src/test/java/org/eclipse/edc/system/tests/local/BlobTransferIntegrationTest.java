@@ -17,7 +17,6 @@
 package org.eclipse.edc.system.tests.local;
 
 import com.azure.core.util.BinaryData;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.system.tests.utils.TransferSimulationUtils;
@@ -66,8 +65,7 @@ public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
     }
 
     @Test
-    public void transferBlob_success() {
-
+    void transferBlob_success() {
         var dstBlobServiceClient = getBlobServiceClient(
                 format(LOCAL_BLOB_STORE_ENDPOINT_TEMPLATE, LOCAL_DESTINATION_BLOB_STORE_ACCOUNT),
                 LOCAL_DESTINATION_BLOB_STORE_ACCOUNT,
@@ -81,7 +79,7 @@ public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
     private void createContainer(BlobServiceClient client, String containerName) {
         assertThat(client.getBlobContainerClient(containerName).exists()).isFalse();
 
-        BlobContainerClient blobContainerClient = client.createBlobContainer(containerName);
+        var blobContainerClient = client.createBlobContainer(containerName);
         assertThat(blobContainerClient.exists()).isTrue();
         containerCleanup.add(() -> client.deleteBlobContainer(containerName));
     }

@@ -1,271 +1,336 @@
 {
-	"info": {
-		"_postman_id": "dbbd12e9-6fbe-4af3-9154-427bf56dbc2a",
-		"name": "MVD",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": [
-		{
-			"name": "Publish Master Data",
-			"item": [
-				{
-					"name": "Publish Asset 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
-									"});"
-								],
-								"type": "text/javascript",
-								"id": "878f6d69-309b-42f2-85e8-8d867cc7a4c4"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"asset\": {\n        \"properties\": {\n            \"asset:prop:name\": \"test-document_{{participant_id}}\",\n            \"asset:prop:contenttype\": \"text/plain\",\n            \"asset:prop:version\": \"1.0\",\n            \"asset:prop:id\": \"test-document_{{participant_id}}\",\n            \"type\": \"AzureStorage\"\n        }\n    },\n    \"dataAddress\": {\n        \"properties\": {\n            \"type\": \"AzureStorage\",\n            \"account\": \"{{storage_account}}\",\n            \"container\": \"src-container\",\n            \"blobname\": \"text-document.txt\",\n            \"keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{data_management_url}}/assets",
-							"host": [
-								"{{data_management_url}}"
-							],
-							"path": [
-								"assets"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish Asset 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "f81ae4d4-f84b-4725-aeb1-c60d71d2f958",
-								"exec": [
-									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"asset\": {\n        \"properties\": {\n            \"asset:prop:name\": \"test-document-2_{{participant_id}}\",\n            \"asset:prop:contenttype\": \"text/plain\",\n            \"asset:prop:version\": \"1.0\",\n            \"asset:prop:id\": \"test-document-2_{{participant_id}}\",\n            \"type\": \"AzureStorage\"\n        }\n    },\n    \"dataAddress\": {\n        \"properties\": {\n            \"type\": \"AzureStorage\",\n            \"account\": \"{{storage_account}}\",\n            \"container\": \"src-container\",\n            \"blobname\": \"text-document-2.txt\",\n            \"keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{data_management_url}}/assets",
-							"host": [
-								"{{data_management_url}}"
-							],
-							"path": [
-								"assets"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish Policy 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "63cb94b6-8e55-46fc-91e2-fef811c7ae9a",
-								"exec": [
-									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n  \"policy\": {\n    \"permissions\": [\n      {\n        \"edctype\": \"dataspaceconnector:permission\",\n        \"id\": null,\n        \"target\": \"test-document_{{participant_id}}\",\n        \"action\": {\n          \"type\": \"USE\",\n          \"includedIn\": null,\n          \"constraint\": null\n        },\n        \"assignee\": null,\n        \"assigner\": null,\n        \"constraints\": [],\n        \"duties\": []\n      }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n      \"@policytype\": \"set\"\n    }\n  }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{data_management_url}}/policydefinitions",
-							"host": [
-								"{{data_management_url}}"
-							],
-							"path": [
-								"policydefinitions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish Policy 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6f68ce4b-0a80-4a2a-aea2-6c3a1ec9a351",
-								"exec": [
-									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n  \"policy\": {\n    \"permissions\": [\n      {\n        \"edctype\": \"dataspaceconnector:permission\",\n        \"id\": null,\n        \"target\": null,\n        \"action\": {\n          \"type\": \"USE\",\n          \"includedIn\": null,\n          \"constraint\": null\n        },\n        \"assignee\": null,\n        \"assigner\": null,\n        \"constraints\": [\n          {\n            \"edctype\": \"AtomicConstraint\",\n            \"leftExpression\": {\n              \"edctype\": \"dataspaceconnector:literalexpression\",\n              \"value\": \"ids:absoluteSpatialPosition\"\n            },\n            \"rightExpression\": {\n              \"edctype\": \"dataspaceconnector:literalexpression\",\n              \"value\": \"eu\"\n            },\n            \"operator\": \"EQ\"\n          }\n        ],\n        \"duties\": []\n      }\n    ],\n    \"prohibitions\": [],\n    \"obligations\": [],\n    \"extensibleProperties\": {},\n    \"inheritsFrom\": null,\n    \"assigner\": null,\n    \"assignee\": null,\n    \"target\": null,\n    \"@type\": {\n      \"@policytype\": \"set\"\n    }\n  }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{data_management_url}}/policydefinitions",
-							"host": [
-								"{{data_management_url}}"
-							],
-							"path": [
-								"policydefinitions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish ContractDefinition 1",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "75d95596-ddcb-4861-b94d-d9c0e80a3ed0",
-								"exec": [
-									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"4a75736e-001d-4364-8bd4-9888490edb56\",\n    \"accessPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n    \"contractPolicyId\": \"956e172f-2de1-4501-8881-057a57fd0e69\",\n        \"criteria\": [\n            {\n                \"operandLeft\": \"asset:prop:id\",\n                \"operator\": \"=\",\n                \"operandRight\": \"test-document_{{participant_id}}\"\n            }\n        ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{data_management_url}}/contractdefinitions",
-							"host": [
-								"{{data_management_url}}"
-							],
-							"path": [
-								"contractdefinitions"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish ContractDefinition 2",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "76e38548-88eb-45e4-941b-8f8a7dae0a9f",
-								"exec": [
-									"pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
-									"    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"id\": \"8dfd8f18-09ad-41f9-a2d8-368889d3e36e\",\n    \"accessPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n    \"contractPolicyId\": \"6a99c1bb-74ad-41a7-b73a-93233ffdbfb8\",\n        \"criteria\": [\n            {\n                \"operandLeft\": \"asset:prop:id\",\n                \"operator\": \"=\",\n                \"operandRight\": \"test-document-2_{{participant_id}}\"\n            }\n        ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{data_management_url}}/contractdefinitions",
-							"host": [
-								"{{data_management_url}}"
-							],
-							"path": [
-								"contractdefinitions"
-							]
-						}
-					},
-					"response": []
-				}
-			],
-			"protocolProfileBehavior": {}
-		}
-	],
-	"auth": {
-		"type": "apikey",
-		"apikey": [
-			{
-				"key": "value",
-				"value": "{{api_key}}",
-				"type": "string"
-			},
-			{
-				"key": "key",
-				"value": "x-api-key",
-				"type": "string"
-			}
-		]
-	},
-	"protocolProfileBehavior": {}
+  "info": {
+    "_postman_id": "17832640-05c7-4d3b-890e-b7212516244b",
+    "name": "MVD",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "11357307"
+  },
+  "item": [
+    {
+      "name": "Publish Master Data",
+      "item": [
+        {
+          "name": "Publish Asset 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"@context\": {\n      \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"edc:asset\": {\n        \"@id\": \"test-document_{{participant_id}}\",\n        \"edc:properties\": {\n            \"edc:name\": \"test-document_{{participant_id}}\",\n            \"edc:contenttype\": \"text/plain\",\n            \"edc:version\": \"1.0\",\n            \"edc:type\": \"AzureStorage\"\n        }\n    },\n    \"edc:dataAddress\": {\n        \"edc:type\": \"AzureStorage\",\n        \"edc:properties\": {\n            \"edc:account\": \"{{storage_account}}\",\n            \"edc:container\": \"src-container\",\n            \"edc:blobname\": \"text-document.txt\",\n            \"edc:keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/v2/assets",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "v2",
+                "assets"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Asset 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new asset) or 409 Conflict (if asset already exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"@context\": {\n      \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"edc:asset\": {\n        \"@id\": \"test-document-2_{{participant_id}}\",\n        \"edc:properties\": {\n            \"edc:name\": \"test-document-2_{{participant_id}}\",\n            \"edc:contenttype\": \"text/plain\",\n            \"edc:version\": \"1.0\",\n            \"edc:type\": \"AzureStorage\"\n        }\n    },\n    \"edc:dataAddress\": {\n        \"edc:type\": \"AzureStorage\",\n        \"edc:properties\": {\n            \"edc:account\": \"{{storage_account}}\",\n            \"edc:container\": \"src-container\",\n            \"edc:blobname\": \"text-document-2.txt\",\n            \"edc:keyName\": \"{{storage_account}}-key1\"\n        }\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/v2/assets",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "v2",
+                "assets"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Policy 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new policy) or 409 Conflict (if policy already exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"@context\": {\n      \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"  \n    },\n    \"@id\": \"no-restriction-policy\",\n    \"edc:policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"permission\": []\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/v2/policydefinitions",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "v2",
+                "policydefinitions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish Policy 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new policy) or 409 Conflict (if policy already exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"@context\": {\n      \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"  \n    },\n    \"@id\": \"eu-restricted-policy\",\n    \"edc:policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"permission\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"leftOperand\": \"https://w3id.org/edc/v0.0.1/ns/regionLocation\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"eu\"\n                }\n            }\n        ]\n    }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/v2/policydefinitions",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "v2",
+                "policydefinitions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish ContractDefinition 1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new contract definition) or 409 Conflict (if contract deifinition already exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"@context\": {\n      \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@id\": \"def-test-document_{{participant_id}}\",\n    \"accessPolicyId\": \"no-restriction-policy\",\n    \"contractPolicyId\": \"no-restriction-policy\",\n    \"assetsSelector\": [\n      {\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"test-document_{{participant_id}}\"\n      }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/v2/contractdefinitions",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "v2",
+                "contractdefinitions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Publish ContractDefinition 2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new contract definition) or 409 Conflict (if contract definition already exists)\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"@context\": {\n      \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@id\": \"test-document-2_{{participant_id}}\",\n    \"accessPolicyId\": \"eu-restricted-policy\",\n    \"contractPolicyId\": \"eu-restricted-policy\",\n    \"assetsSelector\": [\n      {\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"test-document-2_{{participant_id}}\"\n      }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/v2/contractdefinitions",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "v2",
+                "contractdefinitions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Data Plane Instance",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 204 No Content (if new instance) or 409 Conflict (if instance already exists)\", function () {\r",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])\r",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"id\": \"dpf-instance_{{participant_id}}\",\r\n    \"url\": \"http://{{participant_id}}:8383/api/control\",\r\n    \"allowedSourceTypes\": [\"AzureStorage\"],\r\n    \"allowedDestTypes\": [\"AzureStorage\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{data_management_url}}/instances",
+              "host": [
+                "{{data_management_url}}"
+              ],
+              "path": [
+                "instances"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "value",
+        "value": "{{api_key}}",
+        "type": "string"
+      },
+      {
+        "key": "key",
+        "value": "x-api-key",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "data_management_url",
+      "value": "http://localhost:9191/api/management",
+      "type": "string"
+    }
+  ]
 }
