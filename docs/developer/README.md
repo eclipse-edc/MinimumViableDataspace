@@ -10,9 +10,15 @@ Please follow the instructions in [this document](../../system-tests/README.md) 
 
 ## Data Dashboard
 
-The Data Dashboard is a web application (development UI) on top of EDC's DataManagementAPI and is deployed for each participant. It can be accessed at the URLs provided in the GitHub workflow run page. Example:
+The Data Dashboard is a web application (development UI) on top of EDC's DataManagementAPI and is deployed for each participant. It can be accessed at the URLs locally. Example:
 
-![dashboard URLs](dashboard-urls.png)
+| Participant | URL |
+| --- | --- |
+| Company 1 | http://localhost:7080 |
+| Company 2 | http://localhost:7081 |
+| Company 3 | http://localhost:7082 |
+
+![dashboard URLs](dashboard-ports-local.png)
 
 ### Scenarios covered
 
