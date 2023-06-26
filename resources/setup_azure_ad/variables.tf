@@ -34,7 +34,7 @@ variable "tf_state_container" {
 variable "common_resourcegroup_location" {
   default = "northeurope"
 }
-# Resource group that'll contain common resources, such as the ACR
+# Resource group that'll contain common resources, such as the Storage account
 variable "common_resourcegroup" {
   default = "mvd-common"
 }
