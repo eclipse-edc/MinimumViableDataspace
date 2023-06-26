@@ -18,7 +18,7 @@ for i in "${!EdcHostArray[@]}"; do
 
   newman run \
     --folder "Publish Master Data" \
-    --env-var data_management_url="http://${EdcHostArray[$i]}:9191/api/v1/data" \
+    --env-var data_management_url="http://${EdcHostArray[$i]}:9191/api/management" \
     --env-var storage_account="${AssetsStorageAccountArray[$i]}" \
     --env-var participant_id="${ParticipantIdArray[$i]}" \
     --env-var api_key="$API_KEY" \

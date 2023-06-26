@@ -19,22 +19,18 @@ import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
-import org.eclipse.edc.spi.monitor.Monitor;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class RegionConstraintFunction implements AtomicConstraintFunction<Permission> {
-    
-    private static final String REGION_KEY = "region";
-    private final Monitor monitor;
 
-    public RegionConstraintFunction(Monitor monitor) {
-        this.monitor = monitor;
-    }
+    private static final String REGION_KEY = "region";
 
     @Override
     public boolean evaluate(Operator operator, Object rightValue, Permission rule, PolicyContext context) {
@@ -52,22 +48,18 @@ public class RegionConstraintFunction implements AtomicConstraintFunction<Permis
     }
 
     private List<String> getRegions(Map<String, Object> claims) {
-        List<String> regions = new ArrayList<>();
-        var verifiableCredentials = claims.values();
-        for (Object vc : verifiableCredentials) {
-            try {
-                var region = getRegion(vc);
-                regions.add(region);
-            } catch (ClassCastException | IllegalArgumentException e) {
-                monitor.warning("Failed getting region from verifiableCredential", e);
-            }
-        }
-        return regions;
+        return claims.values().stream()
+                .filter(Credential.class::isInstance)
+                .map(o -> (Credential) o)
+                .map(this::getRegion)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    private String getRegion(Object object) {
-        var credential = (Credential) object;
+    @Nullable
+    private String getRegion(Credential credential) {
         var claims = credential.getCredentialSubject().getClaims();
-        return (String) claims.get(REGION_KEY);
+        var o = claims.get(REGION_KEY);
+        return o instanceof String ? (String) o : null;
     }
 }

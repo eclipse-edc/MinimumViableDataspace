@@ -15,15 +15,16 @@
 package org.eclipse.edc.system.tests.local;
 
 import org.eclipse.edc.azure.blob.AzureBlobStoreSchema;
-import org.eclipse.edc.connector.transfer.spi.types.TransferType;
 import org.eclipse.edc.spi.types.TypeManager;
-import org.eclipse.edc.spi.types.domain.DataAddress;
+import org.eclipse.edc.system.tests.utils.TransferInitiationData;
 import org.eclipse.edc.system.tests.utils.TransferRequestFactory;
-import org.eclipse.edc.system.tests.utils.TransferSimulationUtils;
 
 import java.util.Map;
 
-import static org.eclipse.edc.system.tests.utils.TransferSimulationUtils.PROVIDER_ASSET_ID;
+import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.CONTEXT;
+import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.TYPE;
+import static org.eclipse.edc.spi.CoreConstants.EDC_NAMESPACE;
+import static org.eclipse.edc.spi.CoreConstants.EDC_PREFIX;
 
 
 public class BlobTransferRequestFactory implements TransferRequestFactory {
@@ -35,22 +36,23 @@ public class BlobTransferRequestFactory implements TransferRequestFactory {
     }
 
     @Override
-    public String apply(TransferSimulationUtils.TransferInitiationData transferInitiationData) {
+    public String apply(TransferInitiationData transferInitiationData) {
+        var destination = Map.of(
+                TYPE, EDC_NAMESPACE + "DataAddress",
+                EDC_NAMESPACE + "type", AzureBlobStoreSchema.TYPE,
+                EDC_NAMESPACE + "properties", Map.of(
+                        AzureBlobStoreSchema.ACCOUNT_NAME, accountName
+                )
+        );
+
         var request = Map.of(
-                "contractId", transferInitiationData.contractAgreementId,
-                "assetId", PROVIDER_ASSET_ID,
-                "connectorId", "consumer",
-                "connectorAddress", transferInitiationData.connectorAddress,
-                "protocol", "ids-multipart",
-                "dataDestination", DataAddress.Builder.newInstance()
-                        .type(AzureBlobStoreSchema.TYPE)
-                        .property(AzureBlobStoreSchema.ACCOUNT_NAME, accountName)
-                        .build(),
-                "managedResources", true,
-                "transferType", TransferType.Builder.transferType()
-                        .contentType("application/octet-stream")
-                        .isFinite(true)
-                        .build()
+                CONTEXT, Map.of(EDC_PREFIX, EDC_NAMESPACE),
+                TYPE, "TransferRequestDto",
+                "dataDestination", destination,
+                "protocol", "dataspace-protocol-http",
+                "assetId", transferInitiationData.getAssetId(),
+                "contractId", transferInitiationData.getContractAgreementId(),
+                "connectorAddress", transferInitiationData.getProviderDspUrl()
         );
 
         return new TypeManager().writeValueAsString(request);

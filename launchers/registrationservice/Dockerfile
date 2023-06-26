@@ -11,7 +11,7 @@ RUN apt update \
 
 WORKDIR /app
 
-COPY ./build/libs/app.jar /app
+COPY ./build/libs/registrationservice.jar /app
 
 EXPOSE 8182
 
@@ -21,10 +21,12 @@ HEALTHCHECK --interval=5s --timeout=5s --retries=10 CMD curl --fail http://local
 ENV WEB_HTTP_PORT="8181"
 ENV WEB_HTTP_PATH="/api"
 ENV WEB_HTTP_IDENTITY_PORT="7171"
-ENV WEB_HTTP_IDENTITY_PATH="/api/v1/identity"
+ENV WEB_HTTP_IDENTITY_PATH="/api/identity"
+ENV WEB_HTTP_AUTHORITY_PORT="8184"
+ENV WEB_HTTP_AUTHORITY_PATH="/api/authority"
 
 # Use "exec" for graceful termination (SIGINT) to reach JVM.
 # ARG can not be used in ENTRYPOINT so storing value in an ENV variable
 ENV ENV_JVM_ARGS=$JVM_ARGS
 ENTRYPOINT [ "sh", "-c", \
-    "exec java $ENV_JVM_ARGS -jar app.jar"]
+    "exec java $ENV_JVM_ARGS -jar registrationservice.jar"]

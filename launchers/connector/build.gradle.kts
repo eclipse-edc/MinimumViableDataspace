@@ -15,59 +15,62 @@
 plugins {
     `java-library`
     id("application")
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    alias(libs.plugins.shadow)
 }
 
-val edcGroup: String by project
+var distTar = tasks.getByName("distTar")
+var distZip = tasks.getByName("distZip")
 
 dependencies {
-    implementation(project(":extensions:refresh-catalog"))
-    implementation(project(":extensions:policies"))
+    runtimeOnly(project(":extensions:refresh-catalog"))
+    runtimeOnly(project(":extensions:policies"))
 
-    implementation(edc.core.controlplane)
-    implementation(edc.api.observability)
-    implementation(edc.api.dataManagement)
-    implementation(edc.config.filesystem)
-    implementation(edc.ext.http)
-    
-    // IDS
-    implementation(edc.ids) {
-        // Workaround for https://github.com/eclipse-dataspaceconnector/DataSpaceConnector/issues/1387
-        exclude(group = edcGroup, module = "ids-token-validation")
-    }
+    runtimeOnly(libs.bundles.connector)
+    runtimeOnly(libs.edc.core.controlplane)
+    runtimeOnly(libs.edc.ext.api.management)
+    runtimeOnly(libs.edc.ext.api.management.config)
+    runtimeOnly(libs.edc.ext.configuration.filesystem)
+    runtimeOnly(libs.edc.ext.http)
+
+    // DSP protocol
+    runtimeOnly(libs.edc.protocol.dsp)
 
     // API key authentication for Data Management API (also used for CORS support)
+    runtimeOnly(libs.edc.ext.auth.tokenbased)
 
-    implementation(edc.ext.auth.tokenBased)
-
-    // DID authentication for IDS API
-    implementation(edc.bundles.identity)
+    // DID authentication
+    runtimeOnly(libs.bundles.identity)
 
     // Blob storage container provisioning
-    implementation(edc.ext.azure.blob.core)
-    implementation(edc.provision.blob)
+    runtimeOnly(libs.edc.azure.core.blob)
+    runtimeOnly(libs.edc.azure.ext.provision.blob)
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {
-        implementation(edc.vault.filesystem)
+        runtimeOnly(libs.edc.ext.vault.filesystem)
     } else {
-        implementation(edc.vault.azure)
+        runtimeOnly(libs.edc.azure.ext.vault)
     }
 
+    runtimeOnly(libs.bundles.transfer.dpf)
+
+    runtimeOnly(libs.edc.core.dpf.selector)
+    runtimeOnly(libs.edc.ext.dpf.selector.api)
+
     // Embedded DPF
-    implementation(edc.bundles.dpf)
+    runtimeOnly(libs.bundles.dpf)
 
     // Federated catalog
-    implementation(fcc.core)
-    implementation(fcc.api)
+    runtimeOnly(libs.fc.core)
+    runtimeOnly(libs.fc.ext.api)
 
     // Identity Hub
-    implementation(identityHub.core)
-    implementation(identityHub.ext.api)
-    implementation(identityHub.ext.selfdescription.api)
-    implementation(identityHub.core.verifier)
-    implementation(identityHub.ext.credentials.jwt)
-    implementation(identityHub.ext.verifier.jwt)
+    runtimeOnly(libs.ih.core)
+    runtimeOnly(libs.ih.ext.api)
+    runtimeOnly(libs.ih.ext.api.selfdescription)
+    runtimeOnly(libs.ih.core.verifier)
+    runtimeOnly(libs.ih.ext.credentials.jwt)
+    runtimeOnly(libs.ih.ext.verifier.jwt)
 }
 
 application {
@@ -76,5 +79,7 @@ application {
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
-    archiveFileName.set("app.jar")
+    archiveFileName.set("connector.jar")
+    dependsOn(distTar, distZip)
+    mustRunAfter(distTar, distZip)
 }

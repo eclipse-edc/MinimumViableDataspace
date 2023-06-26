@@ -17,7 +17,6 @@
 package org.eclipse.edc.system.tests.local;
 
 import com.azure.core.util.BinaryData;
-import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.system.tests.utils.TransferSimulationUtils;
@@ -31,13 +30,12 @@ import java.util.List;
 import java.util.UUID;
 
 import static java.lang.String.format;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @EndToEndTest
 @EnabledIfEnvironmentVariable(named = "TEST_ENVIRONMENT", matches = "local")
 public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
-    private List<Runnable> containerCleanup = new ArrayList<>();
+
     private static final String PROVIDER_CONTAINER_NAME = "src-container";
     public static final String LOCAL_BLOB_STORE_ENDPOINT_TEMPLATE = "http://127.0.0.1:10000/%s";
     public static final String LOCAL_SOURCE_BLOB_STORE_ACCOUNT = "company1assets";
@@ -45,6 +43,7 @@ public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
     public static final String LOCAL_DESTINATION_BLOB_STORE_ACCOUNT = "company2assets";
     public static final String LOCAL_DESTINATION_BLOB_STORE_ACCOUNT_KEY = "key2";
 
+    private final List<Runnable> containerCleanup = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
@@ -66,8 +65,7 @@ public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
     }
 
     @Test
-    public void transferBlob_success() {
-
+    void transferBlob_success() {
         var dstBlobServiceClient = getBlobServiceClient(
                 format(LOCAL_BLOB_STORE_ENDPOINT_TEMPLATE, LOCAL_DESTINATION_BLOB_STORE_ACCOUNT),
                 LOCAL_DESTINATION_BLOB_STORE_ACCOUNT,
@@ -79,10 +77,10 @@ public class BlobTransferIntegrationTest extends AbstractBlobTransferTest {
 
 
     private void createContainer(BlobServiceClient client, String containerName) {
-        assertFalse(client.getBlobContainerClient(containerName).exists());
+        assertThat(client.getBlobContainerClient(containerName).exists()).isFalse();
 
-        BlobContainerClient blobContainerClient = client.createBlobContainer(containerName);
-        assertTrue(blobContainerClient.exists());
+        var blobContainerClient = client.createBlobContainer(containerName);
+        assertThat(blobContainerClient.exists()).isTrue();
         containerCleanup.add(() -> client.deleteBlobContainer(containerName));
     }
 

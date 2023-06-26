@@ -16,7 +16,7 @@ package org.eclipse.edc.system.tests.local;
 
 
 public class BlobTransferLocalSimulation extends TransferLocalSimulation {
-    static final String ACCOUNT_NAME_PROPERTY = "BlobTransferLocalSimulation-account-name";
+    public static final String ACCOUNT_NAME_PROPERTY = "BlobTransferLocalSimulation-account-name";
 
     public BlobTransferLocalSimulation() {
         super(new BlobTransferRequestFactory(System.getProperty(ACCOUNT_NAME_PROPERTY)));

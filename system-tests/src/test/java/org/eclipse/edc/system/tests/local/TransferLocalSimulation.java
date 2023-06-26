@@ -34,8 +34,10 @@ public class TransferLocalSimulation extends Simulation {
 
     public static final String API_KEY_HEADER = "x-api-key";
     public static final String API_KEY = TestUtils.requiredPropOrEnv("API_KEY", "ApiKeyDefaultValue");
-    public static final String CONSUMER_MANAGEMENT_URL = TestUtils.requiredPropOrEnv("CONSUMER_MANAGEMENT_URL", "http://localhost:9192") + "/api/v1/data";
-    public static final String PROVIDER_IDS_URL = TestUtils.requiredPropOrEnv("PROVIDER_IDS_URL", "http://company1:8282");
+    public static final String CONSUMER_MANAGEMENT_URL = TestUtils.requiredPropOrEnv("CONSUMER_MANAGEMENT_URL", "http://localhost:9192") + "/api/management";
+    public static final String CONSUMER_ID = "did:web:did-server:company2";
+    public static final String PROVIDER_ID = "did:web:did-server:company1";
+    public static final String PROVIDER_DSP_URL = TestUtils.requiredPropOrEnv("PROVIDER_IDS_URL", "http://company1:8282/api/dsp");
     private static final int REPEAT = Integer.parseInt(propOrEnv("repeat", "1"));
     private static final int AT_ONCE_USERS = Integer.parseInt(propOrEnv("at.once.users", "1"));
     private static final int MAX_RESPONSE_TIME = Integer.parseInt(propOrEnv("max.response.time", "5000"));
@@ -47,7 +49,7 @@ public class TransferLocalSimulation extends Simulation {
                 .header(API_KEY_HEADER, s -> API_KEY); // use the Function form to avoid special characters to be interpreted as Gatling Expression Language
         setUp(scenario(TransferSimulationUtils.DESCRIPTION)
                 .repeat(REPEAT)
-                .on(TransferSimulationUtils.contractNegotiationAndTransfer(PROVIDER_IDS_URL, requestFactory))
+                .on(TransferSimulationUtils.contractNegotiationAndTransfer(PROVIDER_DSP_URL, requestFactory))
                 .injectOpen(atOnceUsers(AT_ONCE_USERS)))
                 .protocols(httpProtocol)
                 .assertions(

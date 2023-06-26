@@ -16,5 +16,5 @@ package org.eclipse.edc.system.tests.utils;
 
 import java.util.function.Function;
 
-public interface TransferRequestFactory extends Function<TransferSimulationUtils.TransferInitiationData, String> {
+public interface TransferRequestFactory extends Function<TransferInitiationData, String> {
 }

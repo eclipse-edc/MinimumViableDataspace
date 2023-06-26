@@ -17,8 +17,6 @@ plugins {
     `java-library`
 }
 
-val gatlingVersion: String by project
-
 dependencies {
     testImplementation(libs.gatling.highcharts) {
         exclude(group = "io.gatling", module = "gatling-jms")
@@ -34,22 +32,26 @@ dependencies {
 
     testImplementation(libs.apache.commons.lang3)
 
-    testImplementation(edc.ext.azure.blob.core)
-    testImplementation(edc.util)
-    testImplementation(libs.azure.storageblob)
+    testImplementation(libs.edc.azure.core.blob)
+    testImplementation(libs.edc.core.util)
+    testImplementation(libs.edc.azure.ext.dpf.storage)
     testImplementation(libs.restAssured)
     testImplementation(libs.awaitility)
     testImplementation(libs.okhttp)
 
     testImplementation(libs.azure.identity)
     testImplementation(libs.azure.keyvault)
-    testImplementation(edc.spi.contract)
-    testImplementation(fcc.spi)
-    testImplementation(edc.policy.evaluator)
+    testImplementation(libs.azure.storageblob)
+    testImplementation(libs.edc.azure.ext.vault)
+    testImplementation(libs.edc.spi.contract)
+    testImplementation(libs.fc.spi.core)
+
+    testImplementation(libs.edc.spi.jsonld)
+    testImplementation(libs.edc.ext.jsonld)
 
     // Identity Hub
-    testImplementation(identityHub.core.client)
-    testImplementation(identityHub.ext.credentials.jwt)
-    testImplementation(edc.junit)
+    testImplementation(libs.ih.core.client)
+    testImplementation(libs.ih.ext.credentials.jwt)
+    testImplementation(libs.edc.core.junit)
 }
 

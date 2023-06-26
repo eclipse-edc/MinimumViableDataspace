@@ -18,8 +18,7 @@ import org.eclipse.edc.catalog.spi.FederatedCacheNode;
 import org.eclipse.edc.iam.did.spi.document.DidDocument;
 import org.eclipse.edc.iam.did.spi.document.Service;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.edc.protocol.ids.spi.types.MessageProtocol;
-import org.eclipse.edc.registration.client.models.ParticipantDto;
+import org.eclipse.edc.registration.client.model.ParticipantDto;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.result.Result;
 
@@ -33,8 +32,8 @@ import static java.lang.String.format;
  */
 class FederatedCacheNodeResolver {
 
-    public static final String IDS_MESSAGING = "IDSMessaging";
-    public static final List<String> SUPPORTED_PROTOCOLS = List.of(MessageProtocol.IDS_MULTIPART);
+    public static final String IDS_MESSAGING = "DSPMessaging";
+    public static final List<String> SUPPORTED_PROTOCOLS = List.of("dataspace-protocol-http");
 
     private final DidResolverRegistry resolver;
     private final Monitor monitor;

@@ -7,19 +7,15 @@ val downloadArtifact: Configuration by configurations.creating {
     isTransitive = false
 }
 
-
-val identityHubVersion: String by project
-val registrationServiceVersion: String by project
-val edcGroup: String by project
+val version: String by project
+val group: String by project
 val annotationProcessorVersion: String by project
-val javaVersion: String by project
 val metaModelVersion: String by project
 val actualVersion: String = project.findProperty("version") as String
 
-
 dependencies {
-    downloadArtifact("org.eclipse.edc:identity-hub-cli:${identityHubVersion}:all")
-    downloadArtifact("org.eclipse.edc:registration-service-cli:${registrationServiceVersion}:all")
+    downloadArtifact("org.eclipse.edc:identity-hub-cli:${version}:all")
+    downloadArtifact("org.eclipse.edc:registration-service-cli:${version}:all")
 }
 
 // task that downloads the RegSrv CLI and IH CLI
@@ -29,8 +25,8 @@ val getJarsForLocalTest by tasks.registering(Copy::class) {
     from(downloadArtifact)
         // strip away the version string
         .rename { s ->
-            s.replace("-${identityHubVersion}", "")
-                .replace("-${registrationServiceVersion}", "")
+            s.replace("-${version}", "")
+                .replace("-${version}", "")
                 .replace("-all", "")
         }
     into(layout.projectDirectory.dir("system-tests/resources/cli-tools"))
@@ -42,8 +38,8 @@ val getJarsForAzureTest by tasks.registering(Copy::class) {
     from(downloadArtifact)
         // strip away the version string
         .rename { s ->
-            s.replace("-${identityHubVersion}", "")
-                .replace("-${registrationServiceVersion}", "")
+            s.replace("-${version}", "")
+                .replace("-${version}", "")
                 .replace("-all", "")
         }
     into(layout.projectDirectory.dir("deployment/azure"))
@@ -59,7 +55,7 @@ tasks {
 
 allprojects {
 
-    apply(plugin = "${edcGroup}.edc-build")
+    apply(plugin = "${group}.edc-build")
 
 
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {

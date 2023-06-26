@@ -15,36 +15,36 @@
 plugins {
     `java-library`
     id("application")
-    id("com.github.johnrengelman.shadow") version "7.0.0"
+    alias(libs.plugins.shadow)
 }
 
-dependencies {
-    implementation(registrationService.core)
-    implementation(registrationService.core.credential.service)
-    implementation(registrationService.ext.api)
+var distTar = tasks.getByName("distTar")
+var distZip = tasks.getByName("distZip")
 
-    implementation(edc.identity.did.web)
-    implementation(edc.identity.did.core)
-    implementation(edc.core.connector)
-    runtimeOnly(edc.boot)
-    implementation(edc.core.controlplane)
-    implementation(edc.api.observability)
-    implementation(edc.core.micrometer)
-    runtimeOnly(edc.micrometer.jetty)
-    runtimeOnly(edc.micrometer.jersey)
-    implementation(edc.config.filesystem)
-    implementation(identityHub.ext.api)
-    implementation(identityHub.ext.selfdescription.api)
-    implementation(identityHub.core.verifier)
-    implementation(identityHub.ext.credentials.jwt)
-    implementation(identityHub.ext.verifier.jwt)
+dependencies {
+    runtimeOnly(libs.bundles.connector)
+    runtimeOnly(libs.bundles.identity)
+    runtimeOnly(libs.edc.core.micrometer)
+    runtimeOnly(libs.edc.ext.micrometer.jetty)
+    runtimeOnly(libs.edc.ext.micrometer.jersey)
+    runtimeOnly(libs.edc.ext.configuration.filesystem)
+
+    runtimeOnly(libs.rs.core)
+    runtimeOnly(libs.rs.core.credential.service)
+    runtimeOnly(libs.rs.ext.api)
+
+    runtimeOnly(libs.ih.ext.api)
+    runtimeOnly(libs.ih.ext.api.selfdescription)
+    runtimeOnly(libs.ih.core.verifier)
+    runtimeOnly(libs.ih.ext.credentials.jwt)
+    runtimeOnly(libs.ih.ext.verifier.jwt)
 
     // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
     val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
     if (useFsVault) {
-        implementation(edc.vault.filesystem)
+        runtimeOnly(libs.edc.ext.vault.filesystem)
     } else {
-        implementation(edc.vault.azure)
+        runtimeOnly(libs.edc.azure.ext.vault)
     }
 }
 
@@ -54,5 +54,7 @@ application {
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     mergeServiceFiles()
-    archiveFileName.set("app.jar")
+    archiveFileName.set("registrationservice.jar")
+    dependsOn(distTar, distZip)
+    mustRunAfter(distTar, distZip)
 }

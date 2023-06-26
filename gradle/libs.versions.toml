@@ -1,0 +1,95 @@
+[metadata]
+format.version = "1.1"
+
+[versions]
+edc = "0.1.1"
+identityHub = "0.1.1"
+federatedCatalog = "0.1.1"
+registrationService = "0.1.1"
+
+assertj = "3.24.2"
+awaitility = "4.2.0"
+okhttp = "4.11.0"
+restAssured = "5.3.0"
+apacheCommons = "3.12.0"
+gatling = "3.7.5"
+
+[libraries]
+edc-spi-policy-engine = { module = "org.eclipse.edc:policy-engine-spi", version.ref = "edc" }
+edc-spi-contract = { module = "org.eclipse.edc:contract-spi", version.ref = "edc" }
+edc-spi-jsonld = { module = "org.eclipse.edc:json-ld-spi", version.ref = "edc" }
+edc-core-util = { module = "org.eclipse.edc:util", version.ref = "edc" }
+edc-core-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
+edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
+edc-core-controlplane = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
+edc-core-dpf-selector = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
+edc-core-policy-engine = { module = "org.eclipse.edc:policy-engine", version.ref = "edc" }
+edc-core-micrometer = { module = "org.eclipse.edc:micrometer-core", version.ref = "edc" }
+edc-core-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
+edc-core-jersey = { module = "org.eclipse.edc:jersey-core", version.ref = "edc" }
+edc-protocol-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
+#
+edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
+edc-ext-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
+edc-ext-identity-did-core = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
+edc-ext-identity-did-service = { module = "org.eclipse.edc:identity-did-service", version.ref = "edc" }
+edc-ext-identity-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
+edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
+edc-ext-micrometer-jetty = { module = "org.eclipse.edc:jetty-micrometer", version.ref = "edc" }
+edc-ext-micrometer-jersey = { module = "org.eclipse.edc:jersey-micrometer", version.ref = "edc" }
+edc-ext-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
+edc-ext-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
+edc-ext-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
+edc-ext-configuration-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
+edc-ext-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", version.ref = "edc" }
+edc-ext-dpf-api = { module = "org.eclipse.edc:data-plane-api", version.ref = "edc" }
+edc-ext-dpf-client = { module = "org.eclipse.edc:data-plane-client", version.ref = "edc" }
+edc-ext-dpf-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
+edc-ext-dpf-core = { module = "org.eclipse.edc:data-plane-framework", version.ref = "edc" }
+edc-ext-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
+edc-ext-dpf-selector-api = { module = "org.eclipse.edc:data-plane-selector-api", version.ref = "edc" }
+edc-ext-transfer-dpf = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
+#
+ih-spi-core = { module = "org.eclipse.edc:identity-hub-spi", version.ref = "identityHub" }
+ih-core = { module = "org.eclipse.edc:identity-hub", version.ref = "identityHub" }
+ih-core-client = { module = "org.eclipse.edc:identity-hub-client", version.ref = "identityHub" }
+ih-core-verifier = { module = "org.eclipse.edc:identity-hub-credentials-verifier", version.ref = "identityHub" }
+ih-ext-api = { module = "org.eclipse.edc:identity-hub-api", version.ref = "identityHub" }
+ih-ext-verifier-jwt = { module = "org.eclipse.edc:identity-hub-verifier-jwt", version.ref = "identityHub" }
+ih-ext-credentials-jwt = { module = "org.eclipse.edc:identity-hub-credentials-jwt", version.ref = "identityHub" }
+ih-ext-api-selfdescription = { module = "org.eclipse.edc:self-description-api", version.ref = "identityHub" }
+#
+fc-spi-core = { module = "org.eclipse.edc:federated-catalog-spi", version.ref = "federatedCatalog" }
+fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "federatedCatalog" }
+fc-ext-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "federatedCatalog" }
+#
+rs-spi-core = { module = "org.eclipse.edc:registration-service-spi", version.ref = "registrationService" }
+rs-core = { module = "org.eclipse.edc:registration-service", version.ref = "registrationService" }
+rs-core-credential-service = { module = "org.eclipse.edc:registration-service-credential-service", version.ref = "registrationService" }
+rs-core-client = { module = "org.eclipse.edc:registration-service-client", version.ref = "registrationService" }
+rs-ext-api = { module = "org.eclipse.edc:registration-service-api", version.ref = "registrationService" }
+
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
+awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
+
+edc-azure-ext-vault = { module = "org.eclipse.edc:vault-azure", version.ref = "edc" }
+edc-azure-core-blob = { module = "org.eclipse.edc:azure-blob-core", version.ref = "edc" }
+edc-azure-ext-dpf-storage = { module = "org.eclipse.edc:data-plane-azure-storage", version.ref = "edc" }
+edc-azure-ext-provision-blob = { module = "org.eclipse.edc:provision-blob", version.ref = "edc" }
+
+apache-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommons" }
+gatling-highcharts = { module = "io.gatling.highcharts:gatling-charts-highcharts", version.ref = "gatling" }
+azure-identity = { group = "com.azure", name = "azure-identity", version = "1.9.0" }
+azure-keyvault = { group = "com.azure", name = "azure-security-keyvault-secrets", version = "4.6.2" }
+azure-storageblob = { group = "com.azure", name = "azure-storage-blob", version = "12.22.2" }
+
+[bundles]
+connector = ["edc-core-boot", "edc-core-connector", "edc-core-jersey", "edc-ext-api-observability"]
+identity = ["edc-ext-identity-did-core", "edc-ext-identity-did-service", "edc-ext-identity-did-web"]
+transfer-dpf = ["edc-ext-transfer-dpf", "edc-ext-dpf-client", "edc-ext-dpf-selector-client"]
+dpf = ["edc-ext-dpf-api", "edc-ext-dpf-http", "edc-ext-dpf-core", "edc-azure-ext-dpf-storage"]
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

@@ -28,7 +28,7 @@ for row in $(echo "${participant_json}" | jq -r '.[] | @base64'); do
 
   echo "Register participant with dataspace"
   java -jar registration-service-cli.jar \
-    -u "http://localhost:8184/authority" \
+    -u "http://localhost:8184/api/authority" \
     -d "did:web:${dsdid}" \
     -c "did:web:${p1did}" \
     -k "terraform/generated/$name/participant.pem" \

@@ -14,7 +14,6 @@
 
 package org.eclipse.edc.mvd;
 
-import org.eclipse.edc.connector.contract.spi.offer.ContractDefinitionService;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.policy.engine.spi.RuleBindingRegistry;
 import org.eclipse.edc.policy.model.Permission;
@@ -24,24 +23,21 @@ import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
 
-import static org.eclipse.edc.policy.engine.spi.PolicyEngine.ALL_SCOPES;
+import static org.eclipse.edc.connector.contract.spi.offer.ContractDefinitionResolver.CATALOGING_SCOPE;
+import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
+import static org.eclipse.edc.spi.CoreConstants.EDC_NAMESPACE;
 
 /**
  * Extension to initialize the policies.
  */
 public class SeedPoliciesExtension implements ServiceExtension {
 
-    private static final String ABS_SPATIAL_POSITION = "ids:absoluteSpatialPosition";
+    private static final String REGION_LOCATION = "regionLocation";
+    private static final String REGION_LOCATION_EVALUATION_KEY = EDC_NAMESPACE + REGION_LOCATION;
 
-    /**
-     * Registry that manages rule bindings to policy scopes.
-     */
     @Inject
     private RuleBindingRegistry ruleBindingRegistry;
 
-    /**
-     * Policy engine.
-     */
     @Inject
     private PolicyEngine policyEngine;
 
@@ -63,10 +59,10 @@ public class SeedPoliciesExtension implements ServiceExtension {
      */
     @Override
     public void initialize(ServiceExtensionContext context) {
-        ruleBindingRegistry.bind("USE", ALL_SCOPES);
-        ruleBindingRegistry.bind(ABS_SPATIAL_POSITION, ContractDefinitionService.CATALOGING_SCOPE);
-
-        policyEngine.registerFunction(ALL_SCOPES, Permission.class, ABS_SPATIAL_POSITION, new RegionConstraintFunction(monitor));
+        ruleBindingRegistry.bind("USE", CATALOGING_SCOPE);
+        ruleBindingRegistry.bind(ODRL_SCHEMA + "use", CATALOGING_SCOPE);
+        ruleBindingRegistry.bind(REGION_LOCATION_EVALUATION_KEY, CATALOGING_SCOPE);
+        policyEngine.registerFunction(CATALOGING_SCOPE, Permission.class, REGION_LOCATION_EVALUATION_KEY, new RegionConstraintFunction());
     }
 
 }
