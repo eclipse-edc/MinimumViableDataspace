@@ -112,7 +112,8 @@ openssl req -new -x509 -key private-key.pem -out cert.pem -days 360
 Generated keys are imported to keystores e.g. `system-tests/resources/vault/company1/company1-keystore.jks`. Each
 keystore has password `test123`.
 
-> [KeyStore Explorer](https://keystore-explorer.org/) can be used to manage keystores from UI.
+> [KeyStore Explorer](https://keystore-explorer.org/) should be used to manage keystores (from UI).
+> Using `openssl` combined with `keytool` to obtain a `JKS` keystore will result in a keystore the EDC cannot read (incompatible inclusion of key parameters).
 
 `MVD` local instances use a file-system based vault and its keys are managed using a java properties file
 e.g.`system-tests/resources/vault/company[1,2,3]/company[1,2,3]-vault.properties`.
