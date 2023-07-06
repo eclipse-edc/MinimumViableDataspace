@@ -82,7 +82,7 @@ edc-azure-ext-provision-blob = { module = "org.eclipse.edc:provision-blob", vers
 apache-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommons" }
 gatling-highcharts = { module = "io.gatling.highcharts:gatling-charts-highcharts", version.ref = "gatling" }
 azure-identity = { group = "com.azure", name = "azure-identity", version = "1.9.0" }
-azure-keyvault = { group = "com.azure", name = "azure-security-keyvault-secrets", version = "4.6.2" }
+azure-keyvault = { group = "com.azure", name = "azure-security-keyvault-secrets", version = "4.6.3" }
 azure-storageblob = { group = "com.azure", name = "azure-storage-blob", version = "12.22.2" }
 
 [bundles]
