@@ -2,10 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.1.2"
-identityHub = "0.1.3"
-federatedCatalog = "0.1.2"
-registrationService = "0.1.3"
+edc = "0.1.3"
 
 assertj = "3.24.2"
 awaitility = "4.2.0"
@@ -50,24 +47,24 @@ edc-ext-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-cl
 edc-ext-dpf-selector-api = { module = "org.eclipse.edc:data-plane-selector-api", version.ref = "edc" }
 edc-ext-transfer-dpf = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
 #
-ih-spi-core = { module = "org.eclipse.edc:identity-hub-spi", version.ref = "identityHub" }
-ih-core = { module = "org.eclipse.edc:identity-hub", version.ref = "identityHub" }
-ih-core-client = { module = "org.eclipse.edc:identity-hub-client", version.ref = "identityHub" }
-ih-core-verifier = { module = "org.eclipse.edc:identity-hub-credentials-verifier", version.ref = "identityHub" }
-ih-ext-api = { module = "org.eclipse.edc:identity-hub-api", version.ref = "identityHub" }
-ih-ext-verifier-jwt = { module = "org.eclipse.edc:identity-hub-verifier-jwt", version.ref = "identityHub" }
-ih-ext-credentials-jwt = { module = "org.eclipse.edc:identity-hub-credentials-jwt", version.ref = "identityHub" }
-ih-ext-api-selfdescription = { module = "org.eclipse.edc:self-description-api", version.ref = "identityHub" }
+ih-spi-core = { module = "org.eclipse.edc:identity-hub-spi", version.ref = "edc" }
+ih-core = { module = "org.eclipse.edc:identity-hub", version.ref = "edc" }
+ih-core-client = { module = "org.eclipse.edc:identity-hub-client", version.ref = "edc" }
+ih-core-verifier = { module = "org.eclipse.edc:identity-hub-credentials-verifier", version.ref = "edc" }
+ih-ext-api = { module = "org.eclipse.edc:identity-hub-api", version.ref = "edc" }
+ih-ext-verifier-jwt = { module = "org.eclipse.edc:identity-hub-verifier-jwt", version.ref = "edc" }
+ih-ext-credentials-jwt = { module = "org.eclipse.edc:identity-hub-credentials-jwt", version.ref = "edc" }
+ih-ext-api-selfdescription = { module = "org.eclipse.edc:self-description-api", version.ref = "edc" }
 #
-fc-spi-core = { module = "org.eclipse.edc:federated-catalog-spi", version.ref = "federatedCatalog" }
-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "federatedCatalog" }
-fc-ext-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "federatedCatalog" }
+fc-spi-core = { module = "org.eclipse.edc:federated-catalog-spi", version.ref = "edc" }
+fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
+fc-ext-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
 #
-rs-spi-core = { module = "org.eclipse.edc:registration-service-spi", version.ref = "registrationService" }
-rs-core = { module = "org.eclipse.edc:registration-service", version.ref = "registrationService" }
-rs-core-credential-service = { module = "org.eclipse.edc:registration-service-credential-service", version.ref = "registrationService" }
-rs-core-client = { module = "org.eclipse.edc:registration-service-client", version.ref = "registrationService" }
-rs-ext-api = { module = "org.eclipse.edc:registration-service-api", version.ref = "registrationService" }
+rs-spi-core = { module = "org.eclipse.edc:registration-service-spi", version.ref = "edc" }
+rs-core = { module = "org.eclipse.edc:registration-service", version.ref = "edc" }
+rs-core-credential-service = { module = "org.eclipse.edc:registration-service-credential-service", version.ref = "edc" }
+rs-core-client = { module = "org.eclipse.edc:registration-service-client", version.ref = "edc" }
+rs-ext-api = { module = "org.eclipse.edc:registration-service-api", version.ref = "edc" }
 
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }

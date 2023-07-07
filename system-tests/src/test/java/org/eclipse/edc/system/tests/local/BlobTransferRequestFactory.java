@@ -25,6 +25,7 @@ import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.CONTEXT;
 import static org.eclipse.edc.jsonld.spi.JsonLdKeywords.TYPE;
 import static org.eclipse.edc.spi.CoreConstants.EDC_NAMESPACE;
 import static org.eclipse.edc.spi.CoreConstants.EDC_PREFIX;
+import static org.eclipse.edc.system.tests.local.TransferLocalSimulation.PROVIDER_ID;
 
 
 public class BlobTransferRequestFactory implements TransferRequestFactory {
@@ -52,7 +53,8 @@ public class BlobTransferRequestFactory implements TransferRequestFactory {
                 "protocol", "dataspace-protocol-http",
                 "assetId", transferInitiationData.getAssetId(),
                 "contractId", transferInitiationData.getContractAgreementId(),
-                "connectorAddress", transferInitiationData.getProviderDspUrl()
+                "connectorAddress", transferInitiationData.getProviderDspUrl(),
+                "connectorId", PROVIDER_ID
         );
 
         return new TypeManager().writeValueAsString(request);

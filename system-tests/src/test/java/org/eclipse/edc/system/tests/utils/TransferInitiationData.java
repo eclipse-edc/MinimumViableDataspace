@@ -18,13 +18,11 @@ public class TransferInitiationData {
     private final String providerDspUrl;
     private final String assetId;
     private final String contractAgreementId;
-    private final String connectorAddress;
 
-    TransferInitiationData(String providerDspUrl, String assetId, String contractAgreementId, String connectorAddress) {
+    TransferInitiationData(String providerDspUrl, String assetId, String contractAgreementId) {
         this.providerDspUrl = providerDspUrl;
         this.assetId = assetId;
         this.contractAgreementId = contractAgreementId;
-        this.connectorAddress = connectorAddress;
     }
 
     public String getProviderDspUrl() {
@@ -37,9 +35,5 @@ public class TransferInitiationData {
 
     public String getContractAgreementId() {
         return contractAgreementId;
-    }
-
-    public String getConnectorAddress() {
-        return connectorAddress;
     }
 }
