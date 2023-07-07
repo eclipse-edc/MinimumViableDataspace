@@ -58,7 +58,7 @@ public abstract class TransferSimulationUtils {
     public static final String TRANSFER_SUCCESSFUL = "Transfer successful";
 
     // Related to Postman seed data
-    public static final ContractId CONTRACT_DEFINITION_ID = ContractId.parse("def-test-document_company1:test-document_company1:80b11cb8-dafa-4152-be41-e51461dffa7a");
+    public static final ContractId CONTRACT_DEFINITION_ID = ContractId.create("def-test-document_company1", "test-document_company1");
 
     private TransferSimulationUtils() {
     }
@@ -134,8 +134,7 @@ public abstract class TransferSimulationUtils {
                 .body(StringBody(session -> requestFactory.apply(new TransferInitiationData(
                         providerDspUrl,
                         CONTRACT_DEFINITION_ID.assetIdPart(),
-                        session.getString(CONTRACT_AGREEMENT_ID),
-                        providerDspUrl))))
+                        session.getString(CONTRACT_AGREEMENT_ID)))))
                 .asJson()
                 .check(status().is(200))
                 .check(jsonPath("$.@id")
