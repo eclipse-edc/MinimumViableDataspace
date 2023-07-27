@@ -269,7 +269,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"id\": \"dpf-instance_{{participant_id}}\",\r\n    \"url\": \"http://{{participant_id}}:8383/api/control\",\r\n    \"allowedSourceTypes\": [\"AzureStorage\"],\r\n    \"allowedDestTypes\": [\"AzureStorage\"]\r\n}",
+              "raw": "{\r\n    \"@context\": {\"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"}, \"id\": \"dpf-instance_{{participant_id}}\",\r\n    \"url\": \"http://{{participant_id}}:8383/api/control\",\r\n    \"allowedSourceTypes\": [\"AzureStorage\"],\r\n    \"allowedDestTypes\": [\"AzureStorage\"]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -277,7 +277,7 @@
               }
             },
             "url": {
-              "raw": "{{data_management_url}}/instances",
+              "raw": "{{data_management_url}}/v2/dataplanes",
               "host": [
                 "{{data_management_url}}"
               ],
