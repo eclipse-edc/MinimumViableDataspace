@@ -34,6 +34,7 @@ dependencies {
 
     testImplementation(libs.edc.azure.core.blob)
     testImplementation(libs.edc.core.util)
+    testImplementation(libs.edc.core.transform.core)
     testImplementation(libs.edc.azure.ext.dpf.storage)
     testImplementation(libs.restAssured)
     testImplementation(libs.awaitility)
