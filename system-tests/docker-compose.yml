@@ -205,7 +205,7 @@ services:
   company1-datadashboard:
     container_name: company1-datadashboard
     build:
-      context: ${MVD_UI_PATH}
+      context: /home/michael/IdeaProjects/DataDashboard
     volumes:
       - ./resources/appconfig/company1:/usr/share/nginx/html/assets/config
     depends_on:
@@ -219,7 +219,7 @@ services:
   company2-datadashboard:
     container_name: company2-datadashboard
     build:
-      context: ${MVD_UI_PATH}
+      context: /home/michael/IdeaProjects/DataDashboard
     volumes:
       - ./resources/appconfig/company2:/usr/share/nginx/html/assets/config
     depends_on:
@@ -233,7 +233,7 @@ services:
   company3-datadashboard:
     container_name: company3-datadashboard
     build:
-      context: ${MVD_UI_PATH}
+      context: /home/michael/IdeaProjects/DataDashboard
     volumes:
       - ./resources/appconfig/company3:/usr/share/nginx/html/assets/config
     depends_on:
