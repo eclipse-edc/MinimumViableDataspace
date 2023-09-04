@@ -8,7 +8,7 @@ assertj = "3.24.2"
 awaitility = "4.2.0"
 okhttp = "4.11.0"
 restAssured = "5.3.1"
-apacheCommons = "3.12.0"
+apacheCommons = "3.13.0"
 gatling = "3.9.5"
 
 [libraries]
