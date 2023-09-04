@@ -3,22 +3,24 @@ terraform {
   required_providers {
     azuread = {
       source  = "hashicorp/azuread"
-      version = ">=2.26.1"
+      version = ">=2.41.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = ">=3.16.0"
+      version = ">=3.71.0"
     }
     github = {
       source  = "integrations/github"
-      version = ">=4.28.0"
+      version = ">=5.34.0"
     }
   }
 }
+
 provider "azurerm" {
   features {
   }
 }
+
 provider "azuread" {
   tenant_id = var.tenant_id
 }

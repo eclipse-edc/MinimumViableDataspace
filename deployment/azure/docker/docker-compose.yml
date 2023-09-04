@@ -1,12 +1,11 @@
-version: "3"
-name: "mvd-with-azure"
+version: "3.9"
 services:
 
   # EDC Connector to simulate a dataspace participant acting as a data provider which is located in EU.
   company1:
     container_name: company1
     build:
-      context: ../../launchers/connector
+      context: ../../../launchers/connector
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
     env_file:
@@ -25,7 +24,7 @@ services:
   company2:
     container_name: company2
     build:
-      context: ../../launchers/connector
+      context: ../../../launchers/connector
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006"
     env_file:
@@ -44,7 +43,7 @@ services:
   company3:
     container_name: company3
     build:
-      context: ../../launchers/connector
+      context: ../../../launchers/connector
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5007"
     env_file:
@@ -59,12 +58,11 @@ services:
     volumes:
       - ../resources/self-description/company3:/resources
 
-
   # Dataspace registration service authority.
   registration-service:
     container_name: registration-service
     build:
-      #e.g. /home/user/RegistrationService/launcher
+      # e.g. /home/user/RegistrationService/launcher
       context: ../../../launchers/registrationservice
       args:
         JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
@@ -82,7 +80,7 @@ services:
   company1-datadashboard:
     container_name: company1-datadashboard
     build:
-      context: ${MVD_UI_PATH}
+      context: ../../system-tests/DataDashboard
     volumes:
       - ../resources/appconfig/company1:/usr/share/nginx/html/assets/config
     depends_on:
@@ -97,7 +95,7 @@ services:
   company2-datadashboard:
     container_name: company2-datadashboard
     build:
-      context: ${MVD_UI_PATH}
+      context: ../../system-tests/DataDashboard
     volumes:
       - ../resources/appconfig/company2:/usr/share/nginx/html/assets/config
     depends_on:
@@ -111,7 +109,7 @@ services:
   company3-datadashboard:
     container_name: company3-datadashboard
     build:
-      context: ${MVD_UI_PATH}
+      context: ../../system-tests/DataDashboard
     volumes:
       - ../resources/appconfig/company3:/usr/share/nginx/html/assets/config
     depends_on:
