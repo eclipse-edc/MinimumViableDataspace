@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.2.0"
+edc = "0.2.1"
 
 assertj = "3.24.2"
 awaitility = "4.2.0"
