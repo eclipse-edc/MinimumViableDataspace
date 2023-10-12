@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "company.fullname" . }}
+  labels:
+    {{- include "company.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: mgmt
+      nodePort: {{ .Values.ports.mgmt.nodePort }}
+      port: {{ .Values.ports.mgmt.servicePort }}
+      targetPort: mgmt
+    - name: http
+      port: {{ .Values.ports.http.servicePort }}
+      targetPort: http
+    - name: ids
+      port: {{ .Values.ports.ids.servicePort }}
+      targetPort: ids
+    - name: identity
+      port: {{ .Values.ports.identity.servicePort }}
+      targetPort: identity
+    - name: control
+      port: 8383
+      targetPort: control
+  selector:
+    {{- include "company.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "registration-service.fullname" . }}-configmap
+  labels:
+    {{- include "registration-service.labels" . | nindent 4 }}
+data:
+  JWT_AUDIENCE: "http://registration-service:8184/api/authority"
+  EDC_IAM_DID_WEB_USE_HTTPS: "false"
+  EDC_CONNECTOR_NAME: "registration-service"
+  EDC_IDENTITY_DID_URL: "did:web:did-server:registration-service"
+  EDC_SELF_DESCRIPTION_DOCUMENT_PATH: "/resources/self-description/registration-service/sdd.json"
+  EDC_VAULT: "/resources/vault/registration-service/registration-service-vault.properties"
+  EDC_KEYSTORE: "/resources/vault/registration-service/registration-service-keystore.jks"
+  EDC_KEYSTORE_PASSWORD: "test123"
+  EDC_ERROR_RESPONSE_VERBOSE: "true"

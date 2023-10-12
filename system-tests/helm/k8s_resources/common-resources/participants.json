@@ -1,0 +1,22 @@
+{
+  "include": [
+    {
+      "participant": "company1",
+      "region": "eu",
+      "country": "FR",
+      "data_dashboard_theme": "theme-1"
+    },
+    {
+      "participant": "company2",
+      "region": "eu",
+      "country": "DE",
+      "data_dashboard_theme": "theme-2"
+    },
+    {
+      "participant": "company3",
+      "region": "us",
+      "country": "US",
+      "data_dashboard_theme": "theme-3"
+    }
+  ]
+}

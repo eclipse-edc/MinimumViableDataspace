@@ -1,0 +1,8 @@
+{
+  "apiKey": "ApiKeyDefaultValue",
+  "dataManagementApiUrl": "http://192.168.49.2:30235/api/v1/data",
+  "catalogUrl": "http://192.168.49.2:30235/api/v1/data",
+  "storageAccount": "company3assets",
+  "storageExplorerLinkTemplate": "storageexplorer://v=1",
+  "theme": "theme-3"
+}
