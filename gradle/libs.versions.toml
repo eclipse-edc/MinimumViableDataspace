@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.2.1"
+edc = "0.3.1"
 
 assertj = "3.24.2"
 awaitility = "4.2.0"
@@ -19,6 +19,8 @@ edc-core-util = { module = "org.eclipse.edc:util", version.ref = "edc" }
 edc-core-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
 edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 edc-core-controlplane = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
+edc-core-controlplane-api = { module = "org.eclipse.edc:control-plane-api", version.ref = "edc" }
+edc-core-controlplane-api-client = { module = "org.eclipse.edc:control-plane-api-client", version.ref = "edc" }
 edc-core-dpf-selector = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
 edc-core-policy-engine = { module = "org.eclipse.edc:policy-engine", version.ref = "edc" }
 edc-core-micrometer = { module = "org.eclipse.edc:micrometer-core", version.ref = "edc" }
@@ -43,7 +45,7 @@ edc-ext-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", versio
 edc-ext-dpf-api = { module = "org.eclipse.edc:data-plane-api", version.ref = "edc" }
 edc-ext-dpf-client = { module = "org.eclipse.edc:data-plane-client", version.ref = "edc" }
 edc-ext-dpf-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
-edc-ext-dpf-core = { module = "org.eclipse.edc:data-plane-framework", version.ref = "edc" }
+edc-ext-dpf-core = { module = "org.eclipse.edc:data-plane-core", version.ref = "edc" }
 edc-ext-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
 edc-ext-dpf-selector-api = { module = "org.eclipse.edc:data-plane-selector-api", version.ref = "edc" }
 edc-ext-transfer-dpf = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }

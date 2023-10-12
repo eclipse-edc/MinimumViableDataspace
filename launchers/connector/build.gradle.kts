@@ -27,6 +27,8 @@ dependencies {
 
     runtimeOnly(libs.bundles.connector)
     runtimeOnly(libs.edc.core.controlplane)
+    runtimeOnly(libs.edc.core.controlplane.api)
+    runtimeOnly(libs.edc.core.controlplane.api.client)
     runtimeOnly(libs.edc.ext.api.management)
     runtimeOnly(libs.edc.ext.api.management.config)
     runtimeOnly(libs.edc.ext.configuration.filesystem)

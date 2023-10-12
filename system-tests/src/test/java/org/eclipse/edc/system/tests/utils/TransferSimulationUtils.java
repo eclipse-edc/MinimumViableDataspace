@@ -17,7 +17,7 @@ package org.eclipse.edc.system.tests.utils;
 import io.gatling.javaapi.core.ChainBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
-import org.eclipse.edc.connector.contract.spi.ContractId;
+import org.eclipse.edc.connector.contract.spi.ContractOfferId;
 import org.eclipse.edc.connector.contract.spi.types.negotiation.ContractNegotiationStates;
 import org.eclipse.edc.connector.transfer.spi.types.TransferProcessStates;
 import org.eclipse.edc.spi.types.TypeManager;
@@ -58,7 +58,7 @@ public abstract class TransferSimulationUtils {
     public static final String TRANSFER_SUCCESSFUL = "Transfer successful";
 
     // Related to Postman seed data
-    public static final ContractId CONTRACT_DEFINITION_ID = ContractId.create("def-test-document_company1", "test-document_company1");
+    public static final ContractOfferId CONTRACT_OFFER_ID = ContractOfferId.create("def-test-document_company1", "test-document_company1");
 
     private TransferSimulationUtils() {
     }
@@ -87,9 +87,9 @@ public abstract class TransferSimulationUtils {
         // TODO: this policy must be retrieve from a call to the catalog
         var policy = Map.of(
                 "@context", Map.of("odrl", "http://www.w3.org/ns/odrl/2/"),
-                "@id", CONTRACT_DEFINITION_ID.toString(),
+                "@id", CONTRACT_OFFER_ID.toString(),
                 "@type", "odrl:Set",
-                "odrl:target", CONTRACT_DEFINITION_ID.assetIdPart()
+                "odrl:target", CONTRACT_OFFER_ID.assetIdPart()
         );
         var request = Map.of(
                 TYPE, EDC_NAMESPACE + "NegotiationInitiateRequestDto",
@@ -99,8 +99,8 @@ public abstract class TransferSimulationUtils {
                 EDC_NAMESPACE + "connectorAddress", providerDspAddress,
                 EDC_NAMESPACE + "protocol", "dataspace-protocol-http",
                 EDC_NAMESPACE + "offer", Map.of(
-                        EDC_NAMESPACE + "offerId", CONTRACT_DEFINITION_ID.toString(),
-                        EDC_NAMESPACE + "assetId", CONTRACT_DEFINITION_ID.assetIdPart(),
+                        EDC_NAMESPACE + "offerId", CONTRACT_OFFER_ID.toString(),
+                        EDC_NAMESPACE + "assetId", CONTRACT_OFFER_ID.assetIdPart(),
                         EDC_NAMESPACE + "policy", policy
                 ));
 
@@ -133,7 +133,7 @@ public abstract class TransferSimulationUtils {
                 .post("/v2/transferprocesses")
                 .body(StringBody(session -> requestFactory.apply(new TransferInitiationData(
                         providerDspUrl,
-                        CONTRACT_DEFINITION_ID.assetIdPart(),
+                        CONTRACT_OFFER_ID.assetIdPart(),
                         session.getString(CONTRACT_AGREEMENT_ID)))))
                 .asJson()
                 .check(status().is(200))
