@@ -113,17 +113,19 @@ class IdentityHubIntegrationTest {
 
     private ThrowingConsumer<CredentialEnvelope> vcRequirements(String name, String value) {
         return envelope -> {
-            var vcResult = envelope.toVerifiableCredential(TYPE_MANAGER.getMapper());
+            var vcResult = envelope.toVerifiableCredentials(TYPE_MANAGER.getMapper());
             assertThat(vcResult.succeeded()).isTrue();
-            var credential = vcResult.getContent().getItem();
-            assertThat(credential.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
-            assertThat(credential.getCredentialSubject().getId()).as("Subject is a Web DID").startsWith("did:web:");
-            assertThat(credential.getCredentialSubject().getClaims())
-                    .extractingByKey(name)
-                    .satisfies(o -> {
-                        assertThat(o).isInstanceOf(String.class);
-                        assertThat((String) o).isEqualTo(value);
-                    });
+            assertThat(vcResult.getContent()).allSatisfy(verifiable -> {
+                var credential = verifiable.getItem();
+                assertThat(credential.getIssuer()).as("Issuer is a Web DID").startsWith("did:web:");
+                assertThat(credential.getCredentialSubject().getId()).as("Subject is a Web DID").startsWith("did:web:");
+                assertThat(credential.getCredentialSubject().getClaims())
+                        .extractingByKey(name)
+                        .satisfies(o -> {
+                            assertThat(o).isInstanceOf(String.class);
+                            assertThat((String) o).isEqualTo(value);
+                        });
+            });
         };
     }
 
