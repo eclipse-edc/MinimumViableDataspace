@@ -24,6 +24,6 @@ services:
   edc-connector-dashboard:
     build:
       #e.g. /home/user/RegistrationService/launcher
-      context: /home/farhin/Projects/FISST/mvd-dashboard/edc-dashboard
+      context: path/to/mvd-datadashboard
     image: edc-connector-dashboard:v.01
 
