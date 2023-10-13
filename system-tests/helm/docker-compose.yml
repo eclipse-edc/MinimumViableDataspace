@@ -1,0 +1,29 @@
+services:
+
+  # Dataspace registration service authority.
+  registration-service:
+    build:
+      #e.g. /home/user/RegistrationService/launcher
+      context: ../../launchers/registrationservice
+      args:
+        JVM_ARGS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008"
+    image: registration-service:v.01
+
+  edc-connector:
+      build:
+        context: ../../launchers/connector
+      image: edc-connector:v.01
+
+  cli-tools:
+    build:
+      context: ../resources/cli-tools
+    image: cli-tools:v.01
+
+
+    # connector-dashboard.
+  edc-connector-dashboard:
+    build:
+      #e.g. /home/user/RegistrationService/launcher
+      context: /home/farhin/Projects/FISST/mvd-dashboard/edc-dashboard
+    image: edc-connector-dashboard:v.01
+
