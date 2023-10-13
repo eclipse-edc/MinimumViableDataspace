@@ -6,9 +6,14 @@ In addition, we have used [Helm](https://helm.sh/docs/) to manage all the Kubern
 
 
 ## Deploying MVD
-For the deployment purpose we need a kubernetes cluster. You can use [minikube](https://minikube.sigs.k8s.io/docs/) or [kind](https://kind.sigs.k8s.io/) 
+For the deployment purpose we need,
+* a kubernetes cluster, and
+* helm installed 
+
+You can use [minikube](https://minikube.sigs.k8s.io/docs/) or [kind](https://kind.sigs.k8s.io/) 
 to set up a local kubernetes cluster for this testing purpose. Follow the [documentation](https://minikube.sigs.k8s.io/docs/start/) 
 to install minikube in your machine. Once everything is installed, you can start the cluster with ```minikube start``` command.
+Also, we will be using Helm, which can be installed following the [instructions](https://helm.sh/docs/intro/install/) provide in their official website.
 
 
 ## Mounting Resources
