@@ -97,7 +97,7 @@ All this can also be done using Azure CLI with the following lines from the root
 ```bash
 conn_str="DefaultEndpointsProtocol=http;AccountName=company1assets;AccountKey=key1;BlobEndpoint=http://127.0.0.1:10000/company1assets;"
 az storage container create --name src-container --connection-string $conn_str
-az storage blob upload -f ./deployment/terraform/participant/sample-data/text-document.txt --container-name src-container --name text-document.txt --connection-string $conn_str
+az storage blob upload -f ./deployment/azure/terraform/modules/participant/sample-data/text-document.txt --container-name src-container --name text-document.txt --connection-string $conn_str
 ```
 
 This should result in a similar output as follows. Via the Microsoft Azure Storage Explorer it would be possible to
