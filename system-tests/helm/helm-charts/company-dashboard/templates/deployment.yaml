@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "company-dashboard.fullname" . }}
+  labels:
+    {{- include "company-dashboard.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "company-dashboard.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "company-dashboard.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "company-dashboard.fullname" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ports.http.containerPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: sdd
+              mountPath: /usr/share/nginx/html/assets/config
+      volumes:
+        - name: sdd
+          hostPath:
+            path: {{ .Values.volumes.hostPath }}{{ .Values.companyName }}
+
