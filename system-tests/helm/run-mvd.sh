@@ -22,3 +22,12 @@ helm install newman ./helm-charts/newman
 
 echo "installing cli-tools..."
 helm install cli-tools ./helm-charts/cli-tools
+
+echo "installing company1 data dashboard..."
+helm install company1-datadashboard --set nameOverride=company1-datadashboard,companyName=company1,ports.http.nodePort=31111 ./helm-charts/company-dashboard
+
+echo "installing company2 data dashboard..."
+helm install company2-datadashboard --set nameOverride=company2-datadashboard,companyName=company2,ports.http.nodePort=31112 ./helm-charts/company-dashboard
+
+echo "installing company3 data dashboard..."
+helm install company3-datadashboard --set nameOverride=company3-datadashboard,companyName=company3,ports.http.nodePort=31113 ./helm-charts/company-dashboard
