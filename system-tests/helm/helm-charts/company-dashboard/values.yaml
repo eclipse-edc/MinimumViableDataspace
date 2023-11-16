@@ -38,7 +38,7 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: NodePort
+  type: ClusterIP
 ports:
   http:
     nodePort: 31111
@@ -49,9 +49,11 @@ volumes:
   hostPath: /var/lib/minikube/mvd-resources/resources/appconfig/
 
 ingress:
-  enabled: false
+  enabled: true
   className: ""
-  annotations: {}
+  annotations: {
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  }
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
