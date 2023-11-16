@@ -17,6 +17,7 @@ fullnameOverride: ""
 
 service:
   type: NodePort
+  nodePort: 31000
   port: 10000
 
 
