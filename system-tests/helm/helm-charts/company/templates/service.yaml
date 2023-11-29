@@ -8,7 +8,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - name: mgmt
-{{/*      nodePort: {{ .Values.ports.mgmt.nodePort }}*/}}
+      nodePort: {{ .Values.ports.mgmt.nodePort }}
       port: {{ .Values.ports.mgmt.servicePort }}
       targetPort: mgmt
     - name: http
