@@ -66,6 +66,35 @@ We can test the following endpoints,
 [http://<cluster-ip>:30092/api/management/federatedcatalog]()
 
 
+## Commands for Deploying MVD with KinD
+Start the kind cluster with the config file [kind-cluster.yaml](kind-cluster.yaml). 
+```shell
+kind create cluster --config=kind-cluster.yaml
+```
+
+Create the docker images in the host machine, ```docker compose -f docker-compose.yml build```
+
+Load the images into cluster node, 
+```shell
+kind load docker-image edc-connector-dashboard:v.01 edc-connector:v.01 registration-service:v.01 cli-tools:v.01
+```
+
+Execute ```./run-mvd.sh``` to run the MVD.
+
+All the company-dashboards can be accessed from the following APIs,
+
+*   company1-dashboard: [http:/localhost:31111/]()
+*   company2-dashboard: [http:/localhost:31112/]()
+*   company3-dashboard: [http:/localhost:31113/]()
+
+The company services are exposed at port,
+*   company1: `30091`
+*   company2: `30092`
+*   company3: `30093`
+
+The Azurite blob storage endpoint is exposed at port `31000`.
+
+
 
 
 
