@@ -188,7 +188,7 @@ the script. Navigate back to `<project-root>/deployment/azure` and run
 
 The script will perform these essential steps:
 
-- generate asymmetric keypairs for every dataspace participant and the registration service
+- generate asymmetric key pairs for every dataspace participant and the registration service
 - create a Terraform backend configuration
 - create a Terraform variable file (`*.tfvars)
 - initialize and run Terraform (this creates the infra)

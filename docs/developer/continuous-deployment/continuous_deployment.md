@@ -6,7 +6,7 @@ This document describes how to set up your environment to deploy MVD instances t
 
 Continuous integration and continuous deployment of the MVD to an Azure subscription is performed by [GitHub Actions](https://github.com/features/actions) workflows.
 
-The Azure subscription and and the GitHub repository need to be set up with the required configuration and credentials before the MVD can be deployed.
+The Azure subscription and the GitHub repository need to be set up with the required configuration and credentials before the MVD can be deployed.
 
 The following steps will be performed:
 
@@ -32,7 +32,7 @@ You will need to provide the following:
 This is the easiest way to set up the Service Principals in Azure Active Directory, but it requires that the following tools are installed:
 - Azure CLI: required by Terraform
 - Terraform: used to create App Registrations and Service Principals in Azure AD
-- (optional) Github CLI: if secrets should be stored using the provided shell script
+- (optional) GitHub CLI: if secrets should be stored using the provided shell script
 
 ### Log in to Azure CLI
 
@@ -57,18 +57,18 @@ On a command line execute
 terraform apply
 ```
 This will take some time, and once it has successfully completed, your Azure Active Directory should contain all the relevant App Registrations and Service Principals
-needed for Github.
+needed for GitHub.
 
-### Update Github Secrets
+### Update GitHub Secrets
 
-_A Github user with permission to write secrets is required for this step!_
+_A GitHub user with permission to write secrets is required for this step!_
 
-This can be done manually using the Github website ([see documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)).
-Alternatively there is a [shell script](../../../resources/setup_azure_ad/set-gh-secrets.sh) that will set all Github Secrets automatically. From the `resources/setup_azure_ad` directory simply execute
+This can be done manually using the GitHub website ([see documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)).
+Alternatively there is a [shell script](../../../resources/setup_azure_ad/set-gh-secrets.sh) that will set all GitHub Secrets automatically. From the `resources/setup_azure_ad` directory simply execute
 `./set-gh-secrets.sh` on a shell.
 
 _Requirements_:
-- user must be logged in to [Github CLI](https://cli.github.com/manual/gh_auth_login)
+- user must be logged in to [GitHub CLI](https://cli.github.com/manual/gh_auth_login)
 - `terraform` must have completed successfully
 
 
@@ -165,10 +165,10 @@ To configure GitHub Secrets, navigate to your `MinimumViableDataspace` repositor
 
 Configure the following GitHub secrets with the values from the steps above:
 
-| Secret name         | Value                          |
-| ------------------- | ------------------------------ |
+| Secret name         | Value                                                                                           |
+|---------------------|-------------------------------------------------------------------------------------------------|
 | `ARM_CLIENT_ID`     | The application (client) ID of the application created above (e.g. *"MVD GitHub Actions App"*). |
-| `ARM_CLIENT_SECRET` | The client secret created above. |
+| `ARM_CLIENT_SECRET` | The client secret created above.                                                                |
 
 ### Create Service Identity for MVD Runtimes
 
@@ -208,10 +208,10 @@ Take note of the enterprise application **Object ID**.
 
 Configure the following GitHub secrets with the values from the steps above:
 
-| Secret name         | Value                          |
-| ------------------- | ------------------------------ |
-| `APP_CLIENT_ID`     | The application (client) ID.   |
-| `APP_CLIENT_SECRET` | The application client secret. |
+| Secret name         | Value                                                                    |
+|---------------------|--------------------------------------------------------------------------|
+| `APP_CLIENT_ID`     | The application (client) ID.                                             |
+| `APP_CLIENT_SECRET` | The application client secret.                                           |
 | `APP_OBJECT_ID`     | The ID of the service principal object associated with this application. |
 
 See instructions under [Configure GitHub Secrets for GitHub Actions](#configure-github-secrets-for-github-actions) on how to configure GitHub secrets.
@@ -220,21 +220,21 @@ See instructions under [Configure GitHub Secrets for GitHub Actions](#configure-
 
 Configure the following GitHub secrets which are required by the CD pipeline:
 
-| Secret name                   | Value                                                        |
-| ----------------------------- | ------------------------------------------------------------ |
-| `ARM_TENANT_ID`               | The Azure Active Directory **Tenant ID**. Navigate to Azure Active Directory and copy the Tenant ID from the *Overview* page. |
-| `ARM_SUBSCRIPTION_ID`         | The Azure **Subscription ID** to deploy resources to. Navigate to Subscriptions and copy the *Subscription ID* of your subscription. |
-| `COMMON_RESOURCE_GROUP`       | The Azure resource group name to deploy common resources to, such as Azure Container Registry. Choose any valid resource group name, e.g. *rg-mvd-common*. |
-| `COMMON_RESOURCE_GROUP_LOCATION` | The location where common resources should be deployed to, e.g. *eastus*. |
-| `TERRAFORM_STATE_STORAGE_ACCOUNT` | The name of the storage account used to store the Terraform state container, e.g. *mvdterraformstates*. |
-| `TERRAFORM_STATE_CONTAINER` | The name of the container used to store the Terraform state blob, e.g. *mvdterraformstates*. |
+| Secret name                       | Value                                                                                                                                                      |
+|-----------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ARM_TENANT_ID`                   | The Azure Active Directory **Tenant ID**. Navigate to Azure Active Directory and copy the Tenant ID from the *Overview* page.                              |
+| `ARM_SUBSCRIPTION_ID`             | The Azure **Subscription ID** to deploy resources to. Navigate to Subscriptions and copy the *Subscription ID* of your subscription.                       |
+| `COMMON_RESOURCE_GROUP`           | The Azure resource group name to deploy common resources to, such as Azure Container Registry. Choose any valid resource group name, e.g. *rg-mvd-common*. |
+| `COMMON_RESOURCE_GROUP_LOCATION`  | The location where common resources should be deployed to, e.g. *eastus*.                                                                                  |
+| `TERRAFORM_STATE_STORAGE_ACCOUNT` | The name of the storage account used to store the Terraform state container, e.g. *mvdterraformstates*.                                                    |
+| `TERRAFORM_STATE_CONTAINER`       | The name of the container used to store the Terraform state blob, e.g. *mvdterraformstates*.                                                               |
 
 Update the value of the `CD_RESOURCES_PREFIX` env in the [cloud-cd.yaml](../../../.github/workflows/cloud-cd.yaml) file.
 This prefix allows to have unique resource names across fork repositories when running CD workflows.
 
 See instructions under [Configure GitHub Secrets for GitHub Actions](#configure-github-secrets-for-github-actions) on how to configure GitHub secrets.
 
-For further information on Azure resouce naming, please refer to [naming conventions](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) and [naming rules and restrictions for Azure resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules).
+For further information on Azure resource naming, please refer to [naming conventions](https://docs.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming) and [naming rules and restrictions for Azure resources](https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules).
 
 ## Deploy Common CD Resources
 
@@ -249,12 +249,12 @@ Your infrastructure is now set up to run deployments, you can now e.g. run the `
 To change the location where MVD instances will be deployed to, you can optionally change the location in the [variables.tf file](../../../deployment/azure/terraform/modules/participant/sample-data/text-document.txt) for the dataspace authority and in the [variables.tf file](../../../deployment/azure/terraform/modules/participant/sample-data/text-document.txt) for dataspace participants.
 
 ## Pipelines
-| Pipeline name                   | Description                                                        |
-| ----------------------------- | ------------------------------------------------------------ |
-| CD | Deploys the MVD with docker compose and run tests without dependency on Cloud Services. <br> Checks if Azure secrets are set up, if confirmed, runs the Azure Dataspace Tests pipeline. |
-| Initialize CD | Creates a resource group with a terraform state storage account and container in Azure. |
-| Run Azure Dataspace Tests |Deploys the MVD with docker compose and run tests. <br> Resources such as Key Vaults and Participants, RegistrationService Blob Storage Containers will be created in Azure. |
-| CodeQL | Performs [CodeQL](https://codeql.github.com/) analysis. |
-| Discord Webhook | Manages [Discord](https://discord.com/developers/docs/resources/webhook) Webhooks for New Discussion, New Issue and New Pull Request. |
-| Checks | Performs style checks on Java and Terraform files. |
-| Scan Pull Request | Performs check on Pull Requests title. |
+| Pipeline name             | Description                                                                                                                                                                             |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CD                        | Deploys the MVD with docker compose and run tests without dependency on Cloud Services. <br> Checks if Azure secrets are set up, if confirmed, runs the Azure Dataspace Tests pipeline. |
+| Initialize CD             | Creates a resource group with a terraform state storage account and container in Azure.                                                                                                 |
+| Run Azure Dataspace Tests | Deploys the MVD with docker compose and run tests. <br> Resources such as Key Vaults and Participants, RegistrationService Blob Storage Containers will be created in Azure.            |
+| CodeQL                    | Performs [CodeQL](https://codeql.github.com/) analysis.                                                                                                                                 |
+| Discord Webhook           | Manages [Discord](https://discord.com/developers/docs/resources/webhook) Webhooks for New Discussion, New Issue and New Pull Request.                                                   |
+| Checks                    | Performs style checks on Java and Terraform files.                                                                                                                                      |
+| Scan Pull Request         | Performs check on Pull Requests title.                                                                                                                                                  |
