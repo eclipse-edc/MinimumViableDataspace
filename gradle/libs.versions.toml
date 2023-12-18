@@ -83,7 +83,7 @@ apache-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.re
 gatling-highcharts = { module = "io.gatling.highcharts:gatling-charts-highcharts", version.ref = "gatling" }
 azure-identity = { group = "com.azure", name = "azure-identity", version = "1.11.1" }
 azure-keyvault = { group = "com.azure", name = "azure-security-keyvault-secrets", version = "4.7.0" }
-azure-storageblob = { group = "com.azure", name = "azure-storage-blob", version = "12.24.0" }
+azure-storageblob = { group = "com.azure", name = "azure-storage-blob", version = "12.25.1" }
 
 [bundles]
 connector = ["edc-core-boot", "edc-core-connector", "edc-core-jersey", "edc-ext-api-observability"]
