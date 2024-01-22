@@ -1,137 +1,232 @@
-# Minimum Viable Dataspace
+# Identity And Trust Protocols Demo
 
-The Minimum Viable Dataspace (MVD) is a sample implementation of a dataspace that leverages the [Eclipse Dataspace Components (EDC)](https://github.com/eclipse-edc).
-The main purpose is to demonstrate the capabilities of the EDC, make dataspace concepts tangible based on a specific implementation, and to serve as a starting point to implement a custom dataspace.
+## Introduction
 
-The MVD allows developers and decision makers to gauge the current progress of the EDC and its capabilities to satisfy the functionality of a fully operational dataspace.
+The Identity And Trust Protocols define a secure way how to participants in a dataspace can exchange and present
+credential information. In particular, the [IATP specification](https://github.com/eclipse-tractusx/identity-trust)
+defines the "Presentation Flow", which is the process of requesting and verifying Verifiable Credentials.
 
-As a fully decentralized dataspace is hard to imagine, the MVD also serves the purpose of demonstrating how decentralization can be practically implemented.
+A basic understanding of VerifiableCredentials, VerifiablePresentations, Decentralized Identifiers (DID) and
+cryptography is assumed and will not be explained further.
 
-## Documentation
+The Presentation Flow was adopted in the Eclipse Dataspace Components project and is currently implemented in modules
+pertaining to the [Connector](https://github.com/eclipse-edc/connector) as well as
+the [IdentityHub](https://github.com/eclipse-edc/IdentityHub).
 
-Developer documentation can be found under [docs/developer](docs/developer/), where the main concepts and decisions are captured as [decision records](docs/developer/decision-records/).
+## Purpose of this Demo
 
-## Local Development Setup
+This demo is to demonstrate how two dataspace participants can perform a credential exchange prior to a DSP message
+exchange, for example requesting a catalog or negotiating a contract.
 
-The MVD backend and MVD UI (Data Dashboard) can be run locally for testing and development.
+It must be stated in the strongest terms that this is **NOT** a production grade installation, nor should any
+production-grade developments be based on it. [Shortcuts](#current-caveats-shortcuts-and-workarounds) were taken, and
+assumptions
+were made that are potentially invalid in other scenarios.
 
-1. Check out the repository [eclipse-edc/DataDashboard](https://github.com/eclipse-edc/DataDashboard) or
-   your corresponding fork.
-2. Set the environment variable `MVD_UI_PATH` to the path of the DataDashboard repository. (See example below.)
-3. Use the instructions in section `Publish/Build Tasks` [system-tests/README.md](system-tests/README.md) to set up a
-   local MVD environment with the exception to use the profile `ui`. (See example below.)
-    - In order to verify your local environment works properly, also follow section `Local Test Execution`
-      in `system-tests/README.md` .
+It merely is a playground for new developments in the IATP space, and its purpose is to demonstrate how IATP works to an
+otherwise unassuming audience.
 
-> Using the profile `ui` will create three MVD UIs (Data Dashboards) for each EDC participant in addition to the
-> services described in [system-tests/README.md](system-tests/README.md).
+## The Scenario
 
-```bash
-export MVD_UI_PATH="/path/to/mvd-datadashboard"
-docker compose --profile ui -f system-tests/docker-compose.yml up --build
+There are two connectors dubbed "Alice" and "Bob", where "Alice" will take on the role of data consumer, and "Bob" will
+be the data provider.
+
+Bob, our provider, has two data assets:
+
+- `asset-1`: requires a membership credential to view and a PCF Use Case credential to negotiate a contract
+- `asset-2`: requires a membership credential to view and a Sustainability Use Case credential to negotiate a contract
+
+These requirements are formulated in the form of EDC Policies. In addition, it is a dataspace rule that
+the `MembershipCredential` must be presented in _every_ request.
+
+Furthermore, both Bob and Alice are in possession of a `MembershipCredential` as well as a `PcfCredential`. _Neither has
+the `SustainabilityCredential`_! That means that no contract for `asset-2` can be negotiated!
+For the purposes of this demo the VerifiableCredentials are pre-created and are seeded to the participants' credential
+storage (no issuance). Both Bob and Alice host an EDC connector instance and an IdentityHub instance each and deploy
+them to a
+Kubernetes cluster.
+
+Bob wants to view Alice's catalog, then negotiate a contract for an asset, and then transfer the asset. For this he
+needs to present several credentials:
+
+- catalog request: present `MembershipCredential`
+- contract negotiation: `MembershipCredential` and `PcfCredential` or `SustainabilityCredential`, respectively
+- transfer process: `MembershipCredential`
+
+## Running the Demo (Kubernetes)
+
+For this section a basic understanding of Kubernetes, Docker, Gradle and Terraform is required. It is assumed that the
+following tools are installed and readily available:
+
+- Docker
+- KinD (other cluster engines may work as well - not tested!)
+- Terraform
+- JDK 17+
+- Git
+- a POSIX compliant shell
+- Postman (to comfortably execute REST requests)
+- newman (to run Postman collections from the command line)
+
+All commands are executed from the **repository's root folder** unless stated otherwise via `cd` commands.
+
+### 1. Build the runtime images
+
+```shell
+cd runtimes
+./gradlew build
+./gradlew dockerize
 ```
 
-> In Windows Docker Compose expects the path to use forward slashes instead of backslashes.
+this builds the runtime images and creates the following docker images: `connector:latest` and `identity-hub:latest` in
+the local docker image cache.
 
-The profile `ui` creates three Data Dashboards each connected to an EDC participant. The respective `app.config.json`
-files can be found in the respective directories:
+Next, we bring up and configure the Kubernetes Cluster
 
-- `resources/appconfig/company1/app.config.json`
-- `resources/appconfig/company2/app.config.json`
-- `resources/appconfig/company3/app.config.json`
+```shell
+# Create the cluster
+kind create cluster -n iatp-demo --config deployment/kind.config.yaml
 
-That's it to run the local development environment. The following section `Run A Standard Scenario Locally` describes a
-standard scenario which can be optionally used with the local development environment.
+# Load docker images into KinD
+kind load docker-image connector:latest identity-hub:latest -n iatp-demo
 
-> Tip: The console output from the services spun up by Docker compose can be noisy. To decrease the output from the
-> services on the console set `EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS` to a higher value, e.g. 60, for each EDC
-> participant in `system-tests/docker-compose.yml`.
+# Deploy an NGINX ingress
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
 
-> Note: The container `cli-tools` will turn into the state `healthy` after registering successfully all participants and
-> will keep running as an entrypoint to the services created by Docker compose. This is useful for local development in order
-> to manually check commands against the participants (e.g. `company1`, `company2`, `company3`).
+# Wait for the ingress controller to become available
+kubectl wait --namespace ingress-nginx \
+  --for=condition=ready pod \
+  --selector=app.kubernetes.io/component=controller \
+  --timeout=90s
 
-Sample how to enter the container `cli-tools` and test a command manually.
-
-Host:
-
-```bash
-docker exec -it cli-tools bash
+# Deploy the dataspace, type 'yes' when prompted
+terraform -chdir deployment init
+terraform -chdir deployment apply
 ```
 
-Container:
+Once Terraform has completed the deployment, type `kubectl get pods` and verify the output:
 
-```bash
-java -jar registration-service-cli.jar \
->    -d=did:web:did-server:registration-service \
->    --http-scheme \
->    -k=/resources/vault/company1/private-key.pem \
->    -c=did:web:did-server:company1 \
->    participants get
+```shell
+> kubectl get pods
+NAME                                 READY   STATUS    RESTARTS   AGE
+alice-connector-6d56797f54-bf44q     2/2     Running   0          14m
+alice-identityhub-7664f549f6-bj6v6   1/1     Running   0          14m
+bob-connector-658755df69-v24sm       2/2     Running   0          14m
+bob-identityhub-8cff855bf-9f7h4      1/1     Running   0          14m
 ```
 
-Output (container)
+Every participant has two pods, one for the connector runtime, one for the IdentityHub runtime.
+Assets, policies and contract definitions are already seeded to the connectors.
 
-```json
-{
-  "did": "did:web:did-server:company1",
-  "status": "ONBOARDED"
-}
-```
 
-### Run A Standard Scenario Locally
+Remote Debugging is possible, but Kubernetes port-forwards are necessary. The following debug ports are exposed:
 
-Prerequisite: create a test document manually:
+- 1044 on the connector runtime
+- 1045 on the identity hub runtime
 
-- Connect to the **local** blob storage account (provided by Azurite) of company1.
-    - Storage account name: `company1assets`, storage account key: `key1`.
-    - [Microsoft Azure Storage Explorer](https://azure.microsoft.com/features/storage-explorer/) can be used to connect to the local
-      storage account on `localhost:10000`.
-- Create a container named `src-container`. (Container name is defined for Postman request `Publish Master Data`
-  in [deployment/data/MVD.postman_collection.json](deployment/data/MVD.postman_collection.json))
-- Copy [deployment/azure/terraform/modules/participant/sample-data/text-document.txt](deployment/azure/terraform/modules/participant/sample-data/text-document.txt) into the newly created container.
-    - N.B.: it does not have to be this exact file as long you create a file which has the name `text-document.txt`.
+## Running the demo (inside IntelliJ)
 
-All this can also be done using Azure CLI with the following lines from the root of the MVD repository:
+There are 5 run configurations for IntelliJ in the `.run/` folder. One each for Bob's and Alice's connector runtimes and
+IdentityHub runtimes and one named "dataspace", that brings up all other runtimes together.
 
-```bash
-conn_str="DefaultEndpointsProtocol=http;AccountName=company1assets;AccountKey=key1;BlobEndpoint=http://127.0.0.1:10000/company1assets;"
-az storage container create --name src-container --connection-string $conn_str
-az storage blob upload -f ./deployment/azure/terraform/modules/participant/sample-data/text-document.txt --container-name src-container --name text-document.txt --connection-string $conn_str
-```
+However, with `did:web` documents there is a tightly coupled relation between DID and URL, so we can't easily re-use
+the same DIDs.
 
-This should result in a similar output as follows. Via the Microsoft Azure Storage Explorer it would be possible to
-review the new container and the uploaded blob.
+A separate set of DIDs, DID documents and VerifiableCredentials is required when running locally. As generating them,
+and implementing a switch for local or clustered deployment would be a significant effort it is **currently missing**.
 
-```bash
-{
-  "created": true
-}
+Another possibility would be to put DIDs on some internet-accessible resource such as a CDN or a static webserver, which
+I forewent for the sake of self-contained-ness.
 
-Finished[#############################################################]  100.0000%
-{
-  "etag": "\"0x1CC7CAB96842160\"",
-  "lastModified": "2022-08-08T15:14:01+00:00"
-}
-```
+Running the dataspace from within IntelliJ is still useful though for testing APIs, debugging of one runtime, etc.
 
-The following steps initiate and complete a file transfer with the provided test document.
+## Executing REST requests using Postman
 
-- Open the website of company1 (e.g. <http://localhost:7080>) and verify the existence of two assets in the
-  section `Assets`.
-- Open the website of the company2 (e.g. <http://localhost:7081>) and verify six existing assets from all participants in
-  the `Catalog Browser`.
-    - In the `Catalog Browser` click `Negotiate` for the asset `test-document_company1`.
-        - There should be a message `Contract Negotiation complete! Show me!` in less than a minute.
-- From the previous message click `Show me!`. If you missed it, switch manually to the section `Contracts`.
-    - There should be a new contract. Click `Transfer` to initiate the transfer process.
-    - A dialog should open. Here, select as destination `AzureStorage` and click `Start transfer`.
-    - There should be a message `Transfer [id] complete! Show me!` in less than a minute. (Where `id` is a UUID.)
-- To verify the successful transfer the Storage Explorer can be used to look into the storage account of `company2`.
-    - Storage account name and key is set in `system-tests/docker-compose.yml` for the service `azurite`. Default name
-      is `company2assets`, key is `key2`.
-    - There should be new container in the storage account containing two files `.complete` and `text-document.txt`.
+This demos comes with a Postman collection located in `deployment/assets/postman`. Be aware that the collection is
+pre-configured to work with the demo running in Kubernetes - in order to get it to work with the IntelliJ-based variant,
+you'll need to change the `HOST` and `IH_HOST` variables!
 
-## Contributing
+The collection itself is pretty self-explanatory, it allows you to request a catalog, perform a contract negotiation and
+execute a data transfer. NB [this caveat](#9-data-transfers-will-get-terminated) though.
 
-See [how to contribute](https://github.com/eclipse-edc/docs/blob/main/CONTRIBUTING.md).
+## Other caveats, shortcuts and workarounds
+
+Once again, this is a **DEMO**, does not any provide guarantee w.r.t. operational readiness and comes with a few
+significant workarounds and shortcuts. These are:
+
+### 1. One key for all
+
+Currently, there is only _one_ keypair that everyone uses to sign tokens and VPs. That key gets put in the vault in
+the `SecretsExtension.java`. While this is not secure by any stretch, it avoided having to actually provision a vault,
+and add keys to it before running the connectors.
+
+There is currently
+a [limitation in EDC](https://github.com/eclipse-edc/Connector/blob/4006c3351e6ebece22b4643e0749a7fc70d28e29/core/common/jwt-core/src/main/java/org/eclipse/edc/jwt/TokenGenerationServiceImpl.java#L57)
+which requires that only EC-keys using the ES256 curve are used.
+
+### 2. In-memory stores all-around
+
+For the sake of simplicity, all data retention is purely done in memory. Using Postgres would not have contributed any
+significant value, it would have made configuration a bit more complex.
+
+### 4. Proof-of-possession: only a warning is issued
+
+This demo is inspired heavily by the Catena-X use case, which has a unique situation where the stable ID (= BPN) cannot
+be used to resolve key material (= DID). The consequence of that is, that there MUST be a way to resolve one from the
+other (which is required by
+the [IATP spec](https://github.com/eclipse-tractusx/identity-trust/blob/main/specifications/M1/identity.protocol.base.md#3-identities-and-identifiers)).
+Such as registry does not currently exist, so when verifying that `siToken.sub == siToken.access_token.sub` we would be
+comparing a BPN to a DID which would naturally fail.
+
+### 5. Policy Extractor
+
+Constructing scope strings out of Policy constraints cannot be done in a generic way, because it is highly dependent on
+the constraint expression syntax, which is specific to the dataspace. In this demo, there are two extractors:
+
+- `DefaultScopeExtractor`: adds the `org.eclipse.edc.vc.type:MembershipCredential:read` scope to every request, since as
+  per Catena-X rules, that credential must always be presented.
+- `FrameworkCredentialScopeExtractor`: adds the correct scope for a "Use case credential" (
+  check [here](https://github.com/eclipse-tractusx/ssi-docu/blob/main/docs/architecture/policy_credentialtype_scope.md)
+  for details), whenever a `FrameworkCredential.XYZ` is required by a policy.
+
+For the sake of simplicity, it is only possible to assert the presence of a particular credential. Introspecting the
+schema of the credentials' subjects is not yet implemented.
+
+### 6. Scope-to-criterion transformer
+
+This is similar to the [policy extractor](#5-policy-extractor), as it deals with the reverse mapping from a scope string
+onto a `Criterion`. On the IdentityHub, when the VP request is received, we need to be able to query the database based
+on the scope string that was received. This is currently a very Catena-X-specific solution, as it needs to distinguish
+between "normal" credentials, and "use case" credentials.
+
+### 7. DID resolution
+
+#### 7.1 `did:web` for participants
+
+Every participant hosts their DIDs on their own, which means, that the HTTP-URL that the DID maps to must be accessible
+for all other participants. For external access we're using an ingress, which pods on a cluster cannot access. That
+means, that the DID cannot be the ingress URL, but must be the _service_ url. A service in turn is not accessible from
+outside the cluster. That means, DIDs are only resolvable from _inside_ the cluster, which is only a minor issue, and it
+will go away once DIDs are hosted on a CDN or a web server.
+
+#### 7.2 `did:example` for the dataspace credential issuer
+
+The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, I opted for
+introducing the `"did:example"` method, for which there is then a custom-built DID resolver.
+
+### 8. The AudienceMapper
+
+In EDC, the current implementation always sets the `aud` claim of an incoming token to the DSP callback URL of the
+counter-party. This is not only wrong on a conceptual level, it is also wrong on an implementation level here, because
+the audience of a token must be the identity of the recipient, which the DSP Url is arguably not. This is currently
+being addressed in ongoing development effort in EDC. For now, we introduced the notion of an `AudienceMapper`, which
+maps DSP Url -> ID (in this case: the BPN).
+
+### 9. Data Transfers will get `TERMINATED`
+
+This demo does *not* include infrastructure to perform any sort of actual data transfer, all transfers will ultimately
+fail. That is expected, and could be improved down the line. The important part is, that it will successfully get
+through all the identity-related steps.
+
+### 10. No issuance
+
+All credentials are pre-generated manually because the issuance flow is not implemented yet.

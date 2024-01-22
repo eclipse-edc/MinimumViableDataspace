@@ -1,0 +1,33 @@
+{
+  "id": "did:web:bob-identityhub%3A7083:connector2",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:web:bob-identityhub%3A7083:connector2"
+    }
+  ],
+  "service": [
+    {
+      "id": "#credential-service",
+      "type": "CredentialService",
+      "serviceEndpoint": "http://bob-identityhub:7082/api/resolution"
+    }
+  ],
+  "verificationMethod": [
+    {
+      "id": "did:web:bob-identityhub%3A7083:connector2#key-1",
+      "controller": "did:web:bob-identityhub%3A7083:connector2",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "kty": "EC",
+        "kid": "key-1",
+        "crv": "P-256",
+        "x": "1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c",
+        "y": "sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w"
+      }
+    }
+  ],
+  "authentication": [
+    "#key-1"
+  ]
+}

@@ -1,0 +1,722 @@
+{
+	"info": {
+		"_postman_id": "2be6d6f3-d204-4455-b857-7bc38ff294f0",
+		"name": "IATP Demo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "647585"
+	},
+	"item": [
+		{
+			"name": "Seed",
+			"item": [
+				{
+					"name": "Create Asset 1",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n          \"@context\": {},\n          \"@id\": \"asset-1\",\n          \"@type\": \"Asset\",\n          \"properties\": {\n              \"description\": \"This asset requires Membership to view, PCF to negotiate\"\n          },\n          \"dataAddress\": {\n              \"@type\": \"DataAddress\",\n              \"type\": \"HttpData\",\n              \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n              \"proxyPath\": \"true\",\n              \"proxyQueryParams\": \"true\"\n          }\n      }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Asset 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"@context\": {},\n            \"@id\": \"asset-2\",\n            \"@type\": \"Asset\",\n            \"properties\": {\n                \"description\": \"This asset requires Membership to view and Sustainability to negotiate.\"\n            },\n            \"dataAddress\": {\n                \"@type\": \"DataAddress\",\n                \"type\": \"HttpData\",\n                \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n                \"proxyPath\": \"true\",\n                \"proxyQueryParams\": \"true\"\n            }\n        }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Membership Policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n          \"@context\": {\n              \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n          },\n          \"@type\": \"PolicyDefinitionRequestDto\",\n          \"@id\": \"require-membership\",\n          \"policy\": {\n                      \"@type\": \"Policy\",\n                      \"odrl:permission\" : [{\n                              \"odrl:action\" : \"USE\",\n                              \"odrl:constraint\" : {\n                                      \"@type\": \"LogicalConstraint\",\n                                      \"odrl:or\" : [{\n                                              \"@type\" : \"Constraint\",\n                                              \"odrl:leftOperand\" : \"MembershipCredential\",\n                                              \"odrl:operator\" : {\n                                                  \"@id\": \"odrl:eq\"\n                                              },\n                                              \"odrl:rightOperand\" : \"active\"\n                                      }]\n                              }\n                      }]\n          }\n      }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create PCF Use case policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"@context\": {\n            \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n        },\n        \"@type\": \"PolicyDefinitionRequestDto\",\n        \"@id\": \"require-pcf\",\n        \"policy\": {\n                    \"@type\": \"Policy\",\n                    \"odrl:obligation\" : [{\n                            \"odrl:action\" : \"USE\",\n                            \"odrl:constraint\" : {\n                                    \"@type\": \"LogicalConstraint\",\n                                    \"odrl:or\" : [{\n                                            \"@type\" : \"Constraint\",\n                                            \"odrl:leftOperand\" : \"FrameworkCredential.pcf\",\n                                            \"odrl:operator\" : {\n                                                \"@id\": \"odrl:eq\"\n                                            },\n                                            \"odrl:rightOperand\" : \"active\"\n                                    }]\n                            }\n                    }]\n        }\n    }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sustainability Use case policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n          \"@context\": {\n              \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n          },\n          \"@type\": \"PolicyDefinitionRequestDto\",\n          \"@id\": \"require-sustainability\",\n          \"policy\": {\n                      \"@type\": \"Policy\",\n                      \"odrl:obligation\" : [{\n                              \"odrl:action\" : \"USE\",\n                              \"odrl:constraint\" : {\n                                      \"@type\": \"LogicalConstraint\",\n                                      \"odrl:or\" : [{\n                                              \"@type\" : \"Constraint\",\n                                              \"odrl:leftOperand\" : \"FrameworkCredential.sustainability\",\n                                              \"odrl:operator\" : {\n                                                  \"@id\": \"odrl:eq\"\n                                              },\n                                              \"odrl:rightOperand\" : \"active\"\n                                      }]\n                              }\n                      }]\n          }\n      }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create \"member-and-pcf-cred\" definition",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"@context\": {},\n        \"@id\": \"member-and-pcf-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-pcf\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-1\"\n        }\n    }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/contractdefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create \"require sustainability\" definition",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"@context\": {},\n        \"@id\": \"sustainability-only-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-sustainability\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-2\"\n        }\n    }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/contractdefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DID-Mgmt",
+			"item": [
+				{
+					"name": "Get all DIDs",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids/query",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids",
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"did:web:alice-identityhub%3A7083:connector1\",\n  \"@context\": [\n    \"https://www.w3.org/ns/did/v1\",\n    {\n      \"@base\": \"did:web:alice-identityhub%3A7083:connector1\"\n    }\n  ],\n  \"service\": [\n    {\n      \"id\": \"#credential-service\",\n      \"type\": \"CredentialService\",\n      \"serviceEndpoint\": \"http://alice-identityhub:7082/api/resolution\"\n    }\n  ],\n  \"verificationMethod\": [\n    {\n      \"id\": \"did:web:alice-identityhub%3A7083:connector1#key-1\",\n      \"controller\": \"did:web:alice-identityhub%3A7083:connector1\",\n      \"type\": \"JsonWebKey2020\",\n      \"publicKeyJwk\": {\n        \"kty\": \"EC\",\n        \"kid\": \"key-1\",\n        \"crv\": \"P-256\",\n        \"x\": \"1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c\",\n        \"y\": \"sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w\"\n      }\n    }\n  ],\n  \"authentication\": [\n    \"#key-1\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publish DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids/publish",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids",
+								"publish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Un-Publish DID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids/unpublish",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids",
+								"unpublish"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update DID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": \"did:web:alice-identityhub%3A7083:connector1\",\n  \"@context\": [\n    \"https://www.w3.org/ns/did/v1\",\n    {\n      \"@base\": \"did:web:alice-identityhub%3A7083:connector1\"\n    }\n  ],\n  \"service\": [\n    {\n      \"id\": \"#credential-service\",\n      \"type\": \"CredentialService\",\n      \"serviceEndpoint\": \"http://alice-identityhub:7082/api/resolution\"\n    }\n  ],\n  \"verificationMethod\": [\n    {\n      \"id\": \"did:web:alice-identityhub%3A7083:connector1#key-1\",\n      \"controller\": \"did:web:alice-identityhub%3A7083:connector1\",\n      \"type\": \"JsonWebKey2020\",\n      \"publicKeyJwk\": {\n        \"kty\": \"EC\",\n        \"kid\": \"key-1\",\n        \"crv\": \"P-256\",\n        \"x\": \"1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c\",\n        \"y\": \"sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w\"\n      }\n    }\n  ],\n  \"authentication\": [\n    \"#key-1\"\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids?republish=true",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids"
+							],
+							"query": [
+								{
+									"key": "republish",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete DID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get DID Document state",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CS_URL}}/api/management/v1/dids/state",
+							"host": [
+								"{{CS_URL}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v1",
+								"dids",
+								"state"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ControlPlane Management",
+			"item": [
+				{
+					"name": "Request Catalog",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "password"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/catalog/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"catalog",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate negotiation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-api-key",
+								"value": "password",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"providerId\": \"{{PROVIDER_ID}}\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"Set\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MDI3YWRmNzQtMDA4Mi00NmU4LWIwMjctNWU4NGUzMmVjNjU0\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"odrl:target\": \"asset-1\",\n            \"odrl:action\": {\n                \"odrl:type\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:or\": {\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/contractnegotiations",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"contractnegotiations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Assets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": { \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\" },\n    \"@type\": \"QuerySpec\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contract Negotiations",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": { \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\" },\n    \"@type\": \"QuerySpec\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/contractnegotiations/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"contractnegotiations",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate Transfer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"connectorAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"390d85a7-bb6e-4ca6-8f26-4c6956256344\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": {\n        \"contentType\": \"application/octet-stream\",\n        \"isFinite\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/transferprocesses",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"transferprocesses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get transfer processes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"QuerySpec\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v2/transferprocesses/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v2",
+								"transferprocesses",
+								"request"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "x-api-key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": "http://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "PROVIDER_DSP",
+			"value": "http://localhost:8092",
+			"type": "string"
+		},
+		{
+			"key": "PROVIDER_ID",
+			"value": "BPN0000002",
+			"type": "string"
+		},
+		{
+			"key": "CS_URL",
+			"value": "http://localhost:8181",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,568 @@
+{
+	"info": {
+		"_postman_id": "f510a19c-4214-480b-a79a-55796d03d286",
+		"name": "MXD Management API 11-sep-2023",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29243509"
+	},
+	"item": [
+		{
+			"name": "Create Assets BOB Management",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Asessts Created for BOB\", function () {",
+							"   var jsonData = pm.response.json();",
+							"   console.log(jsonData[\"@id\"]);",
+							"   pm.expect(jsonData[\"@id\"]).to.eql(\"2222\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {},\n    \"asset\": {\n        \"@type\": \"Asset\",\n        \"@id\": \"2222\", \n        \"properties\": {\n            \"description\": \"Product EDC Demo Asset 1\"\n        }\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/assets",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"assets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Asset Alice MANAGEMENT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Asessts Created for Alice\", function () {",
+							"   var jsonData = pm.response.json();",
+							"   console.log(jsonData[\"@id\"]);",
+							"   pm.expect(jsonData[\"@id\"]).to.eql(\"2222\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {},\n    \"asset\": {\n        \"@type\": \"Asset\",\n        \"@id\": \"2222\", \n        \"properties\": {\n            \"description\": \"Product EDC Demo Asset 2\"\n        }\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Alice_MANAGEMENT_URL}}/assets",
+					"host": [
+						"{{Alice_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"assets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Policy BOB_MANAGEMENT_URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Policy Created  for BOB\", function () {",
+							"   var jsonData = pm.response.json();",
+							"   console.log(jsonData[\"@id\"]);",
+							"   pm.expect(jsonData[\"@id\"]).to.eql(\"2222\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"2222\",\n    \"policy\": {\n\t\t\"@type\": \"Policy\",\n\t\t\"odrl:permission\" : [{\n\t\t\t\"odrl:action\" : \"USE\",\n\t\t\t\"odrl:constraint\" : {\n\t\t\t\t\"@type\": \"LogicalConstraint\",\n\t\t\t\t\"odrl:or\" : [{\n\t\t\t\t\t\"@type\" : \"Constraint\",\n\t\t\t\t\t\"odrl:leftOperand\" : \"BusinessPartnerNumber\",\n\t\t\t\t\t\"odrl:operator\" : {\n                        \"@id\": \"odrl:eq\"\n                    },\n\t\t\t\t\t\"odrl:rightOperand\" : \"{{POLICY_BPN}}\"\n\t\t\t\t}]\n\t\t\t}\n\t\t}]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/policydefinitions",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"policydefinitions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Policy Alice_MANAGEMENT_URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Policy Created  for Alice\", function () {",
+							"   var jsonData = pm.response.json();",
+							"   console.log(jsonData[\"@id\"]);",
+							"   pm.expect(jsonData[\"@id\"]).to.eql(\"2222\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"2222\",\n    \"policy\": {\n\t\t\"@type\": \"Policy\",\n\t\t\"odrl:permission\" : [{\n\t\t\t\"odrl:action\" : \"USE\",\n\t\t\t\"odrl:constraint\" : {\n\t\t\t\t\"@type\": \"LogicalConstraint\",\n\t\t\t\t\"odrl:or\" : [{\n\t\t\t\t\t\"@type\" : \"Constraint\",\n\t\t\t\t\t\"odrl:leftOperand\" : \"BusinessPartnerNumber\",\n\t\t\t\t\t\"odrl:operator\" : {\n                        \"@id\": \"odrl:eq\"\n                    },\n\t\t\t\t\t\"odrl:rightOperand\" : \"{{POLICY_BPN}}\"\n\t\t\t\t}]\n\t\t\t}\n\t\t}]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Alice_MANAGEMENT_URL}}/policydefinitions",
+					"host": [
+						"{{Alice_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"policydefinitions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Contract Definition BOB_MANAGEMENT_URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contract Definition for BOB\", function () {",
+							"   var jsonData = pm.response.json();",
+							"   console.log(jsonData[\"@id\"]);",
+							"   pm.expect(jsonData[\"@id\"]).to.eql(\"2222\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {},\n    \"@id\": \"2222\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"1\",\n    \"contractPolicyId\": \"1\",\n    \"assetsSelector\" : {\n        \"@type\" : \"CriterionDto\",\n        \"operandLeft\": \"{{EDC_NAMESPACE}}id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"1\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/contractdefinitions",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"contractdefinitions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Contract Definition Alice_MANAGEMENT_URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Contract Definition for Alice\", function () {",
+							"   var jsonData = pm.response.json();",
+							"   console.log(jsonData[\"@id\"]);",
+							"   pm.expect(jsonData[\"@id\"]).to.eql(\"2222\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {},\n    \"@id\": \"2222\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"1\",\n    \"contractPolicyId\": \"1\",\n    \"assetsSelector\" : {\n        \"@type\" : \"CriterionDto\",\n        \"operandLeft\": \"{{EDC_NAMESPACE}}id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"1\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Alice_MANAGEMENT_URL}}/contractdefinitions",
+					"host": [
+						"{{Alice_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"contractdefinitions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Policies",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Get the All Created Policies \", function () {\r",
+							"   var jsonData = pm.response.json();\r",
+							"   console.log(jsonData[0][\"@id\"]);\r",
+							"   pm.expect(jsonData[0][\"@id\"]).to.eql(\"1\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"id\": \"{{POLICY_ID}}\",\n    \"policy\": {\n        \"prohibitions\": [],\n        \"obligations\": [],\n        \"permissions\": [\n            {\n                \"edctype\": \"dataspaceconnector:permission\",\n                \"action\": {\n                    \"type\": \"USE\"\n                },\n                \"constraints\": []\n            }\n        ]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/policydefinitions/request",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"policydefinitions",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Assets",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Get the All Created Policies\", function () {\r",
+							"   var jsonData = pm.response.json();\r",
+							"   console.log(jsonData[0][\"@id\"]);\r",
+							"   pm.expect(jsonData[0][\"@id\"]).to.eql(\"1\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/assets/request",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"assets",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query Catalog Bob to Alice",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Query Catalog Fetch Successful\", function () {\r",
+							"   var jsonData = pm.response.json();\r",
+							"   console.log(jsonData[\"dcat:dataset\"][0][\"@id\"]);\r",
+							"   pm.expect(jsonData[\"dcat:dataset\"][0][\"@id\"]).to.eql(\"1\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Api-Key",
+						"value": "password",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"@context\": {\r\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\r\n    },\r\n    \"@type\": \"CatalogRequest\",\r\n    \"providerUrl\": \"\",\r\n    \"counterPartyAddress\":\"{{Alice_PROVIDER_PROTOCOL_URL}}\",\r\n    \"protocol\": \"dataspace-protocol-http\",\r\n    \"querySpec\": {\r\n        \"offset\": 0,\r\n        \"limit\": 50\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/catalog/request",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"catalog",
+						"request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Query Catalog Alice to BOB",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Query Catalog Fetch Successful\", function () {\r",
+							"   var jsonData = pm.response.json();\r",
+							"   console.log(jsonData[\"dcat:dataset\"][0][\"@id\"]);\r",
+							"   pm.expect(jsonData[\"dcat:dataset\"][0][\"@id\"]).to.eql(\"1\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Api-Key",
+						"value": "password",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"@context\": {\r\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\r\n    },\r\n    \"@type\": \"CatalogRequest\",\r\n    \"providerUrl\": \"\",\r\n    \"counterPartyAddress\":\"{{Alice_PROVIDER_PROTOCOL_URL}}\",\r\n    \"protocol\": \"dataspace-protocol-http\",\r\n    \"querySpec\": {\r\n        \"offset\": 0,\r\n        \"limit\": 50\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BOB_MANAGEMENT_URL}}/catalog/request",
+					"host": [
+						"{{BOB_MANAGEMENT_URL}}"
+					],
+					"path": [
+						"catalog",
+						"request"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "X-Api-Key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ASSET_ID",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "POLICY_ID",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "CONTRACT_POLICY_ID",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "ACCESS_POLICY_ID",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "CONTRACT_DEFINITION_ID",
+			"value": "1",
+			"type": "default"
+		},
+		{
+			"key": "POLICY_BPN",
+			"value": "BPNBOB",
+			"type": "default"
+		},
+		{
+			"key": "BACKEND_SERVICE",
+			"value": "http://backend:8080",
+			"type": "string"
+		},
+		{
+			"key": "PROVIDER_ID",
+			"value": "BPNPLATO",
+			"type": "string"
+		},
+		{
+			"key": "EDC_NAMESPACE",
+			"value": "https://w3id.org/edc/v0.0.1/ns/",
+			"type": "string"
+		},
+		{
+			"key": "CONSUMER_ADAPTER_URL",
+			"value": "http://localhost:31364/management",
+			"type": "string"
+		},
+		{
+			"key": "BOB_MANAGEMENT_URL",
+			"value": "http://localhost/bob/management/v2",
+			"type": "string"
+		},
+		{
+			"key": "Alice_MANAGEMENT_URL",
+			"value": "http://localhost/alice/management/v2",
+			"type": "string"
+		},
+		{
+			"key": "BOB_PROVIDER_PROTOCOL_URL",
+			"value": "http://bob-controlplane:8084/api/v1/dsp",
+			"type": "string"
+		},
+		{
+			"key": "Alice_PROVIDER_PROTOCOL_URL",
+			"value": "http://alice-controlplane:8084/api/v1/dsp",
+			"type": "string"
+		}
+	]
+}
