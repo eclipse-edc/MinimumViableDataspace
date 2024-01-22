@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="dataspace" type="CompoundRunConfigurationType">
+    <toRun name="Connector 1 (consumer)" type="Application" />
+    <toRun name="Connector 2 (provider)" type="Application" />
+    <toRun name="IdentityHub 1 (consumer)" type="Application" />
+    <toRun name="IdentityHub 2 (provider)" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>
