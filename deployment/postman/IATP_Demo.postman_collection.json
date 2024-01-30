@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "2be6d6f3-d204-4455-b857-7bc38ff294f0",
-		"name": "MVD",
+		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "647585"
 	},
@@ -493,7 +493,7 @@
 									"apikey": [
 										{
 											"key": "value",
-											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
+											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
 											"type": "string"
 										},
 										{
@@ -537,7 +537,7 @@
 									"apikey": [
 										{
 											"key": "value",
-											"value": "Zm9vYmFy.YGE9WvZA+KKbzBqF83n7GtQfgXqZNA7Xe/JDxqKi9YrLC61eoy21RjpY9Xz5KZjlYNYJ+U8JnYXdxTz8tixDRQ==",
+											"value": "c3VwZXItdXNlcg==.0hW91YokWyhPCitsVOroSC08HeOcW6xbqWf1vA+nq0tnkFM0Q8a/g9IqMiTBCNFE0A/SI3ogMri9q42olWV9qw==",
 											"type": "string"
 										},
 										{
@@ -736,7 +736,7 @@
 									"apikey": [
 										{
 											"key": "value",
-											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
+											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
 											"type": "string"
 										},
 										{
@@ -820,14 +820,14 @@
 							"response": []
 						},
 						{
-							"name": "Add KeyPair Copy",
+							"name": "Rotate key",
 							"request": {
 								"auth": {
 									"type": "apikey",
 									"apikey": [
 										{
 											"key": "value",
-											"value": "Zm9vYmFy.LdT/xHRkXXciYhFo1p3Izk3psjwFqgGluRcjuJjLS6RhFSc4WmqLh/61P4u00suZgfUvlmyLYh8FYTCcl4K+6w==",
+											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
 											"type": "string"
 										},
 										{
@@ -849,7 +849,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/keypairs/",
+									"raw": "{{CS_URL}}/api/management/v1/keypairs/key1/rotate",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -858,7 +858,54 @@
 										"management",
 										"v1",
 										"keypairs",
-										""
+										"key1",
+										"rotate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revoke key",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/keypairs/key2/revoke",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"keypairs",
+										"key2",
+										"revoke"
 									]
 								}
 							},
@@ -897,7 +944,7 @@
 					]
 				},
 				{
-					"name": "DID-Mgmt",
+					"name": "DID Document Mgmt API",
 					"item": [
 						{
 							"name": "Get all DIDs",
@@ -1107,6 +1154,46 @@
 										"v1",
 										"dids",
 										"state"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "VerifiableCredential Mgmt API",
+					"item": [
+						{
+							"name": "Get Credential By ID",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/credentials",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"credentials"
 									]
 								}
 							},
