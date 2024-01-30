@@ -57,6 +57,7 @@ edc-dpf-selector-core = { module = "org.eclipse.edc:data-plane-selector-core", v
 edc-ih-api = { module = "org.eclipse.edc:identity-hub-api", version.ref = "edc" }
 edc-ih-credentials = { module = "org.eclipse.edc:identity-hub-credentials", version.ref = "edc" }
 edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
+edc-ih-keypairs = { module = "org.eclipse.edc:identity-hub-keypairs", version.ref = "edc" }
 edc-ih-did = { module = "org.eclipse.edc:identity-hub-did", version.ref = "edc" }
 edc-ih-spi-did = { module = "org.eclipse.edc:identity-hub-did-spi", version.ref = "edc" }
 edc-ih-did-localpub = { module = "org.eclipse.edc:local-did-publisher", version.ref = "edc" }
@@ -65,6 +66,7 @@ edc-ih-mgmt-config = { module = "org.eclipse.edc:identityhub-management-api-conf
 edc-ih-mgmt-did = { module = "org.eclipse.edc:did-management-api", version.ref = "edc" }
 edc-ih-mgmt-participantcontext = { module = "org.eclipse.edc:participant-context-mgmt-api", version.ref = "edc" }
 edc-ih-mgmt-verifiablecredential = { module = "org.eclipse.edc:verifiable-credential-mgmt-api", version.ref = "edc" }
+edc-ih-mgmt-keypairs = { module = "org.eclipse.edc:keypair-mgmt-api", version.ref = "edc" }
 
 # Third party libs
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
@@ -81,7 +83,8 @@ controlplane = ["edc-core-controlplane", "edc-config-filesystem", "edc-auth-toke
 
 did = ["edc-identity-did-web", "edc-identity-did-core", "edc-ih-did", "edc-ih-did-localpub", "edc-ih-mgmt-did"]
 
-management-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential"]
+management-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
+    "edc-ih-mgmt-keypairs"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

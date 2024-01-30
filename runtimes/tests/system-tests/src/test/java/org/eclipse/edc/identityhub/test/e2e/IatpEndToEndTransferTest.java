@@ -64,6 +64,5 @@ public class IatpEndToEndTransferTest {
 
     @Test
     void foo() {
-
     }
 }
