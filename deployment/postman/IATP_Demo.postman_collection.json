@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "2be6d6f3-d204-4455-b857-7bc38ff294f0",
-		"name": "IATP Demo",
+		"name": "MVD",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "647585"
 	},
@@ -243,224 +243,6 @@
 			]
 		},
 		{
-			"name": "DID-Mgmt",
-			"item": [
-				{
-					"name": "Get all DIDs",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids/query",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids",
-								"query"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Store DID",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": \"did:web:alice-identityhub%3A7083:connector1\",\n  \"@context\": [\n    \"https://www.w3.org/ns/did/v1\",\n    {\n      \"@base\": \"did:web:alice-identityhub%3A7083:connector1\"\n    }\n  ],\n  \"service\": [\n    {\n      \"id\": \"#credential-service\",\n      \"type\": \"CredentialService\",\n      \"serviceEndpoint\": \"http://alice-identityhub:7082/api/resolution\"\n    }\n  ],\n  \"verificationMethod\": [\n    {\n      \"id\": \"did:web:alice-identityhub%3A7083:connector1#key-1\",\n      \"controller\": \"did:web:alice-identityhub%3A7083:connector1\",\n      \"type\": \"JsonWebKey2020\",\n      \"publicKeyJwk\": {\n        \"kty\": \"EC\",\n        \"kid\": \"key-1\",\n        \"crv\": \"P-256\",\n        \"x\": \"1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c\",\n        \"y\": \"sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w\"\n      }\n    }\n  ],\n  \"authentication\": [\n    \"#key-1\"\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Publish DID",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids/publish",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids",
-								"publish"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Un-Publish DID",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids/unpublish",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids",
-								"unpublish"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update DID",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"id\": \"did:web:alice-identityhub%3A7083:connector1\",\n  \"@context\": [\n    \"https://www.w3.org/ns/did/v1\",\n    {\n      \"@base\": \"did:web:alice-identityhub%3A7083:connector1\"\n    }\n  ],\n  \"service\": [\n    {\n      \"id\": \"#credential-service\",\n      \"type\": \"CredentialService\",\n      \"serviceEndpoint\": \"http://alice-identityhub:7082/api/resolution\"\n    }\n  ],\n  \"verificationMethod\": [\n    {\n      \"id\": \"did:web:alice-identityhub%3A7083:connector1#key-1\",\n      \"controller\": \"did:web:alice-identityhub%3A7083:connector1\",\n      \"type\": \"JsonWebKey2020\",\n      \"publicKeyJwk\": {\n        \"kty\": \"EC\",\n        \"kid\": \"key-1\",\n        \"crv\": \"P-256\",\n        \"x\": \"1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c\",\n        \"y\": \"sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w\"\n      }\n    }\n  ],\n  \"authentication\": [\n    \"#key-1\"\n  ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids?republish=true",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids"
-							],
-							"query": [
-								{
-									"key": "republish",
-									"value": "true"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete DID",
-					"request": {
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get DID Document state",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{CS_URL}}/api/management/v1/dids/state",
-							"host": [
-								"{{CS_URL}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v1",
-								"dids",
-								"state"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "ControlPlane Management",
 			"item": [
 				{
@@ -510,7 +292,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"providerId\": \"{{PROVIDER_ID}}\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"Set\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MDI3YWRmNzQtMDA4Mi00NmU4LWIwMjctNWU4NGUzMmVjNjU0\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"odrl:target\": \"asset-1\",\n            \"odrl:action\": {\n                \"odrl:type\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:or\": {\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n    }",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"providerId\": \"{{PROVIDER_ID}}\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"Set\",\n        \"@id\": \"c3VzdGFpbmFiaWxpdHktb25seS1kZWY=:YXNzZXQtMg==:MGRkZTFiN2YtMDQyYS00OWRlLThiOWEtZDcxOTMyMTQyYmJm\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"odrl:target\": \"asset-1\",\n            \"odrl:action\": {\n                \"odrl:type\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:or\": {\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -607,7 +389,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"connectorAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"390d85a7-bb6e-4ca6-8f26-4c6956256344\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": {\n        \"contentType\": \"application/octet-stream\",\n        \"isFinite\": true\n    }\n}",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"connectorAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"507c7eed-381a-4a85-a3d5-ea10ebffec88\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": {\n        \"contentType\": \"application/octet-stream\",\n        \"isFinite\": true\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -658,6 +440,679 @@
 						}
 					},
 					"response": []
+				}
+			]
+		},
+		{
+			"name": "IdentityHub",
+			"item": [
+				{
+					"name": "Participant Context Mgmt API",
+					"item": [
+						{
+							"name": "Get Participant By ID",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/foobar",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										"foobar"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Participant",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Regenerate Token",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "Zm9vYmFy.YGE9WvZA+KKbzBqF83n7GtQfgXqZNA7Xe/JDxqKi9YrLC61eoy21RjpY9Xz5KZjlYNYJ+U8JnYXdxTz8tixDRQ==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/foobar/token",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										"foobar",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Participant",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/foobar/state?isActive=true",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										"foobar",
+										"state"
+									],
+									"query": [
+										{
+											"key": "isActive",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deactivate Participant",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "Zm9vYmFy.YGE9WvZA+KKbzBqF83n7GtQfgXqZNA7Xe/JDxqKi9YrLC61eoy21RjpY9Xz5KZjlYNYJ+U8JnYXdxTz8tixDRQ==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/foobar?isActive=false",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										"foobar"
+									],
+									"query": [
+										{
+											"key": "isActive",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Participant",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "Zm9vYmFy.YGE9WvZA+KKbzBqF83n7GtQfgXqZNA7Xe/JDxqKi9YrLC61eoy21RjpY9Xz5KZjlYNYJ+U8JnYXdxTz8tixDRQ==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/foobar",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										"foobar"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "KeyPair Resources Mgmt API",
+					"item": [
+						{
+							"name": "Get KeyPair for Participant",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/keypairs?participantId=foobar",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"keypairs"
+									],
+									"query": [
+										{
+											"key": "participantId",
+											"value": "foobar"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add KeyPair",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "Zm9vYmFy.LdT/xHRkXXciYhFo1p3Izk3psjwFqgGluRcjuJjLS6RhFSc4WmqLh/61P4u00suZgfUvlmyLYh8FYTCcl4K+6w==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"keyId\": \"key2\",\n    \"privateKeyAlias\": \"new-foobar-alias\",\n    \"keyGeneratorParams\": {\n        \"algorithm\": \"EC\",\n        \"curve\": \"secp256r1\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/keypairs?participantId=foobar",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"keypairs"
+									],
+									"query": [
+										{
+											"key": "participantId",
+											"value": "foobar"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add KeyPair Copy",
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "value",
+											"value": "Zm9vYmFy.LdT/xHRkXXciYhFo1p3Izk3psjwFqgGluRcjuJjLS6RhFSc4WmqLh/61P4u00suZgfUvlmyLYh8FYTCcl4K+6w==",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"keyId\": \"key2\",\n    \"privateKeyAlias\": \"new-foobar-alias\",\n    \"keyGeneratorParams\": {\n        \"algorithm\": \"EC\",\n        \"curve\": \"secp256r1\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/keypairs/",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"keypairs",
+										""
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"auth": {
+						"type": "apikey",
+						"apikey": [
+							{
+								"key": "key",
+								"value": "x-api-key",
+								"type": "string"
+							}
+						]
+					},
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "DID-Mgmt",
+					"item": [
+						{
+							"name": "Get all DIDs",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids/query",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids",
+										"query"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Store DID",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"did:web:alice-identityhub%3A7083:connector1\",\n  \"@context\": [\n    \"https://www.w3.org/ns/did/v1\",\n    {\n      \"@base\": \"did:web:alice-identityhub%3A7083:connector1\"\n    }\n  ],\n  \"service\": [\n    {\n      \"id\": \"#credential-service\",\n      \"type\": \"CredentialService\",\n      \"serviceEndpoint\": \"http://alice-identityhub:7082/api/resolution\"\n    }\n  ],\n  \"verificationMethod\": [\n    {\n      \"id\": \"did:web:alice-identityhub%3A7083:connector1#key-1\",\n      \"controller\": \"did:web:alice-identityhub%3A7083:connector1\",\n      \"type\": \"JsonWebKey2020\",\n      \"publicKeyJwk\": {\n        \"kty\": \"EC\",\n        \"kid\": \"key-1\",\n        \"crv\": \"P-256\",\n        \"x\": \"1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c\",\n        \"y\": \"sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w\"\n      }\n    }\n  ],\n  \"authentication\": [\n    \"#key-1\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish DID",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids/publish",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Un-Publish DID",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids/unpublish",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids",
+										"unpublish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update DID",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": \"did:web:alice-identityhub%3A7083:connector1\",\n  \"@context\": [\n    \"https://www.w3.org/ns/did/v1\",\n    {\n      \"@base\": \"did:web:alice-identityhub%3A7083:connector1\"\n    }\n  ],\n  \"service\": [\n    {\n      \"id\": \"#credential-service\",\n      \"type\": \"CredentialService\",\n      \"serviceEndpoint\": \"http://alice-identityhub:7082/api/resolution\"\n    }\n  ],\n  \"verificationMethod\": [\n    {\n      \"id\": \"did:web:alice-identityhub%3A7083:connector1#key-1\",\n      \"controller\": \"did:web:alice-identityhub%3A7083:connector1\",\n      \"type\": \"JsonWebKey2020\",\n      \"publicKeyJwk\": {\n        \"kty\": \"EC\",\n        \"kid\": \"key-1\",\n        \"crv\": \"P-256\",\n        \"x\": \"1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c\",\n        \"y\": \"sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w\"\n      }\n    }\n  ],\n  \"authentication\": [\n    \"#key-1\"\n  ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids?republish=true",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids"
+									],
+									"query": [
+										{
+											"key": "republish",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete DID",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get DID Document state",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids/state",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids",
+										"state"
+									]
+								}
+							},
+							"response": []
+						}
+					]
 				}
 			]
 		}
