@@ -20,8 +20,10 @@ plugins {
 
 dependencies {
     runtimeOnly(libs.edc.ih.api)
-    runtimeOnly(libs.edc.auth.tokenbased)
+    runtimeOnly(libs.edc.ih.credentials)
     runtimeOnly(libs.edc.ih.participants)
+    runtimeOnly(libs.edc.ih.keypairs)
+
     runtimeOnly(libs.bundles.management.api)
     implementation(libs.bundles.did)
     implementation(project(":common-mocks"))
