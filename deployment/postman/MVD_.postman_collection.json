@@ -452,21 +452,6 @@
 						{
 							"name": "Get Participant By ID",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -486,23 +471,28 @@
 							"response": []
 						},
 						{
+							"name": "Get all participants",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Create Participant",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -532,21 +522,6 @@
 						{
 							"name": "Regenerate Token",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.0hW91YokWyhPCitsVOroSC08HeOcW6xbqWf1vA+nq0tnkFM0Q8a/g9IqMiTBCNFE0A/SI3ogMri9q42olWV9qw==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -578,21 +553,6 @@
 						{
 							"name": "Activate Participant",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.MJSqwhKMZXTWgTKZFHYMN5WReBjdkOcILraZi+iBU+N0XDW9ZSawy7jCQV4izZF/d4r9a14hNXByAGuQdR3/1A==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -630,21 +590,6 @@
 						{
 							"name": "Deactivate Participant",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "Zm9vYmFy.YGE9WvZA+KKbzBqF83n7GtQfgXqZNA7Xe/JDxqKi9YrLC61eoy21RjpY9Xz5KZjlYNYJ+U8JnYXdxTz8tixDRQ==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -681,21 +626,6 @@
 						{
 							"name": "Delete Participant",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "Zm9vYmFy.YGE9WvZA+KKbzBqF83n7GtQfgXqZNA7Xe/JDxqKi9YrLC61eoy21RjpY9Xz5KZjlYNYJ+U8JnYXdxTz8tixDRQ==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "DELETE",
 								"header": [],
 								"body": {
@@ -731,21 +661,6 @@
 						{
 							"name": "Get KeyPair for Participant",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -770,23 +685,28 @@
 							"response": []
 						},
 						{
+							"name": "Get all KeyPairs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/keypairs",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"keypairs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Add KeyPair",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "Zm9vYmFy.LdT/xHRkXXciYhFo1p3Izk3psjwFqgGluRcjuJjLS6RhFSc4WmqLh/61P4u00suZgfUvlmyLYh8FYTCcl4K+6w==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "PUT",
 								"header": [],
 								"body": {
@@ -822,21 +742,6 @@
 						{
 							"name": "Rotate key",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -868,21 +773,6 @@
 						{
 							"name": "Revoke key",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
-									]
-								},
 								"method": "POST",
 								"header": [],
 								"body": {
@@ -912,16 +802,6 @@
 							"response": []
 						}
 					],
-					"auth": {
-						"type": "apikey",
-						"apikey": [
-							{
-								"key": "key",
-								"value": "x-api-key",
-								"type": "string"
-							}
-						]
-					},
 					"event": [
 						{
 							"listen": "prerequest",
@@ -948,8 +828,11 @@
 					"item": [
 						{
 							"name": "Get all DIDs",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
-								"method": "POST",
+								"method": "GET",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -961,7 +844,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/dids/query",
+									"raw": "{{CS_URL}}/api/management/v1/dids",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -969,8 +852,7 @@
 										"api",
 										"management",
 										"v1",
-										"dids",
-										"query"
+										"dids"
 									]
 								}
 							},
@@ -1167,21 +1049,27 @@
 						{
 							"name": "Get Credential By ID",
 							"request": {
-								"auth": {
-									"type": "apikey",
-									"apikey": [
-										{
-											"key": "value",
-											"value": "c3VwZXItdXNlcg==.hYVxH5p9z9MxnBIVVjlyQ/4nY5BzxtLu4i26t0L7qFEHU9xKyENlbFGc/2vQY67aNV78QkqpeulbvHN3SxyJhg==",
-											"type": "string"
-										},
-										{
-											"key": "key",
-											"value": "x-api-key",
-											"type": "string"
-										}
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/credentials/foo",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"credentials",
+										"foo"
 									]
-								},
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Credentials",
+							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
@@ -1200,6 +1088,41 @@
 							"response": []
 						}
 					]
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{IH_API_TOKEN}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "x-api-key",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}
@@ -1258,6 +1181,11 @@
 		{
 			"key": "CS_URL",
 			"value": "http://localhost:8181",
+			"type": "string"
+		},
+		{
+			"key": "IH_API_TOKEN",
+			"value": "c3VwZXItdXNlcg==.jJ754HeK1bc1i1UjJ6hCPa/cF464MbYPDK9RjkFFa0Qd89OmbpMLFDuVGROOIHO1sYlRkug78odcBVxqRtyAEQ==",
 			"type": "string"
 		}
 	]
