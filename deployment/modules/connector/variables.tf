@@ -40,7 +40,7 @@ variable "participant-did" {
 
 variable "namespace" {
   type    = string
-  default = "iatp"
+  default = "mvd"
 }
 variable "ports" {
   type = object({

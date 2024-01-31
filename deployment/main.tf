@@ -61,7 +61,7 @@ module "bob-connector" {
 
 resource "kubernetes_namespace" "ns" {
   metadata {
-    name = "iatp"
+    name = "mvd"
   }
 }
 
