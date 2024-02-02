@@ -1,13 +1,11 @@
 # -buster is required to have apt available
-FROM openjdk:17-slim-buster
+FROM eclipse-temurin:21.0.2_13-jre-alpine
 
 # Optional JVM arguments, such as memory settings
 ARG JVM_ARGS=""
 ARG JAR
 
-RUN apt update \
-  && apt install -y curl \
-  && rm -rf /var/cache/apt/archives /var/lib/apt/lists
+RUN apk --no-cache add curl
 
 WORKDIR /app
 
