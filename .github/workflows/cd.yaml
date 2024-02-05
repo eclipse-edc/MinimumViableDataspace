@@ -77,4 +77,4 @@ jobs:
           files: "**/test-results/**/*.xml"
 
       - name: CodeCov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
