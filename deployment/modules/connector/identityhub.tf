@@ -43,7 +43,7 @@ resource "kubernetes_deployment" "identityhub" {
             name           = "debug"
           }
           port {
-            container_port = var.ports.ih-did-management
+            container_port = var.ports.ih-management
             name           = "did-mgmt"
           }
           port {
@@ -69,9 +69,10 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_IH_IAM_ID             = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS = false
     EDC_IH_IAM_PUBLICKEY_PEM  = var.publickey-pem
+    EDC_IH_API_SUPERUSER_KEY  = var.ih_superuser_apikey
     WEB_HTTP_PORT             = var.ports.ih-default
     WEB_HTTP_PATH             = "/api"
-    WEB_HTTP_MANAGEMENT_PORT  = var.ports.ih-did-management
+    WEB_HTTP_MANAGEMENT_PORT  = var.ports.ih-management
     WEB_HTTP_MANAGEMENT_PATH  = "/api/management"
     WEB_HTTP_RESOLUTION_PORT  = var.ports.resolution-api
     WEB_HTTP_RESOLUTION_PATH  = "/api/resolution"
