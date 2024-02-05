@@ -34,3 +34,10 @@ output "alice-node-ip" {
 output "registry" {
   value = jsondecode(local.registry)
 }
+
+output "identity-hub-management-api-key" {
+  value = {
+    bob-superuser = module.bob-connector.ih-superuser-apikey
+    alice-superuser = module.alice-connector.ih-superuser-apikey
+  }
+}

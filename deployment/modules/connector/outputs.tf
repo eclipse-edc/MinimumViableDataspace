@@ -39,3 +39,7 @@ output "audience-mapping" {
     iatpAudience = var.participant-did
   }
 }
+
+output "ih-superuser-apikey"{
+  value = var.ih_superuser_apikey
+}

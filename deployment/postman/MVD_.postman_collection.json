@@ -447,15 +447,35 @@
 			"name": "IdentityHub",
 			"item": [
 				{
-					"name": "Participant Context Mgmt API",
+					"name": "Participant_Context_Mgmt_API",
 					"item": [
 						{
 							"name": "Get Participant By ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/management/v1/participants/alice",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -464,7 +484,7 @@
 										"management",
 										"v1",
 										"participants",
-										"{{PARTICIPANT_ID}}"
+										"alice"
 									]
 								}
 							},
@@ -472,11 +492,29 @@
 						},
 						{
 							"name": "Get all participants",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/management/v1/participants",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -484,8 +522,7 @@
 										"api",
 										"management",
 										"v1",
-										"participants",
-										"{{PARTICIPANT_ID}}"
+										"participants"
 									]
 								}
 							},
@@ -493,12 +530,32 @@
 						},
 						{
 							"name": "Create Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"did:web:{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -506,7 +563,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/management/v1/participants/",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -515,7 +572,56 @@
 										"management",
 										"v1",
 										"participants",
-										"{{PARTICIPANT_ID}}"
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Roles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"role1\", \"role2\", \"admin\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/roles",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"roles"
 									]
 								}
 							},
@@ -523,12 +629,30 @@
 						},
 						{
 							"name": "Regenerate Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"raw": "",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -554,6 +678,24 @@
 						},
 						{
 							"name": "Activate Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -591,6 +733,24 @@
 						},
 						{
 							"name": "Deactivate Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -628,6 +788,24 @@
 						},
 						{
 							"name": "Delete Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -663,6 +841,24 @@
 					"item": [
 						{
 							"name": "Get KeyPair for Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -705,6 +901,26 @@
 						},
 						{
 							"name": "Add KeyPair",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK or conflict\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "PUT",
 								"header": [],
@@ -736,6 +952,24 @@
 						},
 						{
 							"name": "Rotate key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -769,6 +1003,24 @@
 						},
 						{
 							"name": "Revoke key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -827,6 +1079,24 @@
 					"item": [
 						{
 							"name": "Query DIDs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -859,6 +1129,24 @@
 						},
 						{
 							"name": "Publish DID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -891,6 +1179,24 @@
 						},
 						{
 							"name": "Add endpoint",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -924,6 +1230,24 @@
 						},
 						{
 							"name": "Un-Publish DID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -956,6 +1280,24 @@
 						},
 						{
 							"name": "Delete DID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "DELETE",
 								"header": [],
@@ -987,6 +1329,24 @@
 						},
 						{
 							"name": "Get DID Document state",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -1017,6 +1377,28 @@
 							},
 							"response": []
 						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is OK\", function() {",
+									"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+									"})"
+								]
+							}
+						}
 					]
 				},
 				{
@@ -1024,6 +1406,26 @@
 					"item": [
 						{
 							"name": "Get Credential By ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -1046,6 +1448,26 @@
 						},
 						{
 							"name": "Get All Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+											"})"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [],
+										"type": "text/javascript"
+									}
+								}
+							],
 							"request": {
 								"method": "GET",
 								"header": [],
@@ -1097,7 +1519,9 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							""
+							"pm.test(\"Status is OK or conflict\", function() {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"})"
 						]
 					}
 				}

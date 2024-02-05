@@ -4,7 +4,7 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="org.eclipse.edc.boot.system.runtime.BaseRuntime" />
     <module name="runtimes.launchers.identity-hub.main" />
-    <option name="VM_PARAMETERS" value="-Dweb.http.port=7090 -Dweb.http.path=&quot;/api&quot; -Dweb.http.resolution.port=7091 -Dweb.http.resolution.path=&quot;/api/resolution/&quot; -Dweb.http.resolution.path=&quot;/api/resolution/&quot; -Dweb.http.management.port=7092 -Dweb.http.management.path=&quot;/api/management&quot; -Dweb.http.did.port=7093 -Dweb.http.did.path=&quot;/&quot; -Dedc.ih.iam.publickey.path=&quot;./deployment/assets/ec-p256-public.pem&quot; -Dedc.ih.iam.id=&quot;BPN0000002&quot;" />
+    <option name="VM_PARAMETERS" value="-Dweb.http.port=7090 -Dweb.http.path=&quot;/api&quot; -Dweb.http.resolution.port=7091 -Dweb.http.resolution.path=&quot;/api/resolution/&quot; -Dweb.http.resolution.path=&quot;/api/resolution/&quot; -Dweb.http.management.port=7092 -Dweb.http.management.path=&quot;/api/management&quot; -Dweb.http.did.port=7093 -Dweb.http.did.path=&quot;/&quot; -Dedc.ih.iam.publickey.path=&quot;./deployment/assets/ec-p256-public.pem&quot; -Dedc.ih.iam.id=&quot;BPN0000002&quot; -Dedc.ih.api.superuser.key=&quot;c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=&quot;" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

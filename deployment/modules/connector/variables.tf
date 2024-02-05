@@ -44,26 +44,26 @@ variable "namespace" {
 }
 variable "ports" {
   type = object({
-    resolution-api    = number
-    web               = number
-    management        = number
-    protocol          = number
-    debug             = number
-    ih-default        = number
-    ih-debug          = number
-    ih-did            = number
-    ih-did-management = number
+    resolution-api = number
+    web            = number
+    management     = number
+    protocol       = number
+    debug          = number
+    ih-default     = number
+    ih-debug       = number
+    ih-did         = number
+    ih-management  = number
   })
   default = {
-    web               = 8080
-    management        = 8081
-    protocol          = 8082
-    debug             = 1044
-    ih-default        = 7080
-    ih-debug          = 1045
-    ih-did-management = 7081
-    resolution-api    = 7082
-    ih-did            = 7083
+    web            = 8080
+    management     = 8081
+    protocol       = 8082
+    debug          = 1044
+    ih-default     = 7080
+    ih-debug       = 1045
+    ih-management  = 7081
+    resolution-api = 7082
+    ih-did         = 7083
   }
 }
 
@@ -79,6 +79,12 @@ variable "database-name" {
 variable "registry-json" {
   type        = string
   description = "JSON file containing all DSP-URL-to-audience mappings"
+}
+
+variable "ih_superuser_apikey" {
+  default     = "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+  description = "Management API Key for the Super-User. Defaults to 'base64(super-user).base64(super-secret-key)"
+  type        = string
 }
 
 locals {

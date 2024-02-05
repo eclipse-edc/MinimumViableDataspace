@@ -35,19 +35,22 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
 
         // seed DID documents via the IH's management API
         container {
-          name    = "seed-did"
-          image   = "curlimages/curl"
+          name    = "create-participant"
+          image   = "postman/newman:ubuntu"
           command = [
-            "curl", "-v",
-            "-X", "POST",
-            "--location",
-            "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-did-management}/api/management/v1/dids?publish=true",
-            "--header", "Content-Type: application/json",
-            "--data-binary", file("${path.module}/../../assets/dids/${replace(var.participant-did, ":", "_")}.json")
+            "newman", "run",
+            "--folder", "Create Participant",
+            "--env-var", "CS_URL=http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-management}",
+            "--env-var", "IH_API_TOKEN=${var.ih_superuser_apikey}",
+            "--env-var", "NEW_PARTICIPANT_ID=${var.participant-did}",
+            "/opt/collection/${local.newman_collection_name}"
           ]
+          volume_mount {
+            mount_path = "/opt/collection"
+            name       = "seed-collection"
+          }
         }
 
-        // this container seeds data to the miw service
         volume {
           name = "seed-collection"
           config_map {
@@ -67,10 +70,10 @@ resource "kubernetes_config_map" "seed-collection" {
     namespace = var.namespace
   }
   data = {
-    (local.newman_collection_name) = file("${path.module}/../../postman/IATP_Demo.postman_collection.json")
+    (local.newman_collection_name) = file("${path.module}/../../postman/MVD_.postman_collection.json")
   }
 }
 
 locals {
-  newman_collection_name = "IATP_Demo.postman_collection.json"
+  newman_collection_name = "MVD.postman_collection.json"
 }
