@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.demo.iatp.core;
+package org.eclipse.edc.iam.identitytrust.core;
 
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
@@ -22,11 +22,11 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
 import java.time.Clock;
 
-import static org.eclipse.edc.iam.identitytrust.core.IatpDefaultServicesExtension.STS_PRIVATE_KEY_ALIAS;
-import static org.eclipse.edc.iam.identitytrust.core.IatpDefaultServicesExtension.STS_PUBLIC_KEY_ALIAS;
 
 public class SecretsExtension implements ServiceExtension {
-
+    // duplicated from IatpDefaultServicesExtension
+    private static final String STS_PRIVATE_KEY_ALIAS = "edc.iam.sts.privatekey.alias";
+    private static final String STS_PUBLIC_KEY_ALIAS = "edc.iam.sts.publickey.alias";
     @Inject
     private Vault vault;
 
@@ -42,7 +42,7 @@ public class SecretsExtension implements ServiceExtension {
     }
 
     private void seedKeys(ServiceExtensionContext context) {
-        var publickey = """
+        var publicKey = """
                 -----BEGIN PUBLIC KEY-----
                 MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r
                 oYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
@@ -59,6 +59,8 @@ public class SecretsExtension implements ServiceExtension {
 
 
         vault.storeSecret(context.getConfig().getString(STS_PRIVATE_KEY_ALIAS), privateKey);
-        vault.storeSecret(context.getConfig().getString(STS_PUBLIC_KEY_ALIAS), publickey);
+        vault.storeSecret(context.getConfig().getString(STS_PUBLIC_KEY_ALIAS), publicKey);
+
+        context.getMonitor().withPrefix("DEMO").warning(">>>>>> This extension hard-codes a keypair into the vault! CHANGE THIS!!!! <<<<<<");
     }
 }

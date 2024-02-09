@@ -579,6 +579,56 @@
 							"response": []
 						},
 						{
+							"name": "Create Participant (existing key)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"active\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\\n-----END PUBLIC KEY-----\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/participants/",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"participants",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "Update Roles",
 							"event": [
 								{
