@@ -7,8 +7,8 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
   }
   spec {
     // run only once
-    completions                = 1
-    completion_mode            = "NonIndexed"
+    completions     = 1
+    completion_mode = "NonIndexed"
     // clean up any job pods after 90 seconds, failed or succeeded
     ttl_seconds_after_finished = "90"
     template {
@@ -16,10 +16,10 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
         name = "seed-${var.humanReadableName}"
       }
       spec {
-        // this container seeds application data to the connector
+        /* SEED APPLICATION DATA */
         container {
-          name    = "seed-application-data"
-          image   = "postman/newman:ubuntu"
+          name  = "seed-application-data"
+          image = "postman/newman:ubuntu"
           command = [
             "newman", "run",
             "--folder", "Seed",
@@ -33,10 +33,10 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
           }
         }
 
-        // seed DID documents via the IH's management API
+        /* SEED IDENTITY HUB DATA */
         container {
-          name    = "create-participant"
-          image   = "postman/newman:ubuntu"
+          name  = "create-participant"
+          image = "postman/newman:ubuntu"
           command = [
             "newman", "run",
             "--folder", "Create Participant",

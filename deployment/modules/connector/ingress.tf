@@ -19,8 +19,8 @@
 
 resource "kubernetes_ingress_v1" "api-ingress" {
   metadata {
-    name        = "${var.humanReadableName}-ingress"
-    namespace   = var.namespace
+    name      = "${var.humanReadableName}-ingress"
+    namespace = var.namespace
     annotations = {
       "nginx.ingress.kubernetes.io/rewrite-target" = "/$2"
       "nginx.ingress.kubernetes.io/use-regex"      = "true"
@@ -73,8 +73,8 @@ resource "kubernetes_ingress_v1" "api-ingress" {
 // the DID endpoint can not actually modify the URL, otherwise it'll mess up the DID resolution
 resource "kubernetes_ingress_v1" "did-ingress" {
   metadata {
-    name        = "${var.humanReadableName}-did-ingress"
-    namespace   = var.namespace
+    name      = "${var.humanReadableName}-did-ingress"
+    namespace = var.namespace
     annotations = {
       "nginx.ingress.kubernetes.io/rewrite-target" = "/${var.humanReadableName}/$2"
     }

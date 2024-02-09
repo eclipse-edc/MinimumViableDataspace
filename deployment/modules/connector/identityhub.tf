@@ -2,7 +2,7 @@ resource "kubernetes_deployment" "identityhub" {
   metadata {
     name      = "${lower(var.humanReadableName)}-identityhub"
     namespace = var.namespace
-    labels    = {
+    labels = {
       App = "${lower(var.humanReadableName)}-identityhub"
     }
   }

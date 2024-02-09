@@ -17,19 +17,11 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-variable "alice-bpn" {
-  default = "BPN0000001"
-}
-
 variable "alice-did" {
-  default = "did:web:alice-identityhub%3A7083:connector1"
-}
-
-variable "bob-bpn" {
-  default = "BPN0000002"
+  default = "did:web:alice-identityhub%3A7083:alice"
 }
 
 variable "bob-did" {
-  default = "did:web:bob-identityhub%3A7083:connector2"
+  default = "did:web:bob-identityhub%3A7083:bob"
 }
 

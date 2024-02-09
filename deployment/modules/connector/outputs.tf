@@ -40,6 +40,6 @@ output "audience-mapping" {
   }
 }
 
-output "ih-superuser-apikey"{
+output "ih-superuser-apikey" {
   value = var.ih_superuser_apikey
 }
