@@ -555,7 +555,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"did:web:{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EdDSA\",\n            \"curve\": \"Ed25519\"\n        }\n    }\n}",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"active\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EdDSA\",\n            \"curve\": \"Ed25519\"\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
