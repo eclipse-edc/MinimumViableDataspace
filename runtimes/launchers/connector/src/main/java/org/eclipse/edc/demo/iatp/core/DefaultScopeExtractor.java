@@ -18,6 +18,7 @@ import org.eclipse.edc.jwt.spi.JwtRegisteredClaimNames;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Policy;
 import org.eclipse.edc.spi.EdcException;
+import org.eclipse.edc.spi.iam.RequestScope;
 import org.eclipse.edc.spi.iam.TokenParameters;
 
 import java.util.HashSet;
@@ -35,16 +36,15 @@ public class DefaultScopeExtractor implements BiFunction<Policy, PolicyContext, 
 
     @Override
     public Boolean apply(Policy policy, PolicyContext policyContext) {
-        var tokenBuilder = policyContext.getContextData(TokenParameters.Builder.class);
-        if (tokenBuilder == null) {
-            throw new EdcException(format("%s not set in policy context", TokenParameters.Builder.class.getName()));
+        var requestScopeBuilder = policyContext.getContextData(RequestScope.Builder.class);
+        if(requestScopeBuilder == null){
+            throw new EdcException("%s not set in policy context".formatted(RequestScope.Builder.class));
         }
-
-        var tokenParam = tokenBuilder.build();
-        var existingScope = tokenParam.getStringClaim(JwtRegisteredClaimNames.SCOPE);
+        var rq= requestScopeBuilder.build();
+        var existingScope = rq.getScopes();
         var newScopes = new HashSet<>(defaultScopes);
-        newScopes.add(existingScope);
-        tokenBuilder.claims(JwtRegisteredClaimNames.SCOPE, String.join(" ", newScopes).trim());
+        newScopes.addAll(existingScope);
+        requestScopeBuilder.scopes(newScopes);
         return true;
     }
 }
