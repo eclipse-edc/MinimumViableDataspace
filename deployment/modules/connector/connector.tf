@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "connector" {
   metadata {
     name      = "${lower(var.humanReadableName)}-connector"
     namespace = var.namespace
-    labels    = {
+    labels = {
       App = "${lower(var.humanReadableName)}-connector"
     }
   }

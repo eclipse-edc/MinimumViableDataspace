@@ -39,7 +39,7 @@ provider "kubernetes" {
 module "alice-connector" {
   source            = "./modules/connector"
   humanReadableName = "alice"
-  participantId     = var.alice-bpn
+  participantId     = var.alice-did
   participant-did   = var.alice-did
   publickey-pem     = file("./assets/ec-p256-public.pem")
   database-name     = "alice"
@@ -51,7 +51,7 @@ module "alice-connector" {
 module "bob-connector" {
   source            = "./modules/connector"
   humanReadableName = "bob"
-  participantId     = var.bob-bpn
+  participantId     = var.bob-did
   participant-did   = var.bob-did
   publickey-pem     = file("./assets/ec-p256-public.pem")
   database-name     = "bob"
@@ -70,12 +70,12 @@ locals {
     [
       {
         dspUrl : "http://bob-controlplane:8082/api/dsp",
-        participantId : var.bob-bpn,
+        participantId : var.bob-did,
         did : var.bob-did
       },
       {
         dspUrl : "http://alice-controlplane:8092/api/dsp",
-        participantId : var.alice-bpn,
+        participantId : var.alice-did,
         did : var.alice-did
       }
     ]

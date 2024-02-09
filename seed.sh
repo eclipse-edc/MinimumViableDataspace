@@ -1,7 +1,25 @@
+#!/bin/bash
+
+## Seed application data to both connectors
 for url in 'http://127.0.0.1:8081' 'http://127.0.0.1:8091'
 do
   newman run --folder "Seed" \
     --env-var "HOST=$url" \
-    ./deployment/postman/IATP_Demo.postman_collection.json
+    ./deployment/postman/MVD_.postman_collection.json
 
 done
+
+## Seed management data to identityhubs
+API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+
+newman run --folder "Create Participant" \
+  --env-var "CS_URL=http://127.0.0.1:7082" \
+  --env-var "IH_API_TOKEN=$API_KEY" \
+  --env-var "NEW_PARTICIPANT_ID=did:web:alice-identityhub%3A7083:alice" \
+  ./deployment/postman/MVD_.postman_collection.json
+
+newman run --folder "Create Participant" \
+  --env-var "CS_URL=http://127.0.0.1:7092" \
+  --env-var "IH_API_TOKEN=$API_KEY" \
+  --env-var "NEW_PARTICIPANT_ID=did:web:bob-identityhub%3A7083:bob" \
+  ./deployment/postman/MVD_.postman_collection.json

@@ -261,7 +261,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"BPN0000002\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v2/catalog/request",
@@ -447,7 +447,7 @@
 			"name": "IdentityHub",
 			"item": [
 				{
-					"name": "Participant_Context_Mgmt_API",
+					"name": "Participant Context Mgmt API",
 					"item": [
 						{
 							"name": "Get Participant By ID",
@@ -475,7 +475,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/alice",
+									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -484,7 +484,7 @@
 										"management",
 										"v1",
 										"participants",
-										"alice"
+										"{{PARTICIPANT_ID}}"
 									]
 								}
 							},
@@ -555,7 +555,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"did:web:{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"did:web:{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EdDSA\",\n            \"curve\": \"Ed25519\"\n        }\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -854,7 +854,9 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
+										"exec": [
+											""
+										],
 										"type": "text/javascript"
 									}
 								}
@@ -863,7 +865,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/keypairs",
+									"raw": "{{CS_URL}}/api/management/v1/participants/BPN0000001/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -872,7 +874,7 @@
 										"management",
 										"v1",
 										"participants",
-										"{{PARTICIPANT_ID}}",
+										"BPN0000001",
 										"keypairs"
 									]
 								}
@@ -1092,7 +1094,9 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
+										"exec": [
+											""
+										],
 										"type": "text/javascript"
 									}
 								}
@@ -1102,7 +1106,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{}",
+									"raw": "{\n    \n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1110,7 +1114,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/dids/query",
+									"raw": "{{CS_URL}}/api/management/v1/participants/BPN0000001/dids/query",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -1119,9 +1123,61 @@
 										"management",
 										"v1",
 										"participants",
-										"{{PARTICIPANT_ID}}",
+										"BPN0000001",
 										"dids",
 										"query"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All DID Documents",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/management/v1/dids",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"management",
+										"v1",
+										"dids"
 									]
 								}
 							},
@@ -1142,7 +1198,9 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
+										"exec": [
+											""
+										],
 										"type": "text/javascript"
 									}
 								}
@@ -1152,7 +1210,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"raw": "{\n    \"did\": \"did:web:BPN0000001\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1342,7 +1400,9 @@
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
+										"exec": [
+											""
+										],
 										"type": "text/javascript"
 									}
 								}
@@ -1352,7 +1412,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"did\": \"did:web:super-user\"\n}",
+									"raw": "{\n    \"did\": \"did:web:BPN0000001\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1586,7 +1646,7 @@
 		},
 		{
 			"key": "IH_API_TOKEN",
-			"value": "c3VwZXItdXNlcg==.jJ754HeK1bc1i1UjJ6hCPa/cF464MbYPDK9RjkFFa0Qd89OmbpMLFDuVGROOIHO1sYlRkug78odcBVxqRtyAEQ==",
+			"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
 			"type": "string"
 		},
 		{
@@ -1596,6 +1656,11 @@
 		{
 			"key": "DID",
 			"value": "did:web:super-user"
+		},
+		{
+			"key": "NEW_PARTICIPANT_ID",
+			"value": "did:web:alice-identityhub%3A7083:alice",
+			"type": "string"
 		}
 	]
 }

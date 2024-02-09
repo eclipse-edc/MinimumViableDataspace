@@ -24,7 +24,7 @@ resource "kubernetes_service" "controlplane-service" {
     namespace = var.namespace
   }
   spec {
-    type     = "NodePort"
+    type = "NodePort"
     selector = {
       App = kubernetes_deployment.connector.spec.0.template.0.metadata[0].labels.App
     }
@@ -53,7 +53,7 @@ resource "kubernetes_service" "ih-service" {
     namespace = var.namespace
   }
   spec {
-    type     = "NodePort"
+    type = "NodePort"
     selector = {
       App = kubernetes_deployment.identityhub.spec.0.template.0.metadata[0].labels.App
     }

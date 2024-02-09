@@ -37,7 +37,7 @@ output "registry" {
 
 output "identity-hub-management-api-key" {
   value = {
-    bob-superuser = module.bob-connector.ih-superuser-apikey
+    bob-superuser   = module.bob-connector.ih-superuser-apikey
     alice-superuser = module.alice-connector.ih-superuser-apikey
   }
 }
