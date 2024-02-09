@@ -5,23 +5,56 @@ for url in 'http://127.0.0.1:8081' 'http://127.0.0.1:8091'
 do
   newman run --folder "Seed" \
     --env-var "HOST=$url" \
-    ./deployment/postman/MVD_.postman_collection.json
+    ./deployment/postman/MVD_.postman_collection.json > /dev/null
 
 done
 
 ## Seed management data to identityhubs
 API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 
-# alice
-newman run --folder "Create Participant" \
-  --env-var "CS_URL=http://127.0.0.1:7082" \
-  --env-var "IH_API_TOKEN=$API_KEY" \
-  --env-var "NEW_PARTICIPANT_ID=did:web:localhost%3A7083" \
-  ./deployment/postman/MVD_.postman_collection.json
+# add participant alice
+curl --location 'http://localhost:7082/api/management/v1/participants/' \
+--header 'Content-Type: application/json' \
+--header "x-api-key: $API_KEY" \
+--data '{
+    "roles":[],
+    "serviceEndpoints":[
+      {
+         "type": "CredentialService",
+         "serviceEndpoint": "http://localhost:7081/api/resolution/v1/participants/did:web:localhost%3A",
+         "id": "credentialservice-1"
+      }
+    ],
+    "active": true,
+    "participantId": "did:web:localhost%3A7083",
+    "did": "did:web:localhost%3A7083",
+    "key":{
+        "keyId": "key-1",
+        "privateKeyAlias": "did:web:localhost%3A7083-alias",
+        "publicKeyPem":"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\n-----END PUBLIC KEY-----"
+    }
+}'
 
-# bob
-newman run --folder "Create Participant" \
-  --env-var "CS_URL=http://127.0.0.1:7092" \
-  --env-var "IH_API_TOKEN=$API_KEY" \
-  --env-var "NEW_PARTICIPANT_ID=did:web:localhost%3A7093" \
-  ./deployment/postman/MVD_.postman_collection.json
+
+# add participant bob
+curl --location 'http://localhost:7092/api/management/v1/participants/' \
+--header 'Content-Type: application/json' \
+--header "x-api-key: $API_KEY" \
+--data '{
+    "roles":[],
+    "serviceEndpoints":[
+      {
+         "type": "CredentialService",
+         "serviceEndpoint": "http://localhost:7091/api/resolution/v1/participants/did:web:localhost%3A",
+         "id": "credentialservice-1"
+      }
+    ],
+    "active": true,
+    "participantId": "did:web:localhost%3A7093",
+    "did": "did:web:localhost%3A7093",
+    "key":{
+        "keyId": "key-1",
+        "privateKeyAlias": "did:web:localhost%3A7093-alias",
+        "publicKeyPem":"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\n-----END PUBLIC KEY-----"
+    }
+}'
