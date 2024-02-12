@@ -14,15 +14,14 @@
       "controller": "did:example:dataspace-issuer",
       "type": "JsonWebKey2020",
       "publicKeyJwk": {
-        "kty": "EC",
+        "kty": "OKP",
         "kid": "key-1",
-        "crv": "P-256",
-        "x": "1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3c",
-        "y": "sfoTFhbolxlMR5c0oQHoUesL8M1dt22wtLXBXFYFv_w"
+        "crv": "Ed25519",
+        "x":"ActoXZWU6HMz4_aWRvS6g7cni0rnutGuSPzWXtnt49U"
       }
     }
   ],
   "authentication": [
-    "#key-1"
+    "key-1"
   ]
 }
