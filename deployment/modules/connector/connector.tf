@@ -111,9 +111,9 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_PROTOCOL_PATH        = "/api/dsp"
     EDC_API_AUTH_KEY              = "password"
     EDC_DSP_CALLBACK_ADDRESS      = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
-    EDC_IAM_CREDENTIALSERVICE_URL = "http://${local.ih-service-name}:${var.ports.resolution-api}/api/resolution/presentation/query"
-    EDC_IAM_STS_PRIVATEKEY_ALIAS  = "my-private-key"
-    EDC_IAM_STS_PUBLICKEY_ALIAS   = "my-public-key"
+    EDC_IAM_CREDENTIALSERVICE_URL = "http://${local.ih-service-name}:${var.ports.resolution-api}/api/resolution/participants/${var.participantId}/presentation/query"
+    EDC_IAM_STS_PRIVATEKEY_ALIAS  = "${var.participant-did}-alias"
+    EDC_IAM_STS_PUBLICKEY_ALIAS   = "${var.participant-did}#key-1"
     JAVA_TOOL_OPTIONS             = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH = "/etc/registry/registry.json"
     EDC_PARTICIPANT_ID            = var.participantId

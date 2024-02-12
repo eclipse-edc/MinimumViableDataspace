@@ -21,7 +21,7 @@ curl --location 'http://localhost:7082/api/management/v1/participants/' \
     "serviceEndpoints":[
       {
          "type": "CredentialService",
-         "serviceEndpoint": "http://localhost:7081/api/resolution/v1/participants/did:web:localhost%3A",
+         "serviceEndpoint": "http://localhost:7081/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
          "id": "credentialservice-1"
       }
     ],
@@ -45,7 +45,7 @@ curl --location 'http://localhost:7092/api/management/v1/participants/' \
     "serviceEndpoints":[
       {
          "type": "CredentialService",
-         "serviceEndpoint": "http://localhost:7091/api/resolution/v1/participants/did:web:localhost%3A",
+         "serviceEndpoint": "http://localhost:7091/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDkz",
          "id": "credentialservice-1"
       }
     ],
