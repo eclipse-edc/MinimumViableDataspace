@@ -30,7 +30,7 @@ curl --location 'http://localhost:7082/api/management/v1/participants/' \
     "did": "did:web:localhost%3A7083",
     "key":{
         "keyId": "key-1",
-        "privateKeyAlias": "did:web:localhost%3A7083-alias",
+        "privateKeyAlias": "key-1",
         "publicKeyPem":"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\n-----END PUBLIC KEY-----"
     }
 }'
@@ -54,7 +54,7 @@ curl --location 'http://localhost:7092/api/management/v1/participants/' \
     "did": "did:web:localhost%3A7093",
     "key":{
         "keyId": "key-1",
-        "privateKeyAlias": "did:web:localhost%3A7093-alias",
+        "privateKeyAlias": "key-1",
         "publicKeyPem":"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\n-----END PUBLIC KEY-----"
     }
 }'

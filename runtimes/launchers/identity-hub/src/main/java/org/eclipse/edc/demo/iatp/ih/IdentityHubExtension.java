@@ -20,11 +20,18 @@ import org.eclipse.edc.identityhub.spi.store.CredentialStore;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.eclipse.edc.spi.CoreConstants.JSON_LD;
 
@@ -41,7 +48,12 @@ public class IdentityHubExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        seedCredentials(context);
+        try {
+            var directory = context.getConfig().getString("edc.mvd.credentials.path");
+            seedCredentials(directory, context.getMonitor().withPrefix("DEMO"), getClass().getClassLoader());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // register scope mapper
     }
@@ -51,15 +63,28 @@ public class IdentityHubExtension implements ServiceExtension {
         return new CatenaScopeTransformer(List.of("MembershipCredential", "DismantlerCredential", "BpnCredential"));
     }
 
-    private void seedCredentials(ServiceExtensionContext context) {
-        var iamId = context.getConfig().getString("edc.ih.iam.id");
-        var objectMapper = typeManager.getMapper(JSON_LD);
+    private void seedCredentials(String directory, Monitor monitor, ClassLoader classLoader) throws IOException {
 
-        try {
-            store.create(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("credentials/" + iamId + "-membership-credential.json"), VerifiableCredentialResource.class));
-            store.create(objectMapper.readValue(getClass().getClassLoader().getResourceAsStream("credentials/" + iamId + "-pcf-credential.json"), VerifiableCredentialResource.class));
-        } catch (Exception e) {
-            context.getMonitor().severe("Error storing VC", e);
+        URL url = classLoader.getResource(directory);
+        if (url == null) {
+            monitor.warning("Path '%s' does not exist. It must be a relative path within the 'resources' folder! Will not add any VCs.".formatted(directory));
+            return;
         }
+        String path = url.getPath();
+        var files = new File(path).listFiles();
+        if (files == null) {
+            monitor.warning("No files found in directory '%s'. Will not add any VCs.".formatted(directory));
+            return;
+        }
+
+        var objectMapper = typeManager.getMapper(JSON_LD);
+        Stream.of(files).forEach(p -> {
+            try {
+                store.create(objectMapper.readValue(p, VerifiableCredentialResource.class));
+                monitor.debug("Stored VC from file '%s'".formatted(p.getAbsolutePath()));
+            } catch (IOException e) {
+                monitor.severe("Error storing VC", e);
+            }
+        });
     }
 }

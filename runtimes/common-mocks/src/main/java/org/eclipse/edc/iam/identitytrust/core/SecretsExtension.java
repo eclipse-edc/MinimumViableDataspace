@@ -41,6 +41,10 @@ public class SecretsExtension implements ServiceExtension {
         return Clock.systemUTC();
     }
 
+    /**
+     * We need this, because we don't have a vault that is shared between Connector and IdentityHub, so this needs to be seeded to either of them.
+     * @param context
+     */
     private void seedKeys(ServiceExtensionContext context) {
         var publicKey = """
                 -----BEGIN PUBLIC KEY-----
