@@ -2,7 +2,7 @@ resource "kubernetes_deployment" "identityhub" {
   metadata {
     name      = "${lower(var.humanReadableName)}-identityhub"
     namespace = var.namespace
-    labels = {
+    labels    = {
       App = "${lower(var.humanReadableName)}-identityhub"
     }
   }
@@ -50,10 +50,37 @@ resource "kubernetes_deployment" "identityhub" {
             container_port = var.ports.ih-did
             name           = "did"
           }
+
+          volume_mount {
+            mount_path = "/etc/credentials"
+            name       = "credentials-volume"
+          }
+        }
+
+        volume {
+          name = "credentials-volume"
+          config_map {
+            name = kubernetes_config_map.identityhub-credentials-map.metadata[0].name
+          }
         }
       }
 
     }
+  }
+}
+
+locals {
+  dir = "${var.credentials-dir}/${var.humanReadableName}"
+}
+
+resource "kubernetes_config_map" "identityhub-credentials-map" {
+  metadata {
+    name      = "${lower(var.humanReadableName)}-credentials"
+    namespace = var.namespace
+  }
+
+  data = {
+    for f in fileset(local.dir, "*.json") : f => file(join("/", [local.dir, f]))
   }
 }
 
@@ -81,6 +108,6 @@ resource "kubernetes_config_map" "identityhub-config" {
     JAVA_TOOL_OPTIONS            = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.ih-debug}"
     EDC_IAM_STS_PRIVATEKEY_ALIAS = "key-1"
     EDC_IAM_STS_PUBLICKEY_ALIAS  = "${var.participant-did}#key-1"
-    EDC_MVD_CREDENTIALS_PATH     = "credentials/k8s/${var.humanReadableName}"
+    EDC_MVD_CREDENTIALS_PATH     = "/etc/credentials/"
   }
 }

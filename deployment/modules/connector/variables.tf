@@ -81,6 +81,11 @@ variable "registry-json" {
   description = "JSON file containing all DSP-URL-to-audience mappings"
 }
 
+variable "credentials-dir" {
+  type    = string
+  default = "JSON object containing the credentials to seed, sorted by human-readable participant name"
+}
+
 variable "ih_superuser_apikey" {
   default     = "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
   description = "Management API Key for the Super-User. Defaults to 'base64(super-user).base64(super-secret-key)"
