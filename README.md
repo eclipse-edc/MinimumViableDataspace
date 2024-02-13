@@ -117,7 +117,6 @@ bob-identityhub-8cff855bf-9f7h4      1/1     Running   0          14m
 Every participant has two pods, one for the connector runtime, one for the IdentityHub runtime.
 Assets, policies and contract definitions are already seeded to the connectors.
 
-
 Remote Debugging is possible, but Kubernetes port-forwards are necessary. The following debug ports are exposed:
 
 - 1044 on the connector runtime
@@ -139,6 +138,10 @@ I forewent for the sake of self-contained-ness.
 
 Running the dataspace from within IntelliJ is still useful though for testing APIs, debugging of one runtime, etc.
 
+After executing the `dataspace` run config in Intellij, please be sure to execute the `seed.sh` script after all the
+runtimes have started. Omitting to do so will cause all connector-to-connector communication to fail. Note that in the
+Kubernetes deployment this is **not** necessary, because seeding is done automatically.
+
 ## Executing REST requests using Postman
 
 This demos comes with a Postman collection located in `deployment/assets/postman`. Be aware that the collection is
@@ -156,12 +159,8 @@ significant workarounds and shortcuts. These are:
 ### 1. One key for all
 
 Currently, there is only _one_ keypair that everyone uses to sign tokens and VPs. That key gets put in the vault in
-the `SecretsExtension.java`. While this is not secure by any stretch, it avoided having to actually provision a vault,
-and add keys to it before running the connectors.
-
-There is currently
-a [limitation in EDC](https://github.com/eclipse-edc/Connector/blob/4006c3351e6ebece22b4643e0749a7fc70d28e29/core/common/jwt-core/src/main/java/org/eclipse/edc/jwt/TokenGenerationServiceImpl.java#L57)
-which requires that only EC-keys using the ES256 curve are used.
+the `SecretsExtension.java` for both the connectors and the IdentityHubs. While this is not secure by any stretch, it
+avoids having to actually provision a vault, and add keys to it before running the connectors.
 
 ### 2. In-memory stores all-around
 
@@ -229,4 +228,6 @@ through all the identity-related steps.
 
 ### 10. No issuance
 
-All credentials are pre-generated manually because the issuance flow is not implemented yet.
+All credentials are pre-generated manually because the issuance flow is not implemented yet. Credentials are put into
+the stores by an extension called `IdentityHubExtension.java` and are **different** for local deployments and Kubernetes
+deployments.

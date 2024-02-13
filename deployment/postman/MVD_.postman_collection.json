@@ -261,7 +261,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"BPN0000002\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v2/catalog/request",
@@ -1709,7 +1709,7 @@
 		},
 		{
 			"key": "NEW_PARTICIPANT_ID",
-			"value": "did:web:alice-identityhub%3A7083:alice",
+			"value": "did:web:localhost%3A7083",
 			"type": "string"
 		}
 	]
