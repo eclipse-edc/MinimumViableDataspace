@@ -44,6 +44,7 @@ module "alice-connector" {
   publickey-pem     = file("./assets/ec-p256-public.pem")
   database-name     = "alice"
   registry-json     = local.registry
+  credentials-dir   = dirname("./assets/credentials/k8s/")
   namespace         = kubernetes_namespace.ns.metadata.0.name
 }
 
@@ -56,6 +57,7 @@ module "bob-connector" {
   publickey-pem     = file("./assets/ec-p256-public.pem")
   database-name     = "bob"
   registry-json     = local.registry
+  credentials-dir   = dirname("./assets/credentials/k8s/")
   namespace         = kubernetes_namespace.ns.metadata.0.name
 }
 

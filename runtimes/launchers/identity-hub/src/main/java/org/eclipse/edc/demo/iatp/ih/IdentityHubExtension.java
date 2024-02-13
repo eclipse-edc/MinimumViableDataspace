@@ -27,9 +27,6 @@ import org.eclipse.edc.spi.types.TypeManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -50,7 +47,7 @@ public class IdentityHubExtension implements ServiceExtension {
     public void initialize(ServiceExtensionContext context) {
         try {
             var directory = context.getConfig().getString("edc.mvd.credentials.path");
-            seedCredentials(directory, context.getMonitor().withPrefix("DEMO"), getClass().getClassLoader());
+            seedCredentials(directory, context.getMonitor().withPrefix("DEMO"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -63,22 +60,23 @@ public class IdentityHubExtension implements ServiceExtension {
         return new CatenaScopeTransformer(List.of("MembershipCredential", "DismantlerCredential", "BpnCredential"));
     }
 
-    private void seedCredentials(String directory, Monitor monitor, ClassLoader classLoader) throws IOException {
+    private void seedCredentials(String directory, Monitor monitor) throws IOException {
 
-        URL url = classLoader.getResource(directory);
-        if (url == null) {
-            monitor.warning("Path '%s' does not exist. It must be a relative path within the 'resources' folder! Will not add any VCs.".formatted(directory));
+        var absPath = new File(directory).getAbsoluteFile();
+
+        if (!absPath.exists()) {
+            monitor.warning("Path '%s' does not exist. It must be a resolvable path with read access. Will not add any VCs.".formatted(directory));
             return;
         }
-        String path = url.getPath();
-        var files = new File(path).listFiles();
+        var files = absPath.listFiles();
         if (files == null) {
             monitor.warning("No files found in directory '%s'. Will not add any VCs.".formatted(directory));
             return;
         }
 
         var objectMapper = typeManager.getMapper(JSON_LD);
-        Stream.of(files).forEach(p -> {
+        // filtering for *.json files is advised, because on K8s there can be softlinks, if a directory is mapped via ConfigMap
+        Stream.of(files).filter(f -> f.getName().endsWith(".json")).forEach(p -> {
             try {
                 store.create(objectMapper.readValue(p, VerifiableCredentialResource.class));
                 monitor.debug("Stored VC from file '%s'".formatted(p.getAbsolutePath()));
