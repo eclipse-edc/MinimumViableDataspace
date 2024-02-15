@@ -38,6 +38,7 @@ dependencyResolutionManagement {
 rootProject.name = "runtimes"
 include(":launchers:identity-hub")
 include(":launchers:connector")
-include(":common-mocks")
+include(":extensions:common-mocks")
+include(":extensions:inmem-seed")
 //include(":tests:performance")
 include(":tests:system-tests")
