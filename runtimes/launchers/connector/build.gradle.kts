@@ -23,7 +23,7 @@ dependencies {
 
     // must be "implementation", since the DefaultCredentialService is still there
     implementation(libs.bundles.controlplane)
-    implementation(project(":common-mocks"))
+    implementation(project(":extensions:common-mocks"))
     implementation(libs.edc.identity.jws2020)
     implementation(libs.edc.identity.vc.ldp)
     implementation(libs.edc.core.connector)
