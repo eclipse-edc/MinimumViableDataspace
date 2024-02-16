@@ -26,7 +26,7 @@ import java.time.Clock;
 public class SecretsExtension implements ServiceExtension {
     // duplicated from IatpDefaultServicesExtension
     private static final String STS_PRIVATE_KEY_ALIAS = "edc.iam.sts.privatekey.alias";
-    private static final String STS_PUBLIC_KEY_ALIAS = "edc.iam.sts.publickey.alias";
+    private static final String STS_PUBLIC_KEY_ID = "edc.iam.sts.publickey.id";
     @Inject
     private Vault vault;
 
@@ -43,6 +43,7 @@ public class SecretsExtension implements ServiceExtension {
 
     /**
      * We need this, because we don't have a vault that is shared between Connector and IdentityHub, so this needs to be seeded to either of them.
+     *
      * @param context
      */
     private void seedKeys(ServiceExtensionContext context) {
@@ -63,7 +64,7 @@ public class SecretsExtension implements ServiceExtension {
 
 
         vault.storeSecret(context.getConfig().getString(STS_PRIVATE_KEY_ALIAS), privateKey);
-        vault.storeSecret(context.getConfig().getString(STS_PUBLIC_KEY_ALIAS), publicKey);
+        vault.storeSecret(context.getConfig().getString(STS_PUBLIC_KEY_ID), publicKey);
 
         context.getMonitor().withPrefix("DEMO").warning(">>>>>> This extension hard-codes a keypair into the vault! CHANGE THIS!!!! <<<<<<");
     }
