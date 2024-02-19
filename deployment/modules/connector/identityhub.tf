@@ -107,7 +107,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_DID_PATH            = "/"
     JAVA_TOOL_OPTIONS            = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.ih-debug}"
     EDC_IAM_STS_PRIVATEKEY_ALIAS = "key-1"
-    EDC_IAM_STS_PUBLICKEY_ALIAS  = "${var.participant-did}#key-1"
+    EDC_IAM_STS_PUBLICKEY_ID     = "${var.participant-did}#key-1"
     EDC_MVD_CREDENTIALS_PATH     = "/etc/credentials/"
   }
 }
