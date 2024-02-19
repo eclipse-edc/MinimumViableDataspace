@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "connector" {
   metadata {
     name      = "${lower(var.humanReadableName)}-connector"
     namespace = var.namespace
-    labels = {
+    labels    = {
       App = "${lower(var.humanReadableName)}-connector"
     }
   }
@@ -113,7 +113,7 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_DSP_CALLBACK_ADDRESS      = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_CREDENTIALSERVICE_URL = "http://${local.ih-service-name}:${var.ports.resolution-api}/api/resolution/participants/${var.participantId}/presentation/query"
     EDC_IAM_STS_PRIVATEKEY_ALIAS  = "${var.participant-did}-alias"
-    EDC_IAM_STS_PUBLICKEY_ALIAS   = "${var.participant-did}#key-1"
+    EDC_IAM_STS_PUBLICKEY_ID      = "${var.participant-did}#key-1"
     JAVA_TOOL_OPTIONS             = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH = "/etc/registry/registry.json"
     EDC_PARTICIPANT_ID            = var.participantId
