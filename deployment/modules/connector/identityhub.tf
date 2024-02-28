@@ -1,4 +1,5 @@
 resource "kubernetes_deployment" "identityhub" {
+  depends_on = [helm_release.vault]
   metadata {
     name      = "${lower(var.humanReadableName)}-identityhub"
     namespace = var.namespace
@@ -95,7 +96,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_API_AUTH_KEY             = "password"
     EDC_IH_IAM_ID                = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS    = false
-    EDC_IH_IAM_PUBLICKEY_PEM     = var.publickey-pem
+    EDC_IH_IAM_PUBLICKEY_ALIAS   = local.public-key-alias
     EDC_IH_API_SUPERUSER_KEY     = var.ih_superuser_apikey
     WEB_HTTP_PORT                = var.ports.ih-default
     WEB_HTTP_PATH                = "/api"
@@ -106,8 +107,14 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_DID_PORT            = var.ports.ih-did
     WEB_HTTP_DID_PATH            = "/"
     JAVA_TOOL_OPTIONS            = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.ih-debug}"
-    EDC_IAM_STS_PRIVATEKEY_ALIAS = "key-1"
-    EDC_IAM_STS_PUBLICKEY_ID     = "${var.participant-did}#key-1"
+    EDC_IAM_STS_PRIVATEKEY_ALIAS = var.aliases.sts-private-key
+    EDC_IAM_STS_PUBLICKEY_ID     = local.public-key-alias
     EDC_MVD_CREDENTIALS_PATH     = "/etc/credentials/"
+    EDC_VAULT_HASHICORP_URL      = "http://${var.humanReadableName}-vault:8200"
+    EDC_VAULT_HASHICORP_TOKEN    = var.vault-token
   }
+}
+
+locals {
+  public-key-alias = "${var.humanReadableName}-publickey"
 }

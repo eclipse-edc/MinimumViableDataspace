@@ -1,0 +1,9 @@
+server:
+  postStart:
+hashicorp:
+  timeout: 30
+  healthCheck:
+    enabled: true
+    standbyOk: true
+  paths:
+    secret: /v1/secret

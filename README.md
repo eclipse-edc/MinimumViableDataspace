@@ -74,11 +74,11 @@ All commands are executed from the **repository's root folder** unless stated ot
 ```shell
 cd runtimes
 ./gradlew build
-./gradlew dockerize
+./gradlew dockerize -PuseHashicorp=true
 ```
 
 this builds the runtime images and creates the following docker images: `connector:latest` and `identity-hub:latest` in
-the local docker image cache.
+the local docker image cache. Note the `-PuseHashicorp` puts the HashiCorp Vault module on the classpath.
 
 Next, we bring up and configure the Kubernetes Cluster
 

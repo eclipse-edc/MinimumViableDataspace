@@ -28,6 +28,10 @@ dependencies {
     implementation(libs.edc.identity.vc.ldp)
     implementation(libs.edc.core.connector)
     runtimeOnly(libs.edc.identity.did.web)
+    if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
+        runtimeOnly(libs.edc.vault.hashicorp)
+        println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
+    }
     runtimeOnly(libs.bundles.dpf)
 }
 

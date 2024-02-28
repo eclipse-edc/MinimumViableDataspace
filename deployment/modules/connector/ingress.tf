@@ -65,6 +65,18 @@ resource "kubernetes_ingress_v1" "api-ingress" {
             }
           }
         }
+
+        path{
+          path = "/${var.humanReadableName}/vault(/|$)(.*)"
+          backend {
+            service {
+              name = "${var.humanReadableName}-vault"
+              port {
+                number = 8200
+              }
+            }
+          }
+        }
       }
     }
   }

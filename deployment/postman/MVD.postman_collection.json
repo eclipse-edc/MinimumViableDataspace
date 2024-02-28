@@ -25,7 +25,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n          \"@context\": {},\n          \"@id\": \"asset-1\",\n          \"@type\": \"Asset\",\n          \"properties\": {\n              \"description\": \"This asset requires Membership to view, PCF to negotiate\"\n          },\n          \"dataAddress\": {\n              \"@type\": \"DataAddress\",\n              \"type\": \"HttpData\",\n              \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n              \"proxyPath\": \"true\",\n              \"proxyQueryParams\": \"true\"\n          }\n      }"
+							"raw": "{\n            \"@context\": {},\n            \"@id\": \"asset-1\",\n            \"@type\": \"Asset\",\n            \"properties\": {\n                \"description\": \"This asset requires Membership to view and negotiate.\"\n            },\n            \"dataAddress\": {\n                \"@type\": \"DataAddress\",\n                \"type\": \"HttpData\",\n                \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n                \"proxyPath\": \"true\",\n                \"proxyQueryParams\": \"true\"\n            }\n        }"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/assets",
@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n          \"@context\": {\n              \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n          },\n          \"@type\": \"PolicyDefinitionRequestDto\",\n          \"@id\": \"require-membership\",\n          \"policy\": {\n                      \"@type\": \"Policy\",\n                      \"odrl:permission\" : [{\n                              \"odrl:action\" : \"USE\",\n                              \"odrl:constraint\" : {\n                                      \"@type\": \"LogicalConstraint\",\n                                      \"odrl:or\" : [{\n                                              \"@type\" : \"Constraint\",\n                                              \"odrl:leftOperand\" : \"MembershipCredential\",\n                                              \"odrl:operator\" : {\n                                                  \"@id\": \"odrl:eq\"\n                                              },\n                                              \"odrl:rightOperand\" : \"active\"\n                                      }]\n                              }\n                      }]\n          }\n      }"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:permission\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:or\": [\n                        {\n                            \"@type\": \"Constraint\",\n                            \"odrl:leftOperand\": \"MembershipCredential\",\n                            \"odrl:operator\": {\n                                \"@id\": \"odrl:eq\"\n                            },\n                            \"odrl:rightOperand\": \"active\"\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v2/policydefinitions",
@@ -124,7 +124,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"@context\": {\n            \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n        },\n        \"@type\": \"PolicyDefinitionRequestDto\",\n        \"@id\": \"require-pcf\",\n        \"policy\": {\n                    \"@type\": \"Policy\",\n                    \"odrl:obligation\" : [{\n                            \"odrl:action\" : \"USE\",\n                            \"odrl:constraint\" : {\n                                    \"@type\": \"LogicalConstraint\",\n                                    \"odrl:or\" : [{\n                                            \"@type\" : \"Constraint\",\n                                            \"odrl:leftOperand\" : \"FrameworkCredential.pcf\",\n                                            \"odrl:operator\" : {\n                                                \"@id\": \"odrl:eq\"\n                                            },\n                                            \"odrl:rightOperand\" : \"active\"\n                                    }]\n                            }\n                    }]\n        }\n    }"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-pcf\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:or\": [\n                        {\n                            \"@type\": \"Constraint\",\n                            \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                            \"odrl:operator\": {\n                                \"@id\": \"odrl:eq\"\n                            },\n                            \"odrl:rightOperand\": \"active\"\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v2/policydefinitions",
@@ -157,7 +157,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n          \"@context\": {\n              \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n          },\n          \"@type\": \"PolicyDefinitionRequestDto\",\n          \"@id\": \"require-sustainability\",\n          \"policy\": {\n                      \"@type\": \"Policy\",\n                      \"odrl:obligation\" : [{\n                              \"odrl:action\" : \"USE\",\n                              \"odrl:constraint\" : {\n                                      \"@type\": \"LogicalConstraint\",\n                                      \"odrl:or\" : [{\n                                              \"@type\" : \"Constraint\",\n                                              \"odrl:leftOperand\" : \"FrameworkCredential.sustainability\",\n                                              \"odrl:operator\" : {\n                                                  \"@id\": \"odrl:eq\"\n                                              },\n                                              \"odrl:rightOperand\" : \"active\"\n                                      }]\n                              }\n                      }]\n          }\n      }"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-sustainability\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:or\": [\n                        {\n                            \"@type\": \"Constraint\",\n                            \"odrl:leftOperand\": \"FrameworkCredential.sustainability\",\n                            \"odrl:operator\": {\n                                \"@id\": \"odrl:eq\"\n                            },\n                            \"odrl:rightOperand\": \"active\"\n                        }\n                    ]\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v2/policydefinitions",
@@ -239,6 +239,28 @@
 						}
 					},
 					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status is OK or conflict\", function() {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"})"
+						]
+					}
 				}
 			]
 		},
@@ -330,7 +352,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": { \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\" },\n    \"@type\": \"QuerySpec\"\n}"
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/assets/request",
