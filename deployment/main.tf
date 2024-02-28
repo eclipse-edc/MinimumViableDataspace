@@ -27,6 +27,9 @@ terraform {
     kubernetes = {
       source = "hashicorp/kubernetes"
     }
+    helm = { // used for Hashicorp Vault
+      source = "hashicorp/helm"
+    }
   }
 }
 
@@ -34,6 +37,11 @@ provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
+provider "helm" {
+  kubernetes {
+    config_path = "~/.kube/config"
+  }
+}
 
 # First connector
 module "alice-connector" {

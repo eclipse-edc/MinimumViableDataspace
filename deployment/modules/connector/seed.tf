@@ -7,8 +7,8 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
   }
   spec {
     // run only once
-    completions     = 1
-    completion_mode = "NonIndexed"
+    completions                = 1
+    completion_mode            = "NonIndexed"
     // clean up any job pods after 90 seconds, failed or succeeded
     ttl_seconds_after_finished = "90"
     template {
@@ -18,8 +18,8 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
       spec {
         /* SEED APPLICATION DATA */
         container {
-          name  = "seed-application-data"
-          image = "postman/newman:ubuntu"
+          name    = "seed-application-data"
+          image   = "postman/newman:ubuntu"
           command = [
             "newman", "run",
             "--folder", "Seed",
@@ -35,15 +35,15 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
 
         /* SEED IDENTITY HUB DATA */
         container {
-          name  = "create-participant"
-          image = "postman/newman:ubuntu"
+          name    = "create-participant"
+          image   = "postman/newman:ubuntu"
           command = [
             "curl", "-o - -I", "--location",
             "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-management}/api/management/v1/participants/",
             "--header", "Content-Type: application/json",
             "--header", "x-api-key: ${var.ih_superuser_apikey}",
             "--data",
-            "{\n    \"roles\":[],\n    \"serviceEndpoints\":[\n      {\n         \"type\": \"CredentialService\",\n         \"serviceEndpoint\": \"http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.resolution-api}/api/resolution/v1/participants/${base64encode(var.participant-did)}\",\n         \"id\": \"credentialservice-1\"\n      }\n    ],\n    \"active\": true,\n    \"participantId\": \"${var.participant-did}\",\n    \"did\": \"${var.participant-did}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"key-1\",\n        \"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\\n-----END PUBLIC KEY-----\"\n    }\n}\n"
+            "{\n    \"roles\":[],\n    \"serviceEndpoints\":[\n      {\n         \"type\": \"CredentialService\",\n         \"serviceEndpoint\": \"http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.resolution-api}/api/resolution/v1/participants/${base64encode(var.participant-did)}\",\n         \"id\": \"credentialservice-1\"\n      }\n    ],\n    \"active\": true,\n    \"participantId\": \"${var.participant-did}\",\n    \"did\": \"${var.participant-did}\",\n    \"key\":{\n        \"keyId\": \"${var.aliases.sts-public-key-id}\",\n        \"privateKeyAlias\": \"${var.aliases.sts-private-key}\",\n        \"publicKeyPem\":\"${local.publicKeyPem}\"\n    }\n}\n"
           ]
           volume_mount {
             mount_path = "/opt/collection"
@@ -70,10 +70,11 @@ resource "kubernetes_config_map" "seed-collection" {
     namespace = var.namespace
   }
   data = {
-    (local.newman_collection_name) = file("${path.module}/../../postman/MVD_.postman_collection.json")
+    (local.newman_collection_name) = file("${path.module}/../../postman/MVD.postman_collection.json")
   }
 }
 
 locals {
   newman_collection_name = "MVD.postman_collection.json"
+  publicKeyPem           = replace(tls_private_key.ed25519.public_key_pem, "\n", "\\n")
 }

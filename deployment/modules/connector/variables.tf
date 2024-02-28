@@ -92,6 +92,22 @@ variable "ih_superuser_apikey" {
   type        = string
 }
 
+variable "vault-token" {
+  default     = "root"
+  description = "This is the authentication token for the vault. DO NOT USE THIS IN PRODUCTION!"
+  type        = string
+}
+
+variable "aliases" {
+  type = object({
+    sts-private-key = string
+    sts-public-key-id = string
+  })
+  default = {
+    sts-private-key = "key-1"
+    sts-public-key-id = "key-1"
+  }
+}
 locals {
   name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"

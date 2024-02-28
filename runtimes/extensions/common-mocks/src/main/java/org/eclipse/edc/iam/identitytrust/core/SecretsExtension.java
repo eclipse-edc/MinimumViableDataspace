@@ -1,3 +1,4 @@
+
 /*
  *  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
  *
@@ -47,25 +48,28 @@ public class SecretsExtension implements ServiceExtension {
      * @param context
      */
     private void seedKeys(ServiceExtensionContext context) {
-        var publicKey = """
-                -----BEGIN PUBLIC KEY-----
-                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r
-                oYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
-                -----END PUBLIC KEY-----
-                """;
+        // Let's avoid pulling in the connector-core module, just for the instanceof check
+        if(vault.getClass().getSimpleName().equals("InMemoryVault")) {
+            var publicKey = """
+                    -----BEGIN PUBLIC KEY-----
+                    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r
+                    oYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
+                    -----END PUBLIC KEY-----
+                    """;
 
-        var privateKey = """
-                -----BEGIN EC PRIVATE KEY-----
-                MHcCAQEEIARDUGJgKy1yzxkueIJ1k3MPUWQ/tbQWQNqW6TjyHpdcoAoGCCqGSM49
-                AwEHoUQDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3ex+hMWFuiX
-                GUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
-                -----END EC PRIVATE KEY-----
-                """;
+            var privateKey = """
+                    -----BEGIN EC PRIVATE KEY-----
+                    MHcCAQEEIARDUGJgKy1yzxkueIJ1k3MPUWQ/tbQWQNqW6TjyHpdcoAoGCCqGSM49
+                    AwEHoUQDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3ex+hMWFuiX
+                    GUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
+                    -----END EC PRIVATE KEY-----
+                    """;
 
 
-        vault.storeSecret(context.getConfig().getString(STS_PRIVATE_KEY_ALIAS), privateKey);
-        vault.storeSecret(context.getConfig().getString(STS_PUBLIC_KEY_ID), publicKey);
+            vault.storeSecret(context.getConfig().getString(STS_PRIVATE_KEY_ALIAS), privateKey);
+            vault.storeSecret(context.getConfig().getString(STS_PUBLIC_KEY_ID), publicKey);
 
-        context.getMonitor().withPrefix("DEMO").warning(">>>>>> This extension hard-codes a keypair into the vault! CHANGE THIS!!!! <<<<<<");
+            context.getMonitor().withPrefix("DEMO").warning(">>>>>> This extension hard-codes a keypair into the vault! <<<<<<");
+        }
     }
 }

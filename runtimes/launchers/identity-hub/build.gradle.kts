@@ -23,6 +23,10 @@ dependencies {
     runtimeOnly(libs.edc.ih.credentials)
     runtimeOnly(libs.edc.ih.participants)
     runtimeOnly(libs.edc.ih.keypairs)
+    if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
+        runtimeOnly(libs.edc.vault.hashicorp)
+        println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
+    }
     runtimeOnly(project(":extensions:inmem-seed"))
 
     runtimeOnly(libs.bundles.management.api)
