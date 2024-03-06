@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "company.fullname" . }}
+  labels:
+    {{- include "company.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "company.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "company.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.ports.http.containerPort }}
+            - name: identity
+              containerPort: {{ .Values.ports.identity.containerPort }}
+            - name: ids
+              containerPort: {{ .Values.ports.ids.containerPort }}
+            - name: mgmt
+              containerPort: {{ .Values.ports.mgmt.containerPort }}
+            - name: control
+              containerPort: 8383
+          envFrom:
+            - configMapRef:
+                name: {{ include "company.fullname" . }}-configmap
+          volumeMounts:
+            - name: sdd
+              mountPath: /resources
+      volumes:
+        - name: sdd
+          hostPath:
+            path: {{ .Values.volumes.hostPath }}
+

@@ -1,0 +1,43 @@
+{
+  "id": "did:web:did-server:company3",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:web:did-server:company3"
+    }
+  ],
+  "service": [
+    {
+      "id": "#identity-hub-url",
+      "type": "IdentityHub",
+      "serviceEndpoint": "http://company3:7171/api/identity/identity-hub"
+    },
+    {
+      "id": "#dsp-url",
+      "type": "DSPMessaging",
+      "serviceEndpoint": "http://company3:8282/api/dsp"
+    },
+    {
+      "id": "#self-description-url",
+      "type": "SelfDescription",
+      "serviceEndpoint": "http://company3:7171/api/identity/identity-hub/self-description"
+    }
+  ],
+  "verificationMethod": [
+    {
+      "id": "#my-key-1",
+      "controller": "",
+      "type": "EcdsaSecp256k1VerificationKey2019",
+      "publicKeyJwk": {
+        "kty": "EC",
+        "kid": "uIowOgviyWueDwC2SjwEPnqsBVQkhIN3m6B0Ajs6rlU",
+        "crv": "P-256",
+        "x": "T6VaLBE16dj2WcqcCaF6M1ORlaQhrT5bEhY8JUiDwRA",
+        "y": "hcVb4PnEmH2TMYbPk-ctwHx3o15JNIOhIYPBzR3iYf4"
+      }
+    }
+  ],
+  "authentication": [
+    "#my-key-1"
+  ]
+}

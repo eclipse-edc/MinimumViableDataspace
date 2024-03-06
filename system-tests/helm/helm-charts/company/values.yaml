@@ -1,0 +1,78 @@
+# Default values for company.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: edc-connector
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "v.01"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+
+service:
+  type: NodePort
+
+
+ports:
+  http:
+    containerPort: 8181
+    servicePort: 8181
+    path: /api
+  ids:
+    containerPort: 8282
+    servicePort: 8282
+    path: /api/v2/ids
+  mgmt:
+    containerPort: 9191
+    nodePort: 30091
+    servicePort: 9191
+    path: /api/management/v2
+  identity:
+    containerPort: 7171
+    servicePort: 7171
+    path: /api/v2/identity
+
+volumes:
+  hostPath: /var/lib/minikube/mvd-resources/resources
+
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
