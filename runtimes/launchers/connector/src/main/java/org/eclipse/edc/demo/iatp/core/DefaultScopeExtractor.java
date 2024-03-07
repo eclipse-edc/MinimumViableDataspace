@@ -14,18 +14,14 @@
 
 package org.eclipse.edc.demo.iatp.core;
 
-import org.eclipse.edc.jwt.spi.JwtRegisteredClaimNames;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Policy;
 import org.eclipse.edc.spi.EdcException;
 import org.eclipse.edc.spi.iam.RequestScope;
-import org.eclipse.edc.spi.iam.TokenParameters;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
-
-import static java.lang.String.format;
 
 public class DefaultScopeExtractor implements BiFunction<Policy, PolicyContext, Boolean> {
     private final Set<String> defaultScopes;
@@ -37,10 +33,10 @@ public class DefaultScopeExtractor implements BiFunction<Policy, PolicyContext, 
     @Override
     public Boolean apply(Policy policy, PolicyContext policyContext) {
         var requestScopeBuilder = policyContext.getContextData(RequestScope.Builder.class);
-        if(requestScopeBuilder == null){
+        if (requestScopeBuilder == null) {
             throw new EdcException("%s not set in policy context".formatted(RequestScope.Builder.class));
         }
-        var rq= requestScopeBuilder.build();
+        var rq = requestScopeBuilder.build();
         var existingScope = rq.getScopes();
         var newScopes = new HashSet<>(defaultScopes);
         newScopes.addAll(existingScope);
