@@ -6,7 +6,6 @@ do
   newman run --folder "Seed" \
     --env-var "HOST=$url" \
     ./deployment/postman/MVD.postman_collection.json > /dev/null
-
 done
 
 ## Seed management data to identityhubs
@@ -34,7 +33,6 @@ curl --location 'http://localhost:7082/api/management/v1/participants/' \
         "publicKeyPem":"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\n-----END PUBLIC KEY-----"
     }
 }'
-
 
 # add participant bob
 curl --location 'http://localhost:7092/api/management/v1/participants/' \

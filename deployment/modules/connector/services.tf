@@ -17,7 +17,6 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-
 resource "kubernetes_service" "controlplane-service" {
   metadata {
     name      = local.controlplane-service-name

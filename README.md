@@ -99,14 +99,14 @@ kubectl wait --namespace ingress-nginx \
   --timeout=90s
 
 # Deploy the dataspace, type 'yes' when prompted
-terraform -chdir deployment init
-terraform -chdir deployment apply
+terraform -chdir=deployment init
+terraform -chdir=deployment apply
 ```
 
 Once Terraform has completed the deployment, type `kubectl get pods` and verify the output:
 
 ```shell
-> kubectl get pods
+> kubectl get pods --namespace mvd
 NAME                                 READY   STATUS    RESTARTS   AGE
 alice-connector-6d56797f54-bf44q     2/2     Running   0          14m
 alice-identityhub-7664f549f6-bj6v6   1/1     Running   0          14m
