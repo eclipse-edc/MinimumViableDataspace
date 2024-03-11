@@ -108,10 +108,14 @@ Once Terraform has completed the deployment, type `kubectl get pods` and verify 
 ```shell
 > kubectl get pods --namespace mvd
 NAME                                 READY   STATUS    RESTARTS   AGE
-alice-connector-6d56797f54-bf44q     2/2     Running   0          14m
+alice-connector-6d56797f54-bf44q     1/1     Running   0          14m
 alice-identityhub-7664f549f6-bj6v6   1/1     Running   0          14m
-bob-connector-658755df69-v24sm       2/2     Running   0          14m
+alice-vault-0                        1/1     Running   0          14m
+bob-connector-658755df69-v24sm       1/1     Running   0          14m
 bob-identityhub-8cff855bf-9f7h4      1/1     Running   0          14m
+bob-vault-0                          1/1     Running   0          14m
+seed-alice-zthgc                     0/1     Completed 0          14m
+seed-bob-jccpq                       0/1     Completed 0          14m
 ```
 
 Every participant has two pods, one for the connector runtime, one for the IdentityHub runtime.
