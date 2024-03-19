@@ -33,12 +33,13 @@ docker compose --profile ui -f system-tests/docker-compose.yml up --build
 
 > In Windows Docker Compose expects the path to use forward slashes instead of backslashes.
 
-The profile `ui` creates three Data Dashboards each connected to an EDC participant. The respective `app.config.json`
-files can be found in the respective directories:
+The profile `ui` creates three Data Dashboards each connected to an EDC participant. 
+Each of these Data Dashboards uses the respective `app.config.json` file which is stored in the 
+respective directories:
 
-- `resources/appconfig/company1/app.config.json`
-- `resources/appconfig/company2/app.config.json`
-- `resources/appconfig/company3/app.config.json`
+- [`./system-tests/resources/appconfig/company1/app.config.json`](./system-tests/resources/appconfig/company1/app.config.json)
+- [`./system-tests/resources/appconfig/company2/app.config.json`](./system-tests/resources/appconfig/company2/app.config.json)
+- [`./system-tests/resources/appconfig/company3/app.config.json`](./system-tests/resources/appconfig/company3/app.config.json)
 
 That's it to run the local development environment. The following section `Run A Standard Scenario Locally` describes a
 standard scenario which can be optionally used with the local development environment.
