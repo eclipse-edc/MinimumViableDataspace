@@ -24,7 +24,7 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
     public static final String SUPERUSER_APIKEY_PROPERTY = "edc.ih.api.superuser.key";
 
     @Setting(value = "Config value to set the super-user's participant ID.", defaultValue = DEFAULT_SUPER_USER_PARTICIPANT_ID)
-    public static final String SUPERUSER_PARTICIPANT_ID_PROPERTY="edc.ih.api.superuser.id";
+    public static final String SUPERUSER_PARTICIPANT_ID_PROPERTY = "edc.ih.api.superuser.id";
 
     @Override
     public String name() {

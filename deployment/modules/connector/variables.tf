@@ -42,6 +42,7 @@ variable "namespace" {
   type    = string
   default = "mvd"
 }
+
 variable "ports" {
   type = object({
     resolution-api = number
@@ -108,6 +109,7 @@ variable "aliases" {
     sts-public-key-id = "key-1"
   }
 }
+
 locals {
   name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"

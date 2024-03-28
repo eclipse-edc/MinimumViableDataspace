@@ -48,7 +48,6 @@ resource "helm_release" "vault" {
   ]
 }
 
-
 # ECDSA key with P384 elliptic curve
 resource "tls_private_key" "ed25519" {
   algorithm = "ECDSA"
