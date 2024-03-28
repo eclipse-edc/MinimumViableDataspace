@@ -14,6 +14,7 @@
 
 package org.eclipse.edc.demo.iatp.core;
 
+import org.eclipse.edc.core.transform.transformer.edc.to.JsonValueToGenericTypeTransformer;
 import org.eclipse.edc.identitytrust.TrustedIssuerRegistry;
 import org.eclipse.edc.identitytrust.VcConstants;
 import org.eclipse.edc.identitytrust.model.Issuer;
@@ -21,10 +22,14 @@ import org.eclipse.edc.identitytrust.scope.ScopeExtractorRegistry;
 import org.eclipse.edc.identitytrust.verification.SignatureSuiteRegistry;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
+import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.security.signature.jws2020.JwsSignature2020Suite;
+import org.eclipse.edc.spi.iam.AudienceResolver;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
+import org.eclipse.edc.spi.types.domain.message.RemoteMessage;
+import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
 
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +54,8 @@ public class IatpPatchExtension implements ServiceExtension {
 
     @Inject
     private ScopeExtractorRegistry scopeExtractorRegistry;
+    @Inject
+    private TypeTransformerRegistry typeTransformerRegistry;
 
     @Override
     public void initialize(ServiceExtensionContext context) {
@@ -71,5 +78,7 @@ public class IatpPatchExtension implements ServiceExtension {
         //register scope extractor
         scopeExtractorRegistry.registerScopeExtractor(new FrameworkCredentialScopeExtractor());
 
+
+        typeTransformerRegistry.register(new JsonValueToGenericTypeTransformer(typeManager.getMapper(JSON_LD)));
     }
 }
