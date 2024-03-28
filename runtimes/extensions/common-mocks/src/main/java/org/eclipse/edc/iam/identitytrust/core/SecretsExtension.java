@@ -45,11 +45,11 @@ public class SecretsExtension implements ServiceExtension {
     /**
      * We need this, because we don't have a vault that is shared between Connector and IdentityHub, so this needs to be seeded to either of them.
      *
-     * @param context
+     * @param context the service extension context used for accessing configuration and other services
      */
     private void seedKeys(ServiceExtensionContext context) {
         // Let's avoid pulling in the connector-core module, just for the instanceof check
-        if(vault.getClass().getSimpleName().equals("InMemoryVault")) {
+        if (vault.getClass().getSimpleName().equals("InMemoryVault")) {
             var publicKey = """
                     -----BEGIN PUBLIC KEY-----
                     MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r

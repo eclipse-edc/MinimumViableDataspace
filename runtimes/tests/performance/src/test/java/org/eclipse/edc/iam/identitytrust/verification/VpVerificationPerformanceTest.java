@@ -113,7 +113,6 @@ public class VpVerificationPerformanceTest {
         }, numVc);
     }
 
-
     @BeforeAll
     static void prepare() throws URISyntaxException, ParseException {
         when(SIGNATURE_SUITE_REGISTRY.getAllSuites()).thenReturn(Collections.singleton(JWS_SIGNATURE_SUITE));

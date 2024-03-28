@@ -4,7 +4,6 @@ import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Statistics {
     public static void runWithStatistics(int numTestruns, Runnable runnable, int sampleSize){
         var clock = Clock.systemUTC();
@@ -26,7 +25,6 @@ public class Statistics {
         System.out.println("var: " + variance(runTimes));
     }
 
-
     public static double mean(List<Long> dataset) {
         var l = dataset.size();
         return dataset.stream().mapToDouble(v -> (double) v).sum() / l;
@@ -44,7 +42,6 @@ public class Statistics {
         for (double num : dataset) {
             standardDeviation += Math.pow(num - mean, 2);
         }
-
         return Math.sqrt(standardDeviation / l);
     }
 }

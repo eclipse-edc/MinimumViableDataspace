@@ -122,5 +122,3 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_VAULT_HASHICORP_TOKEN    = var.vault-token
   }
 }
-
-

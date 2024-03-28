@@ -21,10 +21,10 @@ output "connector-node-ip" {
   value = kubernetes_service.controlplane-service.spec.0.cluster_ip
 }
 
-
 output "identity-hub-node-ip" {
   value = kubernetes_service.ih-service.spec.0.cluster_ip
 }
+
 output "database-name" {
   value = var.database-name
 }

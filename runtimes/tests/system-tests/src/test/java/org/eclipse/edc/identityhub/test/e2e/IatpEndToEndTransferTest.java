@@ -25,7 +25,7 @@ import java.util.HashMap;
 
 @EndToEndTest
 public class IatpEndToEndTransferTest {
-    protected static final EdcRuntimeExtension aliceIdentityHub = new EdcRuntimeExtension(":launchers:identity-hub", "alice-identityhub", new HashMap<>() {
+    protected static final EdcRuntimeExtension ALICE_IDENTITY_HUB = new EdcRuntimeExtension(":launchers:identity-hub", "alice-identityhub", new HashMap<>() {
         {
             put("web.http.port", "7080");
             put("web.http.path", "/api");
@@ -39,7 +39,7 @@ public class IatpEndToEndTransferTest {
             put("edc.ih.iam.publickey.path", TestUtils.getResource("ih-public.pem").getPath());
         }
     });
-    protected static final EdcRuntimeExtension aliceConnector = new EdcRuntimeExtension(":launchers:connector", "alice-connector", new HashMap<>() {
+    protected static final EdcRuntimeExtension ALICE_CONNECTOR = new EdcRuntimeExtension(":launchers:connector", "alice-connector", new HashMap<>() {
         {
             put("edc.iam.issuer.id", "did:web:alice-identityhub%3A7083:connector1");
             put("web.http.port", "8080");
@@ -58,8 +58,8 @@ public class IatpEndToEndTransferTest {
     });
     @RegisterExtension
     static EdcClassRuntimesExtension alice = new EdcClassRuntimesExtension(
-            aliceConnector,
-            aliceIdentityHub
+            ALICE_CONNECTOR,
+            ALICE_IDENTITY_HUB
     );
 
     @Test
