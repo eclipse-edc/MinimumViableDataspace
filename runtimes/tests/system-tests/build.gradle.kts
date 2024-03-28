@@ -17,7 +17,6 @@ plugins {
 }
 
 dependencies {
-    
     testImplementation(libs.edc.junit)
     testImplementation(libs.nimbus.jwt)
 }
