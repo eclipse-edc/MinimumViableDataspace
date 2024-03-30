@@ -20,6 +20,7 @@ import org.eclipse.edc.identityhub.spi.store.CredentialStore;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
+import org.eclipse.edc.spi.constants.CoreConstants;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -30,7 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.eclipse.edc.spi.CoreConstants.JSON_LD;
+import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 
 @Extension("IATP Demo: Core Extension for IdentityHub")
