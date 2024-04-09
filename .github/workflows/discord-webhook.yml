@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: New Discussion
-        uses: tsickert/discord-webhook@v5.5.0
+        uses: tsickert/discord-webhook@v6.0.0
         if: ${{ (github.event_name == 'discussion') }}
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
@@ -25,7 +25,7 @@ jobs:
           embed-description: A **discussion** has been created in ${{ github.repository }}.
 
       - name: New Issue
-        uses: tsickert/discord-webhook@v5.5.0
+        uses: tsickert/discord-webhook@v6.0.0
         if: ${{ (github.event_name == 'issues') }}
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
@@ -38,7 +38,7 @@ jobs:
           embed-description: An **issue** has been opened in ${{ github.repository }}.
 
       - name: New Pull Request
-        uses: tsickert/discord-webhook@v5.5.0
+        uses: tsickert/discord-webhook@v6.0.0
         if: ${{ (github.event_name == 'pull_request_target') }}
         with:
           webhook-url: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
