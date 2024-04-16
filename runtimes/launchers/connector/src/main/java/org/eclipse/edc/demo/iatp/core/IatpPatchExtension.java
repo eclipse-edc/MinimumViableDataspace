@@ -14,11 +14,11 @@
 
 package org.eclipse.edc.demo.iatp.core;
 
-import org.eclipse.edc.identitytrust.TrustedIssuerRegistry;
-import org.eclipse.edc.identitytrust.VcConstants;
-import org.eclipse.edc.identitytrust.model.Issuer;
-import org.eclipse.edc.identitytrust.scope.ScopeExtractorRegistry;
-import org.eclipse.edc.identitytrust.verification.SignatureSuiteRegistry;
+import org.eclipse.edc.iam.identitytrust.spi.scope.ScopeExtractorRegistry;
+import org.eclipse.edc.iam.identitytrust.spi.verification.SignatureSuiteRegistry;
+import org.eclipse.edc.iam.verifiablecredentials.spi.VcConstants;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.Issuer;
+import org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerRegistry;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.security.signature.jws2020.JwsSignature2020Suite;
