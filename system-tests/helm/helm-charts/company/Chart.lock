@@ -1,0 +1,6 @@
+dependencies:
+- name: did-server
+  repository: file://../did-server
+  version: 0.1.0
+digest: sha256:8ca3f85edcaa103fd507dbed06278727667691b555cba325b62b19c211eb8eaf
+generated: "2023-10-09T18:04:14.923612008+02:00"

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "registration-service.fullname" . }}
+  labels:
+    {{- include "registration-service.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: {{ .Values.ports.http.servicePort }}
+      targetPort: http
+    - name: identity
+      port: {{ .Values.ports.identity.servicePort }}
+      targetPort: identity
+    - name: authority
+      port: {{ .Values.ports.authority.servicePort }}
+      targetPort: authority
+    - name: mgmt
+      port: {{ .Values.ports.mgmt.servicePort }}
+      targetPort: mgmt
+    - name: debug
+      port: {{ .Values.ports.debug.servicePort }}
+      targetPort: debug
+  selector:
+    {{- include "registration-service.selectorLabels" . | nindent 4 }}
+
+

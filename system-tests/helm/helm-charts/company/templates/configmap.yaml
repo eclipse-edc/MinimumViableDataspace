@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "company.fullname" . }}-configmap
+  labels:
+    {{- include "company.labels" . | nindent 4 }}
+data:
+  EDC_CONNECTOR_NAME: {{ include "company.name" . }}
+  EDC_DSP_CALLBACK_ADDRESS: "http://{{ include "company.name" . }}:8282/api/dsp"
+  EDC_PARTICIPANT_ID: "did:web:did-server:{{ include "company.name" . }}"
+  EDC_BLOBSTORE_ENDPOINT_TEMPLATE: "http://azurite:10000/%s"
+  EDC_IDENTITY_DID_URL: "did:web:did-server:{{ include "company.name" . }}"
+  EDC_VAULT: "/resources/vault/{{ include "company.name" . }}/{{ include "company.name" . }}-vault.properties"
+  EDC_KEYSTORE: "/resources/vault/{{ include "company.name" . }}/{{ include "company.name" . }}-keystore.jks"
+  EDC_SELF_DESCRIPTION_DOCUMENT_PATH: "/resources/self-description/{{ include "company.name" . }}/sdd.json"
+  EDC_KEYSTORE_PASSWORD: "test123"
+  EDC_API_AUTH_KEY: "ApiKeyDefaultValue"
+  EDC_IAM_DID_WEB_USE_HTTPS: "false"
+  EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: "5"
+  EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: "50"
+  EDC_CATALOG_CACHE_PARTITION_NUM_CRAWLERS: "5"
+  EDC_DATAPLANE_TOKEN_VALIDATION_ENDPOINT: "http://{{ include "company.name" . }}:8383/api/control/token"
+  REGISTRATION_SERVICE_API_URL: "http://registration-service:8184/api/authority"
+  EDC_WEB_REST_CORS_ENABLED: "true"
+  EDC_WEB_REST_CORS_HEADERS: "origin,content-type,accept,authorization,x-api-key"

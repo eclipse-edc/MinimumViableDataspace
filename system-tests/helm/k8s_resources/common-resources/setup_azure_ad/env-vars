@@ -1,0 +1,12 @@
+
+export ARM_CLIENT_ID=$(terraform output -raw ARM_CLIENT_ID)
+export ARM_SUBSCRIPTION_ID=$(terraform output -raw ARM_SUBSCRIPTION_ID)
+export ARM_TENANT_ID=$(terraform output -raw ARM_TENANT_ID)
+export ARM_CLIENT_SECRET=$(terraform output -raw ARM_CLIENT_SECRET)
+export APP_CLIENT_ID=$(terraform output -raw APP_CLIENT_ID)
+export APP_CLIENT_SECRET=$(terraform output -raw APP_CLIENT_SECRET)
+export APP_OBJECT_ID=$(terraform output -raw APP_OBJECT_ID)
+export COMMON_RESOURCE_GROUP=$(terraform output -raw COMMON_RESOURCE_GROUP)
+export COMMON_RESOURCE_GROUP_LOCATION=$(terraform output -raw COMMON_RESOURCE_GROUP_LOCATION)
+export TERRAFORM_STATE_CONTAINER=$(terraform output -raw TERRAFORM_STATE_CONTAINER)
+export TERRAFORM_STATE_STORAGE_ACCOUNT=$(terraform output -raw TERRAFORM_STATE_STORAGE_ACCOUNT)

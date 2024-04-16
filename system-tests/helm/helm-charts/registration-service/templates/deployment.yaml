@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "registration-service.fullname" . }}
+  labels:
+    {{- include "registration-service.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "registration-service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "registration-service.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.ports.http.containerPort }}
+              name: http
+            - containerPort: {{ .Values.ports.identity.containerPort }}
+              name: identity
+            - containerPort: {{ .Values.ports.authority.containerPort }}
+              name: authority
+            - containerPort: {{ .Values.ports.mgmt.containerPort }}
+              name: mgmt
+            - containerPort: {{ .Values.ports.debug.containerPort }}
+              name: debug
+          envFrom:
+            - configMapRef:
+                name: {{ include "registration-service.fullname" . }}-configmap
+
+          volumeMounts:
+            - mountPath: /resources
+              name: sdd
+      volumes:
+        - name: sdd
+          hostPath:
+            # directory location on host
+            path: {{ .Values.volumes.hostPath }}
+
