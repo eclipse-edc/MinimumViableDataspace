@@ -4,7 +4,7 @@ format.version = "1.1"
 [versions]
 assertj = "3.24.2"
 awaitility = "4.2.0"
-edc = "0.6.1-SNAPSHOT"
+edc = "0.6.1"
 failsafe = "3.3.2"
 jackson = "2.14.2"
 jupiter = "5.10.1"
@@ -45,8 +45,10 @@ edc-identity-trust-transform = { module = "org.eclipse.edc:identity-trust-transf
 edc-identity-core-did = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
 edc-identity-vc-ldp = { module = "org.eclipse.edc:ldp-verifiable-credentials", version.ref = "edc" }
 edc-identity-vc-jwt = { module = "org.eclipse.edc:jwt-verifiable-credentials", version.ref = "edc" }
-edc-identity-jws2020 = { module = "org.eclipse.edc:jws2020", version.ref = "edc" }
 edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
+
+# EDC lib dependencies
+edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }
 
 # EDC DPF dependencies
 edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }

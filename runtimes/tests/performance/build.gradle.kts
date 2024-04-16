@@ -25,7 +25,7 @@ dependencies {
     testImplementation(libs.edc.core.crypto)
 
     testImplementation(libs.edc.junit)
-    testImplementation(testFixtures(libs.edc.identity.jws2020))
+    testImplementation(testFixtures(libs.edc.lib.jws2020))
     testImplementation(testFixtures(libs.edc.identity.vc.ldp))
     testImplementation(testFixtures(libs.edc.identity.vc.jwt))
 }
