@@ -33,8 +33,8 @@ fi
 
 ISSUER_DID="did:example:dataspace-issuer"
 KID="key-1"
-ALG="PS256"
-CURVE="P-256"
+ALG="ES256" # EcDSA keys
+CURVE="P-521"
 
 # generate key-pair for the dataspace issuer
 KEY_FILE_PREFIX="assets/issuer"
@@ -42,7 +42,7 @@ PRIVATE_KEY_FILE=${KEY_FILE_PREFIX}_private_jwk.json
 PUBLIC_KEY_FILE=${KEY_FILE_PREFIX}_public_jwk.json
 
 # uncomment only if you need to regenerate the Issuer's keypair!
-java -jar jwkgen.jar -c $CURVE -i $KID -t EC | tail -n +2 >$PRIVATE_KEY_FILE
+java -jar jwkgen.jar -c $CURVE -i $KID -t EC u sig -a "ES512" | tail -n +2 >$PRIVATE_KEY_FILE
 
 # extract public key - simply remove the "d"
 jq 'del(.d)' $PRIVATE_KEY_FILE >$PUBLIC_KEY_FILE
@@ -57,21 +57,21 @@ LOCAL_AUD="did:web:localhost%3A7083"
 # 1. K8S deployment:  update the JSON files, that contains the CredentialResource
 
 CRED_RES_FILE=assets/credentials/k8s/alice/alice-membership-credential.json
-MEMBERSHIP_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/k8s/alice/membership_vc.json)")
+MEMBERSHIP_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/k8s/alice/membership_vc.json)")
 cat <<<$(jq --arg mvc "$MEMBERSHIP_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 CRED_RES_FILE=assets/credentials/k8s/alice/alice-pcf-credential.json
-PCF_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/k8s/alice/pcf_vc.json)")
+PCF_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/k8s/alice/pcf_vc.json)")
 cat <<<$(jq --arg mvc "$PCF_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 # 2. Local deployment:  update the JSON files, that contains the CredentialResourceAUD="did:web:localhost%3A7083"
 
 CRED_RES_FILE=assets/credentials/local/alice/alice-membership-credential.json
-MEMBERSHIP_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/local/alice/membership_vc.json)")
+MEMBERSHIP_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/local/alice/membership_vc.json)")
 cat <<<$(jq --arg mvc "$MEMBERSHIP_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 CRED_RES_FILE=assets/credentials/local/alice/alice-pcf-credential.json
-PCF_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/local/alice/pcf_vc.json)")
+PCF_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" -P "vc=$(jq . ./assets/credentials/local/alice/pcf_vc.json)")
 cat <<<$(jq --arg mvc "$PCF_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 ##############
@@ -84,21 +84,21 @@ LOCAL_AUD="did:web:localhost%3A7093"
 # 1. K8S deployment:  update the JSON files, that contains the CredentialResource
 
 CRED_RES_FILE=assets/credentials/k8s/bob/bob-membership-credential.json
-MEMBERSHIP_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/k8s/bob/membership_vc.json)")
+MEMBERSHIP_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/k8s/bob/membership_vc.json)")
 cat <<<$(jq --arg mvc "$MEMBERSHIP_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 CRED_RES_FILE=assets/credentials/k8s/bob/bob-pcf-credential.json
-PCF_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/k8s/bob/pcf_vc.json)")
+PCF_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $K8S_AUD --aud $K8S_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/k8s/bob/pcf_vc.json)")
 cat <<<$(jq --arg mvc "$PCF_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 # 2. Local deployment:  update the JSON files, that contains the CredentialResourceAUD="did:web:localhost%3A7083"
 
 CRED_RES_FILE=assets/credentials/local/bob/bob-membership-credential.json
-MEMBERSHIP_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/local/bob/membership_vc.json)")
+MEMBERSHIP_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/local/bob/membership_vc.json)")
 cat <<<$(jq --arg mvc "$MEMBERSHIP_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 CRED_RES_FILE=assets/credentials/local/bob/bob-pcf-credential.json
-PCF_VC=$(./jwt encode --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/local/bob/pcf_vc.json)")
+PCF_VC=$(./jwt encode --alg "$ALG" --kid "$ISSUER_DID#$KID" --iss $ISSUER_DID --sub $LOCAL_AUD --aud $LOCAL_AUD -S "@$PRIVATE_KEY_FILE" "$(jq . ./assets/credentials/local/bob/pcf_vc.json)")
 cat <<<$(jq --arg mvc "$PCF_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_FILE) >$CRED_RES_FILE
 
 ####################
