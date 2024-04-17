@@ -6,18 +6,18 @@
       "@base": "did:example:dataspace-issuer"
     }
   ],
-  "service": [
-  ],
+  "service": [],
   "verificationMethod": [
     {
       "id": "did:example:dataspace-issuer#key-1",
       "controller": "did:example:dataspace-issuer",
       "type": "JsonWebKey2020",
       "publicKeyJwk": {
-        "kty": "OKP",
-        "crv": "Ed25519",
+        "kty": "EC",
+        "crv": "P-256",
         "kid": "key-1",
-        "x": "p1WjKW91glk3nGeaHylpq93RMe_PMGIlNFI-8PlNW1U"
+        "x": "HLwsbXoy9-EJFJ6a3Ks0nVbQpNA2hkza0PV4tgsy6nQ",
+        "y": "8YsKicpeK0UVhznUaZHSq8YH1KdSvO-7CdpqKqKQty4"
       }
     }
   ],
