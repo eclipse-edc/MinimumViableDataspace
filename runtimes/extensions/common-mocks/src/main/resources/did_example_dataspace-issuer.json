@@ -13,11 +13,10 @@
       "controller": "did:example:dataspace-issuer",
       "type": "JsonWebKey2020",
       "publicKeyJwk": {
-        "kty": "EC",
-        "crv": "P-256",
+        "kty": "OKP",
+        "crv": "Ed25519",
         "kid": "key-1",
-        "x": "HLwsbXoy9-EJFJ6a3Ks0nVbQpNA2hkza0PV4tgsy6nQ",
-        "y": "8YsKicpeK0UVhznUaZHSq8YH1KdSvO-7CdpqKqKQty4"
+        "x": "hK2DQ2zZ4y_QHDXi3x9mUx6SC2AzIlP4NK7BjrfE9WM"
       }
     }
   ],

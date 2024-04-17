@@ -33,19 +33,18 @@ fi
 
 ISSUER_DID="did:example:dataspace-issuer"
 KID="key-1"
-ALG="ES256" # EcDSA keys
-CURVE="P-521"
+ALG="EDDSA" # EcDSA keys
 
 # generate key-pair for the dataspace issuer
 KEY_FILE_PREFIX="assets/issuer"
-PRIVATE_KEY_FILE=${KEY_FILE_PREFIX}_private_jwk.json
-PUBLIC_KEY_FILE=${KEY_FILE_PREFIX}_public_jwk.json
+PRIVATE_KEY_FILE=${KEY_FILE_PREFIX}_private.pem
+PUBLIC_KEY_FILE=${KEY_FILE_PREFIX}_public.pem
 
 # uncomment only if you need to regenerate the Issuer's keypair!
-java -jar jwkgen.jar -c $CURVE -i $KID -t EC u sig -a "ES512" | tail -n +2 >$PRIVATE_KEY_FILE
+openssl genpkey -algorithm ed25519 -out $PRIVATE_KEY_FILE
+openssl pkey -in $PRIVATE_KEY_FILE -pubout -out $PUBLIC_KEY_FILE
 
 # extract public key - simply remove the "d"
-jq 'del(.d)' $PRIVATE_KEY_FILE >$PUBLIC_KEY_FILE
 
 ##############
 ## FOR ALICE:
@@ -104,5 +103,5 @@ cat <<<$(jq --arg mvc "$PCF_VC" '.verifiableCredential.rawVc = $mvc' $CRED_RES_F
 ####################
 # Update Issuer DID
 ####################
-DID=../runtimes/extensions/common-mocks/src/main/resources/did_example_dataspace-issuer.json
-cat <<<$(jq --argjson pub "$(cat $PUBLIC_KEY_FILE)" '.verificationMethod[].publicKeyJwk = $pub' $DID) >$DID
+#DID=../runtimes/extensions/common-mocks/src/main/resources/did_example_dataspace-issuer.json
+#cat <<<$(jq --argjson pub "$(cat $PUBLIC_KEY_FILE)" '.verificationMethod[].publicKeyJwk = $pub' $DID) >$DID
