@@ -76,4 +76,4 @@ override.tf.json
 terraform.rc
 **/.terraform.lock.hcl
 
-deployment/azure/terraform/backend.conf
+**/jwt
