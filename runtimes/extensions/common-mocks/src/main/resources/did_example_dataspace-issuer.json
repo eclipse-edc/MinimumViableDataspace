@@ -10,14 +10,14 @@
   ],
   "verificationMethod": [
     {
-      "id": "did:example:dataspace-issuer#key1",
+      "id": "did:example:dataspace-issuer#key-1",
       "controller": "did:example:dataspace-issuer",
       "type": "JsonWebKey2020",
       "publicKeyJwk": {
         "kty": "OKP",
-        "kid": "key-1",
         "crv": "Ed25519",
-        "x": "ActoXZWU6HMz4_aWRvS6g7cni0rnutGuSPzWXtnt49U"
+        "kid": "key-1",
+        "x": "p1WjKW91glk3nGeaHylpq93RMe_PMGIlNFI-8PlNW1U"
       }
     }
   ],
