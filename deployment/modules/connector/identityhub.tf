@@ -3,7 +3,7 @@ resource "kubernetes_deployment" "identityhub" {
   metadata {
     name      = "${lower(var.humanReadableName)}-identityhub"
     namespace = var.namespace
-    labels    = {
+    labels = {
       App = "${lower(var.humanReadableName)}-identityhub"
     }
   }
@@ -108,7 +108,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_DID_PATH            = "/"
     JAVA_TOOL_OPTIONS            = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.ih-debug}"
     EDC_IAM_STS_PRIVATEKEY_ALIAS = var.aliases.sts-private-key
-    EDC_IAM_STS_PUBLICKEY_ID     = local.public-key-alias
+    EDC_IAM_STS_PUBLICKEY_ID     = var.aliases.sts-public-key-id
     EDC_MVD_CREDENTIALS_PATH     = "/etc/credentials/"
     EDC_VAULT_HASHICORP_URL      = "http://${var.humanReadableName}-vault:8200"
     EDC_VAULT_HASHICORP_TOKEN    = var.vault-token

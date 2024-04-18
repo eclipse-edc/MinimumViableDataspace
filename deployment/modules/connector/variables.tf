@@ -68,18 +68,8 @@ variable "ports" {
   }
 }
 
-variable "publickey-pem" {
-  type        = string
-  description = "Public key in PEM format"
-}
-
 variable "database-name" {
   type = string
-}
-
-variable "registry-json" {
-  type        = string
-  description = "JSON file containing all DSP-URL-to-audience mappings"
 }
 
 variable "credentials-dir" {
@@ -101,11 +91,11 @@ variable "vault-token" {
 
 variable "aliases" {
   type = object({
-    sts-private-key = string
+    sts-private-key   = string
     sts-public-key-id = string
   })
   default = {
-    sts-private-key = "key-1"
+    sts-private-key   = "key-1"
     sts-public-key-id = "key-1"
   }
 }

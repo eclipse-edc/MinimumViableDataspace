@@ -27,7 +27,8 @@ terraform {
     kubernetes = {
       source = "hashicorp/kubernetes"
     }
-    helm = { // used for Hashicorp Vault
+    helm = {
+      // used for Hashicorp Vault
       source = "hashicorp/helm"
     }
   }
@@ -49,9 +50,7 @@ module "alice-connector" {
   humanReadableName = "alice"
   participantId     = var.alice-did
   participant-did   = var.alice-did
-  publickey-pem     = file("./assets/ec-p256-public.pem")
   database-name     = "alice"
-  registry-json     = local.registry
   credentials-dir   = dirname("./assets/credentials/k8s/")
   namespace         = kubernetes_namespace.ns.metadata.0.name
 }
@@ -62,9 +61,7 @@ module "bob-connector" {
   humanReadableName = "bob"
   participantId     = var.bob-did
   participant-did   = var.bob-did
-  publickey-pem     = file("./assets/ec-p256-public.pem")
   database-name     = "bob"
-  registry-json     = local.registry
   credentials-dir   = dirname("./assets/credentials/k8s/")
   namespace         = kubernetes_namespace.ns.metadata.0.name
 }

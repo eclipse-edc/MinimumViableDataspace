@@ -66,7 +66,7 @@ resource "kubernetes_ingress_v1" "api-ingress" {
           }
         }
 
-        path{
+        path {
           path = "/${var.humanReadableName}/vault(/|$)(.*)"
           backend {
             service {

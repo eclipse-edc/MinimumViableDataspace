@@ -8,7 +8,7 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
   spec {
     // run only once
     completions                = 1
-    completion_mode            = "NonIndexed"
+    completion_mode = "NonIndexed"
     // clean up any job pods after 90 seconds, failed or succeeded
     ttl_seconds_after_finished = "90"
     template {
@@ -38,7 +38,7 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
           name    = "create-participant"
           image   = "postman/newman:ubuntu"
           command = [
-            "curl", "-o - -I", "--location",
+            "curl", "-v", "--location",
             "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-management}/api/management/v1/participants/",
             "--header", "Content-Type: application/json",
             "--header", "x-api-key: ${var.ih_superuser_apikey}",
@@ -76,5 +76,5 @@ resource "kubernetes_config_map" "seed-collection" {
 
 locals {
   newman_collection_name = "MVD.postman_collection.json"
-  publicKeyPem           = replace(tls_private_key.ed25519.public_key_pem, "\n", "\\n")
+  publicKeyPem           = replace(tls_private_key.ecdsa.public_key_pem, "\n", "\\n")
 }
