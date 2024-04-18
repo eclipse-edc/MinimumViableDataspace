@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "connector" {
   metadata {
     name      = "${lower(var.humanReadableName)}-connector"
     namespace = var.namespace
-    labels    = {
+    labels = {
       App = "${lower(var.humanReadableName)}-connector"
     }
   }
@@ -112,13 +112,12 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_API_AUTH_KEY              = "password"
     EDC_DSP_CALLBACK_ADDRESS      = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_CREDENTIALSERVICE_URL = "http://${local.ih-service-name}:${var.ports.resolution-api}/api/resolution/participants/${var.participantId}/presentation/query"
-    EDC_IAM_STS_PRIVATEKEY_ALIAS = var.aliases.sts-private-key
-    EDC_IAM_STS_PUBLICKEY_ID     = "${var.participant-did}#${var.aliases.sts-public-key-id}"
+    EDC_IAM_STS_PRIVATEKEY_ALIAS  = var.aliases.sts-private-key
+    EDC_IAM_STS_PUBLICKEY_ID      = "${var.participant-did}#${var.aliases.sts-public-key-id}"
     JAVA_TOOL_OPTIONS             = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH = "/etc/registry/registry.json"
     EDC_PARTICIPANT_ID            = var.participantId
-    "registry.json"               = var.registry-json
-    EDC_VAULT_HASHICORP_URL      = "http://${var.humanReadableName}-vault:8200"
-    EDC_VAULT_HASHICORP_TOKEN    = var.vault-token
+    EDC_VAULT_HASHICORP_URL       = "http://${var.humanReadableName}-vault:8200"
+    EDC_VAULT_HASHICORP_TOKEN     = var.vault-token
   }
 }

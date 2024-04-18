@@ -4,7 +4,7 @@ format.version = "1.1"
 [versions]
 assertj = "3.24.2"
 awaitility = "4.2.0"
-edc = "0.6.1"
+edc = "0.6.1-SNAPSHOT"
 failsafe = "3.3.2"
 jackson = "2.14.2"
 jupiter = "5.10.1"

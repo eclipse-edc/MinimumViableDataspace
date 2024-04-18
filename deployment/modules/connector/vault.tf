@@ -39,8 +39,8 @@ resource "helm_release" "vault" {
           "-c",
           join(" && ", [
             "sleep 5",
-            "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.ed25519.private_key_pem}\"",
-            "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ed25519.public_key_pem}\""
+            "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.ecdsa.private_key_pem}\"",
+            "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
           ])
         ]
       }
@@ -48,8 +48,8 @@ resource "helm_release" "vault" {
   ]
 }
 
-# ECDSA key with P384 elliptic curve
-resource "tls_private_key" "ed25519" {
-  algorithm = "ECDSA"
+# ECDSA key with P256 elliptic curve
+resource "tls_private_key" "ecdsa" {
+  algorithm   = "ECDSA"
   ecdsa_curve = "P256"
 }
