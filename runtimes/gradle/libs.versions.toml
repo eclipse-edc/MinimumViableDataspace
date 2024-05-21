@@ -4,7 +4,7 @@ format.version = "1.1"
 [versions]
 assertj = "3.24.2"
 awaitility = "4.2.0"
-edc = "0.6.1-SNAPSHOT"
+edc = "0.6.5-SNAPSHOT"
 failsafe = "3.3.2"
 jackson = "2.14.2"
 jupiter = "5.10.1"
@@ -49,6 +49,7 @@ edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref 
 
 # EDC lib dependencies
 edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }
+edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
 
 # EDC DPF dependencies
 edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
@@ -57,21 +58,26 @@ edc-spi-dataplane-selector = { module = "org.eclipse.edc:data-plane-selector-spi
 edc-dpf-selector-core = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
 
 # identityhub dependencies
-edc-ih-api = { module = "org.eclipse.edc:identity-hub-api", version.ref = "edc" }
-edc-ih-credentials = { module = "org.eclipse.edc:identity-hub-credentials", version.ref = "edc" }
-edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
+edc-ih-core = { module = "org.eclipse.edc:identity-hub-core", version.ref = "edc" }
 edc-ih-keypairs = { module = "org.eclipse.edc:identity-hub-keypairs", version.ref = "edc" }
 edc-ih-did = { module = "org.eclipse.edc:identity-hub-did", version.ref = "edc" }
-edc-ih-spi-did = { module = "org.eclipse.edc:identity-hub-did-spi", version.ref = "edc" }
-edc-ih-did-localpub = { module = "org.eclipse.edc:local-did-publisher", version.ref = "edc" }
+edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
+# identityhub SPI modules
+edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
 edc-ih-spi-store = { module = "org.eclipse.edc:identity-hub-store-spi", version.ref = "edc" }
-edc-ih-mgmt-config = { module = "org.eclipse.edc:identityhub-management-api-configuration", version.ref = "edc" }
+edc-ih-spi-participant = { module = "org.eclipse.edc:participant-context-spi", version.ref = "edc" }
+# identityhub API modules
+edc-ih-api-presentation = { module = "org.eclipse.edc:presentation-api", version.ref = "edc" }
+edc-ih-mgmt-config = { module = "org.eclipse.edc:api-configuration", version.ref = "edc" }
 edc-ih-mgmt-authentication = { module = "org.eclipse.edc:identityhub-api-authentication", version.ref = "edc" }
 edc-ih-mgmt-authorization = { module = "org.eclipse.edc:identityhub-api-authorization", version.ref = "edc" }
-edc-ih-mgmt-participantcontext = { module = "org.eclipse.edc:participant-context-mgmt-api", version.ref = "edc" }
-edc-ih-mgmt-verifiablecredential = { module = "org.eclipse.edc:verifiable-credential-mgmt-api", version.ref = "edc" }
-edc-ih-mgmt-did = { module = "org.eclipse.edc:did-mgmt-api", version.ref = "edc" }
-edc-ih-mgmt-keypairs = { module = "org.eclipse.edc:keypair-mgmt-api", version.ref = "edc" }
+edc-ih-mgmt-participantcontext = { module = "org.eclipse.edc:participant-context-api", version.ref = "edc" }
+edc-ih-mgmt-verifiablecredential = { module = "org.eclipse.edc:verifiable-credentials-api", version.ref = "edc" }
+edc-ih-mgmt-did = { module = "org.eclipse.edc:did-api", version.ref = "edc" }
+edc-ih-mgmt-keypairs = { module = "org.eclipse.edc:keypair-api", version.ref = "edc" }
+
+edc-ih-did-localpub = { module = "org.eclipse.edc:local-did-publisher", version.ref = "edc" }
+edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", version.ref = "edc" }
 
 # Third party libs
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }

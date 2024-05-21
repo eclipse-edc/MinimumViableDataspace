@@ -20,6 +20,7 @@ plugins {
 
 dependencies {
     implementation(libs.edc.spi.core)
+    implementation(libs.edc.lib.transform)
 
     // must be "implementation", since the DefaultCredentialService is still there
     implementation(libs.bundles.controlplane)

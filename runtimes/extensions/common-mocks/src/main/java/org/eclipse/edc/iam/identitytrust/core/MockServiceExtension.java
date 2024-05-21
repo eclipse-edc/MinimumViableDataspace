@@ -15,7 +15,7 @@
 package org.eclipse.edc.iam.identitytrust.core;
 
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.edc.identithub.did.spi.DidWebParser;
+import org.eclipse.edc.identithub.spi.did.DidWebParser;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.spi.monitor.Monitor;
