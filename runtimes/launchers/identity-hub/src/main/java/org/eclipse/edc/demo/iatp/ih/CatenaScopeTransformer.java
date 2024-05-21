@@ -14,7 +14,7 @@
 
 package org.eclipse.edc.demo.iatp.ih;
 
-import org.eclipse.edc.identityhub.defaults.EdcScopeToCriterionTransformer;
+import org.eclipse.edc.identityhub.query.EdcScopeToCriterionTransformer;
 import org.eclipse.edc.spi.query.Criterion;
 import org.eclipse.edc.spi.result.Result;
 

@@ -19,8 +19,8 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.edc.ih.api)
-    runtimeOnly(libs.edc.ih.credentials)
+    runtimeOnly(libs.edc.ih.core)
+    runtimeOnly(libs.edc.ih.api.presentation)
     runtimeOnly(libs.edc.ih.participants)
     runtimeOnly(libs.edc.ih.keypairs)
     if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
@@ -35,7 +35,7 @@ dependencies {
     implementation(libs.bundles.connector)
     implementation(libs.edc.ih.spi.store)
     implementation(libs.edc.identity.vc.ldp)
-    implementation(libs.edc.ih.credentials)
+    implementation(libs.edc.ih.lib.credentialquery)
 }
 
 application {
