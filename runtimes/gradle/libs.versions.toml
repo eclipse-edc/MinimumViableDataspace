@@ -4,7 +4,7 @@ format.version = "1.1"
 [versions]
 assertj = "3.24.2"
 awaitility = "4.2.0"
-edc = "0.6.5-SNAPSHOT"
+edc = "0.7.1-SNAPSHOT"
 failsafe = "3.3.2"
 jackson = "2.14.2"
 jupiter = "5.10.1"
@@ -36,6 +36,7 @@ edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref 
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
+edc-api-control-configuration = { module = "org.eclipse.edc:control-api-configuration", version.ref = "edc" }
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
 edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
 edc-controlplane-callback-dispatcher-event = { module = "org.eclipse.edc:callback-event-dispatcher", version.ref = "edc" }
@@ -90,7 +91,7 @@ connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observab
 
 controlplane = ["edc-core-controlplane", "edc-config-filesystem", "edc-auth-tokenbased", "edc-api-management", "edc-api-management-config",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
-    "edc-identity-core-did", "edc-identity-core-trust", "edc-identity-trust-transform"]
+    "edc-identity-core-did", "edc-identity-core-trust", "edc-identity-trust-transform", "edc-api-control-configuration"]
 
 did = ["edc-identity-did-web", "edc-identity-did-core", "edc-ih-did", "edc-ih-did-localpub"]
 
