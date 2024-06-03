@@ -32,7 +32,7 @@ DATA_ALICE=$(jq -n --arg pem "$PEM_ALICE" '{
            }
        }')
 
-curl -s --location 'http://localhost:7082/api/management/v1/participants/' \
+curl -s --location 'http://localhost:7082/api/management/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_ALICE"
@@ -58,7 +58,7 @@ DATA_BOB=$(jq -n --arg pem "$PEM_BOB" '{
             }
       }')
 
-curl -s --location 'http://localhost:7092/api/management/v1/participants/' \
+curl -s --location 'http://localhost:7092/api/management/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_BOB"
