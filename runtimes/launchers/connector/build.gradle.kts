@@ -19,16 +19,12 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.edc.spi.core)
-    implementation(libs.edc.lib.transform)
-
-    // must be "implementation", since the DefaultCredentialService is still there
-    implementation(libs.bundles.controlplane)
+    implementation(libs.edc.spi.core) // we need some constants
     implementation(project(":extensions:common-mocks"))
-    implementation(libs.edc.lib.jws2020)
-    implementation(libs.edc.identity.vc.ldp)
+
+    implementation(libs.bundles.controlplane)
     implementation(libs.edc.core.connector)
-    runtimeOnly(libs.edc.identity.did.web)
+
     if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")

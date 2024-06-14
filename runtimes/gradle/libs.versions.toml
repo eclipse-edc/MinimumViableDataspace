@@ -91,12 +91,15 @@ connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observab
 
 controlplane = ["edc-core-controlplane", "edc-config-filesystem", "edc-auth-tokenbased", "edc-api-management", "edc-api-management-config",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
-    "edc-identity-core-did", "edc-identity-core-trust", "edc-identity-trust-transform", "edc-api-control-configuration"]
+    "edc-identity-core-did", "edc-identity-core-trust", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
+    "edc-identity-vc-ldp", "edc-identity-did-web", "edc-lib-jws2020"]
 
 did = ["edc-identity-did-web", "edc-identity-did-core", "edc-ih-did", "edc-ih-did-localpub"]
 
 management-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
     "edc-ih-mgmt-keypairs", "edc-ih-mgmt-authentication", "edc-ih-mgmt-authorization"]
+
+identityhub = [ "edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

@@ -12,5 +12,5 @@
 #
 #
 
-org.eclipse.edc.demo.iatp.core.IatpPatchExtension
+org.eclipse.edc.demo.iatp.core.DcpPatchExtension
 org.eclipse.edc.demo.iatp.policy.PolicyEvaluationExtension
