@@ -23,11 +23,11 @@ import java.util.List;
 import static org.eclipse.edc.spi.result.Result.failure;
 import static org.eclipse.edc.spi.result.Result.success;
 
-public class CatenaScopeTransformer extends EdcScopeToCriterionTransformer {
+public class MvdScopeTransformer extends EdcScopeToCriterionTransformer {
 
     private final List<String> knownCredentialTypes;
 
-    public CatenaScopeTransformer(List<String> knownCredentialTypes) {
+    public MvdScopeTransformer(List<String> knownCredentialTypes) {
         this.knownCredentialTypes = knownCredentialTypes;
     }
 

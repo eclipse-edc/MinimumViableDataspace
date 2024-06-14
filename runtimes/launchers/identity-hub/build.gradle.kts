@@ -19,10 +19,7 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.edc.ih.core)
-    runtimeOnly(libs.edc.ih.api.presentation)
-    runtimeOnly(libs.edc.ih.participants)
-    runtimeOnly(libs.edc.ih.keypairs)
+    runtimeOnly(libs.bundles.identityhub)
     if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")

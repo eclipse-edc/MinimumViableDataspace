@@ -51,26 +51,24 @@ public class IdentityHubExtension implements ServiceExtension {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        // register scope mapper
     }
 
     @Provider
     public ScopeToCriterionTransformer createScopeTransformer() {
-        return new CatenaScopeTransformer(List.of("MembershipCredential", "DismantlerCredential", "BpnCredential"));
+        return new MvdScopeTransformer(List.of("MembershipCredential", "DismantlerCredential", "BpnCredential"));
     }
 
-    private void seedCredentials(String directory, Monitor monitor) throws IOException {
+    private void seedCredentials(String credentialsSourceDirectory, Monitor monitor) throws IOException {
 
-        var absPath = new File(directory).getAbsoluteFile();
+        var absPath = new File(credentialsSourceDirectory).getAbsoluteFile();
 
         if (!absPath.exists()) {
-            monitor.warning("Path '%s' does not exist. It must be a resolvable path with read access. Will not add any VCs.".formatted(directory));
+            monitor.warning("Path '%s' does not exist. It must be a resolvable path with read access. Will not add any VCs.".formatted(credentialsSourceDirectory));
             return;
         }
         var files = absPath.listFiles();
         if (files == null) {
-            monitor.warning("No files found in directory '%s'. Will not add any VCs.".formatted(directory));
+            monitor.warning("No files found in directory '%s'. Will not add any VCs.".formatted(credentialsSourceDirectory));
             return;
         }
 
