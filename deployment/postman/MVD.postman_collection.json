@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3471798f-45bc-43df-aaab-8860d77e096d",
+		"_postman_id": "464e8be6-812e-4a70-902f-bc35b5616d5f",
 		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "647585"
@@ -94,14 +94,14 @@
 							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:permission\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"MembershipCredential\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/policydefinitions",
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"policydefinitions"
 							]
 						}
@@ -127,14 +127,14 @@
 							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-pcf\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/policydefinitions",
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"policydefinitions"
 							]
 						}
@@ -160,14 +160,14 @@
 							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-sustainability\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"FrameworkCredential.sustainability\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/policydefinitions",
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"policydefinitions"
 							]
 						}
@@ -193,14 +193,14 @@
 							"raw": "{\n        \"@context\": {},\n        \"@id\": \"member-and-pcf-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-pcf\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-1\"\n        }\n    }"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/contractdefinitions",
+							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"contractdefinitions"
 							]
 						}
@@ -226,14 +226,14 @@
 							"raw": "{\n        \"@context\": {},\n        \"@id\": \"sustainability-only-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-sustainability\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-2\"\n        }\n    }"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/contractdefinitions",
+							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"contractdefinitions"
 							]
 						}
@@ -286,14 +286,14 @@
 							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/catalog/request",
+							"raw": "{{HOST}}/api/management/v3/catalog/request",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"catalog",
 								"request"
 							]
@@ -314,7 +314,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"providerId\": \"{{PROVIDER_ID}}\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"Set\",\n        \"@id\": \"c3VzdGFpbmFiaWxpdHktb25seS1kZWY=:YXNzZXQtMg==:MGRkZTFiN2YtMDQyYS00OWRlLThiOWEtZDcxOTMyMTQyYmJm\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"odrl:target\": \"asset-1\",\n            \"odrl:action\": {\n                \"odrl:type\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:or\": {\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n    }",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MzFkNDdiODItYTJlMy00NDA0LTgzNWMtNGJhZjAwYTk0MDZm\",\n        \"assigner\": \"did:web:localhost%3A7093\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"odrl:target\": \"asset-1\",\n            \"odrl:action\": {\n                \"odrl:type\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:or\": {\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -322,14 +322,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/contractnegotiations",
+							"raw": "{{HOST}}/api/management/v3/contractnegotiations",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"contractnegotiations"
 							]
 						}
@@ -355,10 +355,11 @@
 							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v3/assets/request",
+							"raw": "localhost:8081/api/management/v3/assets/request",
 							"host": [
-								"{{HOST}}"
+								"localhost"
 							],
+							"port": "8081",
 							"path": [
 								"api",
 								"management",
@@ -389,14 +390,14 @@
 							"raw": "{\n    \"@context\": { \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\" },\n    \"@type\": \"QuerySpec\"\n}"
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/contractnegotiations/request",
+							"raw": "{{HOST}}/api/management/v3/contractnegotiations/request",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"contractnegotiations",
 								"request"
 							]
@@ -419,14 +420,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/transferprocesses",
+							"raw": "{{HOST}}/api/management/v3/transferprocesses",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"transferprocesses"
 							]
 						}
@@ -448,14 +449,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{HOST}}/api/management/v2/transferprocesses/request",
+							"raw": "{{HOST}}/api/management/v3/transferprocesses/request",
 							"host": [
 								"{{HOST}}"
 							],
 							"path": [
 								"api",
 								"management",
-								"v2",
+								"v3",
 								"transferprocesses",
 								"request"
 							]
@@ -480,7 +481,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -489,7 +491,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -497,14 +500,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}"
 									]
@@ -521,14 +524,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -536,14 +543,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants"
 									]
 								}
@@ -559,7 +566,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -568,7 +576,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -585,14 +594,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										""
 									]
@@ -609,7 +618,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -618,7 +628,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -635,14 +646,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										""
 									]
@@ -659,14 +670,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -683,14 +698,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/roles",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/roles",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"roles"
@@ -708,14 +723,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -732,14 +751,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/token",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/token",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"token"
@@ -757,14 +776,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -781,14 +804,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/state?isActive=true",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=true",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"state"
@@ -812,14 +835,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -836,14 +863,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/state?isActive=false",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=false",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"state"
@@ -867,14 +894,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -891,14 +922,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}"
 									]
@@ -920,7 +951,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -929,7 +961,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -937,14 +970,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/BPN0000001/keypairs",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/BPN0000001/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"BPN0000001",
 										"keypairs"
@@ -959,14 +992,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/keypairs",
+									"raw": "{{CS_URL}}/api/management/v1alpha/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"keypairs"
 									]
 								}
@@ -984,14 +1017,18 @@
 											"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
 											"})"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1008,14 +1045,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/keypairs",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"keypairs"
@@ -1033,14 +1070,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1057,14 +1098,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/keypairs/key1/rotate",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key1/rotate",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"keypairs",
@@ -1084,14 +1125,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1108,14 +1153,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/keypairs/key2/revoke",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key2/revoke",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"keypairs",
@@ -1160,7 +1205,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -1169,7 +1215,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1186,14 +1233,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/BPN0000001/dids/query",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/BPN0000001/dids/query",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"BPN0000001",
 										"dids",
@@ -1212,7 +1259,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -1221,7 +1269,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1241,14 +1290,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/dids",
+									"raw": "{{CS_URL}}/api/management/v1alpha/dids",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"dids"
 									]
 								}
@@ -1264,7 +1313,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -1273,7 +1323,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1290,14 +1341,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/dids/publish",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/publish",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"dids",
@@ -1316,14 +1367,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1340,14 +1395,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/dids/{{DID}}/endpoints",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/{{DID}}/endpoints",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"dids",
@@ -1367,14 +1422,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1391,14 +1450,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/dids/unpublish",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/unpublish",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"dids",
@@ -1417,14 +1476,18 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1441,14 +1504,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/dids",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"dids"
@@ -1466,7 +1529,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
@@ -1475,7 +1539,8 @@
 										"exec": [
 											""
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1492,14 +1557,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/dids/state",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/state",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"dids",
@@ -1547,14 +1612,18 @@
 											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
 											"})"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1562,14 +1631,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/participants/{{PARTICIPANT_ID}}/credentials",
+									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/credentials",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
 										"credentials"
@@ -1589,14 +1658,18 @@
 											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
 											"})"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
 									}
 								},
 								{
 									"listen": "prerequest",
 									"script": {
-										"exec": [],
-										"type": "text/javascript"
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -1604,14 +1677,14 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1/credentials",
+									"raw": "{{CS_URL}}/api/management/v1alpha/credentials",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
 										"management",
-										"v1",
+										"v1alpha",
 										"credentials"
 									]
 								}

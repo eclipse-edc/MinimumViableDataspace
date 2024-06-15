@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.demo.iatp.core;
+package org.eclipse.edc.demo.dcp.core;
 
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Policy;

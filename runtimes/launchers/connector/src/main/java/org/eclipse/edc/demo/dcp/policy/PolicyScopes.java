@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.demo.iatp.policy;
+package org.eclipse.edc.demo.dcp.policy;
 
 /**
  * Defines standard EDC policy scopes.

@@ -20,13 +20,18 @@ DATA_ALICE=$(jq -n --arg pem "$PEM_ALICE" '{
                 "type": "CredentialService",
                 "serviceEndpoint": "http://localhost:7081/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
                 "id": "alice-credentialservice-1"
+             },
+             {
+                "type": "ProtocolEndpoint",
+                "serviceEndpoint": "http://localhost:8082/api/dsp",
+                "id": "alice-dsp"
              }
            ],
            "active": true,
            "participantId": "did:web:localhost%3A7083",
            "did": "did:web:localhost%3A7083",
            "key":{
-               "keyId": "key-1",
+               "keyId": "did:web:localhost%3A7083#key-1",
                "privateKeyAlias": "key-1",
                "publicKeyPem":"\($pem)"
            }
@@ -46,13 +51,18 @@ DATA_BOB=$(jq -n --arg pem "$PEM_BOB" '{
                  "type": "CredentialService",
                  "serviceEndpoint": "http://localhost:7091/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDkz",
                  "id": "bob-credentialservice-1"
+              },
+              {
+                "type": "ProtocolEndpoint",
+                "serviceEndpoint": "http://localhost:8092/api/dsp",
+                "id": "bob-dsp"
               }
             ],
             "active": true,
             "participantId": "did:web:localhost%3A7093",
             "did": "did:web:localhost%3A7093",
             "key":{
-                "keyId": "key-1",
+                "keyId": "did:web:localhost%3A7093#key-1",
                 "privateKeyAlias": "key-1",
                 "publicKeyPem":"\($pem)"
             }

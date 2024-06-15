@@ -60,7 +60,7 @@ resource "kubernetes_ingress_v1" "api-ingress" {
             service {
               name = kubernetes_service.ih-service.metadata.0.name
               port {
-                number = var.ports.ih-management
+                number = var.ports.ih-identity-api
               }
             }
           }

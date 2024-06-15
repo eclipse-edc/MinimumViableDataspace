@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.demo.iatp.policy;
+package org.eclipse.edc.demo.dcp.policy;
 
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
