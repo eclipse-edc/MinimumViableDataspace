@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.demo.iatp.ih;
+package org.eclipse.edc.demo.dcp.ih;
 
 import org.eclipse.edc.identityhub.query.EdcScopeToCriterionTransformer;
 import org.eclipse.edc.spi.query.Criterion;

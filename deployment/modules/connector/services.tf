@@ -67,7 +67,7 @@ resource "kubernetes_service" "ih-service" {
     }
     port {
       name = "management"
-      port = var.ports.ih-management
+      port = var.ports.ih-identity-api
     }
     port {
       name = "did"

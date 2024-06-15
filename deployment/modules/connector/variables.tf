@@ -62,7 +62,7 @@ variable "ports" {
     debug          = 1044
     ih-default     = 7080
     ih-debug       = 1045
-    ih-management  = 7081
+    ih-identity-api  = 7081
     resolution-api = 7082
     ih-did         = 7083
   }

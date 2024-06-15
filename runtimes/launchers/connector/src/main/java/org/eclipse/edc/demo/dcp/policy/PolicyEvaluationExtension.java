@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.demo.iatp.policy;
+package org.eclipse.edc.demo.dcp.policy;
 
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
@@ -23,10 +23,10 @@ import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
-import static org.eclipse.edc.demo.iatp.policy.MembershipCredentialEvaluationFunction.MEMBERSHIP_CONSTRAINT_KEY;
-import static org.eclipse.edc.demo.iatp.policy.PolicyScopes.CATALOG_SCOPE;
-import static org.eclipse.edc.demo.iatp.policy.PolicyScopes.NEGOTIATION_SCOPE;
-import static org.eclipse.edc.demo.iatp.policy.PolicyScopes.TRANSFER_PROCESS_SCOPE;
+import static org.eclipse.edc.demo.dcp.policy.MembershipCredentialEvaluationFunction.MEMBERSHIP_CONSTRAINT_KEY;
+import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.CATALOG_SCOPE;
+import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.NEGOTIATION_SCOPE;
+import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.TRANSFER_PROCESS_SCOPE;
 import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
 
 public class PolicyEvaluationExtension implements ServiceExtension {

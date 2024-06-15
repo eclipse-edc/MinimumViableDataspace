@@ -39,7 +39,7 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
           image   = "postman/newman:ubuntu"
           command = [
             "curl", "-v", "--location",
-            "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-management}/api/management/v1/participants/",
+            "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-identity-api}/api/management/v1/participants/",
             "--header", "Content-Type: application/json",
             "--header", "x-api-key: ${var.ih_superuser_apikey}",
             "--data",

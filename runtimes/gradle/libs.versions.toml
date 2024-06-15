@@ -51,6 +51,8 @@ edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref 
 # EDC lib dependencies
 edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }
 edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
+edc-lib-crypto = { module = "org.eclipse.edc:crypto-common-lib", version.ref = "edc" }
+edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
 
 # EDC DPF dependencies
 edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
@@ -76,9 +78,12 @@ edc-ih-mgmt-participantcontext = { module = "org.eclipse.edc:participant-context
 edc-ih-mgmt-verifiablecredential = { module = "org.eclipse.edc:verifiable-credentials-api", version.ref = "edc" }
 edc-ih-mgmt-did = { module = "org.eclipse.edc:did-api", version.ref = "edc" }
 edc-ih-mgmt-keypairs = { module = "org.eclipse.edc:keypair-api", version.ref = "edc" }
-
 edc-ih-did-localpub = { module = "org.eclipse.edc:local-did-publisher", version.ref = "edc" }
 edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", version.ref = "edc" }
+
+# federated catalog modules
+edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
+edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
 
 # Third party libs
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
@@ -99,7 +104,7 @@ did = ["edc-identity-did-web", "edc-identity-did-core", "edc-ih-did", "edc-ih-di
 management-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
     "edc-ih-mgmt-keypairs", "edc-ih-mgmt-authentication", "edc-ih-mgmt-authorization"]
 
-identityhub = [ "edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs"]
+identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

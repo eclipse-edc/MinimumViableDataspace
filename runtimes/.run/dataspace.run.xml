@@ -4,6 +4,7 @@
     <toRun name="Connector Bob (provider)" type="Application" />
     <toRun name="IdentityHub Alice (consumer)" type="Application" />
     <toRun name="IdentityHub Bob (provider)" type="Application" />
+    <toRun name="Seed" type="ShConfigurationType" />
     <method v="2" />
   </configuration>
 </component>

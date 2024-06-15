@@ -21,6 +21,7 @@ plugins {
 dependencies {
     implementation(libs.edc.spi.core) // we need some constants
     implementation(project(":extensions:common-mocks"))
+    implementation(libs.edc.fc.spi.crawler)
 
     implementation(libs.bundles.controlplane)
     implementation(libs.edc.core.connector)
@@ -30,6 +31,7 @@ dependencies {
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
     }
     runtimeOnly(libs.bundles.dpf)
+    runtimeOnly(libs.edc.fc.core)
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

@@ -33,6 +33,9 @@ dependencies {
     implementation(libs.edc.ih.spi.store)
     implementation(libs.edc.identity.vc.ldp)
     implementation(libs.edc.ih.lib.credentialquery)
+
+    testImplementation(libs.edc.lib.crypto)
+    testImplementation(libs.edc.lib.keys)
 }
 
 application {
