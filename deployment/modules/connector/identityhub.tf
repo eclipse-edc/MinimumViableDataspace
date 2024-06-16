@@ -101,7 +101,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_PORT                = var.ports.ih-default
     WEB_HTTP_PATH                = "/api"
     WEB_HTTP_IDENTITY_PORT       = var.ports.ih-identity-api
-    WEB_HTTP_IDENTITY_PATH       = "/api/management"
+    WEB_HTTP_IDENTITY_PATH       = "/api/identity"
     WEB_HTTP_RESOLUTION_PORT     = var.ports.resolution-api
     WEB_HTTP_RESOLUTION_PATH     = "/api/resolution"
     WEB_HTTP_DID_PORT            = var.ports.ih-did

@@ -45,26 +45,28 @@ variable "namespace" {
 
 variable "ports" {
   type = object({
-    resolution-api = number
-    web            = number
-    management     = number
-    protocol       = number
-    debug          = number
-    ih-default     = number
-    ih-debug       = number
-    ih-did         = number
-    ih-management  = number
+    web             = number
+    management      = number
+    protocol        = number
+    control         = number
+    debug           = number
+    ih-default      = number
+    ih-debug        = number
+    ih-did          = number
+    ih-identity-api = number
+    resolution-api  = number
   })
   default = {
-    web            = 8080
-    management     = 8081
-    protocol       = 8082
-    debug          = 1044
-    ih-default     = 7080
-    ih-debug       = 1045
-    ih-identity-api  = 7081
-    resolution-api = 7082
-    ih-did         = 7083
+    web             = 8080
+    management      = 8081
+    protocol        = 8082
+    control         = 8083
+    debug           = 1044
+    ih-default      = 7080
+    ih-debug        = 1045
+    ih-did          = 7083
+    ih-identity-api = 7081
+    resolution-api  = 7082
   }
 }
 
@@ -74,7 +76,12 @@ variable "database-name" {
 
 variable "credentials-dir" {
   type    = string
-  default = "JSON object containing the credentials to seed, sorted by human-readable participant name"
+  description = "JSON object containing the credentials to seed, sorted by human-readable participant name"
+}
+
+variable "participant-list-file"{
+  type = string
+  default = "./assets/participants/participants.k8s.json"
 }
 
 variable "ih_superuser_apikey" {
@@ -101,7 +108,7 @@ variable "aliases" {
 }
 
 locals {
-  name                      = lower(var.humanReadableName)
+  name = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
   ih-service-name           = "${var.humanReadableName}-identityhub"
 }

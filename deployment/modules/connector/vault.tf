@@ -40,14 +40,14 @@ resource "helm_release" "vault" {
           join(" && ", [
             "sleep 5",
             "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.ecdsa.private_key_pem}\"",
-            "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
+#             "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
           ])
         ]
       }
     }),
   ]
 }
-
+#
 # ECDSA key with P256 elliptic curve
 resource "tls_private_key" "ecdsa" {
   algorithm   = "ECDSA"

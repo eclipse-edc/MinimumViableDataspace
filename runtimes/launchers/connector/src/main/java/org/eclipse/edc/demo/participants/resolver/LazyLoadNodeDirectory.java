@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.crawler.spi.TargetNode;
 import org.eclipse.edc.crawler.spi.TargetNodeDirectory;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
-import org.eclipse.edc.iam.identitytrust.core.DidExampleResolver;
 import org.eclipse.edc.spi.EdcException;
 import org.eclipse.edc.spi.monitor.Monitor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,10 +36,8 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
     @Override
     public List<TargetNode> getAll() {
         try {
-
             var entries = mapper.readValue(participantListFile, MAP_TYPE);
-
-            var list= entries.entrySet().stream()
+            var list = entries.entrySet().stream()
                     .map(e -> createNode(e.getKey(), e.getValue()))
                     .filter(Objects::nonNull)
                     .toList();

@@ -500,13 +500,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}"
@@ -543,13 +543,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants"
 									]
@@ -594,13 +594,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										""
@@ -646,13 +646,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										""
@@ -698,13 +698,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/roles",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/roles",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -751,13 +751,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/token",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/token",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -804,13 +804,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=true",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=true",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -863,13 +863,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=false",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=false",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -922,13 +922,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}"
@@ -970,13 +970,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/BPN0000001/keypairs",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/BPN0000001/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"BPN0000001",
@@ -992,13 +992,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/keypairs",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"keypairs"
 									]
@@ -1045,13 +1045,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1098,13 +1098,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key1/rotate",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key1/rotate",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1153,13 +1153,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key2/revoke",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key2/revoke",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1233,13 +1233,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/BPN0000001/dids/query",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/BPN0000001/dids/query",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"BPN0000001",
@@ -1290,13 +1290,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/dids",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/dids",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"dids"
 									]
@@ -1341,13 +1341,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/publish",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/publish",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1395,13 +1395,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/{{DID}}/endpoints",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/{{DID}}/endpoints",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1450,13 +1450,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/unpublish",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/unpublish",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1504,13 +1504,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1557,13 +1557,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/dids/state",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/state",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1631,13 +1631,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/participants/{{PARTICIPANT_ID}}/credentials",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/credentials",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
@@ -1677,13 +1677,13 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/management/v1alpha/credentials",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/credentials",
 									"host": [
 										"{{CS_URL}}"
 									],
 									"path": [
 										"api",
-										"management",
+										"identity",
 										"v1alpha",
 										"credentials"
 									]

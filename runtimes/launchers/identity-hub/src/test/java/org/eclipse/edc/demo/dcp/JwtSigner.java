@@ -47,8 +47,8 @@ public class JwtSigner {
 
         //todo: change the claims to suit your needs
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                .audience("did:web:localhost%3A7093")
-                .subject("did:web:localhost%3A7093")
+                .audience("did:web:bob-identityhub%3A7083:bob")
+                .subject("did:web:bob-identityhub%3A7083:bob")
                 .issuer("did:example:dataspace-issuer")
                 .claim("vc", credential)
                 .issueTime(Date.from(Instant.now()))
