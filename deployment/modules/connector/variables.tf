@@ -17,6 +17,10 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
+## Normally, you shouldn't need to change any values here. If you do, please be sure to also change them in the seed script (seed-k8s.sh).
+## Neglecting to do that will render the connectors and identity hubs inoperable!
+
+
 variable "image-pull-policy" {
   default     = "Always"
   type        = string
@@ -75,12 +79,12 @@ variable "database-name" {
 }
 
 variable "credentials-dir" {
-  type    = string
+  type        = string
   description = "JSON object containing the credentials to seed, sorted by human-readable participant name"
 }
 
-variable "participant-list-file"{
-  type = string
+variable "participant-list-file" {
+  type    = string
   default = "./assets/participants/participants.k8s.json"
 }
 
