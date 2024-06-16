@@ -1,9 +1,13 @@
 #!/bin/bash
 
+## This script must be executed when running the dataspace from IntelliJ. Neglecting to do that will render the connectors
+## inoperable!
+
 ## Seed application DATA to both connectors
 for url in 'http://127.0.0.1:8081' 'http://127.0.0.1:8091'
 do
-  newman run --folder "Seed" \
+  newman run \
+    --folder "Seed" \
     --env-var "HOST=$url" \
     ./deployment/postman/MVD.postman_collection.json > /dev/null
 done
@@ -37,7 +41,7 @@ DATA_ALICE=$(jq -n --arg pem "$PEM_ALICE" '{
            }
        }')
 
-curl -s --location 'http://localhost:7082api/identity/v1alpha/participants/' \
+curl -s --location 'http://localhost:7082/api/identity/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_ALICE"
@@ -68,7 +72,7 @@ DATA_BOB=$(jq -n --arg pem "$PEM_BOB" '{
             }
       }')
 
-curl -s --location 'http://localhost:7092api/identity/v1alpha/participants/' \
+curl -s --location 'http://localhost:7092/api/identity/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_BOB"

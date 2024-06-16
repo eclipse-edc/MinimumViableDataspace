@@ -126,6 +126,10 @@ Remote Debugging is possible, but Kubernetes port-forwards are necessary. The fo
 - 1044 on the connector runtime
 - 1045 on the identity hub runtime
 
+Note that both application data and IdentityHub data gets seeded automatically with
+a [Kubernetes Job](./deployment/modules/connector/seed.tf), so there is nothing to do. If for some reason you need to
+re-seed the data, e.g. after a connector pod crashes, you can use the  `seed-k8s.sh`.
+
 ## Running the demo (inside IntelliJ)
 
 There are 5 run configurations for IntelliJ in the `.run/` folder. One each for Bob's and Alice's connector runtimes and
@@ -159,12 +163,6 @@ execute a data transfer. NB [this caveat](#9-data-transfers-will-get-terminated)
 
 Once again, this is a **DEMO**, does not any provide guarantee w.r.t. operational readiness and comes with a few
 significant workarounds and shortcuts. These are:
-
-### 1. One key for all
-
-Currently, there is only _one_ keypair that everyone uses to sign tokens and VPs. That key gets put in the vault in
-the `SecretsExtension.java` for both the connectors and the IdentityHubs. While this is not secure by any stretch, it
-avoids having to actually provision a vault, and add keys to it before running the connectors.
 
 ### 2. In-memory stores all-around
 
