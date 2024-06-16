@@ -32,7 +32,7 @@ public class IatpEndToEndTransferTest {
             put("web.http.resolution.port", "7081");
             put("web.http.resolution.path", "/api/resolution");
             put("web.http.management.port", "7082");
-            put("web.http.management.path", "/api/management");
+            put("web.http.management.path", "api/identity");
             put("web.http.did.port", "7083");
             put("web.http.did.path", "/");
             put("edc.ih.iam.id", "BPN0000001");

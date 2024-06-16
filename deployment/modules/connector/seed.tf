@@ -39,11 +39,11 @@ resource "kubernetes_job" "seed_connectors_via_mgmt_api" {
           image   = "postman/newman:ubuntu"
           command = [
             "curl", "-v", "--location",
-            "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-identity-api}/api/management/v1/participants/",
+            "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.ih-identity-api}/api/identity/v1alpha/participants/",
             "--header", "Content-Type: application/json",
             "--header", "x-api-key: ${var.ih_superuser_apikey}",
             "--data",
-            "{\n    \"roles\":[],\n    \"serviceEndpoints\":[\n      {\n         \"type\": \"CredentialService\",\n         \"serviceEndpoint\": \"http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.resolution-api}/api/resolution/v1/participants/${base64encode(var.participant-did)}\",\n         \"id\": \"credentialservice-1\"\n      }\n    ],\n    \"active\": true,\n    \"participantId\": \"${var.participant-did}\",\n    \"did\": \"${var.participant-did}\",\n    \"key\":{\n        \"keyId\": \"${var.aliases.sts-public-key-id}\",\n        \"privateKeyAlias\": \"${var.aliases.sts-private-key}\",\n        \"publicKeyPem\":\"${local.publicKeyPem}\"\n    }\n}\n"
+            "{\n    \"roles\":[],\n    \"serviceEndpoints\":[\n     {\n         \"type\": \"ProtocolEndpoint\",\n         \"serviceEndpoint\": \"http://${kubernetes_service.controlplane-service.metadata.0.name}:${var.ports.protocol}/api/dsp\",\n         \"id\": \"dsp-endpoint\"\n      }\n, {\n         \"type\": \"CredentialService\",\n         \"serviceEndpoint\": \"http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.resolution-api}/api/resolution/v1/participants/${base64encode(var.participant-did)}\",\n         \"id\": \"credentialservice-1\"\n      }\n    ],\n    \"active\": true,\n    \"participantId\": \"${var.participant-did}\",\n    \"did\": \"${var.participant-did}\",\n    \"key\":{\n        \"keyId\": \"${var.participant-did}#${var.aliases.sts-public-key-id}\",\n        \"privateKeyAlias\": \"${var.aliases.sts-private-key}\",\n        \"publicKeyPem\":\"${local.publicKeyPem}\"\n    }\n}\n"
           ]
           volume_mount {
             mount_path = "/opt/collection"

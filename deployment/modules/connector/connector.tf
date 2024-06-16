@@ -79,6 +79,11 @@ resource "kubernetes_deployment" "connector" {
             mount_path = "/etc/registry"
             name       = "registry-volume"
           }
+
+          volume_mount {
+            mount_path = "/etc/participants"
+            name       = "participants-volume"
+          }
         }
 
         volume {
@@ -87,9 +92,28 @@ resource "kubernetes_deployment" "connector" {
             name = kubernetes_config_map.connector-config.metadata[0].name
           }
         }
+
+        volume {
+          name = "participants-volume"
+          config_map {
+            name = kubernetes_config_map.participants-map.metadata[0].name
+          }
+        }
       }
     }
   }
+}
+
+resource "kubernetes_config_map" "participants-map" {
+  metadata {
+    name      = "${var.humanReadableName}-participants"
+    namespace = var.namespace
+  }
+
+  data = {
+    "participants.json" = file(var.participant-list-file)
+  }
+
 }
 
 resource "kubernetes_config_map" "connector-config" {
@@ -100,24 +124,27 @@ resource "kubernetes_config_map" "connector-config" {
 
   ## Create databases for keycloak and MIW, create users and assign privileges
   data = {
-    EDC_API_AUTH_KEY              = "password"
-    EDC_IAM_ISSUER_ID             = var.participant-did
-    EDC_IAM_DID_WEB_USE_HTTPS     = false
-    WEB_HTTP_PORT                 = var.ports.web
-    WEB_HTTP_PATH                 = "/"
-    WEB_HTTP_MANAGEMENT_PORT      = var.ports.management
-    WEB_HTTP_MANAGEMENT_PATH      = "/api/management"
-    WEB_HTTP_PROTOCOL_PORT        = var.ports.protocol
-    WEB_HTTP_PROTOCOL_PATH        = "/api/dsp"
-    EDC_API_AUTH_KEY              = "password"
-    EDC_DSP_CALLBACK_ADDRESS      = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
-    EDC_IAM_CREDENTIALSERVICE_URL = "http://${local.ih-service-name}:${var.ports.resolution-api}/api/resolution/participants/${var.participantId}/presentation/query"
-    EDC_IAM_STS_PRIVATEKEY_ALIAS  = var.aliases.sts-private-key
-    EDC_IAM_STS_PUBLICKEY_ID      = "${var.participant-did}#${var.aliases.sts-public-key-id}"
-    JAVA_TOOL_OPTIONS             = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
-    EDC_IH_AUDIENCE_REGISTRY_PATH = "/etc/registry/registry.json"
-    EDC_PARTICIPANT_ID            = var.participantId
-    EDC_VAULT_HASHICORP_URL       = "http://${var.humanReadableName}-vault:8200"
-    EDC_VAULT_HASHICORP_TOKEN     = var.vault-token
+    EDC_API_AUTH_KEY               = "password"
+    EDC_IAM_ISSUER_ID              = var.participant-did
+    EDC_IAM_DID_WEB_USE_HTTPS      = false
+    WEB_HTTP_PORT                  = var.ports.web
+    WEB_HTTP_PATH                  = "/"
+    WEB_HTTP_MANAGEMENT_PORT       = var.ports.management
+    WEB_HTTP_MANAGEMENT_PATH       = "/api/management"
+    WEB_HTTP_CONTROL_PORT          = var.ports.control
+    WEB_HTTP_CONTROL_PATH          = "/api/control"
+    WEB_HTTP_PROTOCOL_PORT         = var.ports.protocol
+    WEB_HTTP_PROTOCOL_PATH         = "/api/dsp"
+    EDC_API_AUTH_KEY               = "password"
+    EDC_DSP_CALLBACK_ADDRESS       = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
+    EDC_IAM_CREDENTIALSERVICE_URL  = "http://${local.ih-service-name}:${var.ports.resolution-api}/api/resolution/participants/${var.participantId}/presentation/query"
+    EDC_IAM_STS_PRIVATEKEY_ALIAS   = var.aliases.sts-private-key
+    EDC_IAM_STS_PUBLICKEY_ID       = "${var.participant-did}#${var.aliases.sts-public-key-id}"
+    JAVA_TOOL_OPTIONS              = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
+    EDC_IH_AUDIENCE_REGISTRY_PATH  = "/etc/registry/registry.json"
+    EDC_PARTICIPANT_ID             = var.participantId
+    EDC_VAULT_HASHICORP_URL        = "http://${var.humanReadableName}-vault:8200"
+    EDC_VAULT_HASHICORP_TOKEN      = var.vault-token
+    EDC_MVD_PARTICIPANTS_LIST_FILE = "/etc/participants/participants.json"
   }
 }

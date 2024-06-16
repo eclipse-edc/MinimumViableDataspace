@@ -46,7 +46,6 @@ public class ParticipantsResolverExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         var participantsPath = context.getConfig().getString(PARTICIPANT_LIST_FILE_PATH);
-
         monitor = context.getMonitor().withPrefix("DEMO");
 
         participantListFile = new File(participantsPath).getAbsoluteFile();
