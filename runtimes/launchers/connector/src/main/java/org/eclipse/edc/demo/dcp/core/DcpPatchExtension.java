@@ -65,7 +65,7 @@ public class DcpPatchExtension implements ServiceExtension {
         trustedIssuerRegistry.addIssuer(new Issuer("did:example:dataspace-issuer", Map.of()));
 
         // register a default scope provider
-        var contextMappingFunction = new DefaultScopeExtractor(Set.of(
+        var contextMappingFunction = new DefaultContextMappingFunction(Set.of(
                 "org.eclipse.edc.vc.type:MembershipCredential:read"));
         policyEngine.registerPostValidator(CATALOG_REQUEST_SCOPE, contextMappingFunction);
         policyEngine.registerPostValidator(NEGOTIATION_REQUEST_SCOPE, contextMappingFunction);
