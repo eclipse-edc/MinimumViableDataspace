@@ -4,17 +4,23 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.crawler.spi.TargetNode;
 import org.eclipse.edc.crawler.spi.TargetNodeDirectory;
+import org.eclipse.edc.iam.did.spi.document.Service;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
 import org.eclipse.edc.spi.EdcException;
 import org.eclipse.edc.spi.monitor.Monitor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * {@link TargetNodeDirectory} that is initialized with a file, that contains participant DIDs. On the first getAll() request
+ * the DIDs are resolved and converted into {@link TargetNode} objects. From then on, they are held in memory and cached.
+ * <p>
+ * DIDs must contain a {@link org.eclipse.edc.iam.did.spi.document.Service} where the {@link Service#getType()} equals {@code ProtocolEndpoint}
+ */
 public class LazyLoadNodeDirectory implements TargetNodeDirectory {
     private static final TypeReference<Map<String, String>> MAP_TYPE = new TypeReference<>() {
     };
@@ -24,6 +30,7 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
     private final File participantListFile;
     private final DidResolverRegistry didResolverRegistry;
     private final Monitor monitor;
+    private List<TargetNode> nodes;
 
     public LazyLoadNodeDirectory(ObjectMapper mapper, File participantListFile, DidResolverRegistry didResolverRegistry, Monitor monitor) {
 
@@ -35,14 +42,18 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
 
     @Override
     public List<TargetNode> getAll() {
+        if (nodes != null) {
+            return nodes;
+        }
+
         try {
             var entries = mapper.readValue(participantListFile, MAP_TYPE);
-            var list = entries.entrySet().stream()
+
+            nodes = entries.entrySet().stream()
                     .map(e -> createNode(e.getKey(), e.getValue()))
                     .filter(Objects::nonNull)
                     .toList();
-
-            return list;
+            return nodes;
         } catch (IOException e) {
             throw new EdcException(e);
         }
