@@ -1,7 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="dataspace" type="CompoundRunConfigurationType">
+    <toRun name="Catalog Server Bob" type="Application" />
     <toRun name="Connector Alice (consumer)" type="Application" />
-    <toRun name="Connector Bob (provider)" type="Application" />
+    <toRun name="Connector Carol (provider 2)" type="Application" />
+    <toRun name="Connector Ted (provider 1)" type="Application" />
     <toRun name="IdentityHub Alice (consumer)" type="Application" />
     <toRun name="IdentityHub Bob (provider)" type="Application" />
     <method v="2" />
