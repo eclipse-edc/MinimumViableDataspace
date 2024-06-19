@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Catalog Server Bob" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="org.eclipse.edc.boot.system.runtime.BaseRuntime" />
+    <module name="mvd.launchers.catalog-server.main" />
+    <option name="VM_PARAMETERS" value="-Dweb.http.port=8080 -Dweb.http.path=&quot;/api&quot; -Dweb.http.management.port=8081 -Dweb.http.management.path=&quot;/api/management/&quot; -Dweb.http.protocol.port=8082 -Dweb.http.protocol.path=&quot;/api/dsp&quot; -Dweb.http.control.port=8083 -Dweb.http.control.path=&quot;/api/control&quot; -Dedc.api.auth.key=&quot;password&quot; -Dedc.dsp.callback.address=&quot;http://localhost:8082/api/dsp&quot; -Dedc.participant.id=&quot;did:web:localhost%3A7083&quot;" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
