@@ -19,8 +19,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":extensions:common-mocks"))
-    implementation(project(":extensions:dcp-connector"))
+    implementation(project(":extensions:did-example-resolver"))
+    implementation(project(":extensions:dcp-impl")) // some patches/impls for DCP
+    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalo
     implementation(libs.edc.spi.core) // we need some constants
 
     implementation(libs.bundles.controlplane)
@@ -31,7 +32,6 @@ dependencies {
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
     }
     runtimeOnly(libs.bundles.dpf)
-    runtimeOnly(project(":extensions:catalog-node-resolver"))
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

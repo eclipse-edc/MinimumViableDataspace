@@ -1,2 +1,4 @@
 {
+  "alice": "did:web:localhost%3A7083",
+  "bob": "did:web:localhost%3A7093"
 }
