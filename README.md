@@ -19,7 +19,7 @@ This demo is to demonstrate how two dataspace participants can perform a credent
 exchange, for example requesting a catalog or negotiating a contract.
 
 It must be stated in the strongest terms that this is **NOT** a production grade installation, nor should any
-production-grade developments be based on it. [Shortcuts](#current-caveats-shortcuts-and-workarounds) were taken, and
+production-grade developments be based on it. [Shortcuts](#other-caveats-shortcuts-and-workarounds) were taken, and
 assumptions
 were made that are potentially invalid in other scenarios.
 
@@ -72,7 +72,6 @@ All commands are executed from the **repository's root folder** unless stated ot
 ### 1. Build the runtime images
 
 ```shell
-cd runtimes
 ./gradlew build
 ./gradlew dockerize -PuseHashicorp=true
 ```
