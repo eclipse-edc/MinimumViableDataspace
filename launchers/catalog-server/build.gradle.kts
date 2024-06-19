@@ -19,8 +19,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":extensions:common-mocks"))
-    implementation(project(":extensions:dcp-connector"))
+    implementation(project(":extensions:did-example-resolver"))
+    implementation(project(":extensions:dcp-impl"))
 
     runtimeOnly(libs.bundles.connector) // base runtime
     runtimeOnly(libs.edc.api.management)

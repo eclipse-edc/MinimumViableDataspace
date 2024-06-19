@@ -28,7 +28,7 @@ dependencies {
 
     runtimeOnly(libs.bundles.management.api)
     implementation(libs.bundles.did)
-    implementation(project(":extensions:common-mocks"))
+    implementation(project(":extensions:did-example-resolver"))
     implementation(libs.bundles.connector)
     implementation(libs.edc.ih.spi.store)
     implementation(libs.edc.identity.vc.ldp)
