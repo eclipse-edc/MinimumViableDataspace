@@ -14,9 +14,24 @@
 
 plugins {
     `java-library`
+    id("application")
+    alias(libs.plugins.shadow)
 }
 
 dependencies {
-    implementation(libs.edc.identity.did.core)
-    implementation(libs.edc.ih.spi.did)
+    runtimeOnly(libs.bundles.connector)
+}
+
+application {
+    mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
+}
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    exclude("**/pom.properties", "**/pom.xm")
+    mergeServiceFiles()
+    archiveFileName.set("catalog-server.jar")
+}
+
+edcBuild {
+    publish.set(false)
 }
