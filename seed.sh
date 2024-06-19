@@ -3,8 +3,8 @@
 ## This script must be executed when running the dataspace from IntelliJ. Neglecting to do that will render the connectors
 ## inoperable!
 
-## Seed application DATA to both connectors
-for url in 'http://127.0.0.1:8081' 'http://127.0.0.1:8091'
+## Seed asset/policy/contract-def data to both "Ted" and "Carol"
+for url in 'http://127.0.0.1:8191' 'http://127.0.0.1:8291'
 do
   newman run \
     --folder "Seed" \
@@ -12,10 +12,16 @@ do
     ./deployment/postman/MVD.postman_collection.json > /dev/null
 done
 
-## Seed management DATA to identityhubs
+## Seed linked assets to Catalog Server "Bob"
+newman run \
+  --folder "Seed Catalog Server" \
+  --env-var "HOST=http://127.0.0.1:8091" \
+  ./deployment/postman/MVD.postman_collection.json > /dev/null
+
+## Seed identity data to identityhubs
 API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 
-# add participant alice
+# add participant "Alice"
 PEM_ALICE=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/alice_public.pem)
 DATA_ALICE=$(jq -n --arg pem "$PEM_ALICE" '{
            "roles":[],
@@ -46,7 +52,7 @@ curl -s --location 'http://localhost:7082/api/identity/v1alpha/participants/' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_ALICE"
 
-# add participant bob
+# add participant "Bob"
 PEM_BOB=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/bob_public.pem)
 DATA_BOB=$(jq -n --arg pem "$PEM_BOB" '{
             "roles":[],

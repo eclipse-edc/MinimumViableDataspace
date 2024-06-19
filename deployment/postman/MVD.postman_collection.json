@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "464e8be6-812e-4a70-902f-bc35b5616d5f",
+		"_postman_id": "01f15e20-8265-4beb-b814-8667f1933536",
 		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "647585"
@@ -265,6 +265,175 @@
 			]
 		},
 		{
+			"name": "Seed Catalog Server",
+			"item": [
+				{
+					"name": "Create linked Asset for Ted",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Ted's catalog.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"LinkedAsset\",\n        \"baseUrl\": \"http://localhost:8192/api/dsp\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create linked Asset for Carol",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"LinkedAsset\",\n        \"baseUrl\": \"http://localhost:8292/api/dsp\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Membership Policy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:permission\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"MembershipCredential\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create \"require membership\" definition",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"@context\": {},\n        \"@id\": \"membership-required-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-membership\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"in\",\n            \"operandRight\": [\"linked-asset-ted\", \"linked-asset-carol\"]\n        }\n    }"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status is OK or conflict\", function() {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"})"
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "ControlPlane Management",
 			"item": [
 				{
@@ -308,8 +477,7 @@
 						"header": [
 							{
 								"key": "x-api-key",
-								"value": "password",
-								"type": "text"
+								"value": "password"
 							}
 						],
 						"body": {
@@ -355,11 +523,10 @@
 							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}"
 						},
 						"url": {
-							"raw": "localhost:8081/api/management/v3/assets/request",
+							"raw": "{{HOST}}/api/management/v3/assets/request",
 							"host": [
-								"localhost"
+								"{{HOST}}"
 							],
-							"port": "8081",
 							"path": [
 								"api",
 								"management",
