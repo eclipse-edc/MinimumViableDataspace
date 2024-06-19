@@ -24,7 +24,7 @@ dependencies {
         runtimeOnly(libs.edc.vault.hashicorp)
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
     }
-    runtimeOnly(project(":extensions:inmem-seed"))
+    runtimeOnly(project(":extensions:superuser-seed"))
 
     runtimeOnly(libs.bundles.management.api)
     implementation(libs.bundles.did)

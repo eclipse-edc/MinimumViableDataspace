@@ -19,6 +19,9 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":extensions:common-mocks"))
+    implementation(project(":extensions:dcp-connector"))
+
     runtimeOnly(libs.bundles.connector) // base runtime
     runtimeOnly(libs.edc.api.management)
     runtimeOnly(libs.edc.api.management.config)
@@ -27,7 +30,6 @@ dependencies {
     runtimeOnly(libs.edc.dsp) // protocol webhook
     runtimeOnly(libs.bundles.dcp) // DCP protocol impl
     runtimeOnly(libs.edc.api.dsp.config) // json-ld expansion
-    implementation(project(":extensions:common-mocks"))
 
 }
 

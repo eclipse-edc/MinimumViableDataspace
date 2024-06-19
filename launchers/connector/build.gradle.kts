@@ -19,8 +19,9 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.edc.spi.core) // we need some constants
     implementation(project(":extensions:common-mocks"))
+    implementation(project(":extensions:dcp-connector"))
+    implementation(libs.edc.spi.core) // we need some constants
 
     implementation(libs.bundles.controlplane)
     implementation(libs.edc.core.connector)

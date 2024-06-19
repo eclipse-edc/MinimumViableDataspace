@@ -28,8 +28,6 @@ edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
 edc-ext-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
 edc-api-dsp-config = {module = "org.eclipse.edc:dsp-http-api-configuration", version.ref="edc"}
-edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
-edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
 edc-dcp = { module = "org.eclipse.edc:identity-trust-service", version.ref = "edc" }
 edc-controlplane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
 edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-services", version.ref = "edc" }
@@ -43,8 +41,7 @@ edc-api-management-contractdef = { module = "org.eclipse.edc:contract-definition
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-api-control-configuration = { module = "org.eclipse.edc:control-api-configuration", version.ref = "edc" }
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
-edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
-edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
+
 edc-controlplane-callback-dispatcher-event = { module = "org.eclipse.edc:callback-event-dispatcher", version.ref = "edc" }
 edc-controlplane-callback-dispatcher-http = { module = "org.eclipse.edc:callback-http-dispatcher", version.ref = "edc" }
 edc-dcp-core = { module = "org.eclipse.edc:identity-trust-core", version.ref = "edc" }
@@ -53,6 +50,12 @@ edc-identity-core-did = { module = "org.eclipse.edc:identity-did-core", version.
 edc-identity-vc-ldp = { module = "org.eclipse.edc:ldp-verifiable-credentials", version.ref = "edc" }
 edc-identity-vc-jwt = { module = "org.eclipse.edc:jwt-verifiable-credentials", version.ref = "edc" }
 edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
+edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
+edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
+edc-spi-transform = { module = "org.eclipse.edc:transform-spi", version.ref = "edc" }
+edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
+edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
+
 
 # EDC lib dependencies
 edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }

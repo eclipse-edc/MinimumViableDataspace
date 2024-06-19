@@ -309,19 +309,10 @@
 					"name": "Create linked Asset for Carol",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "X-Api-Key",
-								"value": "password"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"LinkedAsset\",\n        \"baseUrl\": \"http://localhost:8292/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-carol\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"LinkedAsset\",\n        \"baseUrl\": \"http://localhost:8292/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1948,7 +1939,7 @@
 		},
 		{
 			"key": "PROVIDER_ID",
-			"value": "BPN0000002",
+			"value": "did:web:localhost%3A7093",
 			"type": "string"
 		},
 		{

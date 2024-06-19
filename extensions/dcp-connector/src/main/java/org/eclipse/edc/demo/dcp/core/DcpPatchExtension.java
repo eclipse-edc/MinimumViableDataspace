@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+ *  Copyright (c) 2024 Metaform Systems, Inc.
  *
  *  This program and the accompanying materials are made available under the
  *  terms of the Apache License, Version 2.0 which is available at
@@ -8,12 +8,13 @@
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Contributors:
- *       Bayerische Motoren Werke Aktiengesellschaft (BMW AG) - initial API and implementation
+ *       Metaform Systems, Inc. - initial API and implementation
  *
  */
 
 package org.eclipse.edc.demo.dcp.core;
 
+import org.eclipse.edc.iam.identitytrust.core.DcpScopeExtractorExtension;
 import org.eclipse.edc.iam.identitytrust.spi.scope.ScopeExtractorRegistry;
 import org.eclipse.edc.iam.identitytrust.spi.verification.SignatureSuiteRegistry;
 import org.eclipse.edc.iam.verifiablecredentials.spi.VcConstants;
@@ -67,9 +68,9 @@ public class DcpPatchExtension implements ServiceExtension {
         // register a default scope provider
         var contextMappingFunction = new DefaultContextMappingFunction(Set.of(
                 "org.eclipse.edc.vc.type:MembershipCredential:read"));
-        policyEngine.registerPostValidator(CATALOG_REQUEST_SCOPE, contextMappingFunction);
-        policyEngine.registerPostValidator(NEGOTIATION_REQUEST_SCOPE, contextMappingFunction);
-        policyEngine.registerPostValidator(TRANSFER_PROCESS_REQUEST_SCOPE, contextMappingFunction);
+        policyEngine.registerPostValidator(DcpScopeExtractorExtension.CATALOG_REQUEST_SCOPE, contextMappingFunction);
+        policyEngine.registerPostValidator(DcpScopeExtractorExtension.NEGOTIATION_REQUEST_SCOPE, contextMappingFunction);
+        policyEngine.registerPostValidator(DcpScopeExtractorExtension.TRANSFER_PROCESS_REQUEST_SCOPE, contextMappingFunction);
 
 
         //register scope extractor
