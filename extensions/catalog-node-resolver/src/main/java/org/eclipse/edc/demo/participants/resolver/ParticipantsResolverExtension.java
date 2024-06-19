@@ -1,3 +1,17 @@
+/*
+ *  Copyright (c) 2024 Metaform Systems, Inc.
+ *
+ *  This program and the accompanying materials are made available under the
+ *  terms of the Apache License, Version 2.0 which is available at
+ *  https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  SPDX-License-Identifier: Apache-2.0
+ *
+ *  Contributors:
+ *       Metaform Systems, Inc. - initial API and implementation
+ *
+ */
+
 package org.eclipse.edc.demo.participants.resolver;
 
 import org.eclipse.edc.crawler.spi.TargetNodeDirectory;
@@ -5,6 +19,7 @@ import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
+import org.eclipse.edc.runtime.metamodel.annotation.Provides;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -19,7 +34,6 @@ public class ParticipantsResolverExtension implements ServiceExtension {
     public static final String NAME = "MVD Participant Resolver Extension";
 
     public static final String PARTICIPANT_LIST_FILE_PATH = "edc.mvd.participants.list.file";
-
 
     @Inject
     private TypeManager typeManager;

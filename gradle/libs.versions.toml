@@ -39,6 +39,7 @@ edc-api-observability = { module = "org.eclipse.edc:api-observability", version.
 edc-api-control-configuration = { module = "org.eclipse.edc:control-api-configuration", version.ref = "edc" }
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
 edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
+edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
 edc-controlplane-callback-dispatcher-event = { module = "org.eclipse.edc:callback-event-dispatcher", version.ref = "edc" }
 edc-controlplane-callback-dispatcher-http = { module = "org.eclipse.edc:callback-http-dispatcher", version.ref = "edc" }
 edc-identity-core-trust = { module = "org.eclipse.edc:identity-trust-core", version.ref = "edc" }
