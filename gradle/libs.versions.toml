@@ -30,7 +30,7 @@ edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
 edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
 edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
 edc-service-identity-trust = { module = "org.eclipse.edc:identity-trust-service", version.ref = "edc" }
-edc-core-controlplane = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
+edc-controlplane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
 edc-config-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
@@ -85,6 +85,12 @@ edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", 
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
 edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
 
+
+# specific dependencies needed by the catalog server
+edc-controlplane-catalog = { module = "org.eclipse.edc:control-plane-catalog", version.ref = "edc" }
+edc-controlplane-contract = { module = "org.eclipse.edc:control-plane-contract", version.ref = "edc" }
+
+
 # Third party libs
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
 
@@ -94,7 +100,7 @@ dpf = ["edc-dpf-transfer", "edc-dpf-selector-core", "edc-spi-dataplane-selector"
 
 connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
 
-controlplane = ["edc-core-controlplane", "edc-config-filesystem", "edc-auth-tokenbased", "edc-api-management", "edc-api-management-config",
+controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-api-management", "edc-api-management-config",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
     "edc-identity-core-did", "edc-identity-core-trust", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
     "edc-identity-vc-ldp", "edc-identity-did-web", "edc-lib-jws2020"]

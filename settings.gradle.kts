@@ -35,9 +35,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "runtimes"
+rootProject.name = "mvd"
 include(":launchers:identity-hub")
 include(":launchers:connector")
+include(":launchers:catalog-server")
 include(":extensions:common-mocks")
 include(":extensions:inmem-seed")
 //include(":tests:performance")
