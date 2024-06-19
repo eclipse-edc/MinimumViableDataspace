@@ -30,8 +30,7 @@ dependencies {
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
     }
     runtimeOnly(libs.bundles.dpf)
-//    runtimeOnly(project(":extensions:catalog-node-resolver"))
-
+    runtimeOnly(project(":extensions:catalog-node-resolver"))
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
