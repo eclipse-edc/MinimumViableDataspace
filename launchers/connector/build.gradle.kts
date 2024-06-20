@@ -21,7 +21,7 @@ plugins {
 dependencies {
     implementation(project(":extensions:did-example-resolver"))
     implementation(project(":extensions:dcp-impl")) // some patches/impls for DCP
-    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalo
+    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
     implementation(libs.edc.spi.core) // we need some constants
 
     implementation(libs.bundles.controlplane)

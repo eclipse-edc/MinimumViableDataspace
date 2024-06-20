@@ -12,14 +12,15 @@
  *
  */
 
-package org.eclipse.edc.demo.participants.resolver;
+package org.eclipse.edc.demo.participants;
 
 import org.eclipse.edc.crawler.spi.TargetNodeDirectory;
+import org.eclipse.edc.crawler.spi.TargetNodeFilter;
+import org.eclipse.edc.demo.participants.resolver.LazyLoadNodeDirectory;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
-import org.eclipse.edc.runtime.metamodel.annotation.Provides;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -27,7 +28,7 @@ import org.eclipse.edc.spi.types.TypeManager;
 
 import java.io.File;
 
-import static org.eclipse.edc.demo.participants.resolver.ParticipantsResolverExtension.NAME;
+import static org.eclipse.edc.demo.participants.ParticipantsResolverExtension.NAME;
 
 @Extension(value = NAME)
 public class ParticipantsResolverExtension implements ServiceExtension {
@@ -67,6 +68,17 @@ public class ParticipantsResolverExtension implements ServiceExtension {
             nodeDirectory = new LazyLoadNodeDirectory(typeManager.getMapper(), participantListFile, didResolverRegistry, monitor);
         }
         return nodeDirectory;
+    }
+
+    @Provider
+    public TargetNodeFilter skipSelfNodeFilter(ServiceExtensionContext context) {
+        return targetNode -> {
+            var predicateTest = !targetNode.id().equals(context.getParticipantId());
+            if (!predicateTest) {
+                monitor.debug("Node filter: skipping node '%s' for participant '%s'".formatted(targetNode.id(), context.getParticipantId()));
+            }
+            return predicateTest;
+        };
     }
 
 

@@ -41,8 +41,7 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
     }
 
     @Override
-    public List<TargetNode> getAll() {
-        if (nodes != null) {
+    public List<TargetNode> getAll() {if (nodes != null) {
             return nodes;
         }
 

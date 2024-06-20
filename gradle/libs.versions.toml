@@ -74,10 +74,12 @@ edc-ih-core = { module = "org.eclipse.edc:identity-hub-core", version.ref = "edc
 edc-ih-keypairs = { module = "org.eclipse.edc:identity-hub-keypairs", version.ref = "edc" }
 edc-ih-did = { module = "org.eclipse.edc:identity-hub-did", version.ref = "edc" }
 edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
+
 # identityhub SPI modules
 edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
 edc-ih-spi-store = { module = "org.eclipse.edc:identity-hub-store-spi", version.ref = "edc" }
 edc-ih-spi-participant = { module = "org.eclipse.edc:participant-context-spi", version.ref = "edc" }
+
 # identityhub API modules
 edc-ih-api-presentation = { module = "org.eclipse.edc:presentation-api", version.ref = "edc" }
 edc-ih-mgmt-config = { module = "org.eclipse.edc:api-configuration", version.ref = "edc" }
@@ -94,6 +96,7 @@ edc-oauth2-client = { module = "org.eclipse.edc:oauth2-client", version.ref = "e
 # federated catalog modules
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
 edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
+edc-fc-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
 
 # specific dependencies needed by the catalog server
 edc-controlplane-catalog = { module = "org.eclipse.edc:control-plane-catalog", version.ref = "edc" }
