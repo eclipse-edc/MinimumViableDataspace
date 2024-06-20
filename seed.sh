@@ -18,6 +18,16 @@ newman run \
   --env-var "HOST=http://127.0.0.1:8091" \
   ./deployment/postman/MVD.postman_collection.json > /dev/null
 
+curl --location 'http://127.0.0.1:8091/api/management/v3/assets/request' \
+--header 'Content-Type: application/json' \
+--header 'X-Api-Key: password' \
+--data-raw '{
+    "@context": {
+        "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+    },
+    "@type": "QuerySpec"
+}' | jq
+
 ## Seed identity data to identityhubs
 API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 
