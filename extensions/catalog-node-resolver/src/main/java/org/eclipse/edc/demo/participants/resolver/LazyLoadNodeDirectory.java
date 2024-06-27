@@ -30,7 +30,6 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
     private final File participantListFile;
     private final DidResolverRegistry didResolverRegistry;
     private final Monitor monitor;
-    private List<TargetNode> nodes;
 
     public LazyLoadNodeDirectory(ObjectMapper mapper, File participantListFile, DidResolverRegistry didResolverRegistry, Monitor monitor) {
 
@@ -41,18 +40,14 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
     }
 
     @Override
-    public List<TargetNode> getAll() {if (nodes != null) {
-            return nodes;
-        }
-
+    public List<TargetNode> getAll() {
         try {
             var entries = mapper.readValue(participantListFile, MAP_TYPE);
 
-            nodes = entries.entrySet().stream()
+            return entries.entrySet().stream()
                     .map(e -> createNode(e.getKey(), e.getValue()))
                     .filter(Objects::nonNull)
                     .toList();
-            return nodes;
         } catch (IOException e) {
             throw new EdcException(e);
         }
