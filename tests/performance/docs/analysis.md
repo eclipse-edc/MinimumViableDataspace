@@ -1,4 +1,4 @@
-# IATP Performance investigation
+# DCP Performance investigation
 
 ## Purpose of this document
 

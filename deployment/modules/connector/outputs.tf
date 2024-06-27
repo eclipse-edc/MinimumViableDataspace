@@ -36,7 +36,7 @@ output "ports" {
 output "audience-mapping" {
   value = {
     #    dspAudience  = "http://${local.connector-cluster-ip}:${var.ports.protocol}/api/dsp"
-    iatpAudience = var.participant-did
+    dcpAudience = var.participant-did
   }
 }
 

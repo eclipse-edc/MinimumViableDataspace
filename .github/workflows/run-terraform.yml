@@ -18,7 +18,7 @@
 #
 
 ---
-name: "Run IATP Demo locally"
+name: "Run DCP Demo locally"
 on:
   workflow_dispatch:
   workflow_run:
@@ -61,10 +61,10 @@ jobs:
         uses: helm/kind-action@v1.8.0
         with:
           config: deployment/kind.config.yaml
-          cluster_name: iatp-demo
+          cluster_name: dcp-demo
 
       - name: "Load runtime images into KinD"
-        run: kind load docker-image connector:latest identity-hub:latest -n iatp-demo
+        run: kind load docker-image connector:latest identity-hub:latest -n dcp-demo
 
       - name: "Install nginx ingress controller"
         run: |-
@@ -102,4 +102,4 @@ jobs:
 
       - name: "Destroy the KinD cluster"
         run: >-
-          kind delete cluster -n iatp-demo
+          kind delete cluster -n dcp-demo
