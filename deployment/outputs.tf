@@ -17,27 +17,37 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-output "bob-node-ip" {
+output "ted-node-ip" {
   value = {
-    connector    = module.bob-connector.connector-node-ip
-    identity-hub = module.bob-connector.identity-hub-node-ip
+    connector    = module.provider-ted-connector.connector-node-ip
+    identity-hub = module.provider-identityhub.identity-hub-node-ip
+  }
+}
+
+output "carol-node-ip" {
+  value = {
+    connector    = module.provider-carol-connector.connector-node-ip
+    identity-hub = module.provider-identityhub.identity-hub-node-ip
   }
 }
 
 output "alice-node-ip" {
   value = {
     connector    = module.alice-connector.connector-node-ip
-    identity-hub = module.alice-connector.identity-hub-node-ip
+    identity-hub = module.consumer-alice-identityhub.identity-hub-node-ip
   }
 }
 
-output "registry" {
-  value = jsondecode(local.registry)
+output "catalog-server-node-ip" {
+  value = {
+    connector    = module.provider-catalog-server.connector-node-ip
+  }
 }
 
 output "identity-hub-management-api-key" {
   value = {
-    bob-superuser   = module.bob-connector.ih-superuser-apikey
-    alice-superuser = module.alice-connector.ih-superuser-apikey
+    ted-superuser   = module.provider-identityhub.ih-superuser-apikey
+    carol-superuser   = module.provider-identityhub.ih-superuser-apikey
+    alice-superuser = module.consumer-alice-identityhub.ih-superuser-apikey
   }
 }

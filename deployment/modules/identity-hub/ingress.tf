@@ -30,37 +30,47 @@ resource "kubernetes_ingress_v1" "api-ingress" {
     ingress_class_name = "nginx"
     rule {
       http {
+
         path {
-          path = "/${var.humanReadableName}/health(/|$)(.*)"
+          path = "/${var.humanReadableName}/cs(/|$)(.*)"
           backend {
             service {
-              name = kubernetes_service.controlplane-service.metadata.0.name
+              name = kubernetes_service.ih-service.metadata.0.name
               port {
-                number = var.ports.web
+                number = var.ports.ih-identity-api
               }
             }
           }
         }
+      }
+    }
+  }
+}
 
+// the DID endpoint can not actually modify the URL, otherwise it'll mess up the DID resolution
+resource "kubernetes_ingress_v1" "did-ingress" {
+  metadata {
+    name      = "${var.humanReadableName}-did-ingress"
+    namespace = var.namespace
+    annotations = {
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/${var.humanReadableName}/$2"
+    }
+  }
+
+  spec {
+    ingress_class_name = "nginx"
+    rule {
+      http {
+
+
+        # ingress routes for the DID endpoint
         path {
-          path = "/${var.humanReadableName}/cp(/|$)(.*)"
+          path = "/${var.humanReadableName}(/|&)(.*)"
           backend {
             service {
-              name = kubernetes_service.controlplane-service.metadata.0.name
+              name = kubernetes_service.ih-service.metadata.0.name
               port {
-                number = var.ports.management
-              }
-            }
-          }
-        }
-
-        path {
-          path = "/${var.humanReadableName}/vault(/|$)(.*)"
-          backend {
-            service {
-              name = "${var.humanReadableName}-vault"
-              port {
-                number = 8200
+                number = var.ports.ih-did
               }
             }
           }
