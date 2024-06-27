@@ -143,7 +143,7 @@ Remote Debugging is possible, but Kubernetes port-forwards are necessary. The fo
 - 1045 on the identity hub runtime
 
 Note that both application data and IdentityHub data gets seeded automatically with
-a [Kubernetes Job](./deployment/modules/connector/seed.tf), so there is nothing to do. If for some reason you need to
+a [Kubernetes Job](./deployment/modules/connector/seed.tf.unused), so there is nothing to do. If for some reason you need to
 re-seed the data, e.g. after a connector pod crashes, you can use the  `seed-k8s.sh`.
 
 ## Running the demo (inside IntelliJ)

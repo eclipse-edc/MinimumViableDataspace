@@ -32,9 +32,6 @@ import org.eclipse.edc.transform.transformer.edc.to.JsonValueToGenericTypeTransf
 import java.util.Map;
 import java.util.Set;
 
-import static org.eclipse.edc.iam.identitytrust.core.DcpScopeExtractorExtension.CATALOG_REQUEST_SCOPE;
-import static org.eclipse.edc.iam.identitytrust.core.DcpScopeExtractorExtension.NEGOTIATION_REQUEST_SCOPE;
-import static org.eclipse.edc.iam.identitytrust.core.DcpScopeExtractorExtension.TRANSFER_PROCESS_REQUEST_SCOPE;
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 public class DcpPatchExtension implements ServiceExtension {

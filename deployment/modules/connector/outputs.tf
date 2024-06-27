@@ -21,9 +21,6 @@ output "connector-node-ip" {
   value = kubernetes_service.controlplane-service.spec.0.cluster_ip
 }
 
-output "identity-hub-node-ip" {
-  value = kubernetes_service.ih-service.spec.0.cluster_ip
-}
 
 output "database-name" {
   value = var.database-name
@@ -38,8 +35,4 @@ output "audience-mapping" {
     #    dspAudience  = "http://${local.connector-cluster-ip}:${var.ports.protocol}/api/dsp"
     dcpAudience = var.participant-did
   }
-}
-
-output "ih-superuser-apikey" {
-  value = var.ih_superuser_apikey
 }

@@ -17,31 +17,25 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-resource "kubernetes_service" "controlplane-service" {
-  metadata {
-    name      = local.controlplane-service-name
-    namespace = var.namespace
+output "connector-node-ip" {
+  value = kubernetes_service.controlplane-service.spec.0.cluster_ip
+}
+
+output "database-name" {
+  value = var.database-name
+}
+
+output "ports" {
+  value = var.ports
+}
+
+output "audience-mapping" {
+  value = {
+    #    dspAudience  = "http://${local.connector-cluster-ip}:${var.ports.protocol}/api/dsp"
+    dcpAudience = var.participant-did
   }
-  spec {
-    type = "NodePort"
-    selector = {
-      App = kubernetes_deployment.connector.spec.0.template.0.metadata[0].labels.App
-    }
-    port {
-      name = "health"
-      port = var.ports.web
-    }
-    port {
-      name = "management"
-      port = var.ports.management
-    }
-    port {
-      name = "protocol"
-      port = var.ports.protocol
-    }
-    port {
-      name = "debug"
-      port = var.ports.debug
-    }
-  }
+}
+
+output "ih-superuser-apikey" {
+  value = var.ih_superuser_apikey
 }

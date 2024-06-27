@@ -6,3 +6,6 @@ build
 out/
 
 .idea/
+
+.terraform*
+*terraform.tfstate*

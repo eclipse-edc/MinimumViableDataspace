@@ -10,7 +10,7 @@ RUN apk --no-cache add curl
 WORKDIR /app
 
 
-COPY ${JAR} identity-hub.jar
+COPY ${JAR} catalog-server.jar
 
 EXPOSE 8188
 

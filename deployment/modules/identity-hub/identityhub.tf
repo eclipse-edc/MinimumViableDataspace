@@ -1,10 +1,9 @@
 resource "kubernetes_deployment" "identityhub" {
-  depends_on = [helm_release.vault]
   metadata {
-    name      = "${lower(var.humanReadableName)}-identityhub"
+    name      = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
-      App = "${lower(var.humanReadableName)}-identityhub"
+      App = lower(var.humanReadableName)
     }
   }
 
@@ -12,14 +11,14 @@ resource "kubernetes_deployment" "identityhub" {
     replicas = 1
     selector {
       match_labels = {
-        App = "${lower(var.humanReadableName)}-identityhub"
+        App = lower(var.humanReadableName)
       }
     }
 
     template {
       metadata {
         labels = {
-          App = "${lower(var.humanReadableName)}-identityhub"
+          App = lower(var.humanReadableName)
         }
       }
 
@@ -71,7 +70,7 @@ resource "kubernetes_deployment" "identityhub" {
 }
 
 locals {
-  dir = "${var.credentials-dir}/${var.humanReadableName}"
+  dir = var.credentials-dir
 }
 
 resource "kubernetes_config_map" "identityhub-credentials-map" {
@@ -110,7 +109,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_IAM_STS_PRIVATEKEY_ALIAS = var.aliases.sts-private-key
     EDC_IAM_STS_PUBLICKEY_ID     = var.aliases.sts-public-key-id
     EDC_MVD_CREDENTIALS_PATH     = "/etc/credentials/"
-    EDC_VAULT_HASHICORP_URL      = "http://${var.humanReadableName}-vault:8200"
+    EDC_VAULT_HASHICORP_URL      = var.vault-url
     EDC_VAULT_HASHICORP_TOKEN    = var.vault-token
   }
 }

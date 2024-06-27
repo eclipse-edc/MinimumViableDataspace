@@ -44,25 +44,61 @@ provider "helm" {
   }
 }
 
-# First connector
+# consumer connector
 module "alice-connector" {
   source            = "./modules/connector"
   humanReadableName = "alice"
   participantId     = var.alice-did
   participant-did   = var.alice-did
   database-name     = "alice"
-  credentials-dir   = dirname("./assets/credentials/k8s/")
   namespace         = kubernetes_namespace.ns.metadata.0.name
 }
 
-# Second connector
-module "bob-connector" {
+module "consumer-alice-identityhub" {
+  source            = "./modules/identity-hub"
+  credentials-dir = dirname("./assets/credentials/k8s/alice")
+  humanReadableName = "alice-identityhub"
+  participantId     = var.alice-did
+  vault-url         = "http://alice-vault:8200"
+}
+
+# first provider connector "Ted"
+module "provider-ted-connector" {
   source            = "./modules/connector"
-  humanReadableName = "bob"
+  humanReadableName = "provider-ted"
   participantId     = var.bob-did
   participant-did   = var.bob-did
-  database-name     = "bob"
-  credentials-dir   = dirname("./assets/credentials/k8s/")
+  database-name = "ted"
+  #   credentials-dir   = dirname("./assets/credentials/k8s/bob")
+  namespace         = kubernetes_namespace.ns.metadata.0.name
+}
+
+# Second provider connector "Carol"
+module "provider-carol-connector" {
+  source            = "./modules/connector"
+  humanReadableName = "provider-carol"
+  participantId     = var.bob-did
+  participant-did   = var.bob-did
+  database-name     = "carol"
+  namespace         = kubernetes_namespace.ns.metadata.0.name
+}
+
+module "provider-identityhub" {
+  source            = "./modules/identity-hub"
+  credentials-dir = dirname("./assets/credentials/k8s/bob")
+  humanReadableName = "provider-identityhub"
+  participantId     = var.bob-did
+  vault-url         = "http://provider-catalog-server-vault:8200"
+}
+
+# Catalog server runtime "Bob"
+module "provider-catalog-server" {
+  source            = "./modules/catalog-server"
+  humanReadableName = "provider-catalog-server"
+  participantId     = var.bob-did
+  participant-did   = var.bob-did
+  database-name     = "provider-catalog-server"
+  credentials-dir = dirname("./assets/credentials/k8s/bob")
   namespace         = kubernetes_namespace.ns.metadata.0.name
 }
 
@@ -70,21 +106,4 @@ resource "kubernetes_namespace" "ns" {
   metadata {
     name = "mvd"
   }
-}
-
-locals {
-  registry = jsonencode(
-    [
-      {
-        dspUrl : "http://bob-controlplane:8082/api/dsp",
-        participantId : var.bob-did,
-        did : var.bob-did
-      },
-      {
-        dspUrl : "http://alice-controlplane:8092/api/dsp",
-        participantId : var.alice-did,
-        did : var.alice-did
-      }
-    ]
-  )
 }
