@@ -25,7 +25,7 @@ import java.time.Clock;
 
 
 public class SecretsExtension implements ServiceExtension {
-    // duplicated from IatpDefaultServicesExtension
+    // duplicated from DcpDefaultServicesExtension
     private static final String STS_PRIVATE_KEY_ALIAS = "edc.iam.sts.privatekey.alias";
     private static final String STS_PUBLIC_KEY_ID = "edc.iam.sts.publickey.id";
     @Inject
@@ -38,7 +38,7 @@ public class SecretsExtension implements ServiceExtension {
 
     @Provider
     public Clock clock() {
-        // THIS IS A DIRTY HACK, so this extension is intialized before the IatpDefaultServicesExtension, which needs the secrets!
+        // THIS IS A DIRTY HACK, so this extension is intialized before the DcpDefaultServicesExtension, which needs the secrets!
         return Clock.systemUTC();
     }
 

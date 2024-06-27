@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 
-@Extension("IATP Demo: Core Extension for IdentityHub")
+@Extension("DCP Demo: Core Extension for IdentityHub")
 public class IdentityHubExtension implements ServiceExtension {
 
     @Inject

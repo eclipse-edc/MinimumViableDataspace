@@ -55,7 +55,7 @@ import java.util.stream.Stream;
 import static org.eclipse.edc.iam.identitytrust.verification.Statistics.runWithStatistics;
 import static org.eclipse.edc.iam.identitytrust.verification.TestFunctions.createSignedCredential;
 import static org.eclipse.edc.identitytrust.VcConstants.DID_CONTEXT_URL;
-import static org.eclipse.edc.identitytrust.VcConstants.IATP_CONTEXT_URL;
+import static org.eclipse.edc.identitytrust.VcConstants.DCP_CONTEXT_URL;
 import static org.eclipse.edc.identitytrust.VcConstants.JWS_2020_URL;
 import static org.eclipse.edc.identitytrust.VcConstants.PRESENTATION_EXCHANGE_URL;
 import static org.eclipse.edc.identitytrust.VcConstants.W3C_CREDENTIALS_URL;
@@ -127,7 +127,7 @@ public class VpCreationPerformanceTest {
         jsonLd.registerCachedDocument(DID_CONTEXT_URL, TestUtils.getResource("did.json"));
         jsonLd.registerCachedDocument(JWS_2020_URL, TestUtils.getResource("jws2020.json"));
         jsonLd.registerCachedDocument(W3C_CREDENTIALS_URL, TestUtils.getResource("credentials.v1.json"));
-        jsonLd.registerCachedDocument(IATP_CONTEXT_URL, TestUtils.getResource("presentation-query.v08.json"));
+        jsonLd.registerCachedDocument(DCP_CONTEXT_URL, TestUtils.getResource("presentation-query.v08.json"));
         jsonLd.registerCachedDocument(PRESENTATION_EXCHANGE_URL, TestUtils.getResource("presentation-exchange.v1.json"));
         jsonLd.registerCachedDocument("https://www.w3.org/2018/credentials/examples/v1", TestUtils.getResource("examples.v1.json"));
 
