@@ -3,7 +3,7 @@
 ## Introduction
 
 The Identity And Trust Protocols define a secure way how to participants in a dataspace can exchange and present
-credential information. In particular, the [IATP specification](https://github.com/eclipse-tractusx/identity-trust)
+credential information. In particular, the [DCP specification](https://github.com/eclipse-tractusx/identity-trust)
 defines the "Presentation Flow", which is the process of requesting and verifying Verifiable Credentials.
 
 A basic understanding of VerifiableCredentials, VerifiablePresentations, Decentralized Identifiers (DID) and
@@ -23,15 +23,34 @@ production-grade developments be based on it. [Shortcuts](#other-caveats-shortcu
 assumptions
 were made that are potentially invalid in other scenarios.
 
-It merely is a playground for new developments in the IATP space, and its purpose is to demonstrate how IATP works to an
+It merely is a playground for new developments in the DCP space, and its purpose is to demonstrate how DCP works to an
 otherwise unassuming audience.
 
 ## The Scenario
 
-There are two connectors dubbed "Alice" and "Bob", where "Alice" will take on the role of data consumer, and "Bob" will
-be the data provider.
+_In this example, we will see how we can
+implement [Management Domains](https://github.com/eclipse-edc/Connector/blob/main/docs/developer/management-domains/management-domains.md)
+using federated catalogs._
 
-Bob, our provider, has two data assets:
+### Participants
+
+There are two connectors called "Ted" and "Carol", both of which are owned by different departments of a company. That
+company also hosts a catalog server called "Bob", plus an IdentityHub that is shared between Bob, Ted and Carol. This is
+necessary, because those three share the same `participantId`, and thus, the same set of credentials.
+
+Then, there's the data consumer called "Alice", who also has its own IdentityHub.
+
+### Data setup
+
+Ted and Carol both have two data assets each, named `"asset-1"` and `"asset-2"`.
+
+However, neither Ted nor Carol expose their Catalog endpoint to the internet. Instead, the catalog server (Bob) provides
+a catalog that contains pointers to both Teds and Carols connectors. We call this a "root catalog", and the pointers are
+called "catalog assets".
+
+### Access control
+
+Both assets of Ted and Carol have some access restrictions on them:
 
 - `asset-1`: requires a membership credential to view and a PCF Use Case credential to negotiate a contract
 - `asset-2`: requires a membership credential to view and a Sustainability Use Case credential to negotiate a contract
@@ -39,15 +58,13 @@ Bob, our provider, has two data assets:
 These requirements are formulated in the form of EDC Policies. In addition, it is a dataspace rule that
 the `MembershipCredential` must be presented in _every_ request.
 
-Furthermore, both Bob and Alice are in possession of a `MembershipCredential` as well as a `PcfCredential`. _Neither has
+Furthermore, all connectors are in possession of a `MembershipCredential` as well as a `PcfCredential`. _Neither has
 the `SustainabilityCredential`_! That means that no contract for `asset-2` can be negotiated!
 For the purposes of this demo the VerifiableCredentials are pre-created and are seeded to the participants' credential
-storage (no issuance). Both Bob and Alice host an EDC connector instance and an IdentityHub instance each and deploy
-them to a
-Kubernetes cluster.
+storage (no issuance).
 
-Bob wants to view Alice's catalog, then negotiate a contract for an asset, and then transfer the asset. For this he
-needs to present several credentials:
+Alice wants to view the consolidated catalog (containing Teds and Carols assets), then negotiate a contract for an
+asset, and then transfer the asset. For this she needs to present several credentials:
 
 - catalog request: present `MembershipCredential`
 - contract negotiation: `MembershipCredential` and `PcfCredential` or `SustainabilityCredential`, respectively
@@ -83,10 +100,10 @@ Next, we bring up and configure the Kubernetes Cluster
 
 ```shell
 # Create the cluster
-kind create cluster -n iatp-demo --config deployment/kind.config.yaml
+kind create cluster -n dcp-demo --config deployment/kind.config.yaml
 
 # Load docker images into KinD
-kind load docker-image connector:latest identity-hub:latest -n iatp-demo
+kind load docker-image connector:latest identity-hub:latest -n dcp-demo
 
 # Deploy an NGINX ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
@@ -145,8 +162,8 @@ I forewent for the sake of self-contained-ness.
 
 Running the dataspace from within IntelliJ is still useful though for testing APIs, debugging of one runtime, etc.
 
-After executing the `dataspace` run config in Intellij, please be sure to execute the `seed.sh` script after all the
-runtimes have started. Omitting to do so will cause all connector-to-connector communication to fail. Note that in the
+After executing the `dataspace` run config in Intellij, be sure to **execute the `seed.sh` script after all the
+runtimes have started**. Omitting to do so will cause all connector-to-connector communication to fail. Note that in the
 Kubernetes deployment this is **not** necessary, because seeding is done automatically.
 
 ## Executing REST requests using Postman
@@ -173,7 +190,7 @@ significant value, it would have made configuration a bit more complex.
 This demo is inspired heavily by the Catena-X use case, which has a unique situation where the stable ID (= BPN) cannot
 be used to resolve key material (= DID). The consequence of that is, that there MUST be a way to resolve one from the
 other (which is required by
-the [IATP spec](https://github.com/eclipse-tractusx/identity-trust/blob/main/specifications/M1/identity.protocol.base.md#3-identities-and-identifiers)).
+the [DCP spec](https://github.com/eclipse-tractusx/identity-trust/blob/main/specifications/M1/identity.protocol.base.md#3-identities-and-identifiers)).
 Such as registry does not currently exist, so when verifying that `siToken.sub == siToken.access_token.sub` we would be
 comparing a BPN to a DID which would naturally fail.
 
