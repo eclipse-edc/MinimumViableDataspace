@@ -51,3 +51,7 @@ output "identity-hub-management-api-key" {
     alice-superuser = module.consumer-alice-identityhub.ih-superuser-apikey
   }
 }
+
+output "consumer-credentials"{
+  value = module.consumer-alice-identityhub.credentials
+}

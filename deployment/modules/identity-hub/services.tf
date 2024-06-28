@@ -1,6 +1,6 @@
 resource "kubernetes_service" "ih-service" {
   metadata {
-    name      = local.ih-service-name
+    name      = var.humanReadableName
     namespace = var.namespace
   }
   spec {

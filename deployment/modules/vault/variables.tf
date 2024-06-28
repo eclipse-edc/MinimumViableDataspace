@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -17,35 +17,29 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-terraform {
-  required_providers {
-    // for generating passwords, clientsecrets etc.
-    random = {
-      source = "hashicorp/random"
-    }
-
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-    }
-    helm = {
-      // used for Hashicorp Vault
-      source = "hashicorp/helm"
-    }
-  }
+variable "humanReadableName" {
+  type = string
+  description = "Human readable name. Should not contain special characters"
 }
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
+variable "namespace" {
+  type    = string
+  default = "mvd"
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = "~/.kube/config"
-  }
+variable "vault-token" {
+  default     = "root"
+  description = "This is the authentication token for the vault. DO NOT USE THIS IN PRODUCTION!"
+  type        = string
 }
 
-resource "kubernetes_namespace" "ns" {
-  metadata {
-    name = "mvd"
+variable "aliases" {
+  type = object({
+    sts-private-key   = string
+    sts-public-key-id = string
+  })
+  default = {
+    sts-private-key   = "key-1"
+    sts-public-key-id = "key-1"
   }
 }
