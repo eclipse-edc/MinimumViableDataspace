@@ -1,5 +1,5 @@
 resource "helm_release" "vault" {
-  name      = "${var.humanReadableName}-vault"
+  name      = var.humanReadableName
   namespace = var.namespace
 
   force_update      = true
@@ -32,24 +32,24 @@ resource "helm_release" "vault" {
 
   values = [
     file("${path.module}/vault-values.yaml"),
-    yamlencode({
-      "server" : {
-        "postStart" : [
-          "sh",
-          "-c",
-          join(" && ", [
-            "sleep 5",
-            "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.ecdsa.private_key_pem}\"",
-#             "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
-          ])
-        ]
-      }
-    }),
+#     yamlencode({
+#       "server" : {
+#         "postStart" : [
+#           "sh",
+#           "-c",
+#           join(" && ", [
+#             "sleep 5",
+#             "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.private_signing_key.private_key_pem}\"",
+# #             "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
+#           ])
+#         ]
+#       }
+#     }),
   ]
 }
 #
 # ECDSA key with P256 elliptic curve
-resource "tls_private_key" "ecdsa" {
+resource "tls_private_key" "private_signing_key" {
   algorithm   = "ECDSA"
   ecdsa_curve = "P256"
 }

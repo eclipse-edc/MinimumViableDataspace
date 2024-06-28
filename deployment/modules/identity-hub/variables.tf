@@ -101,6 +101,7 @@ variable "aliases" {
   }
 }
 
-locals {
-  ih-service-name = var.humanReadableName
+variable "service-name" {
+  type        = string
+  description = "Name of the Service endpoint"
 }

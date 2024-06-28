@@ -69,9 +69,6 @@ resource "kubernetes_deployment" "identityhub" {
   }
 }
 
-locals {
-  dir = var.credentials-dir
-}
 
 resource "kubernetes_config_map" "identityhub-credentials-map" {
   metadata {
@@ -80,7 +77,7 @@ resource "kubernetes_config_map" "identityhub-credentials-map" {
   }
 
   data = {
-    for f in fileset(local.dir, "*.json") : f => file(join("/", [local.dir, f]))
+    for f in fileset(var.credentials-dir, "*-credential.json") : f => file(join("/", [var.credentials-dir, f]))
   }
 }
 

@@ -29,3 +29,10 @@ output "ports" {
 output "ih-superuser-apikey" {
   value = var.ih_superuser_apikey
 }
+
+output "credentials" {
+  value = {
+    path = var.credentials-dir
+    content = fileset(var.credentials-dir, "*-credential.json")
+  }
+}

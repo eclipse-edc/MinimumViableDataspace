@@ -144,10 +144,10 @@ resource "kubernetes_config_map" "connector-config" {
     JAVA_TOOL_OPTIONS                          = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH              = "/etc/registry/registry.json"
     EDC_PARTICIPANT_ID                         = var.participantId
-    EDC_VAULT_HASHICORP_URL                    = "http://${var.humanReadableName}-vault:8200"
+    EDC_VAULT_HASHICORP_URL                    = var.vault-url
     EDC_VAULT_HASHICORP_TOKEN                  = var.vault-token
     EDC_MVD_PARTICIPANTS_LIST_FILE             = "/etc/participants/participants.json"
-    EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS  = 5
+    EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS  = 10
     EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS = 10
   }
 }

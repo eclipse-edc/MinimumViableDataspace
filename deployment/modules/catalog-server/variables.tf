@@ -54,11 +54,6 @@ variable "ports" {
     protocol        = number
     control         = number
     debug           = number
-    ih-default      = number
-    ih-debug        = number
-    ih-did          = number
-    ih-identity-api = number
-    resolution-api  = number
   })
   default = {
     web             = 8080
@@ -66,21 +61,11 @@ variable "ports" {
     protocol        = 8082
     control         = 8083
     debug           = 1044
-    ih-default      = 7080
-    ih-debug        = 1045
-    ih-did          = 7083
-    ih-identity-api = 7081
-    resolution-api  = 7082
   }
 }
 
 variable "database-name" {
   type = string
-}
-
-variable "credentials-dir" {
-  type        = string
-  description = "JSON object containing the credentials to seed, sorted by human-readable participant name"
 }
 
 variable "participant-list-file" {
@@ -97,6 +82,11 @@ variable "ih_superuser_apikey" {
 variable "vault-token" {
   default     = "root"
   description = "This is the authentication token for the vault. DO NOT USE THIS IN PRODUCTION!"
+  type        = string
+}
+
+variable "vault-url" {
+  description = "URL of the Hashicorp Vault"
   type        = string
 }
 

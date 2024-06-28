@@ -81,6 +81,11 @@ variable "vault-token" {
   type        = string
 }
 
+variable "vault-url" {
+  description = "URL of the Hashicorp Vault"
+  type        = string
+}
+
 variable "aliases" {
   type = object({
     sts-private-key   = string

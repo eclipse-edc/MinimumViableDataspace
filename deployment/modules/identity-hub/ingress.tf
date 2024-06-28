@@ -32,7 +32,7 @@ resource "kubernetes_ingress_v1" "api-ingress" {
       http {
 
         path {
-          path = "/${var.humanReadableName}/cs(/|$)(.*)"
+          path = "/${var.service-name}/cs(/|$)(.*)"
           backend {
             service {
               name = kubernetes_service.ih-service.metadata.0.name
@@ -50,10 +50,10 @@ resource "kubernetes_ingress_v1" "api-ingress" {
 // the DID endpoint can not actually modify the URL, otherwise it'll mess up the DID resolution
 resource "kubernetes_ingress_v1" "did-ingress" {
   metadata {
-    name      = "${var.humanReadableName}-did-ingress"
+    name      = "${var.service-name}-did-ingress"
     namespace = var.namespace
     annotations = {
-      "nginx.ingress.kubernetes.io/rewrite-target" = "/${var.humanReadableName}/$2"
+      "nginx.ingress.kubernetes.io/rewrite-target" = "/${var.service-name}/$2"
     }
   }
 
@@ -65,7 +65,7 @@ resource "kubernetes_ingress_v1" "did-ingress" {
 
         # ingress routes for the DID endpoint
         path {
-          path = "/${var.humanReadableName}(/|&)(.*)"
+          path = "/${var.service-name}(/|&)(.*)"
           backend {
             service {
               name = kubernetes_service.ih-service.metadata.0.name
@@ -78,8 +78,4 @@ resource "kubernetes_ingress_v1" "did-ingress" {
       }
     }
   }
-}
-
-locals {
-  data-plane-service = "${var.humanReadableName}-dataplane"
 }
