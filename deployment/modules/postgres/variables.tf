@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -16,3 +16,20 @@
 #
 #  SPDX-License-Identifier: Apache-2.0
 #
+
+variable "instance-name" {
+  description = "Name for the Postgres instance, must be unique for each postgres instances"
+}
+
+variable "database-port" {
+  default = 5432
+}
+
+variable "init-sql-configs" {
+  description = "Name of config maps with init sql scripts"
+  default = []
+}
+
+variable "namespace" {
+  description = "kubernetes namespace where the PG instance is deployed"
+}

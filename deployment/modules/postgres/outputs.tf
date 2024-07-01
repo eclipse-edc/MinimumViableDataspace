@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -16,3 +16,19 @@
 #
 #  SPDX-License-Identifier: Apache-2.0
 #
+
+output "instance-name" {
+  value = var.instance-name
+}
+
+output "database-host" {
+  value = local.db-ip
+}
+
+output "database-port" {
+  value = var.database-port
+}
+
+output "database-url" {
+  value = local.db-url
+}
