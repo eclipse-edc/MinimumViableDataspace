@@ -1,3 +1,6 @@
+# This file deploys all the components needed for the provider side of the scenario,
+# i.e. a catalog server ("bob"), two connectors ("ted" and "carol") as well as one identityhub and one vault
+
 # first provider connector "Ted"
 module "provider-ted-connector" {
   source            = "./modules/connector"

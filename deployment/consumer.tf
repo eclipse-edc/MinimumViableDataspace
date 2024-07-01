@@ -1,3 +1,6 @@
+# This file deploys all the components needed for the consumer side of the scenario,
+# i.e. the connector, an identityhub and a vault.
+
 # consumer connector
 module "alice-connector" {
   source            = "./modules/connector"
