@@ -30,7 +30,7 @@ module "consumer-vault" {
 }
 
 # Postgres database for the consumer
-module "alice-postgres" {
+module "consumer-postgres" {
   depends_on       = [kubernetes_config_map.postgres-initdb-config-consumer]
   source           = "./modules/postgres"
   instance-name    = "alice"

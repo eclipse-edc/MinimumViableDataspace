@@ -16,3 +16,16 @@
 #
 #  SPDX-License-Identifier: Apache-2.0
 #
+
+output "consumer-jdbc-url" {
+#   jdbc:postgresql://localhost:5432/mydatabase?currentSchema=myschema
+  value = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer?currentSchema=alice"
+}
+
+output "provider-jdbc-url" {
+  value = {
+    catalog-server  = "jdbc:postgresql://${module.bob-postgres.database-url}/provider?currentSchema=catalog_server"
+    ted  = "jdbc:postgresql://${module.bob-postgres.database-url}/provider?currentSchema=ted"
+    carol  = "jdbc:postgresql://${module.bob-postgres.database-url}/provider?currentSchema=carol"
+  }
+}

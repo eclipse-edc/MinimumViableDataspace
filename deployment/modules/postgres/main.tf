@@ -133,5 +133,5 @@ locals {
   app-name = "${var.instance-name}-postgres"
   pg-image = "postgres:16.3-alpine3.20"
   db-ip    = kubernetes_service.pg-service.spec.0.cluster_ip
-  db-url   = "${local.db-ip}:${var.database-port}"
+  db-url   = "${kubernetes_service.pg-service.metadata[0].name}:${var.database-port}"
 }
