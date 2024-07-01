@@ -98,6 +98,6 @@ variable "aliases" {
 }
 
 locals {
-  name = lower(var.humanReadableName)
+  name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
 }

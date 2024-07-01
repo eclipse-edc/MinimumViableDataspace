@@ -40,18 +40,18 @@ output "alice-node-ip" {
 
 output "catalog-server-node-ip" {
   value = {
-    connector    = module.provider-catalog-server.connector-node-ip
+    connector = module.provider-catalog-server.connector-node-ip
   }
 }
 
 output "identity-hub-management-api-key" {
   value = {
     ted-superuser   = module.provider-identityhub.ih-superuser-apikey
-    carol-superuser   = module.provider-identityhub.ih-superuser-apikey
+    carol-superuser = module.provider-identityhub.ih-superuser-apikey
     alice-superuser = module.consumer-alice-identityhub.ih-superuser-apikey
   }
 }
 
-output "consumer-credentials"{
+output "consumer-credentials" {
   value = module.consumer-alice-identityhub.credentials
 }

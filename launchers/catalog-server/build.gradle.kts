@@ -31,6 +31,11 @@ dependencies {
     runtimeOnly(libs.bundles.dcp) // DCP protocol impl
     runtimeOnly(libs.edc.api.dsp.config) // json-ld expansion
 
+    if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
+        runtimeOnly(libs.edc.vault.hashicorp)
+        println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
+    }
+
 }
 
 application {

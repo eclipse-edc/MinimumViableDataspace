@@ -49,18 +49,18 @@ variable "namespace" {
 
 variable "ports" {
   type = object({
-    web             = number
-    management      = number
-    protocol        = number
-    control         = number
-    debug           = number
+    web        = number
+    management = number
+    protocol   = number
+    control    = number
+    debug      = number
   })
   default = {
-    web             = 8080
-    management      = 8081
-    protocol        = 8082
-    control         = 8083
-    debug           = 1044
+    web        = 8080
+    management = 8081
+    protocol   = 8082
+    control    = 8083
+    debug      = 1044
   }
 }
 
@@ -102,7 +102,7 @@ variable "aliases" {
 }
 
 locals {
-  name = lower(var.humanReadableName)
+  name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
   ih-service-name           = "${var.humanReadableName}-identityhub"
 }

@@ -21,12 +21,13 @@ module "provider-carol-connector" {
 }
 
 module "provider-identityhub" {
-  source        = "./modules/identity-hub"
-  credentials-dir = dirname("./assets/credentials/k8s/bob")
+  depends_on        = [module.provider-vault]
+  source            = "./modules/identity-hub"
+  credentials-dir   = dirname("./assets/credentials/k8s/bob/")
   humanReadableName = "bob-identityhub" # must be named "bob-identityhub" until we regenerate DIDs and credentials
-  participantId = var.bob-did
-  vault-url     = "http://provider-vault:8200"
-  service-name  = "bob"
+  participantId     = var.bob-did
+  vault-url         = "http://provider-vault:8200"
+  service-name      = "bob"
 }
 
 # Catalog server runtime "Bob"

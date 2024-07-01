@@ -283,7 +283,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Ted's catalog.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"http://localhost:8192/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Ted's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{TED_DSP_URL}}/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -312,7 +312,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-carol\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"http://localhost:8292/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-carol\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{CAROL_DSP_URL}}/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -350,7 +350,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n            \"@context\": {},\n            \"@id\": \"normal-asset-1\",\n            \"@type\": \"Asset\",\n            \"properties\": {\n                \"description\": \"This is a conventional asset, not a CatalogAsset.\"\n            },\n            \"dataAddress\": {\n                \"@type\": \"DataAddress\",\n                \"type\": \"HttpData\",\n                \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n                \"proxyPath\": \"true\",\n                \"proxyQueryParams\": \"true\"\n            }\n        }"
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"normal-asset-1\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a conventional asset, not a CatalogAsset.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/assets",
@@ -2031,6 +2031,11 @@
 		{
 			"key": "CATALOG_URL",
 			"value": "http://localhost:8084",
+			"type": "string"
+		},
+		{
+			"key": "TED_DSP_URL",
+			"value": "",
 			"type": "string"
 		}
 	]
