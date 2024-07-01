@@ -34,17 +34,21 @@ using federated catalogs._
 
 ### Participants
 
-There are two connectors called "Ted" and "Carol", both of which are owned by different departments of a company. That
-company also hosts a catalog server called "Bob", plus an IdentityHub that is shared between Bob, Ted and Carol. This is
+There are two companies, called "Alice" and "Bob". "Alice"" is the data-consuming company, and "Bob" is the
+data-providing company.
+
+The "Bob" company has two connectors called "Ted" and "Carol", both of which are owned by different departments of the
+company. That
+company also hosts a catalog server, plus an IdentityHub that is shared between the catalog server, Ted and Carol. This
+is
 necessary, because those three share the same `participantId`, and thus, the same set of credentials.
 
-Then, there's the data consumer called "Alice", who also has its own IdentityHub.
+The "Alice" company has a connector plus its own IdentityHub.
 
 ### Data setup
 
-Ted and Carol both have two data assets each, named `"asset-1"` and `"asset-2"`.
-
-However, neither Ted nor Carol expose their Catalog endpoint to the internet. Instead, the catalog server (Bob) provides
+Ted and Carol both have two data assets each, named `"asset-1"` and `"asset-2"` but neither Ted nor Carol expose their
+Catalog endpoint to the internet. Instead, the catalog server (Bob) provides
 a catalog that contains pointers to both Teds and Carols connectors. We call this a "root catalog", and the pointers are
 called "catalog assets".
 
@@ -122,29 +126,50 @@ terraform -chdir=deployment apply
 Once Terraform has completed the deployment, type `kubectl get pods` and verify the output:
 
 ```shell
-> kubectl get pods --namespace mvd
-NAME                                 READY   STATUS    RESTARTS   AGE
-alice-connector-6d56797f54-bf44q     1/1     Running   0          14m
-alice-identityhub-7664f549f6-bj6v6   1/1     Running   0          14m
-alice-vault-0                        1/1     Running   0          14m
-bob-connector-658755df69-v24sm       1/1     Running   0          14m
-bob-identityhub-8cff855bf-9f7h4      1/1     Running   0          14m
-bob-vault-0                          1/1     Running   0          14m
-seed-alice-zthgc                     0/1     Completed 0          14m
-seed-bob-jccpq                       0/1     Completed 0          14m
+❯ kubectl get pods --namespace mvd
+NAME                                       READY   STATUS    RESTARTS   AGE
+alice-connector-54d588b4ff-bdszx           1/1     Running   0          148m
+alice-identityhub-97485f4df-ggr4k          1/1     Running   0          148m
+bob-identityhub-647bfb49cd-9rqcm           1/1     Running   0          148m
+carol-connector-6c9cc8f9cb-zd98x           1/1     Running   0          148m
+consumer-vault-0                           1/1     Running   0          148m
+provider-catalog-server-64c6488cf5-lm9w8   1/1     Running   0          148m
+provider-vault-0                           1/1     Running   0          148m
+ted-connector-694457685b-9pc7v             1/1     Running   0          148m
 ```
 
-Every participant has two pods, one for the connector runtime, one for the IdentityHub runtime.
-Assets, policies and contract definitions are already seeded to the connectors.
+"Alice has a connector, and IdentityHub and a vault, to store secrets.
+"Bob" has a catalog server, a "Ted" and a "Carol" connector plus an IdentityHub and a vault.
 
-Remote Debugging is possible, but Kubernetes port-forwards are necessary. The following debug ports are exposed:
+Remote Debugging is possible, but Kubernetes port-forwards are necessary.
 
-- 1044 on the connector runtime
-- 1045 on the identity hub runtime
+Once all the deployments are up-and-running, the seed script needs to be executed which should produce command line
+output similar to this:
 
-Note that both application data and IdentityHub data gets seeded automatically with
-a [Kubernetes Job](./deployment/modules/connector/seed.tf.unused), so there is nothing to do. If for some reason you need to
-re-seed the data, e.g. after a connector pod crashes, you can use the  `seed-k8s.sh`.
+```shell
+❯ ./seed-k8s.sh
+
+
+Seed data to Ted and Carol
+(node:545000) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:545154) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+Create linked assets on the Catalog Server
+(node:545270) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+Create consumer participant
+ZGlkOndlYjphbGljZS1pZGVudGl0eWh1YiUzQTcwODM6YWxpY2U=.KPHR02XRnn+uT7vrpCIu8jJUADTBHKrterGq0PZTRJgzbzvgCXINcMWM3WBraG0aV/NxdJdl3RH3cqgyt+b5Lg==
+
+Create provider participant
+ZGlkOndlYjpib2ItaWRlbnRpdHlodWIlM0E3MDgzOmJvYg==.wBgVb44W6oi3lXlmeYsH6Xt3FAVO1g295W734jivUo5PKop6fpFsdXO4vC9D4I0WvqfB/cARJ+FVjjyFSIewew==%                                                                                               
+```
+
+_Note the `node` warnings are harmless and can be ignored_
 
 ## Running the demo (inside IntelliJ)
 
@@ -168,9 +193,8 @@ Kubernetes deployment this is **not** necessary, because seeding is done automat
 
 ## Executing REST requests using Postman
 
-This demos comes with a Postman collection located in `deployment/assets/postman`. Be aware that the collection is
-pre-configured to work with the demo running in Kubernetes - in order to get it to work with the IntelliJ-based variant,
-you'll need to change the `HOST` and `IH_HOST` variables!
+This demos comes with a Postman collection located in `deployment/assets/postman`. Be aware that the collection has
+different sets of variables in different environments, "MVD local development" and "MVD K8S".
 
 The collection itself is pretty self-explanatory, it allows you to request a catalog, perform a contract negotiation and
 execute a data transfer. NB [this caveat](#9-data-transfers-will-get-terminated) though.
@@ -199,8 +223,8 @@ comparing a BPN to a DID which would naturally fail.
 Constructing scope strings out of Policy constraints cannot be done in a generic way, because it is highly dependent on
 the constraint expression syntax, which is specific to the dataspace. In this demo, there are two extractors:
 
-- `DefaultScopeExtractor`: adds the `org.eclipse.edc.vc.type:MembershipCredential:read` scope to every request, since as
-  per Catena-X rules, that credential must always be presented.
+- `DefaultScopeExtractor`: adds the `org.eclipse.edc.vc.type:MembershipCredential:read` scope to every request. That
+  means that the MembershipCredential credential must always be presented.
 - `FrameworkCredentialScopeExtractor`: adds the correct scope for a "Use case credential" (
   check [here](https://github.com/eclipse-tractusx/ssi-docu/blob/main/docs/architecture/policy_credentialtype_scope.md)
   for details), whenever a `FrameworkCredential.XYZ` is required by a policy.
