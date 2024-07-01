@@ -31,14 +31,14 @@ module "consumer-vault" {
 
 # Postgres database for the consumer
 module "alice-postgres" {
-  depends_on       = [kubernetes_config_map.postgres-initdb-config]
+  depends_on       = [kubernetes_config_map.postgres-initdb-config-consumer]
   source           = "./modules/postgres"
   instance-name    = "alice"
   init-sql-configs = ["alice-initdb-config"]
   namespace = kubernetes_namespace.ns.metadata.0.name
 }
 
-resource "kubernetes_config_map" "postgres-initdb-config" {
+resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
   metadata {
     name = "alice-initdb-config"
     namespace = kubernetes_namespace.ns.metadata.0.name

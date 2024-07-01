@@ -1,13 +1,15 @@
-CREATE DATABASE consumer;
-\c consumer
-CREATE USER alice WITH ENCRYPTED PASSWORD 'alice';
-CREATE SCHEMA AUTHORIZATION alice;
+SELECT 'CREATE DATABASE provider'
+WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'provider')\gexec
+
+\c provider
+CREATE USER carol WITH ENCRYPTED PASSWORD 'cs';
+CREATE SCHEMA AUTHORIZATION carol;
 
 -- GRANT ALL PRIVILEGES ON DATABASE consumer TO alice;
-GRANT ALL ON SCHEMA alice TO alice;
+GRANT ALL ON SCHEMA carol TO carol;
 
 -- table: edc_asset
-CREATE TABLE IF NOT EXISTS alice.edc_asset
+CREATE TABLE IF NOT EXISTS carol.edc_asset
 (
     asset_id           VARCHAR NOT NULL,
     created_at         BIGINT  NOT NULL,
@@ -15,15 +17,15 @@ CREATE TABLE IF NOT EXISTS alice.edc_asset
     private_properties JSON    DEFAULT '{}',
     data_address       JSON    DEFAULT '{}',
     PRIMARY KEY (asset_id)
-    );
+);
 
-COMMENT ON COLUMN alice.edc_asset.properties IS 'Asset properties serialized as JSON';
-COMMENT ON COLUMN alice.edc_asset.private_properties IS 'Asset private properties serialized as JSON';
-COMMENT ON COLUMN alice.edc_asset.data_address IS 'Asset DataAddress serialized as JSON';
+COMMENT ON COLUMN carol.edc_asset.properties IS 'Asset properties serialized as JSON';
+COMMENT ON COLUMN carol.edc_asset.private_properties IS 'Asset private properties serialized as JSON';
+COMMENT ON COLUMN carol.edc_asset.data_address IS 'Asset DataAddress serialized as JSON';
 
 -- table: edc_contract_definitions
 -- only intended for and tested with H2 and Postgres!
-CREATE TABLE IF NOT EXISTS alice.edc_contract_definitions
+CREATE TABLE IF NOT EXISTS carol.edc_contract_definitions
 (
     created_at             BIGINT  NOT NULL,
     contract_definition_id VARCHAR NOT NULL,
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS alice.edc_contract_definitions
 );
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_lease
+CREATE TABLE IF NOT EXISTS carol.edc_lease
 (
     leased_by      VARCHAR               NOT NULL,
     leased_at      BIGINT,
@@ -45,17 +47,17 @@ CREATE TABLE IF NOT EXISTS alice.edc_lease
             PRIMARY KEY
 );
 
-COMMENT ON COLUMN alice.edc_lease.leased_at IS 'posix timestamp of lease';
+COMMENT ON COLUMN carol.edc_lease.leased_at IS 'posix timestamp of lease';
 
-COMMENT ON COLUMN alice.edc_lease.lease_duration IS 'duration of lease in milliseconds';
+COMMENT ON COLUMN carol.edc_lease.lease_duration IS 'duration of lease in milliseconds';
 
 
 CREATE UNIQUE INDEX IF NOT EXISTS lease_lease_id_uindex
-    ON alice.edc_lease (lease_id);
+    ON carol.edc_lease (lease_id);
 
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_contract_agreement
+CREATE TABLE IF NOT EXISTS carol.edc_contract_agreement
 (
     agr_id            VARCHAR NOT NULL
         CONSTRAINT contract_agreement_pk
@@ -70,7 +72,7 @@ CREATE TABLE IF NOT EXISTS alice.edc_contract_agreement
 );
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_contract_negotiation
+CREATE TABLE IF NOT EXISTS carol.edc_contract_negotiation
 (
     id                   VARCHAR           NOT NULL
         CONSTRAINT contract_negotiation_pk
@@ -88,7 +90,7 @@ CREATE TABLE IF NOT EXISTS alice.edc_contract_negotiation
     error_detail         VARCHAR,
     agreement_id         VARCHAR
         CONSTRAINT contract_negotiation_contract_agreement_id_fk
-            REFERENCES alice.edc_contract_agreement,
+            REFERENCES carol.edc_contract_agreement,
     contract_offers      JSON,
     callback_addresses   JSON,
     trace_context        JSON,
@@ -96,29 +98,29 @@ CREATE TABLE IF NOT EXISTS alice.edc_contract_negotiation
     protocol_messages    JSON,
     lease_id             VARCHAR
         CONSTRAINT contract_negotiation_lease_lease_id_fk
-            REFERENCES alice.edc_lease
+            REFERENCES carol.edc_lease
             ON DELETE SET NULL
 );
 
-COMMENT ON COLUMN alice.edc_contract_negotiation.agreement_id IS 'ContractAgreement serialized as JSON';
+COMMENT ON COLUMN carol.edc_contract_negotiation.agreement_id IS 'ContractAgreement serialized as JSON';
 
-COMMENT ON COLUMN alice.edc_contract_negotiation.contract_offers IS 'List<ContractOffer> serialized as JSON';
+COMMENT ON COLUMN carol.edc_contract_negotiation.contract_offers IS 'List<ContractOffer> serialized as JSON';
 
-COMMENT ON COLUMN alice.edc_contract_negotiation.trace_context IS 'Map<String,String> serialized as JSON';
+COMMENT ON COLUMN carol.edc_contract_negotiation.trace_context IS 'Map<String,String> serialized as JSON';
 
 
 CREATE INDEX IF NOT EXISTS contract_negotiation_correlationid_index
-    ON alice.edc_contract_negotiation (correlation_id);
+    ON carol.edc_contract_negotiation (correlation_id);
 
 CREATE UNIQUE INDEX IF NOT EXISTS contract_negotiation_id_uindex
-    ON alice.edc_contract_negotiation (id);
+    ON carol.edc_contract_negotiation (id);
 
 CREATE UNIQUE INDEX IF NOT EXISTS contract_agreement_id_uindex
-    ON alice.edc_contract_agreement (agr_id);
+    ON carol.edc_contract_agreement (agr_id);
 
 
 -- table: edc_policydefinitions
-CREATE TABLE IF NOT EXISTS alice.edc_policydefinitions
+CREATE TABLE IF NOT EXISTS carol.edc_policydefinitions
 (
     policy_id             VARCHAR NOT NULL,
     created_at            BIGINT  NOT NULL,
@@ -135,18 +137,18 @@ CREATE TABLE IF NOT EXISTS alice.edc_policydefinitions
     PRIMARY KEY (policy_id)
 );
 
-COMMENT ON COLUMN alice.edc_policydefinitions.permissions IS 'Java List<Permission> serialized as JSON';
-COMMENT ON COLUMN alice.edc_policydefinitions.prohibitions IS 'Java List<Prohibition> serialized as JSON';
-COMMENT ON COLUMN alice.edc_policydefinitions.duties IS 'Java List<Duty> serialized as JSON';
-COMMENT ON COLUMN alice.edc_policydefinitions.extensible_properties IS 'Java Map<String, Object> serialized as JSON';
-COMMENT ON COLUMN alice.edc_policydefinitions.policy_type IS 'Java PolicyType serialized as JSON';
+COMMENT ON COLUMN carol.edc_policydefinitions.permissions IS 'Java List<Permission> serialized as JSON';
+COMMENT ON COLUMN carol.edc_policydefinitions.prohibitions IS 'Java List<Prohibition> serialized as JSON';
+COMMENT ON COLUMN carol.edc_policydefinitions.duties IS 'Java List<Duty> serialized as JSON';
+COMMENT ON COLUMN carol.edc_policydefinitions.extensible_properties IS 'Java Map<String, Object> serialized as JSON';
+COMMENT ON COLUMN carol.edc_policydefinitions.policy_type IS 'Java PolicyType serialized as JSON';
 
 CREATE UNIQUE INDEX IF NOT EXISTS edc_policydefinitions_id_uindex
-    ON alice.edc_policydefinitions (policy_id);
+    ON carol.edc_policydefinitions (policy_id);
 
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_transfer_process
+CREATE TABLE IF NOT EXISTS carol.edc_transfer_process
 (
     transferprocess_id       VARCHAR           NOT NULL
         CONSTRAINT transfer_process_pk
@@ -177,38 +179,38 @@ CREATE TABLE IF NOT EXISTS alice.edc_transfer_process
     data_destination           JSON,
     lease_id                   VARCHAR
         CONSTRAINT transfer_process_lease_lease_id_fk
-            REFERENCES alice.edc_lease
+            REFERENCES carol.edc_lease
             ON DELETE SET NULL
 );
 
-COMMENT ON COLUMN alice.edc_transfer_process.trace_context IS 'Java Map serialized as JSON';
+COMMENT ON COLUMN carol.edc_transfer_process.trace_context IS 'Java Map serialized as JSON';
 
 
-COMMENT ON COLUMN alice.edc_transfer_process.resource_manifest IS 'java ResourceManifest serialized as JSON';
+COMMENT ON COLUMN carol.edc_transfer_process.resource_manifest IS 'java ResourceManifest serialized as JSON';
 
-COMMENT ON COLUMN alice.edc_transfer_process.provisioned_resource_set IS 'ProvisionedResourceSet serialized as JSON';
+COMMENT ON COLUMN carol.edc_transfer_process.provisioned_resource_set IS 'ProvisionedResourceSet serialized as JSON';
 
-COMMENT ON COLUMN alice.edc_transfer_process.content_data_address IS 'DataAddress serialized as JSON';
+COMMENT ON COLUMN carol.edc_transfer_process.content_data_address IS 'DataAddress serialized as JSON';
 
-COMMENT ON COLUMN alice.edc_transfer_process.deprovisioned_resources IS 'List of deprovisioned resources, serialized as JSON';
+COMMENT ON COLUMN carol.edc_transfer_process.deprovisioned_resources IS 'List of deprovisioned resources, serialized as JSON';
 
 
 CREATE UNIQUE INDEX IF NOT EXISTS transfer_process_id_uindex
-    ON alice.edc_transfer_process (transferprocess_id);
+    ON carol.edc_transfer_process (transferprocess_id);
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_data_plane_instance
+CREATE TABLE IF NOT EXISTS carol.edc_data_plane_instance
 (
     id                   VARCHAR NOT NULL PRIMARY KEY,
     data                 JSON,
     lease_id             VARCHAR
         CONSTRAINT data_plane_instance_lease_id_fk
-            REFERENCES alice.edc_lease
+            REFERENCES carol.edc_lease
             ON DELETE SET NULL
 );
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_policy_monitor
+CREATE TABLE IF NOT EXISTS carol.edc_policy_monitor
 (
     entry_id             VARCHAR NOT NULL PRIMARY KEY,
     state                INTEGER NOT NULL            ,
@@ -220,14 +222,14 @@ CREATE TABLE IF NOT EXISTS alice.edc_policy_monitor
     error_detail         VARCHAR,
     lease_id             VARCHAR
         CONSTRAINT policy_monitor_lease_lease_id_fk
-            REFERENCES alice.edc_lease
+            REFERENCES carol.edc_lease
             ON DELETE SET NULL,
     properties           JSON,
     contract_id          VARCHAR
 );
 
 
-CREATE TABLE IF NOT EXISTS alice.edc_edr_entry
+CREATE TABLE IF NOT EXISTS carol.edc_edr_entry
 (
     transfer_process_id           VARCHAR NOT NULL PRIMARY KEY,
     agreement_id                  VARCHAR NOT NULL,

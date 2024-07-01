@@ -24,13 +24,13 @@ module "provider-carol-connector" {
 }
 
 module "provider-identityhub" {
-  depends_on        = [module.provider-vault]
-  source            = "./modules/identity-hub"
-  credentials-dir   = dirname("./assets/credentials/k8s/bob/")
+  depends_on = [module.provider-vault]
+  source        = "./modules/identity-hub"
+  credentials-dir = dirname("./assets/credentials/k8s/bob/")
   humanReadableName = "bob-identityhub" # must be named "bob-identityhub" until we regenerate DIDs and credentials
-  participantId     = var.bob-did
-  vault-url         = "http://provider-vault:8200"
-  service-name      = "bob"
+  participantId = var.bob-did
+  vault-url     = "http://provider-vault:8200"
+  service-name  = "bob"
 }
 
 # Catalog server runtime "Bob"
@@ -48,4 +48,47 @@ module "provider-catalog-server" {
 module "provider-vault" {
   source            = "./modules/vault"
   humanReadableName = "provider-vault"
+}
+
+# Postgres database for the consumer
+module "bob-postgres" {
+  depends_on = [kubernetes_config_map.postgres-initdb-config-cs]
+  source        = "./modules/postgres"
+  instance-name = "bob"
+  init-sql-configs = [
+    kubernetes_config_map.postgres-initdb-config-cs.metadata[0].name,
+    kubernetes_config_map.postgres-initdb-config-ted.metadata[0].name,
+    kubernetes_config_map.postgres-initdb-config-carol.metadata[0].name
+  ]
+  namespace = kubernetes_namespace.ns.metadata.0.name
+}
+
+resource "kubernetes_config_map" "postgres-initdb-config-cs" {
+  metadata {
+    name      = "cs-initdb-config"
+    namespace = kubernetes_namespace.ns.metadata.0.name
+  }
+  data = {
+    "cs-initdb-config.sql" = file("./assets/postgres/catalog-server.sql")
+  }
+}
+
+resource "kubernetes_config_map" "postgres-initdb-config-ted" {
+  metadata {
+    name      = "ted-initdb-config"
+    namespace = kubernetes_namespace.ns.metadata.0.name
+  }
+  data = {
+    "ted-initdb-config.sql" = file("./assets/postgres/ted.sql")
+  }
+}
+
+resource "kubernetes_config_map" "postgres-initdb-config-carol" {
+  metadata {
+    name      = "carol-initdb-config"
+    namespace = kubernetes_namespace.ns.metadata.0.name
+  }
+  data = {
+    "carol-initdb-config.sql" = file("./assets/postgres/carol.sql")
+  }
 }
