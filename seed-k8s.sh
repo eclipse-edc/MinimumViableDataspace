@@ -4,6 +4,9 @@
 ## However, if you want to re-seed data (e.g. after a pod crashed), you can use this script.
 
 ## Seed application DATA to both connectors
+echo
+echo
+echo "Seed data to Ted and Carol"
 for url in 'http://127.0.0.1/ted/cp' 'http://127.0.0.1/carol/cp'
 do
   newman run \
@@ -13,27 +16,31 @@ do
 done
 
 ## Seed linked assets to Catalog Server "Bob"
+echo
+echo
+echo "Create linked assets on the Catalog Server"
 newman run \
   --folder "Seed Catalog Server" \
   --env-var "HOST=http://127.0.0.1/provider-catalog-server/cp" \
+  --env-var "TED_DSP_URL=http://ted-controlplane:8082" \
+  --env-var "CAROL_DSP_URL=http://carol-controlplane:8082" \
   ./deployment/postman/MVD.postman_collection.json > /dev/null
 
-## Seed management DATA to identityhubs
+## Seed management DATA to identityhubsl
 API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 
 # add consumer participant
 echo
-echo "Create consumer participant"
 echo
-PEM_CONSUMER=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/alice_public.pem)
+echo "Create consumer participant"
 CONSUMER_CONTROLPLANE_SERVICE_URL="http://alice-controlplane:8082"
-CONSUMER_IDENTITYHUB_URL="http://127.0.0.1/alice/cs"
-DATA_CONSUMER=$(jq -n --arg pem "$PEM_CONSUMER" --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$CONSUMER_IDENTITYHUB_URL" '{
+CONSUMER_IDENTITYHUB_URL="http://alice-identityhub:7082"
+DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$CONSUMER_IDENTITYHUB_URL" '{
            "roles":[],
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
+                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjphbGljZS1pZGVudGl0eWh1YiUzQTcwODM6YWxpY2U",
                 "id": "alice-credentialservice-1"
              },
              {
@@ -54,7 +61,7 @@ DATA_CONSUMER=$(jq -n --arg pem "$PEM_CONSUMER" --arg url "$CONSUMER_CONTROLPLAN
            }
        }')
 
-curl -s --location "$CONSUMER_IDENTITYHUB_URL/api/identity/v1alpha/participants/" \
+curl -s --location "http://127.0.0.1/alice/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_CONSUMER"
@@ -63,19 +70,18 @@ curl -s --location "$CONSUMER_IDENTITYHUB_URL/api/identity/v1alpha/participants/
 # add provider participant
 
 echo
-echo "Create provider participant"
 echo
+echo "Create provider participant"
 
-PEM_PROVIDER=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/bob_public.pem)
 PROVIDER_CONTROLPLANE_SERVICE_URL="http://provider-catalog-server-controlplane:8082"
-PROVIDER_IDENTITYHUB_URL="http://127.0.0.1/bob/cs"
+PROVIDER_IDENTITYHUB_URL="http://bob-identityhub:7082"
 
-DATA_PROVIDER=$(jq -n --arg pem "$PEM_PROVIDER" --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$PROVIDER_IDENTITYHUB_URL" '{
+DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$PROVIDER_IDENTITYHUB_URL" '{
            "roles":[],
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
+                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjpib2ItaWRlbnRpdHlodWIlM0E3MDgzOmJvYg",
                 "id": "ted-credentialservice-1"
              },
              {
@@ -96,7 +102,7 @@ DATA_PROVIDER=$(jq -n --arg pem "$PEM_PROVIDER" --arg url "$PROVIDER_CONTROLPLAN
            }
        }')
 
-curl -s --location "$PROVIDER_IDENTITYHUB_URL/api/identity/v1alpha/participants/" \
+curl -s --location "http://127.0.0.1/bob/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_PROVIDER"

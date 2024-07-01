@@ -11,8 +11,9 @@ module "alice-connector" {
 
 # consumer identity hub
 module "consumer-alice-identityhub" {
+  depends_on        = [module.consumer-vault]
   source            = "./modules/identity-hub"
-  credentials-dir = dirname("./assets/credentials/k8s/alice/")
+  credentials-dir   = dirname("./assets/credentials/k8s/alice/")
   humanReadableName = "alice-identityhub"
   participantId     = var.alice-did
   vault-url         = "http://consumer-vault:8200"

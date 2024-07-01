@@ -32,19 +32,19 @@ resource "helm_release" "vault" {
 
   values = [
     file("${path.module}/vault-values.yaml"),
-#     yamlencode({
-#       "server" : {
-#         "postStart" : [
-#           "sh",
-#           "-c",
-#           join(" && ", [
-#             "sleep 5",
-#             "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.private_signing_key.private_key_pem}\"",
-# #             "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
-#           ])
-#         ]
-#       }
-#     }),
+    #     yamlencode({
+    #       "server" : {
+    #         "postStart" : [
+    #           "sh",
+    #           "-c",
+    #           join(" && ", [
+    #             "sleep 5",
+    #             "/bin/vault kv put secret/${var.aliases.sts-private-key} content=\"${tls_private_key.private_signing_key.private_key_pem}\"",
+    # #             "/bin/vault kv put secret/${local.public-key-alias} content=\"${tls_private_key.ecdsa.public_key_pem}\""
+    #           ])
+    #         ]
+    #       }
+    #     }),
   ]
 }
 #

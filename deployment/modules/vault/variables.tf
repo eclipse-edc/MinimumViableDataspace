@@ -18,7 +18,7 @@
 #
 
 variable "humanReadableName" {
-  type = string
+  type        = string
   description = "Human readable name. Should not contain special characters"
 }
 
