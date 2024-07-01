@@ -34,7 +34,7 @@ module "alice-postgres" {
   depends_on       = [kubernetes_config_map.postgres-initdb-config]
   source           = "./modules/postgres"
   instance-name    = "alice"
-  init-sql-configs = ["alice-initdb-config", "alice"]
+  init-sql-configs = ["alice-initdb-config"]
   namespace = kubernetes_namespace.ns.metadata.0.name
 }
 
@@ -43,16 +43,7 @@ resource "kubernetes_config_map" "postgres-initdb-config" {
     name = "alice-initdb-config"
     namespace = kubernetes_namespace.ns.metadata.0.name
   }
-
   data = {
-
-    "alice-initdb-config.sql" = <<-EOT
-
-      CREATE USER alice WITH ENCRYPTED PASSWORD 'alice';
-      CREATE DATABASE alice;
-      GRANT ALL PRIVILEGES ON DATABASE alice TO alice;
-      \c alice
-      GRANT ALL ON SCHEMA public TO alice;
-    EOT
+    "alice-initdb-config.sql" = file("./assets/postgres/alice.sql")
   }
 }
