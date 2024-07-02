@@ -27,12 +27,12 @@ dependencies {
     implementation(libs.bundles.controlplane)
     implementation(libs.edc.core.connector)
 
-    if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
+    if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
-        println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
+        runtimeOnly(libs.bundles.sql.edc)
+        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
     runtimeOnly(libs.bundles.dpf)
-    runtimeOnly(libs.bundles.sql.edc)
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
