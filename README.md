@@ -94,11 +94,12 @@ All commands are executed from the **repository's root folder** unless stated ot
 
 ```shell
 ./gradlew build
-./gradlew dockerize -PuseHashicorp=true
+./gradlew dockerize -Ppersistence=true
 ```
 
-this builds the runtime images and creates the following docker images: `connector:latest` and `identity-hub:latest` in
-the local docker image cache. Note the `-PuseHashicorp` puts the HashiCorp Vault module on the classpath.
+this builds the runtime images and creates the following docker images: `connector:latest`, `catalog-server:latest`
+and `identity-hub:latest` in the local docker image cache. Note the `-Ppersistence` puts the HashiCorp Vault module and
+PostgreSQL persistence modules on the classpath. Note that appropriate configuration is required for those!
 
 Next, we bring up and configure the Kubernetes Cluster
 
@@ -107,7 +108,7 @@ Next, we bring up and configure the Kubernetes Cluster
 kind create cluster -n dcp-demo --config deployment/kind.config.yaml
 
 # Load docker images into KinD
-kind load docker-image connector:latest identity-hub:latest -n dcp-demo
+kind load docker-image connector:latest identity-hub:latest catalog-server:latest -n dcp-demo
 
 # Deploy an NGINX ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
@@ -128,18 +129,20 @@ Once Terraform has completed the deployment, type `kubectl get pods` and verify 
 ```shell
 ❯ kubectl get pods --namespace mvd
 NAME                                       READY   STATUS    RESTARTS   AGE
-alice-connector-54d588b4ff-bdszx           1/1     Running   0          148m
-alice-identityhub-97485f4df-ggr4k          1/1     Running   0          148m
-bob-identityhub-647bfb49cd-9rqcm           1/1     Running   0          148m
-carol-connector-6c9cc8f9cb-zd98x           1/1     Running   0          148m
-consumer-vault-0                           1/1     Running   0          148m
-provider-catalog-server-64c6488cf5-lm9w8   1/1     Running   0          148m
-provider-vault-0                           1/1     Running   0          148m
-ted-connector-694457685b-9pc7v             1/1     Running   0          148m
+alice-connector-54d588b4ff-r468g           1/1     Running   0             11m
+alice-identityhub-97485f4df-gqklj          1/1     Running   1 (11m ago)   11m
+alice-postgres-7654f9c97c-nf4d9            1/1     Running   0             11m
+consumer-vault-0                           1/1     Running   0             11m
+bob-identityhub-647bfb49cd-fpd77           1/1     Running   1 (11m ago)   11m
+bob-postgres-7f74c86dbc-vhw9n              1/1     Running   0             11m
+carol-connector-6c9cc8f9cb-t9rtg           1/1     Running   0             11m
+provider-catalog-server-64c6488cf5-tdtbj   1/1     Running   0             11m
+provider-vault-0                           1/1     Running   0             11m
+ted-connector-694457685b-82xth             1/1     Running   0             11m
 ```
 
-"Alice has a connector, and IdentityHub and a vault, to store secrets.
-"Bob" has a catalog server, a "Ted" and a "Carol" connector plus an IdentityHub and a vault.
+"Alice" has a connector, and IdentityHub, a postgres database and a vault to store secrets.
+"Bob" has a catalog server, a "Ted" and a "Carol" connector plus an IdentityHub, a postgres database and a vault.
 
 Remote Debugging is possible, but Kubernetes port-forwards are necessary.
 

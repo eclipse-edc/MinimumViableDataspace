@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -17,22 +17,18 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-output "connector-node-ip" {
-  value = kubernetes_service.controlplane-service.spec.0.cluster_ip
+output "instance-name" {
+  value = var.instance-name
 }
 
-
-output "database-name" {
-  value = var.database
+output "database-host" {
+  value = local.db-ip
 }
 
-output "ports" {
-  value = var.ports
+output "database-port" {
+  value = var.database-port
 }
 
-output "audience-mapping" {
-  value = {
-    #    dspAudience  = "http://${local.connector-cluster-ip}:${var.ports.protocol}/api/dsp"
-    dcpAudience = var.participant-did
-  }
+output "database-url" {
+  value = local.db-url
 }

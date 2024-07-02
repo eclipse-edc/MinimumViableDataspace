@@ -149,5 +149,8 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_MVD_PARTICIPANTS_LIST_FILE             = "/etc/participants/participants.json"
     EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS  = 10
     EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS = 10
+    EDC_DATASOURCE_DEFAULT_URL                 = var.database.url
+    EDC_DATASOURCE_DEFAULT_USER                = var.database.user
+    EDC_DATASOURCE_DEFAULT_PASSWORD            = var.database.password
   }
 }

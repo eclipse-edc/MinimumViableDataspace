@@ -7,6 +7,7 @@ import org.eclipse.edc.identityhub.spi.participantcontext.model.ParticipantManif
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.EdcException;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -25,6 +26,9 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
 
     @Setting(value = "Config value to set the super-user's participant ID.", defaultValue = DEFAULT_SUPER_USER_PARTICIPANT_ID)
     public static final String SUPERUSER_PARTICIPANT_ID_PROPERTY = "edc.ih.api.superuser.id";
+    private String superUserParticipantId;
+    private String superUserApiKey;
+    private Monitor monitor;
 
     @Override
     public String name() {
@@ -39,9 +43,14 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
+        superUserParticipantId = context.getSetting(SUPERUSER_PARTICIPANT_ID_PROPERTY, DEFAULT_SUPER_USER_PARTICIPANT_ID);
+        superUserApiKey = context.getSetting(SUPERUSER_APIKEY_PROPERTY, null);
+        monitor = context.getMonitor();
+    }
 
+    @Override
+    public void start() {
         // create super-user
-        var superUserParticipantId = context.getSetting(SUPERUSER_PARTICIPANT_ID_PROPERTY, DEFAULT_SUPER_USER_PARTICIPANT_ID);
 
         participantContextService.createParticipantContext(ParticipantManifest.Builder.newInstance()
                         .participantId(superUserParticipantId)
@@ -55,8 +64,7 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
                         .roles(List.of(ServicePrincipal.ROLE_ADMIN))
                         .build())
                 .onSuccess(generatedKey -> {
-                    var monitor = context.getMonitor();
-                    var apiKey = ofNullable(context.getSetting(SUPERUSER_APIKEY_PROPERTY, null))
+                    var apiKey = ofNullable(superUserApiKey)
                             .map(key -> {
                                 if (!key.contains(".")) {
                                     monitor.warning("Super-user key override: this key appears to have an invalid format, you may be unable to access some APIs. It must follow the structure: 'base64(<participantId>).<random-string>'");
@@ -73,5 +81,4 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
                 })
                 .orElseThrow(f -> new EdcException("Error creating Super-User: " + f.getFailureDetail()));
     }
-
 }

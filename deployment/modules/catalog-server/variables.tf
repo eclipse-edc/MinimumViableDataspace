@@ -64,8 +64,12 @@ variable "ports" {
   }
 }
 
-variable "database-name" {
-  type = string
+variable "database" {
+  type = object({
+    url      = string
+    user     = string
+    password = string
+  })
 }
 
 variable "participant-list-file" {
