@@ -17,41 +17,15 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-output "ted-node-ip" {
-  value = {
-    connector    = module.provider-ted-connector.connector-node-ip
-    identity-hub = module.provider-identityhub.identity-hub-node-ip
-  }
+output "consumer-jdbc-url" {
+  #   jdbc:postgresql://localhost:5432/mydatabase?currentSchema=myschema
+  value = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer?currentSchema=alice"
 }
 
-output "carol-node-ip" {
+output "provider-jdbc-url" {
   value = {
-    connector    = module.provider-carol-connector.connector-node-ip
-    identity-hub = module.provider-identityhub.identity-hub-node-ip
+    catalog-server = "jdbc:postgresql://${module.bob-postgres.database-url}/catalog_server"
+    ted            = "jdbc:postgresql://${module.bob-postgres.database-url}/ted"
+    carol          = "jdbc:postgresql://${module.bob-postgres.database-url}/carol"
   }
-}
-
-output "alice-node-ip" {
-  value = {
-    connector    = module.alice-connector.connector-node-ip
-    identity-hub = module.consumer-alice-identityhub.identity-hub-node-ip
-  }
-}
-
-output "catalog-server-node-ip" {
-  value = {
-    connector = module.provider-catalog-server.connector-node-ip
-  }
-}
-
-output "identity-hub-management-api-key" {
-  value = {
-    ted-superuser   = module.provider-identityhub.ih-superuser-apikey
-    carol-superuser = module.provider-identityhub.ih-superuser-apikey
-    alice-superuser = module.consumer-alice-identityhub.ih-superuser-apikey
-  }
-}
-
-output "consumer-credentials" {
-  value = module.consumer-alice-identityhub.credentials
 }

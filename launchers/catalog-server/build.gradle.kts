@@ -31,9 +31,10 @@ dependencies {
     runtimeOnly(libs.bundles.dcp) // DCP protocol impl
     runtimeOnly(libs.edc.api.dsp.config) // json-ld expansion
 
-    if (project.properties.getOrDefault("useHashicorp", "false") == "true") {
+    if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
-        println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
+        runtimeOnly(libs.bundles.sql.edc)
+        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
 
 }
