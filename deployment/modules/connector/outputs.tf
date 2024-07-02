@@ -23,7 +23,7 @@ output "connector-node-ip" {
 
 
 output "database-name" {
-  value = var.database-name
+  value = var.database
 }
 
 output "ports" {

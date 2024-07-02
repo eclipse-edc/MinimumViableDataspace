@@ -35,6 +35,7 @@ dependencies {
         runtimeOnly(libs.edc.vault.hashicorp)
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
     }
+    runtimeOnly(libs.bundles.sql)
 
 }
 

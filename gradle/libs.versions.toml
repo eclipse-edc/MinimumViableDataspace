@@ -75,6 +75,9 @@ edc-sql-contractdef = { module = "org.eclipse.edc:contract-definition-store-sql"
 edc-sql-contractneg = { module = "org.eclipse.edc:contract-negotiation-store-sql", version.ref = "edc" }
 edc-sql-policydef = { module = "org.eclipse.edc:policy-definition-store-sql", version.ref = "edc" }
 edc-sql-transferprocess = { module = "org.eclipse.edc:transfer-process-store-sql", version.ref = "edc" }
+edc-sql-core = { module = "org.eclipse.edc:sql-core", version.ref = "edc" }
+edc-sql-lease = { module = "org.eclipse.edc:sql-lease", version.ref = "edc" }
+edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref = "edc" }
 
 # identityhub dependencies
 edc-ih-core = { module = "org.eclipse.edc:identity-hub-core", version.ref = "edc" }
@@ -111,6 +114,7 @@ edc-controlplane-contract = { module = "org.eclipse.edc:control-plane-contract",
 
 # Third party libs
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
+postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 
 
 [bundles]
@@ -132,7 +136,7 @@ identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", 
 
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
-sql = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-transferprocess"]
+sql = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-transferprocess", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "postgres"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

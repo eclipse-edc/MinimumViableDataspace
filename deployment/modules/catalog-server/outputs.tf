@@ -21,10 +21,6 @@ output "connector-node-ip" {
   value = kubernetes_service.controlplane-service.spec.0.cluster_ip
 }
 
-output "database-name" {
-  value = var.database-name
-}
-
 output "ports" {
   value = var.ports
 }

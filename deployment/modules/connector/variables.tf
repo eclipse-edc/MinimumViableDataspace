@@ -66,8 +66,12 @@ variable "ports" {
   }
 }
 
-variable "database-name" {
-  type = string
+variable "database" {
+  type = object({
+    url      = string
+    user     = string
+    password = string
+  })
 }
 
 variable "participant-list-file" {
@@ -98,6 +102,6 @@ variable "aliases" {
 }
 
 locals {
-  name                      = lower(var.humanReadableName)
+  name = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
 }

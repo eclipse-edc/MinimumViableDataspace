@@ -24,8 +24,8 @@ output "consumer-jdbc-url" {
 
 output "provider-jdbc-url" {
   value = {
-    catalog-server  = "jdbc:postgresql://${module.bob-postgres.database-url}/provider?currentSchema=catalog_server"
-    ted  = "jdbc:postgresql://${module.bob-postgres.database-url}/provider?currentSchema=ted"
-    carol  = "jdbc:postgresql://${module.bob-postgres.database-url}/provider?currentSchema=carol"
+    catalog-server  = "jdbc:postgresql://${module.bob-postgres.database-url}/catalog_server"
+    ted  = "jdbc:postgresql://${module.bob-postgres.database-url}/ted"
+    carol  = "jdbc:postgresql://${module.bob-postgres.database-url}/carol"
   }
 }
