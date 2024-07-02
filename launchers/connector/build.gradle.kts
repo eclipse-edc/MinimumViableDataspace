@@ -32,7 +32,7 @@ dependencies {
         println("This runtime compiles with Hashicorp Vault. You will need a properly configured HCV instance.")
     }
     runtimeOnly(libs.bundles.dpf)
-    runtimeOnly(libs.bundles.sql)
+    runtimeOnly(libs.bundles.sql.edc)
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

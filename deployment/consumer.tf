@@ -25,6 +25,11 @@ module "consumer-alice-identityhub" {
   participantId     = var.alice-did
   vault-url         = "http://consumer-vault:8200"
   service-name      = "alice"
+  database = {
+    user = "alice"
+    password = "alice"
+    url  = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
+  }
 }
 
 # consumer vault
@@ -42,6 +47,7 @@ module "consumer-postgres" {
   namespace     = kubernetes_namespace.ns.metadata.0.name
 }
 
+# DB initialization for the EDC database
 resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
   metadata {
     name      = "alice-initdb-config"
@@ -54,6 +60,8 @@ resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
         \c consumer
 
         ${file("./assets/postgres/edc_schema.sql")}
+
+        ${file("./assets/postgres/ih_schema.sql")}
 
         GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO alice;
       EOT

@@ -39,9 +39,6 @@ variable "namespace" {
 variable "ports" {
   type = object({
     web             = number
-    management      = number
-    protocol        = number
-    control         = number
     debug           = number
     ih-default      = number
     ih-debug        = number
@@ -51,9 +48,6 @@ variable "ports" {
   })
   default = {
     web             = 8080
-    management      = 8081
-    protocol        = 8082
-    control         = 8083
     debug           = 1044
     ih-default      = 7080
     ih-debug        = 1045
@@ -104,4 +98,12 @@ variable "aliases" {
 variable "service-name" {
   type        = string
   description = "Name of the Service endpoint"
+}
+
+variable "database" {
+  type = object({
+    url      = string
+    user     = string
+    password = string
+  })
 }

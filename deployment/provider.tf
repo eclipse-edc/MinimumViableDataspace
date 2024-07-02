@@ -10,7 +10,7 @@ module "provider-ted-connector" {
   database = {
     user     = "ted"
     password = "ted"
-    url      = "jdbc:postgresql://${module.bob-postgres.database-url}/bob"
+    url      = "jdbc:postgresql://${module.bob-postgres.database-url}/ted"
   }
   namespace = kubernetes_namespace.ns.metadata.0.name
   vault-url = "http://provider-vault:8200"
@@ -39,6 +39,11 @@ module "provider-identityhub" {
   participantId = var.bob-did
   vault-url     = "http://provider-vault:8200"
   service-name  = "bob"
+  database = {
+    user = "identityhub"
+    password = "identityhub"
+    url  = "jdbc:postgresql://${module.bob-postgres.database-url}/identityhub"
+  }
 }
 
 # Catalog server runtime "Bob"
@@ -69,7 +74,8 @@ module "bob-postgres" {
   init-sql-configs = [
     kubernetes_config_map.postgres-initdb-config-cs.metadata[0].name,
     kubernetes_config_map.postgres-initdb-config-ted.metadata[0].name,
-    kubernetes_config_map.postgres-initdb-config-carol.metadata[0].name
+    kubernetes_config_map.postgres-initdb-config-carol.metadata[0].name,
+    kubernetes_config_map.postgres-initdb-config-ih.metadata[0].name
   ]
   namespace = kubernetes_namespace.ns.metadata.0.name
 }
@@ -124,6 +130,24 @@ resource "kubernetes_config_map" "postgres-initdb-config-carol" {
         ${file("./assets/postgres/edc_schema.sql")}
 
         GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO carol;
+      EOT
+  }
+}
+
+resource "kubernetes_config_map" "postgres-initdb-config-ih" {
+  metadata {
+    name      = "ih-initdb-config"
+    namespace = kubernetes_namespace.ns.metadata.0.name
+  }
+  data = {
+    "ih-initdb-config.sql" = <<-EOT
+        CREATE USER identityhub WITH ENCRYPTED PASSWORD 'identityhub';
+        CREATE DATABASE identityhub;
+        \c identityhub
+
+        ${file("./assets/postgres/ih_schema.sql")}
+
+        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO identityhub;
       EOT
   }
 }

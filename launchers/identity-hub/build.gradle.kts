@@ -27,6 +27,8 @@ dependencies {
     runtimeOnly(project(":extensions:superuser-seed"))
 
     runtimeOnly(libs.bundles.management.api)
+    runtimeOnly(libs.bundles.sql.ih)
+
     implementation(libs.bundles.did)
     implementation(project(":extensions:did-example-resolver"))
     implementation(libs.bundles.connector)
