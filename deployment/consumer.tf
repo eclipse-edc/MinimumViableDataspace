@@ -8,27 +8,27 @@ module "alice-connector" {
   participantId     = var.alice-did
   participant-did   = var.alice-did
   database = {
-    user = "alice"
+    user     = "alice"
     password = "alice"
-    url  = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
+    url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
-  namespace         = kubernetes_namespace.ns.metadata.0.name
-  vault-url         = "http://consumer-vault:8200"
+  namespace = kubernetes_namespace.ns.metadata.0.name
+  vault-url = "http://consumer-vault:8200"
 }
 
 # consumer identity hub
 module "consumer-alice-identityhub" {
-  depends_on = [module.consumer-vault]
+  depends_on        = [module.consumer-vault]
   source            = "./modules/identity-hub"
-  credentials-dir = dirname("./assets/credentials/k8s/alice/")
+  credentials-dir   = dirname("./assets/credentials/k8s/alice/")
   humanReadableName = "alice-identityhub"
   participantId     = var.alice-did
   vault-url         = "http://consumer-vault:8200"
   service-name      = "alice"
   database = {
-    user = "alice"
+    user     = "alice"
     password = "alice"
-    url  = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
+    url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
 }
 
@@ -40,11 +40,11 @@ module "consumer-vault" {
 
 # Postgres database for the consumer
 module "consumer-postgres" {
-  depends_on = [kubernetes_config_map.postgres-initdb-config-consumer]
-  source        = "./modules/postgres"
-  instance-name = "alice"
+  depends_on       = [kubernetes_config_map.postgres-initdb-config-consumer]
+  source           = "./modules/postgres"
+  instance-name    = "alice"
   init-sql-configs = ["alice-initdb-config"]
-  namespace     = kubernetes_namespace.ns.metadata.0.name
+  namespace        = kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database

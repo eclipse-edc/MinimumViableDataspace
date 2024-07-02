@@ -27,7 +27,7 @@ variable "database-port" {
 
 variable "init-sql-configs" {
   description = "Name of config maps with init sql scripts"
-  default = []
+  default     = []
 }
 
 variable "namespace" {

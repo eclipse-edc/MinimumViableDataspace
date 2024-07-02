@@ -27,22 +27,22 @@ module "provider-carol-connector" {
     password = "carol"
     url      = "jdbc:postgresql://${module.bob-postgres.database-url}/carol"
   }
-  namespace         = kubernetes_namespace.ns.metadata.0.name
-  vault-url         = "http://provider-vault:8200"
+  namespace = kubernetes_namespace.ns.metadata.0.name
+  vault-url = "http://provider-vault:8200"
 }
 
 module "provider-identityhub" {
-  depends_on = [module.provider-vault]
-  source        = "./modules/identity-hub"
-  credentials-dir = dirname("./assets/credentials/k8s/bob/")
+  depends_on        = [module.provider-vault]
+  source            = "./modules/identity-hub"
+  credentials-dir   = dirname("./assets/credentials/k8s/bob/")
   humanReadableName = "bob-identityhub" # must be named "bob-identityhub" until we regenerate DIDs and credentials
-  participantId = var.bob-did
-  vault-url     = "http://provider-vault:8200"
-  service-name  = "bob"
+  participantId     = var.bob-did
+  vault-url         = "http://provider-vault:8200"
+  service-name      = "bob"
   database = {
-    user = "identityhub"
+    user     = "identityhub"
     password = "identityhub"
-    url  = "jdbc:postgresql://${module.bob-postgres.database-url}/identityhub"
+    url      = "jdbc:postgresql://${module.bob-postgres.database-url}/identityhub"
   }
 }
 
@@ -68,7 +68,7 @@ module "provider-vault" {
 
 # Postgres database for the consumer
 module "bob-postgres" {
-  depends_on = [kubernetes_config_map.postgres-initdb-config-cs]
+  depends_on    = [kubernetes_config_map.postgres-initdb-config-cs]
   source        = "./modules/postgres"
   instance-name = "bob"
   init-sql-configs = [

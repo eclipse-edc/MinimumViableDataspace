@@ -19,7 +19,7 @@
 
 resource "kubernetes_deployment" "connector" {
   metadata {
-    name = lower(var.humanReadableName)
+    name      = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
       App = lower(var.humanReadableName)
@@ -43,7 +43,7 @@ resource "kubernetes_deployment" "connector" {
 
       spec {
         container {
-          name = lower(var.humanReadableName)
+          name              = lower(var.humanReadableName)
           image             = "catalog-server:latest"
           image_pull_policy = "Never"
 
