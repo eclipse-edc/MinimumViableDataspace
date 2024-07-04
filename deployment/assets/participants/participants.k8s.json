@@ -1,4 +1,4 @@
 {
-  "alice": "did:web:alice-identityhub%3A7083:alice",
-  "bob": "did:web:bob-identityhub%3A7083:bob"
+  "consumer-corp": "did:web:consumer-identityhub%3A7083:consumer",
+  "provider-corp": "did:web:provider-identityhub%3A7083:provider"
 }

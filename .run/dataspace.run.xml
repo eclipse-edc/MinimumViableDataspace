@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="dataspace" type="CompoundRunConfigurationType">
-    <toRun name="Catalog Server Bob" type="Application" />
-    <toRun name="Connector Alice (consumer)" type="Application" />
-    <toRun name="Connector Carol (provider 2)" type="Application" />
-    <toRun name="Connector Ted (provider 1)" type="Application" />
-    <toRun name="IdentityHub Alice (consumer)" type="Application" />
-    <toRun name="IdentityHub Bob (provider)" type="Application" />
+    <toRun name="Connector &quot;provider-manufacturing&quot;" type="Application" />
+    <toRun name="Connector &quot;provider-qna&quot;" type="Application" />
+    <toRun name="Connector Consumer Corp" type="Application" />
+    <toRun name="IdentityHub Consumer Corp" type="Application" />
+    <toRun name="IdentityHub Provider Corp" type="Application" />
+    <toRun name="Provider Catalog Server" type="Application" />
     <method v="2" />
   </configuration>
 </component>

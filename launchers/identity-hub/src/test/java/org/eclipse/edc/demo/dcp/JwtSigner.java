@@ -43,7 +43,7 @@ public class JwtSigner {
 
 
         //todo: change this to whatever credential JSON you want to sign
-        var credential = mapper.readValue(new File(System.getProperty("user.dir") + "/../../../deployment/assets/credentials/k8s/bob/membership_vc.json"), Map.class);
+        var credential = mapper.readValue(new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership_vc.json"), Map.class);
 
         //todo: change the claims to suit your needs
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
@@ -55,7 +55,7 @@ public class JwtSigner {
                 .build();
 
         // this must be the path to the Credential issuer's private key
-        var privateKey = (PrivateKey) new PemParser(mock()).parse(readFile(System.getProperty("user.dir") + "/../../../deployment/assets/issuer_private.pem")).orElseThrow(f -> new RuntimeException(f.getFailureDetail()));
+        var privateKey = (PrivateKey) new PemParser(mock()).parse(readFile(System.getProperty("user.dir") + "/../../deployment/assets/issuer_private.pem")).orElseThrow(f -> new RuntimeException(f.getFailureDetail()));
 
         var jwt = new SignedJWT(header, claims);
         jwt.sign(CryptoConverter.createSignerFor(privateKey));

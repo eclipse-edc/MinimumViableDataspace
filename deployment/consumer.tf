@@ -2,14 +2,14 @@
 # i.e. the connector, an identityhub and a vault.
 
 # consumer connector
-module "alice-connector" {
+module "consumer-connector" {
   source            = "./modules/connector"
-  humanReadableName = "alice"
-  participantId     = var.alice-did
-  participant-did   = var.alice-did
+  humanReadableName = "consumer"
+  participantId     = var.consumer-did
+  participant-did   = var.consumer-did
   database = {
-    user     = "alice"
-    password = "alice"
+    user     = "consumer"
+    password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
   namespace = kubernetes_namespace.ns.metadata.0.name
@@ -17,17 +17,17 @@ module "alice-connector" {
 }
 
 # consumer identity hub
-module "consumer-alice-identityhub" {
+module "consumer-identityhub" {
   depends_on        = [module.consumer-vault]
   source            = "./modules/identity-hub"
-  credentials-dir   = dirname("./assets/credentials/k8s/alice/")
-  humanReadableName = "alice-identityhub"
-  participantId     = var.alice-did
+  credentials-dir   = dirname("./assets/credentials/k8s/consumer/")
+  humanReadableName = "consumer-identityhub"
+  participantId     = var.consumer-did
   vault-url         = "http://consumer-vault:8200"
-  service-name      = "alice"
+  service-name      = "consumer"
   database = {
-    user     = "alice"
-    password = "alice"
+    user     = "consumer"
+    password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
 }
@@ -42,20 +42,20 @@ module "consumer-vault" {
 module "consumer-postgres" {
   depends_on       = [kubernetes_config_map.postgres-initdb-config-consumer]
   source           = "./modules/postgres"
-  instance-name    = "alice"
-  init-sql-configs = ["alice-initdb-config"]
+  instance-name    = "consumer"
+  init-sql-configs = ["consumer-initdb-config"]
   namespace        = kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database
 resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
   metadata {
-    name      = "alice-initdb-config"
+    name      = "consumer-initdb-config"
     namespace = kubernetes_namespace.ns.metadata.0.name
   }
   data = {
-    "alice-initdb-config.sql" = <<-EOT
-        CREATE USER alice WITH ENCRYPTED PASSWORD 'alice';
+    "consumer-initdb-config.sql" = <<-EOT
+        CREATE USER consumer WITH ENCRYPTED PASSWORD 'consumer';
         CREATE DATABASE consumer;
         \c consumer
 
@@ -63,7 +63,7 @@ resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
 
         ${file("./assets/postgres/ih_schema.sql")}
 
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO alice;
+        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO consumer;
       EOT
   }
 }

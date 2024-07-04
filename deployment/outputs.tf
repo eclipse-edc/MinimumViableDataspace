@@ -19,13 +19,13 @@
 
 output "consumer-jdbc-url" {
   #   jdbc:postgresql://localhost:5432/mydatabase?currentSchema=myschema
-  value = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer?currentSchema=alice"
+  value = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
 }
 
 output "provider-jdbc-url" {
   value = {
-    catalog-server = "jdbc:postgresql://${module.bob-postgres.database-url}/catalog_server"
-    ted            = "jdbc:postgresql://${module.bob-postgres.database-url}/ted"
-    carol          = "jdbc:postgresql://${module.bob-postgres.database-url}/carol"
+    catalog-server         = "jdbc:postgresql://${module.provider-postgres.database-url}/catalog_server"
+    provider-qna           = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_qna"
+    provider-manufacturing = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_manufacturing"
   }
 }

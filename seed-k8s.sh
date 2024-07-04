@@ -6,25 +6,25 @@
 ## Seed application DATA to both connectors
 echo
 echo
-echo "Seed data to Ted and Carol"
-for url in 'http://127.0.0.1/ted/cp' 'http://127.0.0.1/carol/cp'
+echo "Seed data to 'provider-qna' and 'provider-manufacturing'"
+for url in 'http://127.0.0.1/provider-manufacturing/cp' 'http://127.0.0.1/provider-qna/cp'
 do
   newman run \
     --folder "Seed" \
     --env-var "HOST=$url" \
-    ./deployment/postman/MVD.postman_collection.json > /dev/null
+    ./deployment/postman/MVD.postman_collection.json
 done
 
-## Seed linked assets to Catalog Server "Bob"
+## Seed linked assets to Catalog Server
 echo
 echo
 echo "Create linked assets on the Catalog Server"
 newman run \
   --folder "Seed Catalog Server" \
   --env-var "HOST=http://127.0.0.1/provider-catalog-server/cp" \
-  --env-var "TED_DSP_URL=http://ted-controlplane:8082" \
-  --env-var "CAROL_DSP_URL=http://carol-controlplane:8082" \
-  ./deployment/postman/MVD.postman_collection.json > /dev/null
+  --env-var "PROVIDER_QNA_DSP_URL=http://provider-qna-controlplane:8082" \
+  --env-var "PROVIDER_MF_DSP_URL=http://provider-manufacturing-controlplane:8082" \
+  ./deployment/postman/MVD.postman_collection.json
 
 ## Seed management DATA to identityhubsl
 API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
@@ -33,27 +33,27 @@ API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 echo
 echo
 echo "Create consumer participant"
-CONSUMER_CONTROLPLANE_SERVICE_URL="http://alice-controlplane:8082"
-CONSUMER_IDENTITYHUB_URL="http://alice-identityhub:7082"
+CONSUMER_CONTROLPLANE_SERVICE_URL="http://consumer-controlplane:8082"
+CONSUMER_IDENTITYHUB_URL="http://consumer-identityhub:7082"
 DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$CONSUMER_IDENTITYHUB_URL" '{
            "roles":[],
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjphbGljZS1pZGVudGl0eWh1YiUzQTcwODM6YWxpY2U",
-                "id": "alice-credentialservice-1"
+                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjpjb25zdW1lci1pZGVudGl0eWh1YiUzQTcwODM6Y29uc3VtZXI=",
+                "id": "consumer-credentialservice-1"
              },
              {
                 "type": "ProtocolEndpoint",
                 "serviceEndpoint": "\($url)/api/dsp",
-                "id": "alice-dsp"
+                "id": "consumer-dsp"
              }
            ],
            "active": true,
-           "participantId": "did:web:alice-identityhub%3A7083:alice",
-           "did": "did:web:alice-identityhub%3A7083:alice",
+           "participantId": "did:web:consumer-identityhub%3A7083:consumer",
+           "did": "did:web:consumer-identityhub%3A7083:consumer",
            "key":{
-               "keyId": "did:web:alice-identityhub%3A7083:alice#key-1",
+               "keyId": "did:web:consumer-identityhub%3A7083:consumer#key-1",
                "privateKeyAlias": "key-1",
                "keyGeneratorParams":{
                   "algorithm": "EC"
@@ -61,7 +61,7 @@ DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            }
        }')
 
-curl -s --location "http://127.0.0.1/alice/cs/api/identity/v1alpha/participants/" \
+curl --location "http://127.0.0.1/consumer/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_CONSUMER"
@@ -74,27 +74,27 @@ echo
 echo "Create provider participant"
 
 PROVIDER_CONTROLPLANE_SERVICE_URL="http://provider-catalog-server-controlplane:8082"
-PROVIDER_IDENTITYHUB_URL="http://bob-identityhub:7082"
+PROVIDER_IDENTITYHUB_URL="http://provider-identityhub:7082"
 
 DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$PROVIDER_IDENTITYHUB_URL" '{
            "roles":[],
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjpib2ItaWRlbnRpdHlodWIlM0E3MDgzOmJvYg",
-                "id": "ted-credentialservice-1"
+                "serviceEndpoint": "\($ihurl)/api/resolution/v1/participants/ZGlkOndlYjpwcm92aWRlci1pZGVudGl0eWh1YiUzQTcwODM6cHJvdmlkZXI=",
+                "id": "provider-credentialservice-1"
              },
              {
                 "type": "ProtocolEndpoint",
                 "serviceEndpoint": "\($url)/api/dsp",
-                "id": "ted-dsp"
+                "id": "provider-dsp"
              }
            ],
            "active": true,
-           "participantId": "did:web:bob-identityhub%3A7083:bob",
-           "did": "did:web:bob-identityhub%3A7083:bob",
+           "participantId": "did:web:provider-identityhub%3A7083:provider",
+           "did": "did:web:provider-identityhub%3A7083:provider",
            "key":{
-               "keyId": "did:web:bob-identityhub%3A7083:bob#key-1",
+               "keyId": "did:web:provider-identityhub%3A7083:provider#key-1",
                "privateKeyAlias": "key-1",
                "keyGeneratorParams":{
                   "algorithm": "EC"
@@ -102,7 +102,7 @@ DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            }
        }')
 
-curl -s --location "http://127.0.0.1/bob/cs/api/identity/v1alpha/participants/" \
+curl --location "http://127.0.0.1/provider/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_PROVIDER"

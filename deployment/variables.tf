@@ -17,11 +17,11 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-variable "alice-did" {
-  default = "did:web:alice-identityhub%3A7083:alice"
+variable "consumer-did" {
+  default = "did:web:consumer-identityhub%3A7083:consumer"
 }
 
-variable "bob-did" {
-  default = "did:web:bob-identityhub%3A7083:bob"
+variable "provider-did" {
+  default = "did:web:provider-identityhub%3A7083:provider"
 }
 

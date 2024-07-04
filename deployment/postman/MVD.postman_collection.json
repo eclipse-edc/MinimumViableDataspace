@@ -268,7 +268,7 @@
 			"name": "Seed Catalog Server",
 			"item": [
 				{
-					"name": "Create linked Asset for Ted",
+					"name": "Create linked Asset for provider-qna",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -283,7 +283,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Ted's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{TED_DSP_URL}}/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Ted's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_QNA_DSP_URL}}/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -306,13 +306,13 @@
 					"response": []
 				},
 				{
-					"name": "Create linked Asset for Carol",
+					"name": "Create linked Asset for provider-manufacturing",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-carol\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{CAROL_DSP_URL}}/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-carol\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_MF_DSP_URL}}/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
