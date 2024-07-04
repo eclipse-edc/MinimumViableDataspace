@@ -1,3 +1,16 @@
+#
+#  Copyright (c) 2024 Metaform Systems, Inc.
+#
+#  This program and the accompanying materials are made available under the
+#  terms of the Apache License, Version 2.0 which is available at
+#  https://www.apache.org/licenses/LICENSE-2.0
+#
+#  SPDX-License-Identifier: Apache-2.0
+#
+#  Contributors:
+#       Metaform Systems, Inc. - initial API and implementation
+#
+
 # This file deploys all the components needed for the consumer side of the scenario,
 # i.e. the connector, an identityhub and a vault.
 
@@ -18,9 +31,9 @@ module "consumer-connector" {
 
 # consumer identity hub
 module "consumer-identityhub" {
-  depends_on        = [module.consumer-vault]
+  depends_on = [module.consumer-vault]
   source            = "./modules/identity-hub"
-  credentials-dir   = dirname("./assets/credentials/k8s/consumer/")
+  credentials-dir = dirname("./assets/credentials/k8s/consumer/")
   humanReadableName = "consumer-identityhub"
   participantId     = var.consumer-did
   vault-url         = "http://consumer-vault:8200"
@@ -40,11 +53,11 @@ module "consumer-vault" {
 
 # Postgres database for the consumer
 module "consumer-postgres" {
-  depends_on       = [kubernetes_config_map.postgres-initdb-config-consumer]
-  source           = "./modules/postgres"
-  instance-name    = "consumer"
+  depends_on = [kubernetes_config_map.postgres-initdb-config-consumer]
+  source        = "./modules/postgres"
+  instance-name = "consumer"
   init-sql-configs = ["consumer-initdb-config"]
-  namespace        = kubernetes_namespace.ns.metadata.0.name
+  namespace     = kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database
