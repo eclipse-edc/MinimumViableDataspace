@@ -30,6 +30,8 @@ done
 newman run \
   --folder "Seed Catalog Server" \
   --env-var "HOST=http://127.0.0.1:8091" \
+  --env-var "PROVIDER_QNA_DSP_URL=http://localhost:8192" \
+  --env-var "PROVIDER_MF_DSP_URL=http://localhost:8292" \
   ./deployment/postman/MVD.postman_collection.json > /dev/null
 
 
