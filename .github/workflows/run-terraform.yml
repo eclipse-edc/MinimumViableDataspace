@@ -46,15 +46,12 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
+      - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
       - name: "Build runtime images"
         working-directory: ./runtimes
         run: |
-          ./gradlew dockerize
+          ./gradlew -Ppersistence=true dockerize 
     
 
       - name: "Create k8s Kind Cluster"
@@ -64,7 +61,7 @@ jobs:
           cluster_name: dcp-demo
 
       - name: "Load runtime images into KinD"
-        run: kind load docker-image connector:latest identity-hub:latest -n dcp-demo
+        run: kind load docker-image connector:latest identity-hub:latest catalog-server:latest -n dcp-demo
 
       - name: "Install nginx ingress controller"
         run: |-
@@ -93,12 +90,9 @@ jobs:
 
       - name: "Run Health Checks"
         run: |-
-          curl --fail http://localhost/bob/health/check/readiness -H "x-api-key: password"
-          curl --fail http://localhost/alice/health/check/readiness -H "x-api-key: password"
-
-      # not needed yet
-      # - name: "Run Tests"
-      #   uses: ./.github/actions/mxd-test-action
+          curl --fail http://localhost/provider-qna/health/check/readiness -H "x-api-key: password"
+          curl --fail http://localhost/provider-manufacturing/health/check/readiness -H "x-api-key: password"
+          curl --fail http://localhost/consumer/health/check/readiness -H "x-api-key: password"
 
       - name: "Destroy the KinD cluster"
         run: >-
