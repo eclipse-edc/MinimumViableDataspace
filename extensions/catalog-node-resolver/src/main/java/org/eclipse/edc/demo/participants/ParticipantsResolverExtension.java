@@ -63,7 +63,7 @@ public class ParticipantsResolverExtension implements ServiceExtension {
     }
 
     @Provider
-    public TargetNodeDirectory createLazyTargetNodeDirectory(ServiceExtensionContext context) {
+    public TargetNodeDirectory createLazyTargetNodeDirectory() {
         if (nodeDirectory == null) {
             nodeDirectory = new LazyLoadNodeDirectory(typeManager.getMapper(), participantListFile, didResolverRegistry, monitor);
         }
