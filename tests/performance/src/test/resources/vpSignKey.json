@@ -1,0 +1,8 @@
+{
+  "kty": "EC",
+  "d": "X-b7JNgRWtQf6wGFd-NItSyJz3wWb6hwgy55-sjVjnA",
+  "crv": "P-256",
+  "kid": "#my-key1",
+  "x": "sCPqXEj68cNcQioepzJmFTKo6Ox6q0YmE9EoLEHwrtw",
+  "y": "a6Jmleyms4D1pW52VIQfHP6DyecbuwNjbNS-JJ9W4Ng"
+}

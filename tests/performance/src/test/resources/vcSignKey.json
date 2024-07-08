@@ -1,0 +1,7 @@
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "kid": "#central-issuer-key1",
+  "x": "LaYd4fK1xYqSumn19cAsL8ZqXymyC91iw8NsPKAx2KI",
+  "y": "OXvnLT0URhiRxq2RRhdAR1pK-vXN7pwQKS3TvQDPCD8"
+}

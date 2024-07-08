@@ -2,94 +2,150 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.3.1"
-
-assertj = "3.25.3"
-awaitility = "4.2.1"
-okhttp = "4.12.0"
-restAssured = "5.4.0"
-apacheCommons = "3.14.0"
-gatling = "3.10.4"
+assertj = "3.24.2"
+awaitility = "4.2.0"
+edc = "0.7.2-SNAPSHOT"
+failsafe = "3.3.2"
+jackson = "2.14.2"
+jupiter = "5.10.1"
+mockserver = "5.15.0"
+nimbus = "9.37"
+postgres = "42.6.0"
+restAssured = "5.3.2"
+swagger = "2.2.18"
+rsApi = "3.1.0"
+testcontainers = "1.19.1"
 
 [libraries]
-edc-spi-policy-engine = { module = "org.eclipse.edc:policy-engine-spi", version.ref = "edc" }
-edc-spi-contract = { module = "org.eclipse.edc:contract-spi", version.ref = "edc" }
-edc-spi-jsonld = { module = "org.eclipse.edc:json-ld-spi", version.ref = "edc" }
-edc-core-util = { module = "org.eclipse.edc:util", version.ref = "edc" }
-edc-core-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
+# upstream EDC dependencies
+edc-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
+edc-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
+edc-did-core = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
+edc-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
 edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
-edc-core-controlplane = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
-edc-core-controlplane-api = { module = "org.eclipse.edc:control-plane-api", version.ref = "edc" }
-edc-core-controlplane-api-client = { module = "org.eclipse.edc:control-plane-api-client", version.ref = "edc" }
-edc-core-dpf-selector = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
-edc-core-policy-engine = { module = "org.eclipse.edc:policy-engine", version.ref = "edc" }
-edc-core-micrometer = { module = "org.eclipse.edc:micrometer-core", version.ref = "edc" }
-edc-core-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
-edc-core-jersey = { module = "org.eclipse.edc:jersey-core", version.ref = "edc" }
-edc-core-transform-core = { module = "org.eclipse.edc:transform-core", version.ref = "edc" }
-edc-protocol-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
-#
-edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
-edc-ext-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
-edc-ext-identity-did-core = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
-edc-ext-identity-did-service = { module = "org.eclipse.edc:identity-did-service", version.ref = "edc" }
-edc-ext-identity-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
+edc-core-crypto = { module = "org.eclipse.edc:crypto-core", version.ref = "edc" }
 edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
-edc-ext-micrometer-jetty = { module = "org.eclipse.edc:jetty-micrometer", version.ref = "edc" }
-edc-ext-micrometer-jersey = { module = "org.eclipse.edc:jersey-micrometer", version.ref = "edc" }
-edc-ext-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
-edc-ext-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
-edc-ext-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
-edc-ext-configuration-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
-edc-ext-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", version.ref = "edc" }
-edc-ext-dpf-api = { module = "org.eclipse.edc:data-plane-api", version.ref = "edc" }
-edc-ext-dpf-client = { module = "org.eclipse.edc:data-plane-client", version.ref = "edc" }
-edc-ext-dpf-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
-edc-ext-dpf-core = { module = "org.eclipse.edc:data-plane-core", version.ref = "edc" }
-edc-ext-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
-edc-ext-dpf-selector-api = { module = "org.eclipse.edc:data-plane-selector-api", version.ref = "edc" }
-edc-ext-transfer-dpf = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
-#
-ih-spi-core = { module = "org.eclipse.edc:identity-hub-spi", version.ref = "edc" }
-ih-core = { module = "org.eclipse.edc:identity-hub", version.ref = "edc" }
-ih-core-client = { module = "org.eclipse.edc:identity-hub-client", version.ref = "edc" }
-ih-core-verifier = { module = "org.eclipse.edc:identity-hub-credentials-verifier", version.ref = "edc" }
-ih-ext-api = { module = "org.eclipse.edc:identity-hub-api", version.ref = "edc" }
-ih-ext-verifier-jwt = { module = "org.eclipse.edc:identity-hub-verifier-jwt", version.ref = "edc" }
-ih-ext-credentials-jwt = { module = "org.eclipse.edc:identity-hub-credentials-jwt", version.ref = "edc" }
-ih-ext-api-selfdescription = { module = "org.eclipse.edc:self-description-api", version.ref = "edc" }
-#
-fc-spi-core = { module = "org.eclipse.edc:federated-catalog-spi", version.ref = "edc" }
-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
-fc-ext-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
-#
-rs-spi-core = { module = "org.eclipse.edc:registration-service-spi", version.ref = "edc" }
-rs-core = { module = "org.eclipse.edc:registration-service", version.ref = "edc" }
-rs-core-credential-service = { module = "org.eclipse.edc:registration-service-credential-service", version.ref = "edc" }
-rs-core-client = { module = "org.eclipse.edc:registration-service-client", version.ref = "edc" }
-rs-ext-api = { module = "org.eclipse.edc:registration-service-api", version.ref = "edc" }
+edc-ext-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
+edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
+edc-api-dsp-config = { module = "org.eclipse.edc:dsp-http-api-configuration", version.ref = "edc" }
+edc-dcp = { module = "org.eclipse.edc:identity-trust-service", version.ref = "edc" }
+edc-controlplane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
+edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-services", version.ref = "edc" }
+edc-config-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
+edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
+edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
+edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
+edc-api-management-asset = { module = "org.eclipse.edc:asset-api", version.ref = "edc" }
+edc-api-management-policy = { module = "org.eclipse.edc:policy-definition-api", version.ref = "edc" }
+edc-api-management-contractdef = { module = "org.eclipse.edc:contract-definition-api", version.ref = "edc" }
+edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
+edc-api-control-configuration = { module = "org.eclipse.edc:control-api-configuration", version.ref = "edc" }
+edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
 
-assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
-awaitility = { module = "org.awaitility:awaitility", version.ref = "awaitility" }
-okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
+edc-controlplane-callback-dispatcher-event = { module = "org.eclipse.edc:callback-event-dispatcher", version.ref = "edc" }
+edc-controlplane-callback-dispatcher-http = { module = "org.eclipse.edc:callback-http-dispatcher", version.ref = "edc" }
+edc-dcp-core = { module = "org.eclipse.edc:identity-trust-core", version.ref = "edc" }
+edc-identity-trust-transform = { module = "org.eclipse.edc:identity-trust-transform", version.ref = "edc" }
+edc-identity-core-did = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
+edc-identity-vc-ldp = { module = "org.eclipse.edc:ldp-verifiable-credentials", version.ref = "edc" }
+edc-identity-vc-jwt = { module = "org.eclipse.edc:jwt-verifiable-credentials", version.ref = "edc" }
+edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
+edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
+edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
+edc-spi-transform = { module = "org.eclipse.edc:transform-spi", version.ref = "edc" }
+edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
+edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
 
-edc-azure-ext-vault = { module = "org.eclipse.edc:vault-azure", version.ref = "edc" }
-edc-azure-core-blob = { module = "org.eclipse.edc:azure-blob-core", version.ref = "edc" }
-edc-azure-ext-dpf-storage = { module = "org.eclipse.edc:data-plane-azure-storage", version.ref = "edc" }
-edc-azure-ext-provision-blob = { module = "org.eclipse.edc:provision-blob", version.ref = "edc" }
 
-apache-commons-lang3 = { module = "org.apache.commons:commons-lang3", version.ref = "apacheCommons" }
-gatling-highcharts = { module = "io.gatling.highcharts:gatling-charts-highcharts", version.ref = "gatling" }
-azure-identity = { group = "com.azure", name = "azure-identity", version = "1.11.2" }
-azure-keyvault = { group = "com.azure", name = "azure-security-keyvault-secrets", version = "4.7.3" }
-azure-storageblob = { group = "com.azure", name = "azure-storage-blob", version = "12.25.1" }
+# EDC lib dependencies
+edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }
+edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
+edc-lib-crypto = { module = "org.eclipse.edc:crypto-common-lib", version.ref = "edc" }
+edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
+
+# EDC DPF dependencies
+edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
+edc-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
+edc-spi-dataplane-selector = { module = "org.eclipse.edc:data-plane-selector-spi", version.ref = "edc" }
+edc-dpf-selector-core = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
+
+# EDC Postgres modules
+edc-sql-assetindex = { module = "org.eclipse.edc:asset-index-sql", version.ref = "edc" }
+edc-sql-contractdef = { module = "org.eclipse.edc:contract-definition-store-sql", version.ref = "edc" }
+edc-sql-contractneg = { module = "org.eclipse.edc:contract-negotiation-store-sql", version.ref = "edc" }
+edc-sql-policydef = { module = "org.eclipse.edc:policy-definition-store-sql", version.ref = "edc" }
+edc-sql-transferprocess = { module = "org.eclipse.edc:transfer-process-store-sql", version.ref = "edc" }
+edc-sql-core = { module = "org.eclipse.edc:sql-core", version.ref = "edc" }
+edc-sql-lease = { module = "org.eclipse.edc:sql-lease", version.ref = "edc" }
+edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref = "edc" }
+edc-sql-transactionlocal = { module = "org.eclipse.edc:transaction-local", version.ref = "edc" }
+
+# identity hub SQL implementations
+edc-sql-ih-credstore-sql = { module = "org.eclipse.edc:identity-hub-credentials-store-sql", version.ref = "edc" }
+edc-sql-ih-didstore-sql = { module = "org.eclipse.edc:identity-hub-did-store-sql", version.ref = "edc" }
+edc-sql-ih-keypairstore-sql = { module = "org.eclipse.edc:identity-hub-keypair-store-sql", version.ref = "edc" }
+edc-sql-ih-pcstore-sql = { module = "org.eclipse.edc:identity-hub-participantcontext-store-sql", version.ref = "edc" }
+
+# identityhub dependenciesl
+edc-ih-core = { module = "org.eclipse.edc:identity-hub-core", version.ref = "edc" }
+edc-ih-keypairs = { module = "org.eclipse.edc:identity-hub-keypairs", version.ref = "edc" }
+edc-ih-did = { module = "org.eclipse.edc:identity-hub-did", version.ref = "edc" }
+edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
+
+# identityhub SPI modules
+edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
+edc-ih-spi-store = { module = "org.eclipse.edc:identity-hub-store-spi", version.ref = "edc" }
+edc-ih-spi-participant = { module = "org.eclipse.edc:participant-context-spi", version.ref = "edc" }
+
+# identityhub API modules
+edc-ih-api-presentation = { module = "org.eclipse.edc:presentation-api", version.ref = "edc" }
+edc-ih-mgmt-config = { module = "org.eclipse.edc:api-configuration", version.ref = "edc" }
+edc-ih-mgmt-authentication = { module = "org.eclipse.edc:identityhub-api-authentication", version.ref = "edc" }
+edc-ih-mgmt-authorization = { module = "org.eclipse.edc:identityhub-api-authorization", version.ref = "edc" }
+edc-ih-mgmt-participantcontext = { module = "org.eclipse.edc:participant-context-api", version.ref = "edc" }
+edc-ih-mgmt-verifiablecredential = { module = "org.eclipse.edc:verifiable-credentials-api", version.ref = "edc" }
+edc-ih-mgmt-did = { module = "org.eclipse.edc:did-api", version.ref = "edc" }
+edc-ih-mgmt-keypairs = { module = "org.eclipse.edc:keypair-api", version.ref = "edc" }
+edc-ih-did-localpub = { module = "org.eclipse.edc:local-did-publisher", version.ref = "edc" }
+edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", version.ref = "edc" }
+edc-oauth2-client = { module = "org.eclipse.edc:oauth2-client", version.ref = "edc" }
+
+# federated catalog modules
+edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
+edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
+edc-fc-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
+
+# specific dependencies needed by the catalog server
+edc-controlplane-catalog = { module = "org.eclipse.edc:control-plane-catalog", version.ref = "edc" }
+edc-controlplane-contract = { module = "org.eclipse.edc:control-plane-contract", version.ref = "edc" }
+
+# Third party libs
+nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
+postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+
 
 [bundles]
-connector = ["edc-core-boot", "edc-core-connector", "edc-core-jersey", "edc-ext-api-observability"]
-identity = ["edc-ext-identity-did-core", "edc-ext-identity-did-service", "edc-ext-identity-did-web"]
-transfer-dpf = ["edc-ext-transfer-dpf", "edc-ext-dpf-client", "edc-ext-dpf-selector-client"]
-dpf = ["edc-ext-dpf-api", "edc-ext-dpf-http", "edc-ext-dpf-core", "edc-azure-ext-dpf-storage"]
+dpf = ["edc-dpf-transfer", "edc-dpf-selector-core", "edc-spi-dataplane-selector"]
+
+connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
+
+controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-api-management", "edc-api-management-config",
+    "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
+    "edc-identity-core-did", "edc-dcp-core", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
+    "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020"]
+
+did = ["edc-did-web", "edc-did-core", "edc-ih-did", "edc-ih-did-localpub"]
+
+management-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
+    "edc-ih-mgmt-keypairs", "edc-ih-mgmt-authentication", "edc-ih-mgmt-authorization"]
+
+identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs"]
+
+dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
+
+sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-transferprocess", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+
+sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql","edc-sql-ih-keypairstore-sql","edc-sql-ih-pcstore-sql","edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

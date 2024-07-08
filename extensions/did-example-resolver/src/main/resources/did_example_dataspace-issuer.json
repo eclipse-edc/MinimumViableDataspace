@@ -1,0 +1,26 @@
+{
+  "id": "did:example:dataspace-issuer",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:example:dataspace-issuer"
+    }
+  ],
+  "service": [],
+  "verificationMethod": [
+    {
+      "id": "did:example:dataspace-issuer#key-1",
+      "controller": "did:example:dataspace-issuer",
+      "type": "JsonWebKey2020",
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "kid": "key-1",
+        "x": "hK2DQ2zZ4y_QHDXi3x9mUx6SC2AzIlP4NK7BjrfE9WM"
+      }
+    }
+  ],
+  "authentication": [
+    "key-1"
+  ]
+}

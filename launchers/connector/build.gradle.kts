@@ -1,16 +1,16 @@
 /*
- *  Copyright (c) 2020, 2021 Microsoft Corporation
- *
- *  This program and the accompanying materials are made available under the
- *  terms of the Apache License, Version 2.0 which is available at
- *  https://www.apache.org/licenses/LICENSE-2.0
- *
- *  SPDX-License-Identifier: Apache-2.0
- *
- *  Contributors:
- *       Microsoft Corporation - initial API and implementation
- *
- */
+*  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+*
+*  This program and the accompanying materials are made available under the
+*  terms of the Apache License, Version 2.0 which is available at
+*  https://www.apache.org/licenses/LICENSE-2.0
+*
+*  SPDX-License-Identifier: Apache-2.0
+*
+*  Contributors:
+*       Bayerische Motoren Werke Aktiengesellschaft (BMW AG) - Initial API and Implementation
+*
+*/
 
 plugins {
     `java-library`
@@ -18,70 +18,33 @@ plugins {
     alias(libs.plugins.shadow)
 }
 
-var distTar = tasks.getByName("distTar")
-var distZip = tasks.getByName("distZip")
-
 dependencies {
-    runtimeOnly(project(":extensions:refresh-catalog"))
-    runtimeOnly(project(":extensions:policies"))
+    implementation(project(":extensions:did-example-resolver"))
+    implementation(project(":extensions:dcp-impl")) // some patches/impls for DCP
+    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
+    implementation(libs.edc.spi.core) // we need some constants
 
-    runtimeOnly(libs.bundles.connector)
-    runtimeOnly(libs.edc.core.controlplane)
-    runtimeOnly(libs.edc.core.controlplane.api)
-    runtimeOnly(libs.edc.core.controlplane.api.client)
-    runtimeOnly(libs.edc.ext.api.management)
-    runtimeOnly(libs.edc.ext.api.management.config)
-    runtimeOnly(libs.edc.ext.configuration.filesystem)
-    runtimeOnly(libs.edc.ext.http)
+    implementation(libs.bundles.controlplane)
+    implementation(libs.edc.core.connector)
 
-    // DSP protocol
-    runtimeOnly(libs.edc.protocol.dsp)
-
-    // API key authentication for Data Management API (also used for CORS support)
-    runtimeOnly(libs.edc.ext.auth.tokenbased)
-
-    // DID authentication
-    runtimeOnly(libs.bundles.identity)
-
-    // Blob storage container provisioning
-    runtimeOnly(libs.edc.azure.core.blob)
-    runtimeOnly(libs.edc.azure.ext.provision.blob)
-    // To use FileSystem vault e.g. -DuseFsVault="true".Only for non-production usages.
-    val useFsVault: Boolean = System.getProperty("useFsVault", "false").toBoolean()
-    if (useFsVault) {
-        runtimeOnly(libs.edc.ext.vault.filesystem)
-    } else {
-        runtimeOnly(libs.edc.azure.ext.vault)
+    if (project.properties.getOrDefault("persistence", "false") == "true") {
+        runtimeOnly(libs.edc.vault.hashicorp)
+        runtimeOnly(libs.bundles.sql.edc)
+        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
-
-    runtimeOnly(libs.bundles.transfer.dpf)
-
-    runtimeOnly(libs.edc.core.dpf.selector)
-    runtimeOnly(libs.edc.ext.dpf.selector.api)
-
-    // Embedded DPF
     runtimeOnly(libs.bundles.dpf)
+}
 
-    // Federated catalog
-    runtimeOnly(libs.fc.core)
-    runtimeOnly(libs.fc.ext.api)
-
-    // Identity Hub
-    runtimeOnly(libs.ih.core)
-    runtimeOnly(libs.ih.ext.api)
-    runtimeOnly(libs.ih.ext.api.selfdescription)
-    runtimeOnly(libs.ih.core.verifier)
-    runtimeOnly(libs.ih.ext.credentials.jwt)
-    runtimeOnly(libs.ih.ext.verifier.jwt)
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    exclude("**/pom.properties", "**/pom.xm")
+    mergeServiceFiles()
+    archiveFileName.set("${project.name}.jar")
 }
 
 application {
     mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    mergeServiceFiles()
-    archiveFileName.set("connector.jar")
-    dependsOn(distTar, distZip)
-    mustRunAfter(distTar, distZip)
+edcBuild {
+    publish.set(false)
 }
