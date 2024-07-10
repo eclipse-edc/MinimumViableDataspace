@@ -34,6 +34,7 @@ edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-
 edc-config-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
+edc-api-version = { module = "org.eclipse.edc:version-api", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
 edc-api-management-asset = { module = "org.eclipse.edc:asset-api", version.ref = "edc" }
 edc-api-management-policy = { module = "org.eclipse.edc:policy-definition-api", version.ref = "edc" }
