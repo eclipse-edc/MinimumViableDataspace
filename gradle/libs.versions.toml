@@ -64,11 +64,25 @@ edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "e
 edc-lib-crypto = { module = "org.eclipse.edc:crypto-common-lib", version.ref = "edc" }
 edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
 
-# EDC DPF dependencies
+# EDC dataplane client modules (used in controlplane)
 edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
 edc-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
 edc-spi-dataplane-selector = { module = "org.eclipse.edc:data-plane-selector-spi", version.ref = "edc" }
 edc-dpf-selector-core = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
+edc-dpf-selector-control-api = { module = "org.eclipse.edc:data-plane-selector-control-api", version.ref = "edc" }
+edc-dpf-signaling-client = { module = "org.eclipse.edc:data-plane-signaling-client", version.ref = "edc" }
+
+# EDC dataplane modules
+edc-dataplane-core = { module = "org.eclipse.edc:data-plane-core", version.ref = "edc" }
+edc-dataplane-api-control-config = { module = "org.eclipse.edc:control-api-configuration", version.ref = "edc" }
+edc-dataplane-api-control-client = { module = "org.eclipse.edc:control-plane-api-client", version.ref = "edc" }
+edc-dataplane-selfregistration = { module = "org.eclipse.edc:data-plane-self-registration", version.ref = "edc" }
+edc-dataplane-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
+edc-dataplane-http-oauth2 = { module = "org.eclipse.edc:data-plane-http-oauth2", version.ref = "edc" }
+edc-dataplane-api-control = { module = "org.eclipse.edc:data-plane-control-api", version.ref = "edc" }
+edc-dataplane-api-public = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
+edc-dataplane-api-signaling = { module = "org.eclipse.edc:data-plane-signaling-api", version.ref = "edc" }
+
 
 # EDC Postgres modules
 edc-sql-assetindex = { module = "org.eclipse.edc:asset-index-sql", version.ref = "edc" }
@@ -126,7 +140,7 @@ postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 
 
 [bundles]
-dpf = ["edc-dpf-transfer", "edc-dpf-selector-core", "edc-spi-dataplane-selector"]
+dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-control-api", "edc-dpf-signaling-client"]
 
 connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
 
@@ -146,7 +160,7 @@ dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-c
 
 sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-transferprocess", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
-sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql","edc-sql-ih-keypairstore-sql","edc-sql-ih-pcstore-sql","edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
