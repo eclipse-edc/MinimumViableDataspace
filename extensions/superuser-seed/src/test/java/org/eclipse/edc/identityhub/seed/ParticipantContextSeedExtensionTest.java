@@ -32,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(DependencyInjectionExtension.class)
 class ParticipantContextSeedExtensionTest {
 
+    public static final String SUPER_USER = "super-user";
     private final ParticipantContextService participantContextService = mock();
     private final Vault vault = mock();
     private final Monitor monitor = mock();
@@ -48,6 +50,7 @@ class ParticipantContextSeedExtensionTest {
         context.registerService(ParticipantContextService.class, participantContextService);
         context.registerService(Vault.class, vault);
         context.registerService(Monitor.class, monitor);
+        when(participantContextService.getParticipantContext(eq(SUPER_USER))).thenReturn(ServiceResult.notFound("foobar"));
     }
 
     @Test
@@ -58,6 +61,7 @@ class ParticipantContextSeedExtensionTest {
         ext.initialize(context);
 
         ext.start();
+        verify(participantContextService).getParticipantContext(eq(SUPER_USER));
         verify(participantContextService).createParticipantContext(any());
         verifyNoMoreInteractions(participantContextService);
     }
@@ -69,6 +73,8 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(ServiceResult.badRequest("test-message"));
         ext.initialize(context);
         assertThatThrownBy(ext::start).isInstanceOf(EdcException.class);
+
+        verify(participantContextService).getParticipantContext(eq(SUPER_USER));
         verify(participantContextService).createParticipantContext(any());
         verifyNoMoreInteractions(participantContextService);
     }
@@ -86,13 +92,14 @@ class ParticipantContextSeedExtensionTest {
 
         when(participantContextService.createParticipantContext(any()))
                 .thenReturn(ServiceResult.success("generated-api-key"));
-        when(participantContextService.getParticipantContext(eq("super-user")))
+        when(participantContextService.getParticipantContext(eq(SUPER_USER)))
+                .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
 
         ext.initialize(context);
         ext.start();
+        verify(participantContextService, times(2)).getParticipantContext(eq(SUPER_USER));
         verify(participantContextService).createParticipantContext(any());
-        verify(participantContextService).getParticipantContext(eq("super-user"));
         verify(vault).storeSecret(eq("super-user-apikey"), eq(apiKeyOverride));
         verifyNoMoreInteractions(participantContextService, vault);
     }
@@ -108,13 +115,14 @@ class ParticipantContextSeedExtensionTest {
 
         when(participantContextService.createParticipantContext(any()))
                 .thenReturn(ServiceResult.success("generated-api-key"));
-        when(participantContextService.getParticipantContext(eq("super-user")))
+        when(participantContextService.getParticipantContext(eq(SUPER_USER)))
+                .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
 
         ext.initialize(context);
         ext.start();
         verify(participantContextService).createParticipantContext(any());
-        verify(participantContextService).getParticipantContext(eq("super-user"));
+        verify(participantContextService, times(2)).getParticipantContext(eq(SUPER_USER));
         verify(vault).storeSecret(eq("super-user-apikey"), eq(apiKeyOverride));
         verify(monitor).warning(contains("this key appears to have an invalid format"));
         verifyNoMoreInteractions(participantContextService, vault);
@@ -131,13 +139,14 @@ class ParticipantContextSeedExtensionTest {
 
         when(participantContextService.createParticipantContext(any()))
                 .thenReturn(ServiceResult.success("generated-api-key"));
-        when(participantContextService.getParticipantContext(eq("super-user")))
+        when(participantContextService.getParticipantContext(eq(SUPER_USER)))
+                .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
 
         ext.initialize(context);
         ext.start();
+        verify(participantContextService, times(2)).getParticipantContext(eq(SUPER_USER));
         verify(participantContextService).createParticipantContext(any());
-        verify(participantContextService).getParticipantContext(eq("super-user"));
         verify(vault).storeSecret(eq("super-user-apikey"), eq(apiKeyOverride));
         verify(monitor).warning(eq("Error storing API key in vault: test-failure"));
         verifyNoMoreInteractions(participantContextService, vault);
@@ -145,7 +154,7 @@ class ParticipantContextSeedExtensionTest {
 
     private ParticipantContext.Builder superUserContext() {
         return ParticipantContext.Builder.newInstance()
-                .participantId("super-user")
+                .participantId(SUPER_USER)
                 .apiTokenAlias("super-user-apikey");
 
     }
