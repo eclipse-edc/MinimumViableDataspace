@@ -206,7 +206,7 @@ This demos comes with a Postman collection located in `deployment/assets/postman
 different sets of variables in different environments, "MVD local development" and "MVD K8S".
 
 The collection itself is pretty self-explanatory, it allows you to request a catalog, perform a contract negotiation and
-execute a data transfer. NB [this caveat](#9-data-transfers-will-get-terminated) though.
+execute a data transfer. NB [this caveat](#5-data-transfers-will-get-terminated) though.
 
 ## Other caveats, shortcuts and workarounds
 
