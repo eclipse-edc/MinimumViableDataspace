@@ -96,6 +96,10 @@ connector-to-connector communication to fail.
 
 All REST requests made from the script are available in
 the [Postman collection](./deployment/postman/MVD.postman_collection.json).
+With the [HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) 
+and [Import from Postman Collections](https://plugins.jetbrains.com/plugin/22438-import-from-postman-collections)
+plugins, the Postman collection can be imported and then executed by means of the 
+[environment file](./deployment/postman/http-client.env.json), selecting the "Local" environment.
 
 ## Running the Demo (Kubernetes)
 
