@@ -33,7 +33,6 @@ variable "participantId" {
 
 variable "namespace" {
   type    = string
-  default = "mvd"
 }
 
 variable "ports" {

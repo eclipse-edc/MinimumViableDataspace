@@ -44,7 +44,6 @@ variable "participant-did" {
 
 variable "namespace" {
   type    = string
-  default = "mvd"
 }
 
 variable "ports" {

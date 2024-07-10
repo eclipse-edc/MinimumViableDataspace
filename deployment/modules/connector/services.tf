@@ -47,6 +47,10 @@ resource "kubernetes_service" "controlplane-service" {
       name = "debug"
       port = var.ports.debug
     }
+    port{
+      name = "control"
+      port = var.ports.control
+    }
   }
 }
 
@@ -60,7 +64,10 @@ resource "kubernetes_service" "dataplane-service" {
     selector = {
       App = kubernetes_deployment.dataplane.spec.0.template.0.metadata[0].labels.App
     }
-
+    port{
+      name = "control"
+      port = var.ports.control
+    }
     port{
       name="public"
       port = var.ports.public

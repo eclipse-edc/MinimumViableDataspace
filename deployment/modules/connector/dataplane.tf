@@ -69,7 +69,6 @@ resource "kubernetes_deployment" "dataplane" {
             timeout_seconds   = 30
           }
         }
-
       }
     }
   }
@@ -83,6 +82,9 @@ resource "kubernetes_config_map" "dataplane-config" {
 
   ## Create databases for keycloak and MIW, create users and assign privileges
   data = {
+    # hostname is "localhost" by default, but must be the service name at which the dataplane is reachable. URL scheme and port are appended by the application
+    EDC_HOSTNAME                                      = local.dataplane-service-name
+    EDC_RUNTIME_ID                                    = "${var.humanReadableName}-dataplane"
     EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS = "${var.participant-did}#${var.aliases.sts-public-key-id}"
     EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS  = var.aliases.sts-private-key
     EDC_DPF_SELECTOR_URL                              = "http://${local.controlplane-service-name}:${var.ports.control}/api/control/v1/dataplanes"

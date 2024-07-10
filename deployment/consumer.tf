@@ -26,6 +26,7 @@ module "consumer-connector" {
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
   vault-url = "http://consumer-vault:8200"
+  namespace = kubernetes_namespace.ns.metadata.0.name
 }
 
 # consumer identity hub
@@ -42,12 +43,14 @@ module "consumer-identityhub" {
     password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
+  namespace = kubernetes_namespace.ns.metadata.0.name
 }
 
 # consumer vault
 module "consumer-vault" {
   source            = "./modules/vault"
   humanReadableName = "consumer-vault"
+  namespace = kubernetes_namespace.ns.metadata.0.name
 }
 
 # Postgres database for the consumer

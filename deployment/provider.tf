@@ -46,13 +46,15 @@ module "provider-manufacturing-connector" {
 }
 
 module "provider-identityhub" {
-  depends_on        = [module.provider-vault]
-  source            = "./modules/identity-hub"
-  credentials-dir   = dirname("./assets/credentials/k8s/provider/")
+  depends_on = [module.provider-vault]
+  source        = "./modules/identity-hub"
+  credentials-dir = dirname("./assets/credentials/k8s/provider/")
   humanReadableName = "provider-identityhub" # must be named "bob-identityhub" until we regenerate DIDs and credentials
-  participantId     = var.provider-did
-  vault-url         = "http://provider-vault:8200"
-  service-name      = "provider"
+  participantId = var.provider-did
+  vault-url     = "http://provider-vault:8200"
+  service-name  = "provider"
+  namespace     = kubernetes_namespace.ns.metadata.0.name
+
   database = {
     user     = "identityhub"
     password = "identityhub"
@@ -78,11 +80,12 @@ module "provider-catalog-server" {
 module "provider-vault" {
   source            = "./modules/vault"
   humanReadableName = "provider-vault"
+  namespace = kubernetes_namespace.ns.metadata.0.name
 }
 
 # Postgres database for the consumer
 module "provider-postgres" {
-  depends_on    = [kubernetes_config_map.postgres-initdb-config-cs]
+  depends_on = [kubernetes_config_map.postgres-initdb-config-cs]
   source        = "./modules/postgres"
   instance-name = "provider"
   init-sql-configs = [
