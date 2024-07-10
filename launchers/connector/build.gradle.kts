@@ -33,6 +33,7 @@ dependencies {
         println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
     runtimeOnly(libs.bundles.dpf)
+    runtimeOnly(libs.edc.api.version)
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
