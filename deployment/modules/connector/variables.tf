@@ -55,6 +55,7 @@ variable "ports" {
     control    = number
     catalog    = number
     debug      = number
+    public     = number
   })
   default = {
     web        = 8080
@@ -63,6 +64,7 @@ variable "ports" {
     control    = 8083
     catalog    = 8084
     debug      = 1044
+    public     = 11002
   }
 }
 
@@ -102,6 +104,7 @@ variable "aliases" {
 }
 
 locals {
-  name                      = lower(var.humanReadableName)
+  name = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
+  dataplane-service-name    = "${var.humanReadableName}-dataplane"
 }

@@ -124,7 +124,7 @@ All commands are executed from the **repository's root folder** unless stated ot
 ./gradlew dockerize -Ppersistence=true
 ```
 
-this builds the runtime images and creates the following docker images: `connector:latest`, `catalog-server:latest`
+this builds the runtime images and creates the following docker images: `controlplane:latest`, `catalog-server:latest`
 and `identity-hub:latest` in the local docker image cache. Note the `-Ppersistence` flag which puts the HashiCorp Vault
 module and PostgreSQL persistence modules on the classpath. These obviously require additional configuration, which is
 handled by the Terraform scripts.
@@ -136,7 +136,7 @@ Next, we bring up and configure the Kubernetes Cluster
 kind create cluster -n dcp-demo --config deployment/kind.config.yaml
 
 # Load docker images into KinD
-kind load docker-image connector:latest identity-hub:latest catalog-server:latest -n dcp-demo
+kind load docker-image controlplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
 
 # Deploy an NGINX ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml

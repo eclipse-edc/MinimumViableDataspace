@@ -25,7 +25,6 @@ module "consumer-connector" {
     password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
-  namespace = kubernetes_namespace.ns.metadata.0.name
   vault-url = "http://consumer-vault:8200"
 }
 

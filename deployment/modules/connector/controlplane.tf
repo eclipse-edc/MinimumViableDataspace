@@ -17,12 +17,12 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-resource "kubernetes_deployment" "connector" {
+resource "kubernetes_deployment" "controlplane" {
   metadata {
-    name      = "${lower(var.humanReadableName)}-connector"
+    name      = "${lower(var.humanReadableName)}-controlplane"
     namespace = var.namespace
     labels = {
-      App = "${lower(var.humanReadableName)}-connector"
+      App = "${lower(var.humanReadableName)}-controlplane"
     }
   }
 
@@ -30,21 +30,21 @@ resource "kubernetes_deployment" "connector" {
     replicas = 1
     selector {
       match_labels = {
-        App = "${lower(var.humanReadableName)}-connector"
+        App = "${lower(var.humanReadableName)}-controlplane"
       }
     }
 
     template {
       metadata {
         labels = {
-          App = "${lower(var.humanReadableName)}-connector"
+          App = "${lower(var.humanReadableName)}-controlplane"
         }
       }
 
       spec {
         container {
           name              = "connector-${lower(var.humanReadableName)}"
-          image             = "connector:latest"
+          image             = "controlplane:latest"
           image_pull_policy = "Never"
 
           env_from {
@@ -118,7 +118,7 @@ resource "kubernetes_config_map" "participants-map" {
 
 resource "kubernetes_config_map" "connector-config" {
   metadata {
-    name      = "${lower(var.humanReadableName)}-connector-config"
+    name      = "${lower(var.humanReadableName)}-controlplane-config"
     namespace = var.namespace
   }
 

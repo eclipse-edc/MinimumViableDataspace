@@ -45,6 +45,6 @@ include(":tests:system-tests")
 
 // launcher modules
 include(":launchers:identity-hub")
-include(":launchers:connector")
+include(":launchers:controlplane")
 include(":launchers:dataplane")
 include(":launchers:catalog-server")
