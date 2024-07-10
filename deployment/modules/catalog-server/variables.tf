@@ -43,7 +43,7 @@ variable "participant-did" {
 }
 
 variable "namespace" {
-  type    = string
+  type = string
 }
 
 variable "ports" {

@@ -32,7 +32,7 @@ variable "participantId" {
 }
 
 variable "namespace" {
-  type    = string
+  type = string
 }
 
 variable "ports" {

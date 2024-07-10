@@ -23,7 +23,7 @@ variable "humanReadableName" {
 }
 
 variable "namespace" {
-  type    = string
+  type = string
 }
 
 variable "vault-token" {

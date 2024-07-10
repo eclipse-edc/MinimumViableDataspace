@@ -18,7 +18,7 @@
 module "consumer-connector" {
   source            = "./modules/connector"
   humanReadableName = "consumer"
-  participantId   = var.consumer-did
+  participantId     = var.consumer-did
   database = {
     user     = "consumer"
     password = "consumer"
@@ -49,7 +49,7 @@ module "consumer-identityhub" {
 module "consumer-vault" {
   source            = "./modules/vault"
   humanReadableName = "consumer-vault"
-  namespace = kubernetes_namespace.ns.metadata.0.name
+  namespace         = kubernetes_namespace.ns.metadata.0.name
 }
 
 # Postgres database for the consumer

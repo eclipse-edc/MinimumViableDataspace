@@ -38,7 +38,7 @@ variable "participantId" {
 }
 
 variable "namespace" {
-  type    = string
+  type = string
 }
 
 variable "ports" {
@@ -98,7 +98,7 @@ variable "aliases" {
 }
 
 locals {
-  name = lower(var.humanReadableName)
+  name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
   dataplane-service-name    = "${var.humanReadableName}-dataplane"
 }
