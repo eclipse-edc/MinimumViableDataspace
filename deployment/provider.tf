@@ -19,8 +19,7 @@
 module "provider-qna-connector" {
   source            = "./modules/connector"
   humanReadableName = "provider-qna"
-  participantId     = var.provider-did
-  participant-did   = var.provider-did
+  participantId   = var.provider-did
   database = {
     user     = "qna"
     password = "provider-qna"
@@ -34,8 +33,7 @@ module "provider-qna-connector" {
 module "provider-manufacturing-connector" {
   source            = "./modules/connector"
   humanReadableName = "provider-manufacturing"
-  participantId     = var.provider-did
-  participant-did   = var.provider-did
+  participantId   = var.provider-did
   database = {
     user     = "manufacturing"
     password = "provider-manufacturing"

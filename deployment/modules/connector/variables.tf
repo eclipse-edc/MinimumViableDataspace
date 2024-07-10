@@ -34,12 +34,7 @@ variable "humanReadableName" {
 
 variable "participantId" {
   type        = string
-  description = "Participant ID of the connector. In Catena-X, this MUST be the BPN"
-}
-
-variable "participant-did" {
-  type        = string
-  description = "DID:WEB identifier of the participant"
+  description = "DID:WEB identifier of the participant, will be used as runtime participantId"
 }
 
 variable "namespace" {

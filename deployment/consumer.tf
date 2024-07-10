@@ -18,8 +18,7 @@
 module "consumer-connector" {
   source            = "./modules/connector"
   humanReadableName = "consumer"
-  participantId     = var.consumer-did
-  participant-did   = var.consumer-did
+  participantId   = var.consumer-did
   database = {
     user     = "consumer"
     password = "consumer"

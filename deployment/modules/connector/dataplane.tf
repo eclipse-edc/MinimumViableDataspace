@@ -60,9 +60,14 @@ resource "kubernetes_deployment" "dataplane" {
             name           = "public-port"
           }
 
+          port {
+            container_port = var.ports.debug
+            name           = "debug-port"
+          }
+
           liveness_probe {
             exec {
-              command = ["curl", "-X POST", "http://localhost:8080/api/check/health"]
+              command = ["curl", "-X POST", "http://localhost:${var.ports.web}/api/check/health"]
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -85,12 +90,16 @@ resource "kubernetes_config_map" "dataplane-config" {
     # hostname is "localhost" by default, but must be the service name at which the dataplane is reachable. URL scheme and port are appended by the application
     EDC_HOSTNAME                                      = local.dataplane-service-name
     EDC_RUNTIME_ID                                    = "${var.humanReadableName}-dataplane"
-    EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS = "${var.participant-did}#${var.aliases.sts-public-key-id}"
+    EDC_PARTICIPANT_ID                                = var.participantId
+    EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS = "${var.participantId}#${var.aliases.sts-public-key-id}"
     EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS  = var.aliases.sts-private-key
     EDC_DPF_SELECTOR_URL                              = "http://${local.controlplane-service-name}:${var.ports.control}/api/control/v1/dataplanes"
+    WEB_HTTP_PORT                                     = var.ports.web
+    WEB_HTTP_PATH                                     = "/api"
     WEB_HTTP_CONTROL_PORT                             = var.ports.control
     WEB_HTTP_CONTROL_PATH                             = "/api/control"
     WEB_HTTP_PUBLIC_PORT                              = var.ports.public
     WEB_HTTP_PUBLIC_PATH                              = "/api/public"
+    JAVA_TOOL_OPTIONS                                 = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
   }
 }

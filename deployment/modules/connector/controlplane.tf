@@ -68,7 +68,7 @@ resource "kubernetes_deployment" "controlplane" {
 
           liveness_probe {
             exec {
-              command = ["curl", "-X POST", "http://localhost:8080/api/check/health"]
+              command = ["curl", "-X POST", "http://localhost:${var.ports.web}/api/check/health"]
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -124,11 +124,12 @@ resource "kubernetes_config_map" "connector-config" {
 
   ## Create databases for keycloak and MIW, create users and assign privileges
   data = {
+    EDC_PARTICIPANT_ID                         = var.participantId
     EDC_API_AUTH_KEY                           = "password"
-    EDC_IAM_ISSUER_ID                          = var.participant-did
+    EDC_IAM_ISSUER_ID                          = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS                  = false
     WEB_HTTP_PORT                              = var.ports.web
-    WEB_HTTP_PATH                              = "/"
+    WEB_HTTP_PATH                              = "/api"
     WEB_HTTP_MANAGEMENT_PORT                   = var.ports.management
     WEB_HTTP_MANAGEMENT_PATH                   = "/api/management"
     WEB_HTTP_CONTROL_PORT                      = var.ports.control
@@ -140,10 +141,9 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_API_AUTH_KEY                           = "password"
     EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = var.aliases.sts-private-key
-    EDC_IAM_STS_PUBLICKEY_ID                   = "${var.participant-did}#${var.aliases.sts-public-key-id}"
+    EDC_IAM_STS_PUBLICKEY_ID                   = "${var.participantId}#${var.aliases.sts-public-key-id}"
     JAVA_TOOL_OPTIONS                          = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH              = "/etc/registry/registry.json"
-    EDC_PARTICIPANT_ID                         = var.participantId
     EDC_VAULT_HASHICORP_URL                    = var.vault-url
     EDC_VAULT_HASHICORP_TOKEN                  = var.vault-token
     EDC_MVD_PARTICIPANTS_LIST_FILE             = "/etc/participants/participants.json"
