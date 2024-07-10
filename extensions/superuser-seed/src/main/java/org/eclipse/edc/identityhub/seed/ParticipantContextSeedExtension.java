@@ -22,6 +22,7 @@ import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.EdcException;
 import org.eclipse.edc.spi.monitor.Monitor;
+import org.eclipse.edc.spi.result.ServiceFailure;
 import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -43,17 +44,15 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
     private String superUserParticipantId;
     private String superUserApiKey;
     private Monitor monitor;
+    @Inject
+    private ParticipantContextService participantContextService;
+    @Inject
+    private Vault vault;
 
     @Override
     public String name() {
         return NAME;
     }
-
-    @Inject
-    private ParticipantContextService participantContextService;
-
-    @Inject
-    private Vault vault;
 
     @Override
     public void initialize(ServiceExtensionContext context) {
@@ -65,7 +64,10 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
     @Override
     public void start() {
         // create super-user
-
+        if (participantContextService.getParticipantContext(superUserParticipantId).succeeded()) { // already exists
+            monitor.debug("super-user already exists with ID '%s', will not re-create".formatted(superUserParticipantId));
+            return;
+        }
         participantContextService.createParticipantContext(ParticipantManifest.Builder.newInstance()
                         .participantId(superUserParticipantId)
                         .did("did:web:%s".formatted(superUserParticipantId)) // doesn't matter, not intended for resolution

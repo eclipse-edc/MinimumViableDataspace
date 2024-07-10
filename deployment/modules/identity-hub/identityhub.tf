@@ -13,7 +13,7 @@
 
 resource "kubernetes_deployment" "identityhub" {
   metadata {
-    name      = lower(var.humanReadableName)
+    name = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
       App = lower(var.humanReadableName)
@@ -63,10 +63,41 @@ resource "kubernetes_deployment" "identityhub" {
             container_port = var.ports.ih-did
             name           = "did"
           }
+          port {
+            container_port = var.ports.web
+            name           = "default-port"
+          }
 
           volume_mount {
             mount_path = "/etc/credentials"
             name       = "credentials-volume"
+          }
+
+          liveness_probe {
+            exec {
+              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/liveness"]
+            }
+            failure_threshold = 10
+            period_seconds    = 5
+            timeout_seconds   = 30
+          }
+
+          readiness_probe {
+            exec {
+              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/readiness"]
+            }
+            failure_threshold = 10
+            period_seconds    = 5
+            timeout_seconds   = 30
+          }
+
+          startup_probe {
+            exec {
+              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/startup"]
+            }
+            failure_threshold = 10
+            period_seconds    = 5
+            timeout_seconds   = 30
           }
         }
 
@@ -107,7 +138,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_IAM_DID_WEB_USE_HTTPS       = false
     EDC_IH_IAM_PUBLICKEY_ALIAS      = local.public-key-alias
     EDC_IH_API_SUPERUSER_KEY        = var.ih_superuser_apikey
-    WEB_HTTP_PORT                   = var.ports.ih-default
+    WEB_HTTP_PORT                   = var.ports.web
     WEB_HTTP_PATH                   = "/api"
     WEB_HTTP_IDENTITY_PORT          = var.ports.ih-identity-api
     WEB_HTTP_IDENTITY_PATH          = "/api/identity"

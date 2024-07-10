@@ -20,6 +20,7 @@ plugins {
 
 dependencies {
     runtimeOnly(libs.bundles.identityhub)
+    runtimeOnly(libs.edc.api.observability)
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.bundles.sql.ih)
