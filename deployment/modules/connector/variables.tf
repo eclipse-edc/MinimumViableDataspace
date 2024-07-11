@@ -34,17 +34,11 @@ variable "humanReadableName" {
 
 variable "participantId" {
   type        = string
-  description = "Participant ID of the connector. In Catena-X, this MUST be the BPN"
-}
-
-variable "participant-did" {
-  type        = string
-  description = "DID:WEB identifier of the participant"
+  description = "DID:WEB identifier of the participant, will be used as runtime participantId"
 }
 
 variable "namespace" {
-  type    = string
-  default = "mvd"
+  type = string
 }
 
 variable "ports" {
@@ -55,6 +49,7 @@ variable "ports" {
     control    = number
     catalog    = number
     debug      = number
+    public     = number
   })
   default = {
     web        = 8080
@@ -63,6 +58,7 @@ variable "ports" {
     control    = 8083
     catalog    = 8084
     debug      = 1044
+    public     = 11002
   }
 }
 
@@ -104,4 +100,5 @@ variable "aliases" {
 locals {
   name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
+  dataplane-service-name    = "${var.humanReadableName}-dataplane"
 }

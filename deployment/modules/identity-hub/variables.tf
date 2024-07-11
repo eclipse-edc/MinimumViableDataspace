@@ -32,24 +32,21 @@ variable "participantId" {
 }
 
 variable "namespace" {
-  type    = string
-  default = "mvd"
+  type = string
 }
 
 variable "ports" {
   type = object({
     web             = number
     debug           = number
-    ih-default      = number
     ih-debug        = number
     ih-did          = number
     ih-identity-api = number
     resolution-api  = number
   })
   default = {
-    web             = 8080
+    web             = 7080
     debug           = 1044
-    ih-default      = 7080
     ih-debug        = 1045
     ih-did          = 7083
     ih-identity-api = 7081

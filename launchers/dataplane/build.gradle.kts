@@ -19,21 +19,19 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":extensions:did-example-resolver"))
-    implementation(project(":extensions:dcp-impl")) // some patches/impls for DCP
-    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
-    implementation(libs.edc.spi.core) // we need some constants
+    runtimeOnly(libs.edc.ext.observability)
+    runtimeOnly(libs.edc.dataplane.core)
+    runtimeOnly(libs.edc.dataplane.api.control.config)
+    runtimeOnly(libs.edc.dataplane.api.control.client)
+    runtimeOnly(libs.edc.dataplane.selfregistration)
+    runtimeOnly(libs.edc.dataplane.http)
+    runtimeOnly(libs.edc.dataplane.http.oauth2)
+    runtimeOnly(libs.edc.dataplane.api.control)
+    runtimeOnly(libs.edc.dataplane.api.public)
+    runtimeOnly(libs.edc.dataplane.api.signaling)
+    runtimeOnly(libs.edc.ext.jsonld) // needed by the DataPlaneSignalingApi
+    runtimeOnly(libs.edc.dpf.selector.client) // for the selector service -> self registration
 
-    implementation(libs.bundles.controlplane)
-    implementation(libs.edc.core.connector)
-
-    if (project.properties.getOrDefault("persistence", "false") == "true") {
-        runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.bundles.sql.edc)
-        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
-    }
-    runtimeOnly(libs.bundles.dpf)
-    runtimeOnly(libs.edc.api.version)
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

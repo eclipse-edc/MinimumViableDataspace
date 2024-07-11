@@ -68,7 +68,25 @@ resource "kubernetes_deployment" "connector" {
 
           liveness_probe {
             exec {
-              command = ["curl", "-X POST", "http://localhost:8080/api/check/health"]
+              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/liveness"]
+            }
+            failure_threshold = 10
+            period_seconds    = 5
+            timeout_seconds   = 30
+          }
+
+          readiness_probe {
+            exec {
+              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/readiness"]
+            }
+            failure_threshold = 10
+            period_seconds    = 5
+            timeout_seconds   = 30
+          }
+
+          startup_probe {
+            exec {
+              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/startup"]
             }
             failure_threshold = 10
             period_seconds    = 5

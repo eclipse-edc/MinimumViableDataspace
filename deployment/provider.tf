@@ -20,7 +20,6 @@ module "provider-qna-connector" {
   source            = "./modules/connector"
   humanReadableName = "provider-qna"
   participantId     = var.provider-did
-  participant-did   = var.provider-did
   database = {
     user     = "qna"
     password = "provider-qna"
@@ -35,7 +34,6 @@ module "provider-manufacturing-connector" {
   source            = "./modules/connector"
   humanReadableName = "provider-manufacturing"
   participantId     = var.provider-did
-  participant-did   = var.provider-did
   database = {
     user     = "manufacturing"
     password = "provider-manufacturing"
@@ -53,6 +51,8 @@ module "provider-identityhub" {
   participantId     = var.provider-did
   vault-url         = "http://provider-vault:8200"
   service-name      = "provider"
+  namespace         = kubernetes_namespace.ns.metadata.0.name
+
   database = {
     user     = "identityhub"
     password = "identityhub"
@@ -78,6 +78,7 @@ module "provider-catalog-server" {
 module "provider-vault" {
   source            = "./modules/vault"
   humanReadableName = "provider-vault"
+  namespace         = kubernetes_namespace.ns.metadata.0.name
 }
 
 # Postgres database for the consumer

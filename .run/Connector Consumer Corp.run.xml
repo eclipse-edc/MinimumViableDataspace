@@ -3,7 +3,7 @@
     <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="org.eclipse.edc.boot.system.runtime.BaseRuntime" />
-    <module name="mvd.launchers.connector.main" />
+    <module name="mvd.launchers.controlplane.main" />
     <option name="VM_PARAMETERS" value="-Dedc.iam.issuer.id=&quot;did:web:localhost%3A7083&quot; -Dweb.http.port=8080 -Dweb.http.path=&quot;/api&quot; -Dweb.http.management.port=8081 -Dweb.http.management.path=&quot;/api/management/&quot; -Dweb.http.protocol.port=8082 -Dweb.http.protocol.path=&quot;/api/dsp&quot; -Dweb.http.control.port=8083 -Dweb.http.control.path=&quot;/api/control&quot; -Dweb.http.catalog.port=8084 -Dweb.http.catalog.path=&quot;/api/catalog&quot; -Dweb.http.version.port=8085 -Dweb.http.version.path=&quot;/api/version&quot; -Dedc.api.auth.key=&quot;password&quot; -Dedc.iam.did.web.use.https=&quot;false&quot; -Dedc.iam.sts.privatekey.alias=&quot;did:web:localhost%3A7083-alias&quot; -Dedc.iam.sts.publickey.id=&quot;did:web:localhost%3A7083#key-1&quot; -Dedc.dsp.callback.address=&quot;http://localhost:8082/api/dsp&quot; -Dedc.participant.id=&quot;did:web:localhost%3A7083&quot; -Dedc.catalog.cache.execution.delay.seconds=5 -Dedc.catalog.cache.execution.period.seconds=10 -Dedc.mvd.participants.list.file=&quot;deployment/assets/participants/participants.local.json&quot;" />
     <method v="2">
       <option name="Make" enabled="true" />

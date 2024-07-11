@@ -36,12 +36,15 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "mvd"
-include(":launchers:identity-hub")
-include(":launchers:connector")
-include(":launchers:catalog-server")
 include(":extensions:did-example-resolver")
 include(":extensions:catalog-node-resolver")
 include(":extensions:dcp-impl")
 include(":extensions:superuser-seed")
 //include(":tests:performance")
 include(":tests:system-tests")
+
+// launcher modules
+include(":launchers:identity-hub")
+include(":launchers:controlplane")
+include(":launchers:dataplane")
+include(":launchers:catalog-server")

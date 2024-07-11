@@ -19,36 +19,32 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.bundles.identityhub)
-    runtimeOnly(libs.edc.api.observability)
+    implementation(project(":extensions:did-example-resolver"))
+    implementation(project(":extensions:dcp-impl")) // some patches/impls for DCP
+    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
+    implementation(libs.edc.spi.core) // we need some constants
+
+    implementation(libs.bundles.controlplane)
+    implementation(libs.edc.core.connector)
+
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.bundles.sql.ih)
+        runtimeOnly(libs.bundles.sql.edc)
         println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
-    runtimeOnly(project(":extensions:superuser-seed"))
+    runtimeOnly(libs.bundles.dpf)
+    runtimeOnly(libs.edc.api.version)
 
-    runtimeOnly(libs.bundles.management.api)
-
-    implementation(libs.bundles.did)
-    implementation(project(":extensions:did-example-resolver"))
-    implementation(libs.bundles.connector)
-    implementation(libs.edc.ih.spi.store)
-    implementation(libs.edc.identity.vc.ldp)
-    implementation(libs.edc.ih.lib.credentialquery)
-
-    testImplementation(libs.edc.lib.crypto)
-    testImplementation(libs.edc.lib.keys)
-}
-
-application {
-    mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     exclude("**/pom.properties", "**/pom.xm")
     mergeServiceFiles()
-    archiveFileName.set("identity-hub.jar")
+    archiveFileName.set("${project.name}.jar")
+}
+
+application {
+    mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
 edcBuild {

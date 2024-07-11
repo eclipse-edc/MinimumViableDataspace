@@ -23,8 +23,7 @@ variable "humanReadableName" {
 }
 
 variable "namespace" {
-  type    = string
-  default = "mvd"
+  type = string
 }
 
 variable "vault-token" {
