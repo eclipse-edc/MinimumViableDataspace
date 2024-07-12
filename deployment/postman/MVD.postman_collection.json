@@ -570,7 +570,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MGYxNGY1ZDItZGYxOS00NWI3LTliMmMtMGZjNGMyY2ZjY2M5\",\n        \"assigner\": \"did:web:localhost%3A7093\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"use\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"FrameworkCredential.pcf\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"active\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MDIxM2MzZDQtMzE3NS00MzFmLWIzM2UtNDFkY2I2Y2RhZjU1\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"use\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"FrameworkCredential.pcf\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"active\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -734,7 +734,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{HOST}}/api/management/v3/edrs/b8626e75-54a0-43ae-8bbc-848a83222736/dataaddress",
+							"raw": "{{HOST}}/api/management/v3/edrs/392d1767-e546-4b54-ab6e-6fb20a3dc12a/dataaddress",
 							"host": [
 								"{{HOST}}"
 							],
@@ -743,8 +743,36 @@
 								"management",
 								"v3",
 								"edrs",
-								"b8626e75-54a0-43ae-8bbc-848a83222736",
+								"392d1767-e546-4b54-ab6e-6fb20a3dc12a",
 								"dataaddress"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Data from Public API",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "eyJraWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMja2V5LTEiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJhdWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwODMiLCJzdWIiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJpYXQiOjE3MjA3Nzk3MjMwMjAsImp0aSI6ImJhZjUwM2ZmLTQ0YTEtNGEzNS1hNDJjLTgwNGM1ODNhYTIxZiJ9.JX6nLTgAJZ6lAEv68ZqVawjMQep2gkWS4Xoco2elm_7TyoWQcxHnxPbrYYFxNg-ATdeARfqr5EiyO3l8A6vAyQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROVIDER_PUBLIC_API}}/api/public",
+							"host": [
+								"{{PROVIDER_PUBLIC_API}}"
+							],
+							"path": [
+								"api",
+								"public"
 							]
 						}
 					},
