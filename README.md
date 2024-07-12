@@ -50,7 +50,7 @@ Consumer Corp has a connector plus its own IdentityHub.
 "provider-qna" and "provider-manufacturing" both have two data assets each, named `"asset-1"` and `"asset-2"` but
 neither
 "provider-qna" nor "provider-manufacturing" expose their
-catalog endpoint directly to the internet. Instead, the catalog server (Bob) provides
+catalog endpoint directly to the internet. Instead, the catalog server (provider company) provides
 a catalog that contains special assets (think: pointers) to both "provider-qna"'s and "provider-manufacturing"'s
 connectors. We call this a "root catalog", and the pointers are called "catalog assets". This means, that by resolving
 the root catalog, and by following the links in it, "Consumer Corp" can resolve the actual asset from "provider-qna" and
@@ -71,8 +71,9 @@ the `SustainabilityCredential`_! That means that no contract for `asset-2` can b
 For the purposes of this demo the VerifiableCredentials are pre-created and are seeded to the participants' credential
 storage (no issuance).
 
-If Alice wants to view the consolidated catalog (containing Teds and Carols assets), then negotiate a contract for an
-asset, and then transfer the asset, she needs to present several credentials:
+If the consumer wants to view the consolidated catalog (containing assets from the provider's Q&A and manufacturing
+departments), then negotiate a contract for an asset, and then transfer the asset, she needs to present several
+credentials:
 
 - catalog request: present `MembershipCredential`
 - contract negotiation: `MembershipCredential` and `PcfCredential` or `SustainabilityCredential`, respectively
@@ -80,14 +81,18 @@ asset, and then transfer the asset, she needs to present several credentials:
 
 ## Running the demo (inside IntelliJ)
 
-There are several run configurations for IntelliJ in the `.run/` folder. One each for Bob's and Alice's connector
-runtimes and
-IdentityHub runtimes and one named "dataspace". The latter brings up all other runtimes together.
+There are several run configurations for IntelliJ in the `.run/` folder. One each for the consumer and provider
+connectors runtimes and IdentityHub runtimes plus one for the provider catalog server, and one named "dataspace". The
+latter is a compound run config an brings up all other runtimes together.
 
-However, with `did:web` documents there is a tightly coupled relation between DID and URL, so we can't easily re-use the
+The connector runtimes contain both the controlplane and the dataplane. Note that in a real-world scenario those would
+likely be separate runtimes to be able to scale them differently. Note also, that the [Kubernetes deployment]() does
+indeed run them as separate pods.
+
+However, with `did:web` documents there is a tight coupling between DID and URL, so we can't easily re-use the
 same DIDs.
 
-DID documents are dynamically generated when "seeding" the data, in particular when creating the `ParticipantContext`s
+DID documents are dynamically generated when "seeding" the data, specifically when creating the `ParticipantContext`s
 in IdentityHub. This is automatically being done by a script `seed.sh`.
 
 After executing the `dataspace` run config in Intellij, be sure to **execute the `seed.sh` script after all the
@@ -96,9 +101,9 @@ connector-to-connector communication to fail.
 
 All REST requests made from the script are available in
 the [Postman collection](./deployment/postman/MVD.postman_collection.json).
-With the [HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) 
+With the [HTTP Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html)
 and [Import from Postman Collections](https://plugins.jetbrains.com/plugin/22438-import-from-postman-collections)
-plugins, the Postman collection can be imported and then executed by means of the 
+plugins, the Postman collection can be imported and then executed by means of the
 [environment file](./deployment/postman/http-client.env.json), selecting the "Local" environment.
 
 ## Running the Demo (Kubernetes)
@@ -114,6 +119,7 @@ following tools are installed and readily available:
 - a POSIX compliant shell
 - Postman (to comfortably execute REST requests)
 - `newman` (to run Postman collections from the command line)
+- not needed, but recommended: Kubernetes monitoring tools like K9s
 
 All commands are executed from the **repository's root folder** unless stated otherwise via `cd` commands.
 
@@ -157,22 +163,28 @@ Once Terraform has completed the deployment, type `kubectl get pods` and verify 
 
 ```shell
 ❯ kubectl get pods --namespace mvd
-NAME                                       READY   STATUS    RESTARTS   AGE
-alice-connector-54d588b4ff-r468g           1/1     Running   0             11m
-alice-identityhub-97485f4df-gqklj          1/1     Running   0             11m
-alice-postgres-7654f9c97c-nf4d9            1/1     Running   0             11m
-consumer-vault-0                           1/1     Running   0             11m
-bob-identityhub-647bfb49cd-fpd77           1/1     Running   0             11m
-bob-postgres-7f74c86dbc-vhw9n              1/1     Running   0             11m
-"provider-manufacturing"-connector-6c9cc8f9cb-t9rtg           1/1     Running   0             11m
-provider-catalog-server-64c6488cf5-tdtbj   1/1     Running   0             11m
-provider-vault-0                           1/1     Running   0             11m
-"provider-qna"-connector-694457685b-82xth             1/1     Running   0             11m
+NAME                                                  READY   STATUS    RESTARTS   AGE
+consumer-controlplane-5854f6f4d7-pk4lm                1/1     Running   0          24s
+consumer-dataplane-64c59668fb-w66vz                   1/1     Running   0          17s
+consumer-identityhub-57465876c5-9hdhj                 1/1     Running   0          24s
+consumer-postgres-6978d86b59-8zbps                    1/1     Running   0          40s
+consumer-vault-0                                      1/1     Running   0          37s
+provider-catalog-server-7f78cf6875-bxc5p              1/1     Running   0          24s
+provider-identityhub-f9d8d4446-nz7k7                  1/1     Running   0          24s
+provider-manufacturing-controlplane-d74946b69-rdqnz   1/1     Running   0          24s
+provider-manufacturing-dataplane-546956b4f8-hkx85     1/1     Running   0          17s
+provider-postgres-75d64bb9fc-drf84                    1/1     Running   0          40s
+provider-qna-controlplane-6cd65bf6f7-fpt7h            1/1     Running   0          24s
+provider-qna-dataplane-5dc5fc4c7d-k4qh4               1/1     Running   0          17s
+provider-vault-0                                      1/1     Running   0          36s
 ```
 
-"Alice" has a connector, and IdentityHub, a postgres database and a vault to store secrets.
-"Bob" has a catalog server, a ""provider-qna"" and a ""provider-manufacturing"" connector plus an IdentityHub, a
-postgres database and a vault.
+The consumer company has a controlplane, a dataplane, an IdentityHub, a postgres database and a vault to store secrets.
+The provider company has a catalog server, a "provider-qna" and a "provider-manufacturing" controlplane/dataplane combo
+plus an IdentityHub, a postgres database and a vault.
+
+It is possible that pods need to restart a number of time before the cluster becomes stable. This is normal and
+expected. If pods _don't_ come up after a reasonable amount of time, it is time to look at the logs and investigate.
 
 Remote Debugging is possible, but Kubernetes port-forwards are necessary.
 

@@ -38,20 +38,23 @@ newman run \
 ## Seed identity data to identityhubs
 API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 
-# add participant "Alice"
-PEM_ALICE=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/alice_public.pem)
-DATA_ALICE=$(jq -n --arg pem "$PEM_ALICE" '{
+# add participant "consumer"
+echo
+echo
+echo "Create consumer participant"
+PEM_CONSUMER=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/consumer_public.pem)
+DATA_CONSUMER=$(jq -n --arg pem "$PEM_CONSUMER" '{
            "roles":[],
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
                 "serviceEndpoint": "http://localhost:7081/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
-                "id": "alice-credentialservice-1"
+                "id": "consumer-credentialservice-1"
              },
              {
                 "type": "ProtocolEndpoint",
                 "serviceEndpoint": "http://localhost:8082/api/dsp",
-                "id": "alice-dsp"
+                "id": "consumer-dsp"
              }
            ],
            "active": true,
@@ -67,22 +70,25 @@ DATA_ALICE=$(jq -n --arg pem "$PEM_ALICE" '{
 curl -s --location 'http://localhost:7082/api/identity/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
---data "$DATA_ALICE"
+--data "$DATA_CONSUMER"
 
-# add participant "Bob"
-PEM_BOB=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/bob_public.pem)
-DATA_BOB=$(jq -n --arg pem "$PEM_BOB" '{
+# add participant "provider"
+echo
+echo
+echo "Create provider participant"
+PEM_PROVIDER=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/provider_public.pem)
+DATA_PROVIDER=$(jq -n --arg pem "$PEM_PROVIDER" '{
             "roles":[],
             "serviceEndpoints":[
               {
                  "type": "CredentialService",
                  "serviceEndpoint": "http://localhost:7091/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDkz",
-                 "id": "bob-credentialservice-1"
+                 "id": "provider-credentialservice-1"
               },
               {
                 "type": "ProtocolEndpoint",
                 "serviceEndpoint": "http://localhost:8092/api/dsp",
-                "id": "bob-dsp"
+                "id": "provider-catalogserver-dsp"
               }
             ],
             "active": true,
@@ -98,4 +104,4 @@ DATA_BOB=$(jq -n --arg pem "$PEM_BOB" '{
 curl -s --location 'http://localhost:7092/api/identity/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
---data "$DATA_BOB"
+--data "$DATA_PROVIDER"
