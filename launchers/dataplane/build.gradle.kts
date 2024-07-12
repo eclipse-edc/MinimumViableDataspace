@@ -32,6 +32,12 @@ dependencies {
     runtimeOnly(libs.edc.ext.jsonld) // needed by the DataPlaneSignalingApi
     runtimeOnly(libs.edc.dpf.selector.client) // for the selector service -> self registration
 
+    if (project.properties.getOrDefault("persistence", "false") == "true") {
+        runtimeOnly(libs.edc.vault.hashicorp)
+        runtimeOnly(libs.bundles.sql.edc.dataplane)
+        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
+    }
+
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

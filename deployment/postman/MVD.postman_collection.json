@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "01f15e20-8265-4beb-b814-8667f1933536",
+		"_postman_id": "106f4673-6d43-4109-8ba4-ede9592fd363",
 		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "647585"
@@ -283,7 +283,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-ted\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Ted's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_QNA_DSP_URL}}/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-provider-qna\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to the catalog of the provider's Q&A department.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_QNA_DSP_URL}}/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -312,7 +312,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-carol\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to Carols's catalog.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_MF_DSP_URL}}/api/dsp\"\n    }\n}",
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"linked-asset-provider-manufacturing\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to the catalog of the provider's Manufacturing department.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_MF_DSP_URL}}/api/dsp\"\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -416,7 +416,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"@context\": {},\n        \"@id\": \"membership-required-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-membership\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"in\",\n            \"operandRight\": [\"linked-asset-ted\", \"linked-asset-carol\", \"normal-asset-1\"]\n        }\n    }"
+							"raw": "{\n        \"@context\": {},\n        \"@id\": \"membership-required-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-membership\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"in\",\n            \"operandRight\": [\"linked-asset-provider-qna\", \"linked-asset-provider-manufacturing\", \"normal-asset-1\"]\n        }\n    }"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
@@ -461,74 +461,6 @@
 			"name": "ControlPlane Management",
 			"item": [
 				{
-					"name": "Request Catalog",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "X-Api-Key",
-								"value": "password"
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
-						},
-						"url": {
-							"raw": "{{HOST}}/api/management/v3/catalog/request",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v3",
-								"catalog",
-								"request"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Initiate negotiation",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "X-Api-Key",
-								"value": "password"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MzFkNDdiODItYTJlMy00NDA0LTgzNWMtNGJhZjAwYTk0MDZm\",\n        \"assigner\": \"did:web:localhost%3A7093\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"odrl:target\": \"asset-1\",\n            \"odrl:action\": {\n                \"odrl:type\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:or\": {\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n    }",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{HOST}}/api/management/v3/contractnegotiations",
-							"host": [
-								"{{HOST}}"
-							],
-							"path": [
-								"api",
-								"management",
-								"v3",
-								"contractnegotiations"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Get Assets",
 					"request": {
 						"method": "POST",
@@ -557,6 +489,104 @@
 								"v3",
 								"assets",
 								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request Catalog",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{CATALOG_SERVER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/catalog/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"catalog",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cached Catalogs",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CONSUMER_CATALOG_QUERY_URL}}/api/catalog/v1alpha/catalog/query",
+							"host": [
+								"{{CONSUMER_CATALOG_QUERY_URL}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"v1alpha",
+								"catalog",
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate negotiation",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MGYxNGY1ZDItZGYxOS00NWI3LTliMmMtMGZjNGMyY2ZjY2M5\",\n        \"assigner\": \"did:web:localhost%3A7093\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"use\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"FrameworkCredential.pcf\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"active\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractnegotiations",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractnegotiations"
 							]
 						}
 					},
@@ -603,7 +633,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"connectorAddress\": \"{{PROVIDER_DSP}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"507c7eed-381a-4a85-a3d5-ea10ebffec88\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": {\n        \"contentType\": \"application/octet-stream\",\n        \"isFinite\": true\n    }\n}",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"76ee7bc5-73b0-44c8-8e03-032726616996\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -656,30 +686,65 @@
 					"response": []
 				},
 				{
-					"name": "Get Cached Catalogs",
+					"name": "Get cached EDRs",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"edc\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}"
 						},
 						"url": {
-							"raw": "{{CATALOG_URL}}/api/catalog/v1alpha/catalog/query",
+							"raw": "{{HOST}}/api/management/v3/edrs/request",
 							"host": [
-								"{{CATALOG_URL}}"
+								"{{HOST}}"
 							],
 							"path": [
 								"api",
-								"catalog",
-								"v1alpha",
-								"catalog",
-								"query"
+								"management",
+								"v3",
+								"edrs",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get EDR DataAddress for TransferId",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Api-Key",
+								"value": "password"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/edrs/b8626e75-54a0-43ae-8bbc-848a83222736/dataaddress",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"edrs",
+								"b8626e75-54a0-43ae-8bbc-848a83222736",
+								"dataaddress"
 							]
 						}
 					},
