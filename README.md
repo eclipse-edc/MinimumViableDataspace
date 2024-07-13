@@ -142,7 +142,7 @@ Next, we bring up and configure the Kubernetes Cluster
 kind create cluster -n dcp-demo --config deployment/kind.config.yaml
 
 # Load docker images into KinD
-kind load docker-image controlplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
+kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
 
 # Deploy an NGINX ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
@@ -218,7 +218,7 @@ _Note the `node` warnings are harmless and can be ignored_
 
 ## Executing REST requests using Postman
 
-This demos comes with a Postman collection located in `deployment/assets/postman`. Be aware that the collection has
+This demos comes with a Postman collection located in `deployment/postman`. Be aware that the collection has
 different sets of variables in different environments, "MVD local development" and "MVD K8S".
 
 The collection itself is pretty self-explanatory, it allows you to request a catalog, perform a contract negotiation and
