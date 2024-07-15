@@ -4,7 +4,7 @@ format.version = "1.1"
 [versions]
 assertj = "3.24.2"
 awaitility = "4.2.0"
-edc = "0.8.0"
+edc = "0.8.1-SNAPSHOT"
 failsafe = "3.3.2"
 jackson = "2.14.2"
 jupiter = "5.10.1"
@@ -129,6 +129,7 @@ edc-oauth2-client = { module = "org.eclipse.edc:oauth2-client", version.ref = "e
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
 edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
 edc-fc-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
+edc-fc-cache-sql = { module = "org.eclipse.edc:federated-catalog-cache-sql", version.ref = "edc" }
 
 # specific dependencies needed by the catalog server
 edc-controlplane-catalog = { module = "org.eclipse.edc:control-plane-catalog", version.ref = "edc" }
@@ -161,6 +162,8 @@ dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-c
 sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-transferprocess", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
 sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+
+sql-fc = ["edc-fc-cache-sql"]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
