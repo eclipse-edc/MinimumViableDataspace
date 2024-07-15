@@ -30,6 +30,7 @@ dependencies {
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.bundles.sql.edc)
+        runtimeOnly(libs.bundles.sql.fc)
         println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
     runtimeOnly(libs.bundles.dpf)

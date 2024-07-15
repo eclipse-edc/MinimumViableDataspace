@@ -242,3 +242,10 @@ CREATE TABLE IF NOT EXISTS edc_edr_entry
     contract_negotiation_id       VARCHAR,
     created_at                    BIGINT  NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS edc_federated_catalog
+(
+    id                    VARCHAR PRIMARY KEY NOT NULL,
+    catalog               JSON,
+    marked                BOOLEAN DEFAULT FALSE
+);
