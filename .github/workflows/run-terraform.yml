@@ -97,7 +97,7 @@ jobs:
 
       - name: "Run E2E Test"
         run: |-
-          ./gradlew -DincludeTags="EndToEndTest" :tests:end2end:test
+          ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
 
       - name: "Destroy the KinD cluster"
         run: >-
