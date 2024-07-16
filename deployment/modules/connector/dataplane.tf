@@ -110,7 +110,7 @@ resource "kubernetes_config_map" "dataplane-config" {
     EDC_RUNTIME_ID                                    = "${var.humanReadableName}-dataplane"
     EDC_PARTICIPANT_ID                                = var.participantId
     EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS = "${var.participantId}#${var.aliases.sts-public-key-id}"
-    EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS  = var.aliases.sts-private-key
+    EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS  = "${var.participantId}#${var.aliases.sts-private-key}"
     EDC_DPF_SELECTOR_URL                              = "http://${local.controlplane-service-name}:${var.ports.control}/api/control/v1/dataplanes"
     WEB_HTTP_PORT                                     = var.ports.web
     WEB_HTTP_PATH                                     = "/api"
@@ -118,6 +118,11 @@ resource "kubernetes_config_map" "dataplane-config" {
     WEB_HTTP_CONTROL_PATH                             = "/api/control"
     WEB_HTTP_PUBLIC_PORT                              = var.ports.public
     WEB_HTTP_PUBLIC_PATH                              = "/api/public"
+    EDC_VAULT_HASHICORP_URL                           = var.vault-url
+    EDC_VAULT_HASHICORP_TOKEN                         = var.vault-token
     JAVA_TOOL_OPTIONS                                 = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
+    EDC_DATASOURCE_DEFAULT_URL                        = var.database.url
+    EDC_DATASOURCE_DEFAULT_USER                       = var.database.user
+    EDC_DATASOURCE_DEFAULT_PASSWORD                   = var.database.password
   }
 }

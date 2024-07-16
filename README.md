@@ -1,5 +1,27 @@
 # Minimum Viable Dataspace Demo
 
+<!-- TOC -->
+
+- [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
+    - [Introduction](#introduction)
+    - [Purpose of this Demo](#purpose-of-this-demo)
+    - [The Scenario](#the-scenario)
+        - [Participants](#participants)
+        - [Data setup](#data-setup)
+        - [Access control](#access-control)
+    - [Running the demo (inside IntelliJ)](#running-the-demo-inside-intellij)
+    - [Running the Demo (Kubernetes)](#running-the-demo-kubernetes)
+        - [1. Build the runtime images](#1-build-the-runtime-images)
+    - [Executing REST requests using Postman](#executing-rest-requests-using-postman)
+    - [Other caveats, shortcuts and workarounds](#other-caveats-shortcuts-and-workarounds)
+      _ [1. In-memory stores in local deployment](#1-in-memory-stores-in-local-deployment)
+      _ [2. Policy Extractor](#2-policy-extractor)
+      _ [3. Scope-to-criterion transformer](#3-scope-to-criterion-transformer)
+      _ [4. DID resolution](#4-did-resolution)
+      _ [4.1 `did:web` for participants](#41-didweb-for-participants)
+      _ [4.2 `did:example` for the dataspace credential issuer](#42-didexample-for-the-dataspace-credential-issuer) \* [5. No issuance (yet)](#5-no-issuance-yet)
+  <!-- TOC -->
+
 ## Introduction
 
 The Decentralized Claims Protocols define a secure way how to participants in a dataspace can exchange and present
@@ -127,10 +149,11 @@ All commands are executed from the **repository's root folder** unless stated ot
 
 ```shell
 ./gradlew build
-./gradlew dockerize -Ppersistence=true
+./gradlew -Ppersistence=true dockerize
 ```
 
-this builds the runtime images and creates the following docker images: `controlplane:latest`, `catalog-server:latest`
+this builds the runtime images and creates the following docker
+images: `controlplane:latest`, `dataplane:latest`, `catalog-server:latest`
 and `identity-hub:latest` in the local docker image cache. Note the `-Ppersistence` flag which puts the HashiCorp Vault
 module and PostgreSQL persistence modules on the classpath. These obviously require additional configuration, which is
 handled by the Terraform scripts.
@@ -222,7 +245,168 @@ This demos comes with a Postman collection located in `deployment/postman`. Be a
 different sets of variables in different environments, "MVD local development" and "MVD K8S".
 
 The collection itself is pretty self-explanatory, it allows you to request a catalog, perform a contract negotiation and
-execute a data transfer. NB [this caveat](#5-data-transfers-will-get-terminated) though.
+execute a data transfer.
+
+The following sequence must be observed:
+
+### 1. Get the catalog
+
+to get the dataspace catalog across all participants, execute `ControlPlane Management/Get Cached Catalog`. Note that it
+takes a few seconds for the consumer connector to collect all entries.
+Watch out for a dataset entry named `asset-1` similar to this:
+
+```json
+                  {
+  "@id": "asset-1",
+  "@type": "http://www.w3.org/ns/dcat#Dataset",
+  "odrl:hasPolicy": {
+    "@id": "bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4",
+    "@type": "odrl:Offer",
+    "odrl:permission": [],
+    "odrl:prohibition": [],
+    "odrl:obligation": {
+      "odrl:action": {
+        "@id": "use"
+      },
+      "odrl:constraint": {
+        "odrl:leftOperand": {
+          "@id": "FrameworkCredential.pcf"
+        },
+        "odrl:operator": {
+          "@id": "odrl:eq"
+        },
+        "odrl:rightOperand": "active"
+      }
+    }
+  },
+  "http://www.w3.org/ns/dcat#distribution": [
+    //...
+  ],
+  "description": "This asset requires Membership to view and negotiate.",
+  "id": "asset-1"
+},
+```
+
+for the purposes of this tutorial we'll focus on the offers from the Provider's Q&A department, so the associated
+service entry should be:
+
+```json
+"http://www.w3.org/ns/dcat#service": {
+// ...
+"http://www.w3.org/ns/dcat#endpointUrl": "http://provider-qna-controlplane:8082/api/dsp",
+"http://purl.org/dc/terms/terms": "dspace:connector",
+"http://purl.org/dc/terms/endpointUrl": "http://provider-qna-controlplane:8082/api/dsp"
+// ...
+}
+```
+
+Important: copy the `@id` value of the `odrl:hasPolicy`, we'll need that to initiate the negotiation!
+
+### 2. Initiate the contract negotiation
+
+From the previous step we have the `odrl:hasPolicy.@id` value, that should look something
+like `bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4`.
+This value must now be copied into the `policy.@id` field of the `ControlPlane Management/Initiate Negotiation` request
+of the Postman collection:
+
+```json
+//...
+"counterPartyId": "{{PROVIDER_ID}}",
+"protocol": "dataspace-protocol-http",
+"policy": {
+"@context": "http://www.w3.org/ns/odrl.jsonld",
+"@type": "http://www.w3.org/ns/odrl/2/Offer",
+"@id": "bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4",
+//...
+```
+
+You will receive a response immediately, but that only means that the request has been received. In order to get the
+current status of the negotiation, we'll have to inquire periodically.
+
+### 3. Query negotiation status
+
+With the `ControlPlane Management/Get Contract Negotiations` request we can periodically query the status of all our
+contract negotiations. Once the `state: FINALIZED`, we copy the value of the `contractAgreementId`:
+
+```json
+{
+  //...
+  "state": "FINALIZED",
+  "contractAgreementId": "3fb08a81-62b4-46fb-9a40-c574ec437759"
+  //...
+}
+```
+
+### 4. Initiate data transfer
+
+From the previous step we have the `contractAgreementId` value `3fb08a81-62b4-46fb-9a40-c574ec437759`. In
+the `ControlPlane Management/Initiate Transfer` request we will paste that into the `contractId` field:
+
+```json
+{
+  //...
+  "contractId": "3fb08a81-62b4-46fb-9a40-c574ec437759",
+  "dataDestination": {
+    "type": "HttpProxy"
+  },
+  "protocol": "dataspace-protocol-http",
+  "transferType": "HttpData-PULL"
+}
+```
+
+### 5. Query data transfers
+
+Like with contract negotiations, data transfers are asynchronous processes so we need to periodically query their status
+using the `ControlPlane Management/Get transfer processes` request. Once we find a `"state": "STARTED"` field in the
+response, we can move on.
+
+The type of data transfer that we are using here (`HttpData-PULL`) means that we can fetch data from the provider
+dataplane's public endpoint, as we would query any other REST API. However, an access token is needed to authenticate
+the request. This access token is provided to the consumer in the form of an EndpointDataReference (EDR). We must thus
+query the consumer's EDR endpoint to obtain the token.
+
+### 6. Get EndpointDataReference
+
+Using the `ControlPlane Management/Get Cached EDRs` request, we fetch the EDR and note down the value of the `@id`
+field, for example `392d1767-e546-4b54-ab6e-6fb20a3dc12a`. This should be identical to the value of
+the `transferProcessId` field.
+
+With that value, we can obtain the access token for this particular EDR.
+
+### 7. Get access token for EDR
+
+In the `ControlPlane Management/Get EDR DataAddress for TransferId` request we have to paste the `transferProcessId`
+value from the previous step in the URL path, for example:
+
+```
+{{HOST}}/api/management/v3/edrs/392d1767-e546-4b54-ab6e-6fb20a3dc12a/dataaddress
+```
+
+Executing this request produces a response that contains both the endpoint where we can fetch the data, and the
+authorization token:
+
+```json
+{
+  //...
+  "endpoint": "http://provider-qna-dataplane:11002/api/public",
+  "authType": "bearer",
+  "endpointType": "https://w3id.org/idsa/v4.1/HTTP",
+  "authorization": "eyJra.....PbovoypJGtWJst30vD9zy5w"
+  //...
+}
+```
+
+Note that the token was abbreviated for legibility.
+
+### 8. Fetch data
+
+Using the endpoint and the authorization token from the previous step, we can then download data using
+the `ControlPlane Management/Download Data from Public API` request. To do that, the token must be copied into the
+request's `Authorization` header.
+
+Important: do not prepend a `bearer` prefix!
+
+This will return some dummy JSON data.
 
 ## Other caveats, shortcuts and workarounds
 
@@ -276,14 +460,7 @@ unless we put DIDs on a publicly resolvable DNS or similar.
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
 introducing the (fictitious) `"did:example"` method, for which there is a custom-built DID resolver in the code.
 
-### 5. Data Transfers will get `TERMINATED`
-
-This demo does _not_ yet include infrastructure to perform any sort of actual data transfer, all transfers will
-ultimately
-fail. That is expected, and will be improved down the line. The important part is, that it will successfully get
-through all the identity-related steps.
-
-### 6. No issuance (yet)
+### 5. No issuance (yet)
 
 All credentials are pre-generated manually because the DCP Issuance Flow is not implemented yet. Credentials are put
 into

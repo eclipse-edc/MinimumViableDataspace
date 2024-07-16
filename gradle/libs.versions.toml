@@ -24,6 +24,7 @@ edc-did-core = { module = "org.eclipse.edc:identity-did-core", version.ref = "ed
 edc-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
 edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 edc-core-crypto = { module = "org.eclipse.edc:crypto-core", version.ref = "edc" }
+edc-core-edrstore = { module = "org.eclipse.edc:edr-store-core", version.ref = "edc" }
 edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
 edc-ext-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
@@ -38,11 +39,13 @@ edc-api-management-config = { module = "org.eclipse.edc:management-api-configura
 edc-api-version = { module = "org.eclipse.edc:version-api", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
 edc-api-management-asset = { module = "org.eclipse.edc:asset-api", version.ref = "edc" }
+edc-api-management-edr = { module = "org.eclipse.edc:edr-cache-api", version.ref = "edc" }
 edc-api-management-policy = { module = "org.eclipse.edc:policy-definition-api", version.ref = "edc" }
 edc-api-management-contractdef = { module = "org.eclipse.edc:contract-definition-api", version.ref = "edc" }
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-api-control-configuration = { module = "org.eclipse.edc:control-api-configuration", version.ref = "edc" }
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
+edc-edr-storereceiver = { module = "org.eclipse.edc:edr-store-receiver", version.ref = "edc" }
 
 edc-controlplane-callback-dispatcher-event = { module = "org.eclipse.edc:callback-event-dispatcher", version.ref = "edc" }
 edc-controlplane-callback-dispatcher-http = { module = "org.eclipse.edc:callback-http-dispatcher", version.ref = "edc" }
@@ -67,6 +70,7 @@ edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
 
 # EDC dataplane client modules (used in controlplane)
 edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
+edc-dpf-transfer-signaling = { module = "org.eclipse.edc:transfer-data-plane-signaling", version.ref = "edc" }
 edc-dpf-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
 edc-spi-dataplane-selector = { module = "org.eclipse.edc:data-plane-selector-spi", version.ref = "edc" }
 edc-dpf-selector-core = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
@@ -87,6 +91,7 @@ edc-dataplane-api-signaling = { module = "org.eclipse.edc:data-plane-signaling-a
 
 # EDC Postgres modules
 edc-sql-assetindex = { module = "org.eclipse.edc:asset-index-sql", version.ref = "edc" }
+edc-sql-edrcache = { module = "org.eclipse.edc:edr-index-sql", version.ref = "edc" }
 edc-sql-contractdef = { module = "org.eclipse.edc:contract-definition-store-sql", version.ref = "edc" }
 edc-sql-contractneg = { module = "org.eclipse.edc:contract-negotiation-store-sql", version.ref = "edc" }
 edc-sql-policydef = { module = "org.eclipse.edc:policy-definition-store-sql", version.ref = "edc" }
@@ -95,6 +100,10 @@ edc-sql-core = { module = "org.eclipse.edc:sql-core", version.ref = "edc" }
 edc-sql-lease = { module = "org.eclipse.edc:sql-lease", version.ref = "edc" }
 edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref = "edc" }
 edc-sql-transactionlocal = { module = "org.eclipse.edc:transaction-local", version.ref = "edc" }
+edc-sql-accesstokendata = { module = "org.eclipse.edc:accesstokendata-store-sql", version.ref = "edc" }
+edc-sql-dataplane = { module = "org.eclipse.edc:data-plane-store-sql", version.ref = "edc" }
+edc-sql-dataplane-instancestore = { module = "org.eclipse.edc:data-plane-instance-store-sql", version.ref = "edc" }
+
 
 # identity hub SQL implementations
 edc-sql-ih-credstore-sql = { module = "org.eclipse.edc:identity-hub-credentials-store-sql", version.ref = "edc" }
@@ -142,25 +151,26 @@ postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 
 
 [bundles]
-dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-control-api", "edc-dpf-signaling-client"]
+dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-control-api", "edc-dpf-signaling-client", "edc-dpf-transfer-signaling"]
 
 connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
 
-controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config",
+controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config","edc-api-management-edr",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
     "edc-identity-core-did", "edc-dcp-core", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
-    "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020"]
+    "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020", "edc-core-edrstore", "edc-edr-storereceiver"]
 
 did = ["edc-did-web", "edc-did-core", "edc-ih-did", "edc-ih-did-localpub"]
 
-management-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
+identity-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
     "edc-ih-mgmt-keypairs", "edc-ih-mgmt-authentication", "edc-ih-mgmt-authorization"]
 
 identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs"]
 
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
-sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-transferprocess", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore","edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-edc-dataplane = ["edc-sql-accesstokendata", "edc-sql-dataplane", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "edc-sql-dataplane-instancestore", "postgres"]
 
 sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 

@@ -243,6 +243,54 @@ CREATE TABLE IF NOT EXISTS edc_edr_entry
     created_at                    BIGINT  NOT NULL
 );
 
+-- ##################
+-- DATA PLANE TABLES
+-- ##################
+
+CREATE TABLE IF NOT EXISTS edc_accesstokendata
+(
+    id           VARCHAR NOT NULL PRIMARY KEY,
+    claim_token  JSON    NOT NULL,
+    data_address JSON    NOT NULL,
+    additional_properties JSON DEFAULT '{}'
+);
+
+CREATE TABLE IF NOT EXISTS edc_lease
+(
+    leased_by      VARCHAR NOT NULL,
+    leased_at      BIGINT,
+    lease_duration INTEGER NOT NULL,
+    lease_id       VARCHAR NOT NULL
+        CONSTRAINT lease_pk
+            PRIMARY KEY
+);
+
+
+CREATE TABLE IF NOT EXISTS edc_data_plane
+(
+    process_id           VARCHAR NOT NULL PRIMARY KEY,
+    state                INTEGER NOT NULL            ,
+    created_at           BIGINT  NOT NULL            ,
+    updated_at           BIGINT  NOT NULL            ,
+    state_count          INTEGER DEFAULT 0 NOT NULL,
+    state_time_stamp     BIGINT,
+    trace_context        JSON,
+    error_detail         VARCHAR,
+    callback_address     VARCHAR,
+    lease_id             VARCHAR
+        CONSTRAINT data_plane_lease_lease_id_fk
+            REFERENCES edc_lease
+            ON DELETE SET NULL,
+    source               JSON,
+    destination          JSON,
+    properties           JSON,
+    flow_type            VARCHAR,
+    transfer_type_destination VARCHAR
+);
+
+-- This will help to identify states that need to be transitioned without a table scan when the entries grow
+CREATE INDEX IF NOT EXISTS data_plane_state ON edc_data_plane (state,state_time_stamp);
+
 CREATE TABLE IF NOT EXISTS edc_federated_catalog
 (
     id                    VARCHAR PRIMARY KEY NOT NULL,
