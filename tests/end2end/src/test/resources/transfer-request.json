@@ -1,0 +1,14 @@
+{
+  "@context": {
+    "odrl": "http://www.w3.org/ns/odrl/2/"
+  },
+  "assetId": "asset-1",
+  "counterPartyAddress":  "{{PROVIDER_DSP_URL}}/api/dsp",
+  "connectorId": "{{PROVIDER_ID}}",
+  "contractId": "{{CONTRACT_ID}}",
+  "dataDestination": {
+    "type": "HttpProxy"
+  },
+  "protocol": "dataspace-protocol-http",
+  "transferType": "HttpData-PULL"
+}

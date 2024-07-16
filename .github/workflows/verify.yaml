@@ -22,8 +22,6 @@ name: "Verify"
 
 on:
   push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -51,7 +49,7 @@ jobs:
             exit 1;
           fi
 
-  validate-formating:
+  checkstyle:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -59,6 +57,15 @@ jobs:
       - name: Run Checkstyle
         run: ./gradlew checkstyleMain checkstyleTest
 
+      - name: Check Terraform files are properly formatted (run "terraform fmt -recursive" to fix)
+        run: |
+          terraform fmt -recursive
+          git diff --exit-code
+
+  validate-terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - name: Check Terraform files are properly formatted (run "terraform fmt -recursive" to fix)
         run: |
           terraform fmt -recursive

@@ -41,7 +41,7 @@ include(":extensions:catalog-node-resolver")
 include(":extensions:dcp-impl")
 include(":extensions:superuser-seed")
 //include(":tests:performance")
-include(":tests:system-tests")
+include(":tests:end2end")
 
 // launcher modules
 include(":launchers:identity-hub")

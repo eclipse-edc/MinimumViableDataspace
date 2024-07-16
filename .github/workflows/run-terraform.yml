@@ -49,7 +49,7 @@ jobs:
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
       - name: "Build runtime images"
-        working-directory: ./runtimes
+        working-directory: ./
         run: |
           ./gradlew -Ppersistence=true dockerize 
     
@@ -61,7 +61,7 @@ jobs:
           cluster_name: dcp-demo
 
       - name: "Load runtime images into KinD"
-        run: kind load docker-image controlplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
+        run: kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
 
       - name: "Install nginx ingress controller"
         run: |-
@@ -93,6 +93,15 @@ jobs:
           curl --fail http://localhost/provider-qna/health/check/readiness -H "x-api-key: password"
           curl --fail http://localhost/provider-manufacturing/health/check/readiness -H "x-api-key: password"
           curl --fail http://localhost/consumer/health/check/readiness -H "x-api-key: password"
+
+      - name: "Seed dataspace"
+        run: |- 
+          chmod +x seed-k8s.sh
+          ./seed-k8s.sh
+
+      - name: "Run E2E Test"
+        run: |-
+          ./gradlew -DincludeTags="EndToEndTest" :tests:end2end:test
 
       - name: "Destroy the KinD cluster"
         run: >-
