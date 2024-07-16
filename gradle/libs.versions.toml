@@ -155,7 +155,7 @@ dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-
 
 connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
 
-controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config","edc-api-management-edr"
+controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config","edc-api-management-edr",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
     "edc-identity-core-did", "edc-dcp-core", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
     "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020", "edc-core-edrstore", "edc-edr-storereceiver"]
