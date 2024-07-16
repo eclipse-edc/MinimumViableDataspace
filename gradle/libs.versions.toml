@@ -33,6 +33,7 @@ edc-controlplane-core = { module = "org.eclipse.edc:control-plane-core", version
 edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-services", version.ref = "edc" }
 edc-config-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
+edc-auth-configuration = { module = "org.eclipse.edc:auth-configuration", version.ref = "edc" }
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
 edc-api-version = { module = "org.eclipse.edc:version-api", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
@@ -145,7 +146,7 @@ dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-
 
 connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
 
-controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-api-management", "edc-api-management-config",
+controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
     "edc-identity-core-did", "edc-dcp-core", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
     "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020"]

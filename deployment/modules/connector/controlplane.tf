@@ -156,6 +156,8 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_PROTOCOL_PATH                     = "/api/dsp"
     WEB_HTTP_CATALOG_PORT                      = var.ports.catalog
     WEB_HTTP_CATALOG_PATH                      = "/api/catalog"
+    WEB_HTTP_CATALOG_AUTH_TYPE                 = "tokenbased"
+    WEB_HTTP_CATALOG_AUTH_KEY                  = "password"
     EDC_API_AUTH_KEY                           = "password"
     EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = var.aliases.sts-private-key
