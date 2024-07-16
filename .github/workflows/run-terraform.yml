@@ -20,11 +20,13 @@
 ---
 name: "Run DCP Demo locally"
 on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  workflow_run:
-    workflows: [ "Verify" ]
-    types:
-      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -49,7 +51,7 @@ jobs:
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
       - name: "Build runtime images"
-        working-directory: ./runtimes
+        working-directory: ./
         run: |
           ./gradlew -Ppersistence=true dockerize 
     
@@ -61,7 +63,7 @@ jobs:
           cluster_name: dcp-demo
 
       - name: "Load runtime images into KinD"
-        run: kind load docker-image controlplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
+        run: kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
 
       - name: "Install nginx ingress controller"
         run: |-
@@ -88,11 +90,14 @@ jobs:
         run: |-
           terraform apply "$GITHUB_SHA.out"
 
-      - name: "Run Health Checks"
+      - name: "Seed dataspace"
+        run: |- 
+          chmod +x seed-k8s.sh
+          ./seed-k8s.sh
+
+      - name: "Run E2E Test"
         run: |-
-          curl --fail http://localhost/provider-qna/health/check/readiness -H "x-api-key: password"
-          curl --fail http://localhost/provider-manufacturing/health/check/readiness -H "x-api-key: password"
-          curl --fail http://localhost/consumer/health/check/readiness -H "x-api-key: password"
+          ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
 
       - name: "Destroy the KinD cluster"
         run: >-
