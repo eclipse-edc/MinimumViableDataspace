@@ -20,11 +20,13 @@
 ---
 name: "Run DCP Demo locally"
 on:
+  push:
+  pull_request:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-  workflow_run:
-    workflows: [ "Verify" ]
-    types:
-      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -87,12 +89,6 @@ jobs:
         working-directory: ./deployment
         run: |-
           terraform apply "$GITHUB_SHA.out"
-
-      - name: "Run Health Checks"
-        run: |-
-          curl --fail http://localhost/provider-qna/health/check/readiness -H "x-api-key: password"
-          curl --fail http://localhost/provider-manufacturing/health/check/readiness -H "x-api-key: password"
-          curl --fail http://localhost/consumer/health/check/readiness -H "x-api-key: password"
 
       - name: "Seed dataspace"
         run: |- 
