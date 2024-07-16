@@ -140,7 +140,7 @@ public class TransferEndToEndTest {
         //download exemplary JSON data from public endpoint
         var response = given()
                 .header("Authorization", token.get())
-                .get(PROVIDER_PUBLIC_URL+"/api/public")
+                .get(PROVIDER_PUBLIC_URL + "/api/public")
                 .then()
                 .log().ifError()
                 .statusCode(200)
