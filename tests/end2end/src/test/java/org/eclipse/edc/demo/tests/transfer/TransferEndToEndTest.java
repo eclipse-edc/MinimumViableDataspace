@@ -17,7 +17,6 @@ package org.eclipse.edc.demo.tests.transfer;
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.json.Json;
-import jakarta.json.JsonPatch;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.testfixtures.TestUtils;
 import org.junit.jupiter.api.Test;
@@ -46,7 +45,8 @@ public class TransferEndToEndTest {
     private static final String PROVIDER_ID = "did:web:provider-identityhub%3A7083:provider";
     // public API endpoint of the provider-qna connector, goes through the incress controller
     private static final String PROVIDER_PUBLIC_URL = "http://127.0.0.1/provider-qna/public";
-    private static final Duration TEST_TIMEOUT_DURATION = Duration.ofSeconds(60);
+    private static final Duration TEST_TIMEOUT_DURATION = Duration.ofSeconds(30);
+    private static final Duration TEST_POLL_DELAY = Duration.ofSeconds(2);
 
     private static RequestSpecification baseRequest() {
         return given()
@@ -64,6 +64,7 @@ public class TransferEndToEndTest {
         var offerId = new AtomicReference<String>();
         // get catalog, extract offer ID
         await().atMost(TEST_TIMEOUT_DURATION)
+                .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var oid = baseRequest()
                             .body(emptyQueryBody)
@@ -96,6 +97,7 @@ public class TransferEndToEndTest {
         //wait until negotiation is FINALIZED
         var agreementId = new AtomicReference<String>();
         await().atMost(TEST_TIMEOUT_DURATION)
+                .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
                             .get(CONSUMER_MANAGEMENT_URL + "/api/management/v3/contractnegotiations/" + negotiationId)
@@ -126,11 +128,13 @@ public class TransferEndToEndTest {
         var endpoint = new AtomicReference<String>();
         var token = new AtomicReference<String>();
         await().atMost(TEST_TIMEOUT_DURATION)
+                .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
                             .get(CONSUMER_MANAGEMENT_URL + "/api/management/v3/edrs/%s/dataaddress".formatted(transferProcessId))
                             .then()
                             .statusCode(200)
+                            .onFailMessage("Expected to find an EDR with transfer ID %s but did not!".formatted(transferProcessId))
                             .extract().body().jsonPath();
 
                     endpoint.set(jp.getString("endpoint"));
