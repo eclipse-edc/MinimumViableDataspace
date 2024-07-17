@@ -46,7 +46,7 @@ application {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    exclude("**/pom.properties", "**/pom.xm")
+    exclude("**/pom.properties", "**/pom.xml")
     mergeServiceFiles()
     archiveFileName.set("identity-hub.jar")
 }
