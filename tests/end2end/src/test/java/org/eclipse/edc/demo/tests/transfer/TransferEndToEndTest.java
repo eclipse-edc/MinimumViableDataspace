@@ -124,7 +124,20 @@ public class TransferEndToEndTest {
                 .statusCode(200)
                 .extract().body().jsonPath().getString("@id");
 
-        // fetch EDR for transfer process
+        await().atMost(TEST_TIMEOUT_DURATION)
+                .pollDelay(TEST_POLL_DELAY)
+                .untilAsserted(() -> {
+                    var jp= baseRequest()
+                            .body(emptyQueryBody)
+                            .post(CONSUMER_MANAGEMENT_URL + "/api/management/v3/transferprocesses/request")
+                            .then()
+                            .statusCode(200)
+                            .extract().body().jsonPath();
+
+                    assertThat(jp.getString("state")).contains("STARTED");
+                });
+
+        // fetch EDR for transfer processs
         var endpoint = new AtomicReference<String>();
         var token = new AtomicReference<String>();
         await().atMost(TEST_TIMEOUT_DURATION)
@@ -133,6 +146,7 @@ public class TransferEndToEndTest {
                     var jp = baseRequest()
                             .get(CONSUMER_MANAGEMENT_URL + "/api/management/v3/edrs/%s/dataaddress".formatted(transferProcessId))
                             .then()
+                            .log().ifValidationFails()
                             .statusCode(200)
                             .onFailMessage("Expected to find an EDR with transfer ID %s but did not!".formatted(transferProcessId))
                             .extract().body().jsonPath();
