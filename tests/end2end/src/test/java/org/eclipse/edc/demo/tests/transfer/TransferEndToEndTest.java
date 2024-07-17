@@ -14,8 +14,10 @@
 
 package org.eclipse.edc.demo.tests.transfer;
 
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.json.Json;
+import jakarta.json.JsonPatch;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.testfixtures.TestUtils;
 import org.junit.jupiter.api.Test;
@@ -70,10 +72,11 @@ public class TransferEndToEndTest {
                             .log().ifError()
                             .statusCode(200)
                             // yes, it's a bit brittle with the hardcoded indexes, but it appears to work.
-                            .extract().body().jsonPath().getString("[0]['http://www.w3.org/ns/dcat#dataset'][1]['http://www.w3.org/ns/dcat#dataset'][0]['odrl:hasPolicy']['@id']");
+                            .extract().body().asString();
+                    var jp = new JsonPath(oid).getString("[0]['dcat:dataset'][1]['dcat:dataset'][0]['odrl:hasPolicy']['@id']");
 
-                    assertThat(oid).isNotNull();
-                    offerId.set(oid);
+                    assertThat(jp).isNotNull();
+                    offerId.set(jp);
                 });
 
         // initiate negotiation
