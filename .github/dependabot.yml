@@ -43,7 +43,7 @@ updates:
       - dependency-name: "org.eclipse.edc:edc-versions"
 
   - package-ecosystem: "terraform"
-    directory: "/mxd"
+    directory: "/deployment"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
@@ -51,11 +51,12 @@ updates:
       - "dependencies"
       - "terraform"
 
-  - package-ecosystem: "npm"
-    directory: "/edc-policy-playground"
+  # Docker
+  - package-ecosystem: "docker"
+    target-branch: main
+    directory: "./launchers"
+    labels:
+      - "dependabot"
+      - "docker"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 5
-    labels:
-      - "dependencies"
-      - "npm"
