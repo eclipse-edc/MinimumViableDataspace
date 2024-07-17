@@ -33,6 +33,7 @@ edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
 edc-api-dsp-config = { module = "org.eclipse.edc:dsp-http-api-configuration", version.ref = "edc" }
 edc-dcp = { module = "org.eclipse.edc:identity-trust-service", version.ref = "edc" }
 edc-controlplane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
+edc-controlplane-transform = { module = "org.eclipse.edc:control-plane-transform", version.ref = "edc" }
 edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-services", version.ref = "edc" }
 edc-config-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
@@ -69,6 +70,7 @@ edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" 
 edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
 edc-lib-crypto = { module = "org.eclipse.edc:crypto-common-lib", version.ref = "edc" }
 edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
+edc-lib-jsonld = { module = "org.eclipse.edc:json-ld-lib", version.ref = "edc" }
 
 # EDC dataplane client modules (used in controlplane)
 edc-dpf-transfer = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }

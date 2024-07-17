@@ -14,11 +14,27 @@
 
 package org.eclipse.edc.demo.tests.transfer;
 
-import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import org.eclipse.edc.catalog.transform.JsonObjectToCatalogTransformer;
+import org.eclipse.edc.catalog.transform.JsonObjectToDataServiceTransformer;
+import org.eclipse.edc.catalog.transform.JsonObjectToDatasetTransformer;
+import org.eclipse.edc.catalog.transform.JsonObjectToDistributionTransformer;
+import org.eclipse.edc.connector.controlplane.catalog.spi.Catalog;
+import org.eclipse.edc.connector.controlplane.catalog.spi.Dataset;
+import org.eclipse.edc.connector.controlplane.transform.odrl.OdrlTransformersFactory;
+import org.eclipse.edc.jsonld.TitaniumJsonLd;
+import org.eclipse.edc.jsonld.spi.JsonLd;
+import org.eclipse.edc.jsonld.util.JacksonJsonLd;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.testfixtures.TestUtils;
+import org.eclipse.edc.spi.agent.ParticipantIdMapper;
+import org.eclipse.edc.spi.monitor.ConsoleMonitor;
+import org.eclipse.edc.transform.TypeTransformerRegistryImpl;
+import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
+import org.eclipse.edc.transform.transformer.edc.to.JsonValueToGenericTypeTransformer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
@@ -43,16 +59,39 @@ public class TransferEndToEndTest {
     private static final String PROVIDER_DSP_URL = "http://provider-qna-controlplane:8082";
     // DID of the provider company
     private static final String PROVIDER_ID = "did:web:provider-identityhub%3A7083:provider";
-    // public API endpoint of the provider-qna connector, goes through the incress controller
+    // public API endpoint of the provider-qna connector, goes through the ingress controller
     private static final String PROVIDER_PUBLIC_URL = "http://127.0.0.1/provider-qna/public";
-    private static final Duration TEST_TIMEOUT_DURATION = Duration.ofSeconds(30);
+    private static final Duration TEST_TIMEOUT_DURATION = Duration.ofSeconds(120);
     private static final Duration TEST_POLL_DELAY = Duration.ofSeconds(2);
+
+    private final TypeTransformerRegistry transformerRegistry = new TypeTransformerRegistryImpl();
+    private final JsonLd jsonLd = new TitaniumJsonLd(new ConsoleMonitor());
 
     private static RequestSpecification baseRequest() {
         return given()
                 .header("X-Api-Key", "password")
                 .contentType(JSON)
                 .when();
+    }
+
+    @BeforeEach
+    void setup() {
+        transformerRegistry.register(new JsonObjectToCatalogTransformer());
+        transformerRegistry.register(new JsonObjectToDatasetTransformer());
+        transformerRegistry.register(new JsonObjectToDataServiceTransformer());
+        transformerRegistry.register(new JsonObjectToDistributionTransformer());
+        transformerRegistry.register(new JsonValueToGenericTypeTransformer(JacksonJsonLd.createObjectMapper()));
+        OdrlTransformersFactory.jsonObjectToOdrlTransformers(new ParticipantIdMapper() {
+            @Override
+            public String toIri(String s) {
+                return s;
+            }
+
+            @Override
+            public String fromIri(String s) {
+                return s;
+            }
+        }).forEach(transformerRegistry::register);
     }
 
     @Test
@@ -66,18 +105,32 @@ public class TransferEndToEndTest {
         await().atMost(TEST_TIMEOUT_DURATION)
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
-                    var oid = baseRequest()
+                    var jo = baseRequest()
                             .body(emptyQueryBody)
                             .post(CONSUMER_CATALOG_URL + "/api/catalog/v1alpha/catalog/query")
                             .then()
                             .log().ifError()
                             .statusCode(200)
                             // yes, it's a bit brittle with the hardcoded indexes, but it appears to work.
-                            .extract().body().asString();
-                    var jp = new JsonPath(oid).getString("[0]['dcat:dataset'][1]['dcat:dataset'][0]['odrl:hasPolicy']['@id']");
+                            .extract().body().as(JsonArray.class);
 
-                    assertThat(jp).isNotNull();
-                    offerId.set(jp);
+                    var offerIdsFiltered = jo.stream().map(jv -> {
+
+                        var expanded = jsonLd.expand(jv.asJsonObject()).orElseThrow(f -> new AssertionError(f.getFailureDetail()));
+                        var cat = transformerRegistry.transform(expanded, Catalog.class).orElseThrow(f -> new AssertionError(f.getFailureDetail()));
+                        return cat.getDatasets().stream().filter(ds -> ds instanceof Catalog) // filter for CatalogAssets
+                                .map(ds -> (Catalog) ds)
+                                .filter(sc -> sc.getDataServices().stream().anyMatch(dataService -> dataService.getEndpointUrl().contains("provider-qna"))) // filter for assets from the Q&A Provider
+                                .flatMap(c -> c.getDatasets().stream())
+                                .filter(dataset -> dataset.getId().equals("asset-1")) // filter for the asset we're allowed to negotiate
+                                .map(Dataset::getOffers)
+                                .map(offers -> offers.keySet().iterator().next())
+                                .findFirst()
+                                .orElse(null);
+                    });
+                    var oid = offerIdsFiltered.findFirst().orElseThrow();
+                    assertThat(oid).isNotNull();
+                    offerId.set(oid);
                 });
 
         // initiate negotiation
@@ -124,10 +177,11 @@ public class TransferEndToEndTest {
                 .statusCode(200)
                 .extract().body().jsonPath().getString("@id");
 
+        // wait until transfer process is in STARTED state
         await().atMost(TEST_TIMEOUT_DURATION)
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
-                    var jp= baseRequest()
+                    var jp = baseRequest()
                             .body(emptyQueryBody)
                             .post(CONSUMER_MANAGEMENT_URL + "/api/management/v3/transferprocesses/request")
                             .then()

@@ -23,4 +23,8 @@ dependencies {
     testImplementation(libs.parsson)
     testImplementation(libs.restAssured)
     testImplementation(libs.awaitility)
+    testImplementation(libs.edc.fc.core)
+    testImplementation(libs.edc.lib.transform)
+    testImplementation(libs.edc.lib.jsonld)
+    testImplementation(libs.edc.controlplane.transform)
 }
