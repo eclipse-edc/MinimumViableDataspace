@@ -99,7 +99,12 @@ jobs:
 
       - name: "Run E2E Test"
         run: |-
-          ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true || kubectl logs deployment/provider-qna-controlplane -n mvd
+          ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
+
+      - name: "Print log if test failed"
+        if: failure()
+        run: |-
+          kubectl logs deployment/provider-qna-controlplane -n mvd
 
       - name: "Destroy the KinD cluster"
         run: >-

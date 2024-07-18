@@ -168,7 +168,7 @@ public class TransferEndToEndTest {
         await().atMost(TEST_TIMEOUT_DURATION)
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
-                    var jp= baseRequest()
+                    var jp = baseRequest()
                             .get(PROVIDER_MANAGEMENT_URL + "/api/management/v3/dataplanes")
                             .then()
                             .statusCode(200)
