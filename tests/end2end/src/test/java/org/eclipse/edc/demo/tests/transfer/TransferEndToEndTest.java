@@ -111,7 +111,6 @@ public class TransferEndToEndTest {
                             .then()
                             .log().ifError()
                             .statusCode(200)
-                            // yes, it's a bit brittle with the hardcoded indexes, but it appears to work.
                             .extract().body().as(JsonArray.class);
 
                     var offerIdsFiltered = jo.stream().map(jv -> {
@@ -127,8 +126,9 @@ public class TransferEndToEndTest {
                                 .map(offers -> offers.keySet().iterator().next())
                                 .findFirst()
                                 .orElse(null);
-                    });
-                    var oid = offerIdsFiltered.findFirst().orElseThrow();
+                    }).toList();
+                    assertThat(offerIdsFiltered).hasSize(1);
+                    var oid = offerIdsFiltered.get(0);
                     assertThat(oid).isNotNull();
                     offerId.set(oid);
                 });
