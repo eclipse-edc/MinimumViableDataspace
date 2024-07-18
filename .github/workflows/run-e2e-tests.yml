@@ -18,7 +18,7 @@
 #
 
 ---
-name: "Run DCP Demo locally"
+name: "Execute E2E Tests"
 on:
   push:
   pull_request:
@@ -36,7 +36,7 @@ concurrency:
 
 
 jobs:
-  Deploy-with-Terraform:
+  Run-E2E-Tests:
     runs-on: ubuntu-latest
     steps:
 
