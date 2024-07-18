@@ -61,6 +61,7 @@ public class TransferEndToEndTest {
     private static final String PROVIDER_ID = "did:web:provider-identityhub%3A7083:provider";
     // public API endpoint of the provider-qna connector, goes through the ingress controller
     private static final String PROVIDER_PUBLIC_URL = "http://127.0.0.1/provider-qna/public";
+    private static final String PROVIDER_MANAGEMENT_URL = "http://127.0.0.1/provider-qna/cp";
     private static final Duration TEST_TIMEOUT_DURATION = Duration.ofSeconds(120);
     private static final Duration TEST_POLL_DELAY = Duration.ofSeconds(2);
 
@@ -161,6 +162,21 @@ public class TransferEndToEndTest {
                     assertThat(state).isEqualTo("FINALIZED");
                     agreementId.set(jp.getString("contractAgreementId"));
 
+                });
+
+        // wait until provider's dataplane is available
+        await().atMost(TEST_TIMEOUT_DURATION)
+                .pollDelay(TEST_POLL_DELAY)
+                .untilAsserted(() -> {
+                    var jp= baseRequest()
+                            .get(PROVIDER_MANAGEMENT_URL + "/api/management/v3/dataplanes")
+                            .then()
+                            .statusCode(200)
+                            .log().ifValidationFails()
+                            .extract().body().jsonPath();
+
+                    var state = jp.getString("state");
+                    assertThat(state).contains("AVAILABLE");
                 });
 
         //start transfer process
