@@ -14,12 +14,12 @@
         - [1. Build the runtime images](#1-build-the-runtime-images)
     - [Executing REST requests using Postman](#executing-rest-requests-using-postman)
     - [Other caveats, shortcuts and workarounds](#other-caveats-shortcuts-and-workarounds)
-      _ [1. In-memory stores in local deployment](#1-in-memory-stores-in-local-deployment)
-      _ [2. Policy Extractor](#2-policy-extractor)
-      _ [3. Scope-to-criterion transformer](#3-scope-to-criterion-transformer)
-      _ [4. DID resolution](#4-did-resolution)
-      _ [4.1 `did:web` for participants](#41-didweb-for-participants)
-      _ [4.2 `did:example` for the dataspace credential issuer](#42-didexample-for-the-dataspace-credential-issuer) \* [5. No issuance (yet)](#5-no-issuance-yet)
+      - [1. In-memory stores in local deployment](#1-in-memory-stores-in-local-deployment)
+      - [2. Policy Extractor](#2-policy-extractor)
+      - [3. Scope-to-criterion transformer](#3-scope-to-criterion-transformer)
+      - [4. DID resolution](#4-did-resolution)
+        - [4.1 `did:web` for participants](#41-didweb-for-participants)
+        - [4.2 `did:example` for the dataspace credential issuer](#42-didexample-for-the-dataspace-credential-issuer) \* [5. No issuance (yet)](#5-no-issuance-yet)
   <!-- TOC -->
 
 ## Introduction

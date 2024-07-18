@@ -18,7 +18,7 @@
 #
 
 ---
-name: "Run DCP Demo locally"
+name: "Execute E2E Tests"
 on:
   push:
   pull_request:
@@ -36,7 +36,7 @@ concurrency:
 
 
 jobs:
-  Deploy-with-Terraform:
+  Run-E2E-Tests:
     runs-on: ubuntu-latest
     steps:
 
@@ -100,6 +100,11 @@ jobs:
       - name: "Run E2E Test"
         run: |-
           ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
+
+      - name: "Print log if test failed"
+        if: failure()
+        run: |-
+          kubectl logs deployment/provider-qna-controlplane -n mvd
 
       - name: "Destroy the KinD cluster"
         run: >-
