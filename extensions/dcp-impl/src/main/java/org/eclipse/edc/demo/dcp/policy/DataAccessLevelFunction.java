@@ -21,23 +21,16 @@ import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.spi.agent.ParticipantAgent;
 
 import java.util.Map;
+import java.util.Objects;
 
-public class UseCaseFunction implements AtomicConstraintFunction<Duty> {
+public class DataAccessLevelFunction extends AbstractCredentialEvaluationFunction implements AtomicConstraintFunction<Duty> {
 
-    private final String usecase;
-
-    public UseCaseFunction(String usecase) {
-        this.usecase = usecase;
-    }
+    private static final String DATAPROCESSOR_CRED_TYPE = "DataProcessorCredential";
 
     @Override
     public boolean evaluate(Operator operator, Object rightOperand, Duty duty, PolicyContext policyContext) {
         if (!operator.equals(Operator.EQ)) {
             policyContext.reportProblem("Cannot evaluate operator %s, only %s is supported".formatted(operator, Operator.EQ));
-            return false;
-        }
-        if (!"active".equalsIgnoreCase(rightOperand.toString())) {
-            policyContext.reportProblem("Use case credentials only support right operand 'active', but found '%s'".formatted(operator.toString()));
             return false;
         }
         var pa = policyContext.getContextData(ParticipantAgent.class);
@@ -46,18 +39,28 @@ public class UseCaseFunction implements AtomicConstraintFunction<Duty> {
             return false;
         }
 
-        var claims = pa.getClaims();
+        var credentialResult = getCredentialList(pa);
+        if (credentialResult.failed()) {
+            policyContext.reportProblem(credentialResult.getFailureDetail());
+            return false;
+        }
 
-        String version = getClaim("contractVersion", claims);
-        String holderIdentifier = getClaim("holderIdentifier", claims);
-        String contractTemplate = getClaim("contractTemplate", claims);
+        return credentialResult.getContent()
+                .stream()
+                .filter(vc -> vc.getType().stream().anyMatch(t -> t.endsWith(DATAPROCESSOR_CRED_TYPE)))
+                .flatMap(credential -> credential.getCredentialSubject().stream())
+                .anyMatch(credentialSubject -> {
+                    var version = credentialSubject.getClaim(MVD_NAMESPACE, "contractVersion");
+                    var level = credentialSubject.getClaim(MVD_NAMESPACE, "level");
 
-        return version != null && holderIdentifier != null && contractTemplate != null &&
-                contractTemplate.contains(usecase);
+                    return version != null && Objects.equals(level, rightOperand);
+                });
+
+        
     }
 
     public String key() {
-        return "FrameworkCredential.%s".formatted(usecase);
+        return "DataAccess.level";
     }
 
     @SuppressWarnings("unchecked")

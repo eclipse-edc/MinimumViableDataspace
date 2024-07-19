@@ -14,12 +14,12 @@
         - [1. Build the runtime images](#1-build-the-runtime-images)
     - [Executing REST requests using Postman](#executing-rest-requests-using-postman)
     - [Other caveats, shortcuts and workarounds](#other-caveats-shortcuts-and-workarounds)
-      - [1. In-memory stores in local deployment](#1-in-memory-stores-in-local-deployment)
-      - [2. Policy Extractor](#2-policy-extractor)
-      - [3. Scope-to-criterion transformer](#3-scope-to-criterion-transformer)
-      - [4. DID resolution](#4-did-resolution)
-        - [4.1 `did:web` for participants](#41-didweb-for-participants)
-        - [4.2 `did:example` for the dataspace credential issuer](#42-didexample-for-the-dataspace-credential-issuer) \* [5. No issuance (yet)](#5-no-issuance-yet)
+        - [1. In-memory stores in local deployment](#1-in-memory-stores-in-local-deployment)
+        - [2. Policy Extractor](#2-policy-extractor)
+        - [3. Scope-to-criterion transformer](#3-scope-to-criterion-transformer)
+        - [4. DID resolution](#4-did-resolution)
+            - [4.1 `did:web` for participants](#41-didweb-for-participants)
+            - [4.2 `did:example` for the dataspace credential issuer](#42-didexample-for-the-dataspace-credential-issuer) \* [5. No issuance (yet)](#5-no-issuance-yet)
   <!-- TOC -->
 
 ## Introduction
@@ -70,35 +70,48 @@ Consumer Corp has a connector plus its own IdentityHub.
 ### Data setup
 
 "provider-qna" and "provider-manufacturing" both have two data assets each, named `"asset-1"` and `"asset-2"` but
-neither
-"provider-qna" nor "provider-manufacturing" expose their
-catalog endpoint directly to the internet. Instead, the catalog server (provider company) provides
-a catalog that contains special assets (think: pointers) to both "provider-qna"'s and "provider-manufacturing"'s
-connectors. We call this a "root catalog", and the pointers are called "catalog assets". This means, that by resolving
-the root catalog, and by following the links in it, "Consumer Corp" can resolve the actual asset from "provider-qna" and
-"provider-manufacturing".
+neither "provider-qna" nor "provider-manufacturing" expose their catalog endpoint directly to the internet. Instead, the
+catalog server (provider company) provides a catalog that contains special assets (think: pointers) to both "
+provider-qna"'s and "provider-manufacturing"'s connectors. We call this a "root catalog", and the pointers are called "
+catalog assets". This means, that by resolving the root catalog, and by following the links in it, "Consumer Corp" can
+resolve the actual asset from "provider-qna" and "provider-manufacturing".
 
 ### Access control
 
 Both assets of "provider-qna" and "provider-manufacturing" have some access restrictions on them:
 
-- `asset-1`: requires a membership credential to view and a PCF Use Case credential to negotiate a contract
-- `asset-2`: requires a membership credential to view and a Sustainability Use Case credential to negotiate a contract
+- `asset-1`: requires a membership credential to view and a Data Processor credential with `"level": "processing"` to
+  negotiate a contract and transfer data
+- `asset-2`: requires a membership credential to view and a Data Processor credential with a `"level": "sensitive"` to
+  negotiate a contract
 
 These requirements are formulated as EDC policies. In addition, it is a dataspace rule that
-the `MembershipCredential` must be presented in _every_ request.
+the `MembershipCredential` must be presented in _every_ request. This credential attests that the holder is a member of
+the dataspace.
 
-Furthermore, all connectors are in possession of the `MembershipCredential` as well as a `PcfCredential`. _Neither has
-the `SustainabilityCredential`_! That means that no contract for `asset-2` can be negotiated!
-For the purposes of this demo the VerifiableCredentials are pre-created and are seeded to the participants' credential
-storage (no issuance).
+In this fictitious dataspace, the DataProcessorCredential attests to the "ability of the holder to process data at a
+certain level". The following levels exist:
+
+- `"processing"`: means, the holder can process non-sensitive data
+- `"sensitive"`: means, the holder has undergone "some very highly secure vetting process" and can process sensitive
+  data
+
+The information about the level of data a holder can process is stored in the `credentialSubject` of the
+DataProcessorCredential.
+
+All participants of the dataspace are in possession of the `MembershipCredential` as well as
+a `DataProcessorCredential` with level `"processing"`.
+_None possess the `DataProcessorCredential` with level="sensitive"_. That means that no contract for `asset-2` can be
+negotiated. For the purposes of this demo the VerifiableCredentials are pre-created and are seeded to the participants'
+credential storage ([no issuance](#5-no-issuance-yet)).
 
 If the consumer wants to view the consolidated catalog (containing assets from the provider's Q&A and manufacturing
 departments), then negotiate a contract for an asset, and then transfer the asset, she needs to present several
 credentials:
 
 - catalog request: present `MembershipCredential`
-- contract negotiation: `MembershipCredential` and `PcfCredential` or `SustainabilityCredential`, respectively
+- contract negotiation: `MembershipCredential` and `DataProcessorCredential(level=processing)`
+  or `DataProcessorCredential(level=sensitive)`, respectively
 - transfer process: `MembershipCredential`
 
 ## Running the demo (inside IntelliJ)
@@ -439,8 +452,7 @@ schema of the credentials' subjects is not yet implemented.
 
 This is similar to the [policy extractor](#5-policy-extractor), as it deals with the reverse mapping from a scope string
 onto a `Criterion`. On the IdentityHub, when the VP request is received, we need to be able to query the database based
-on the scope string that was received. This is currently a very Catena-X-specific solution, as it needs to distinguish
-between "normal" credentials, and "use case" credentials.
+on the scope string that was received. 
 
 ### 4. DID resolution
 

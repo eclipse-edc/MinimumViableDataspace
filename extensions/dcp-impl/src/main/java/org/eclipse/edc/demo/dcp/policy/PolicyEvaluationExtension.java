@@ -40,29 +40,26 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         var fct = new MembershipCredentialEvaluationFunction();
-        this.bindPermissionFunction(fct, TRANSFER_PROCESS_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        this.bindPermissionFunction(fct, NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        this.bindPermissionFunction(fct, CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
-        registerUseCase("pcf");
-        registerUseCase("traceability");
-        registerUseCase("sustainability");
-        registerUseCase("quality");
-        registerUseCase("resiliency");
+        bindPermissionFunction(fct, TRANSFER_PROCESS_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(fct, NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(fct, CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+
+        registerDataAccessLevelFunction();
 
     }
 
-    private void registerUseCase(String useCaseName) {
-        var frameworkFunction = new UseCaseFunction(useCaseName);
-        var usecase = frameworkFunction.key();
+    private void registerDataAccessLevelFunction() {
+        var function = new DataAccessLevelFunction();
+        var accessLevelKey = function.key();
 
-        bindDutyFunction(frameworkFunction, TRANSFER_PROCESS_SCOPE, usecase);
-        bindDutyFunction(frameworkFunction, NEGOTIATION_SCOPE, usecase);
-        bindDutyFunction(frameworkFunction, CATALOG_SCOPE, usecase);
+        bindDutyFunction(function, TRANSFER_PROCESS_SCOPE, accessLevelKey);
+        bindDutyFunction(function, NEGOTIATION_SCOPE, accessLevelKey);
+        bindDutyFunction(function, CATALOG_SCOPE, accessLevelKey);
     }
 
     private void bindPermissionFunction(AtomicConstraintFunction<Permission> function, String scope, String constraintType) {
-        ruleBindingRegistry.bind("USE", scope);
+        ruleBindingRegistry.bind("use", scope);
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
@@ -70,7 +67,7 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     }
 
     private void bindDutyFunction(AtomicConstraintFunction<Duty> function, String scope, String constraintType) {
-        ruleBindingRegistry.bind("USE", scope);
+        ruleBindingRegistry.bind("use", scope);
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
