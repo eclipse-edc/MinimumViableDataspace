@@ -23,12 +23,12 @@
 
 variable "humanReadableName" {
   type        = string
-  description = "Human readable name of the connector, NOT the BPN!!. Required."
+  description = "Human readable name of the connector, NOT the ID!!. Required."
 }
 
 variable "participantId" {
   type        = string
-  description = "Participant ID of the connector. In Catena-X, this MUST be the BPN"
+  description = "Participant ID of the connector. Usually a DID"
 }
 
 variable "namespace" {

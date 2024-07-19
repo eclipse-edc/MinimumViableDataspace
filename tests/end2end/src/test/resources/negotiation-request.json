@@ -15,16 +15,16 @@
     "prohibition": [],
     "odrl:obligation": {
       "odrl:action": {
-        "@id": "use"
+        "@id": "USE"
       },
       "odrl:constraint": {
         "odrl:leftOperand": {
-          "@id": "FrameworkCredential.pcf"
+          "@id": "DataAccess.level"
         },
         "odrl:operator": {
           "@id": "odrl:eq"
         },
-        "odrl:rightOperand": "active"
+        "odrl:rightOperand": "processing"
       }
     },
     "target": "asset-1"

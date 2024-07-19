@@ -43,26 +43,22 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         var fct = new MembershipCredentialEvaluationFunction();
-        this.bindPermissionFunction(fct, TRANSFER_PROCESS_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        this.bindPermissionFunction(fct, NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        this.bindPermissionFunction(fct, CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
-        registerDataAccessLevelFunction("processing");
-        registerDataAccessLevelFunction("sensitive");
+        bindPermissionFunction(fct, TRANSFER_PROCESS_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(fct, NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(fct, CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+
+        registerDataAccessLevelFunction();
 
     }
 
-    private void registerDataAccessLevelFunction(String accessLevel) {
-        var function = new DataAccessLevelFunction(accessLevel);
+    private void registerDataAccessLevelFunction() {
+        var function = new DataAccessLevelFunction();
         var accessLevelKey = function.key();
 
         bindDutyFunction(function, TRANSFER_PROCESS_SCOPE, accessLevelKey);
         bindDutyFunction(function, NEGOTIATION_SCOPE, accessLevelKey);
         bindDutyFunction(function, CATALOG_SCOPE, accessLevelKey);
-
-        bindDutyFunction(function, TRANSFER_PROCESS_REQUEST_SCOPE, accessLevelKey);
-        bindDutyFunction(function, NEGOTIATION_REQUEST_SCOPE, accessLevelKey);
-        bindDutyFunction(function, CATALOG_REQUEST_SCOPE, accessLevelKey);
     }
 
     private void bindPermissionFunction(AtomicConstraintFunction<Permission> function, String scope, String constraintType) {
