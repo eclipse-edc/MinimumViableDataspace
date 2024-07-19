@@ -15,7 +15,7 @@
     "prohibition": [],
     "odrl:obligation": {
       "odrl:action": {
-        "@id": "USE"
+        "@id": "use"
       },
       "odrl:constraint": {
         "odrl:leftOperand": {

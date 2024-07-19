@@ -55,7 +55,7 @@ public class JwtSigner {
     @SuppressWarnings("unchecked")
     @ParameterizedTest
     @ArgumentsSource(InputOutputProvider.class)
-    void generateJwt(String rawCredentialFilePAth, File vcResource, String did) throws JOSEException, IOException {
+    void generateJwt(String rawCredentialFilePath, File vcResource, String did) throws JOSEException, IOException {
 
         var header = new JWSHeader.Builder(JWSAlgorithm.EdDSA)
                 .keyID("did:example:dataspace-issuer#key-1")
@@ -63,10 +63,8 @@ public class JwtSigner {
                 .build();
 
 
-        //todo: change this to whatever credential JSON you want to sign
-        var credential = mapper.readValue(new File(rawCredentialFilePAth), Map.class);
+        var credential = mapper.readValue(new File(rawCredentialFilePath), Map.class);
 
-        //todo: change the claims to suit your needs
         var claims = new JWTClaimsSet.Builder()
                 .audience(did)
                 .subject(did)
@@ -85,7 +83,6 @@ public class JwtSigner {
 
         var content = Files.readString(vcResource.toPath());
         var updatedContent = content.replaceFirst("\"rawVc\":.*,", "\"rawVc\": \"%s\",".formatted(jwt.serialize()));
-//        mapper.writeValue(vcResource, updatedContent);
         Files.write(vcResource.toPath(), updatedContent.getBytes());
     }
 

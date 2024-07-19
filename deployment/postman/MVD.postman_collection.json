@@ -91,7 +91,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:permission\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"MembershipCredential\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:permission\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"MembershipCredential\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/policydefinitions",
@@ -124,7 +124,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-dataprocessor\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"DataAccess.level\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"processing\"\n                }\n            }\n        ]\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-dataprocessor\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"DataAccess.level\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"processing\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/policydefinitions",
@@ -157,7 +157,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-sensitive\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"DataAccess.level\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"sensitive\"\n                }\n            }\n        ]\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-sensitive\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"DataAccess.level\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"sensitive\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/policydefinitions",
@@ -570,7 +570,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1kYXRhcHJvY2Vzc29yLWRlZg==:YXNzZXQtMQ==:NDFiMWQzZDUtOTA0OS00ZGRmLTk5MDEtNTYxOTVhYmQzNjNj\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"USE\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"DataAccess.level\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1kYXRhcHJvY2Vzc29yLWRlZg==:YXNzZXQtMQ==:MmQ0ZWZjZTYtYzJjNy00NTM5LTk5ODAtZDAwOTlkZDNkOWQy\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"use\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"DataAccess.level\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -633,7 +633,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"5613c232-d12e-41de-b0d6-befc290e5309\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"47e43627-d9b0-4e35-b534-cef450d7de88\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -734,7 +734,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{HOST}}/api/management/v3/edrs/cb60556e-5544-4d37-a5ca-6412b293fc98/dataaddress",
+							"raw": "{{HOST}}/api/management/v3/edrs/713dfab7-c70a-4c7b-9756-d372647276b5/dataaddress",
 							"host": [
 								"{{HOST}}"
 							],
@@ -743,7 +743,7 @@
 								"management",
 								"v3",
 								"edrs",
-								"cb60556e-5544-4d37-a5ca-6412b293fc98",
+								"713dfab7-c70a-4c7b-9756-d372647276b5",
 								"dataaddress"
 							]
 						}
@@ -764,7 +764,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "eyJraWQiOiJkaWQ6d2ViOnByb3ZpZGVyLWlkZW50aXR5aHViJTNBNzA4Mzpwcm92aWRlciNrZXktMSIsImFsZyI6IkVTMjU2In0.eyJpc3MiOiJkaWQ6d2ViOnByb3ZpZGVyLWlkZW50aXR5aHViJTNBNzA4Mzpwcm92aWRlciIsImF1ZCI6ImRpZDp3ZWI6Y29uc3VtZXItaWRlbnRpdHlodWIlM0E3MDgzOmNvbnN1bWVyIiwic3ViIjoiZGlkOndlYjpwcm92aWRlci1pZGVudGl0eWh1YiUzQTcwODM6cHJvdmlkZXIiLCJpYXQiOjE3MjExMjUwMTY4NTUsImp0aSI6ImMzODM0YWJmLWE3YjYtNDNmNC05ZWU3LTBjYjIzNzI2NGIzZiJ9.Ok7g_ekPgOuevytQEf3gDaixyUEphTbZa496lUqKYoyS0QIsKsxtYfkbD0tCitUtCkZIgGOIBsq5-A8ia_7UHg",
+								"value": "eyJraWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMja2V5LTEiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJhdWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwODMiLCJzdWIiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJpYXQiOjE3MjEzOTMxNjU5ODgsImp0aSI6ImFmOWI2YWIyLTMwNjYtNDNlNi1hNjg1LWIyMDVjNTFkZmJhMyJ9.ute0sLuMgc0bzG_ZUGG9G3pliFfANf9pWDxReiRrWjGudgUa4YmR9ftB5LeZTOvKCBJshRpbZX-hnQxR8fXMWA",
 								"type": "text"
 							}
 						],

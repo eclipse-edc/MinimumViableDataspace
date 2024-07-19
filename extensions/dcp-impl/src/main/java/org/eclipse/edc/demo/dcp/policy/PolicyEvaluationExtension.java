@@ -24,11 +24,8 @@ import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
 import static org.eclipse.edc.demo.dcp.policy.MembershipCredentialEvaluationFunction.MEMBERSHIP_CONSTRAINT_KEY;
-import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.CATALOG_REQUEST_SCOPE;
 import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.CATALOG_SCOPE;
-import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.NEGOTIATION_REQUEST_SCOPE;
 import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.NEGOTIATION_SCOPE;
-import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.TRANSFER_PROCESS_REQUEST_SCOPE;
 import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.TRANSFER_PROCESS_SCOPE;
 import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
 
@@ -62,7 +59,7 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     }
 
     private void bindPermissionFunction(AtomicConstraintFunction<Permission> function, String scope, String constraintType) {
-        ruleBindingRegistry.bind("USE", scope);
+        ruleBindingRegistry.bind("use", scope);
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
@@ -70,7 +67,7 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     }
 
     private void bindDutyFunction(AtomicConstraintFunction<Duty> function, String scope, String constraintType) {
-        ruleBindingRegistry.bind("USE", scope);
+        ruleBindingRegistry.bind("use", scope);
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 

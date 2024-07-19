@@ -14,17 +14,13 @@
 
 package org.eclipse.edc.demo.dcp.policy;
 
-import org.eclipse.edc.iam.verifiablecredentials.spi.model.VerifiableCredential;
-import org.eclipse.edc.jsonld.spi.JsonLdKeywords;
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
 import org.eclipse.edc.spi.agent.ParticipantAgent;
-import org.eclipse.edc.spi.result.Result;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Map;
 
 public class MembershipCredentialEvaluationFunction extends AbstractCredentialEvaluationFunction implements AtomicConstraintFunction<Permission> {
