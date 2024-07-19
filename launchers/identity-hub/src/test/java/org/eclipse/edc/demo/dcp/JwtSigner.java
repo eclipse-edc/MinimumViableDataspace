@@ -14,6 +14,7 @@
 
 package org.eclipse.edc.demo.dcp;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
@@ -21,18 +22,25 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.eclipse.edc.identityhub.spi.verifiablecredentials.model.VerifiableCredentialResource;
 import org.eclipse.edc.keys.keyparsers.PemParser;
 import org.eclipse.edc.security.token.jwt.CryptoConverter;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static org.mockito.Mockito.mock;
 
@@ -46,9 +54,13 @@ import static org.mockito.Mockito.mock;
 public class JwtSigner {
 
     private final ObjectMapper mapper = new ObjectMapper();
+    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
+    };
 
-    @Test
-    void generateJwt() throws JOSEException, IOException {
+    @SuppressWarnings("unchecked")
+    @ParameterizedTest
+    @ArgumentsSource(InputOutputProvider.class)
+    void generateJwt(String rawCredentialFilePAth, File vcResource, String did) throws JOSEException, IOException {
 
         var header = new JWSHeader.Builder(JWSAlgorithm.EdDSA)
                 .keyID("did:example:dataspace-issuer#key-1")
@@ -57,12 +69,12 @@ public class JwtSigner {
 
 
         //todo: change this to whatever credential JSON you want to sign
-        var credential = mapper.readValue(new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership_vc.json"), Map.class);
+        var credential = mapper.readValue(new File(rawCredentialFilePAth), Map.class);
 
         //todo: change the claims to suit your needs
-        JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                .audience("did:web:bob-identityhub%3A7083:bob")
-                .subject("did:web:bob-identityhub%3A7083:bob")
+        var claims = new JWTClaimsSet.Builder()
+                .audience(did)
+                .subject(did)
                 .issuer("did:example:dataspace-issuer")
                 .claim("vc", credential)
                 .issueTime(Date.from(Instant.now()))
@@ -74,7 +86,12 @@ public class JwtSigner {
         var jwt = new SignedJWT(header, claims);
         jwt.sign(CryptoConverter.createSignerFor(privateKey));
 
-        System.out.println(jwt.serialize());
+        // replace the "rawVc" field in the output file
+
+        var content = Files.readString(vcResource.toPath());
+        var updatedContent = content.replaceFirst("\"rawVc\":.*,", "\"rawVc\": \"%s\",".formatted(jwt.serialize()));
+//        mapper.writeValue(vcResource, updatedContent);
+        Files.write(vcResource.toPath(), updatedContent.getBytes());
     }
 
     private String readFile(String path) {
@@ -82,6 +99,49 @@ public class JwtSigner {
             return Files.readString(Paths.get(path));
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static class InputOutputProvider implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(
+
+                    // PROVIDER credentials, K8S and local
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/membership_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/membership-credential.json"),
+                            "did:web:bob-identityhub%3A7083:bob"),
+
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/pcf_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/pcf-credential.json"),
+                            "did:web:bob-identityhub%3A7083:bob"),
+
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/unsigned/membership_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/membership-credential.json"),
+                            "did:web:bob-identityhub%3A7083:bob"),
+
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/unsigned/pcf_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/pcf-credential.json"),
+                            "did:web:bob-identityhub%3A7083:bob"),
+
+                    // CONSUMER credentials, K8S and local
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership-credential.json"),
+                            "did:web:alice-identityhub%3A7083:alice"),
+
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/pcf_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/pcf-credential.json"),
+                            "did:web:alice-identityhub%3A7083:alice"),
+
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/unsigned/membership_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/membership-credential.json"),
+                            "did:web:alice-identityhub%3A7083:alice"),
+
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/unsigned/pcf_vc.json",
+                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/pcf-credential.json"),
+                            "did:web:alice-identityhub%3A7083:alice")
+
+            );
         }
     }
 }
