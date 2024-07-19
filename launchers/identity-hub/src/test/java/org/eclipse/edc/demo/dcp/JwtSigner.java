@@ -14,7 +14,6 @@
 
 package org.eclipse.edc.demo.dcp;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
@@ -22,7 +21,6 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.eclipse.edc.identityhub.spi.verifiablecredentials.model.VerifiableCredentialResource;
 import org.eclipse.edc.keys.keyparsers.PemParser;
 import org.eclipse.edc.security.token.jwt.CryptoConverter;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -34,7 +32,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.time.Instant;
@@ -54,8 +51,6 @@ import static org.mockito.Mockito.mock;
 public class JwtSigner {
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private static final TypeReference<Map<String, Object>> MAP_TYPE = new TypeReference<>() {
-    };
 
     @SuppressWarnings("unchecked")
     @ParameterizedTest
@@ -104,41 +99,41 @@ public class JwtSigner {
 
     private static class InputOutputProvider implements ArgumentsProvider {
         @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
 
                     // PROVIDER credentials, K8S and local
                     Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/membership_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/membership-credential.json"),
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/membership-credential.json"),
                             "did:web:bob-identityhub%3A7083:bob"),
 
-                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/pcf_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/pcf-credential.json"),
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/dataprocessor_vc.json",
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/provider/dataprocessor-credential.json"),
                             "did:web:bob-identityhub%3A7083:bob"),
 
                     Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/unsigned/membership_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/membership-credential.json"),
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/membership-credential.json"),
                             "did:web:bob-identityhub%3A7083:bob"),
 
-                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/unsigned/pcf_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/pcf-credential.json"),
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/unsigned/dataprocessor_vc.json",
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/provider/dataprocessor-credential.json"),
                             "did:web:bob-identityhub%3A7083:bob"),
 
                     // CONSUMER credentials, K8S and local
                     Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership-credential.json"),
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/membership-credential.json"),
                             "did:web:alice-identityhub%3A7083:alice"),
 
-                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/pcf_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/pcf-credential.json"),
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/dataprocessor_vc.json",
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/k8s/consumer/dataprocessor-credential.json"),
                             "did:web:alice-identityhub%3A7083:alice"),
 
                     Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/unsigned/membership_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/membership-credential.json"),
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/membership-credential.json"),
                             "did:web:alice-identityhub%3A7083:alice"),
 
-                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/unsigned/pcf_vc.json",
-                            new File( System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/pcf-credential.json"),
+                    Arguments.of(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/unsigned/dataprocessor_vc.json",
+                            new File(System.getProperty("user.dir") + "/../../deployment/assets/credentials/local/consumer/dataprocessor-credential.json"),
                             "did:web:alice-identityhub%3A7083:alice")
 
             );

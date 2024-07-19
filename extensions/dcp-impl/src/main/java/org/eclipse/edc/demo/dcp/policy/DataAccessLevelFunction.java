@@ -21,13 +21,14 @@ import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.spi.agent.ParticipantAgent;
 
 import java.util.Map;
+import java.util.Objects;
 
-public class UseCaseFunction implements AtomicConstraintFunction<Duty> {
+public class DataAccessLevelFunction implements AtomicConstraintFunction<Duty> {
 
-    private final String usecase;
+    private final String level;
 
-    public UseCaseFunction(String usecase) {
-        this.usecase = usecase;
+    public DataAccessLevelFunction(String level) {
+        this.level = level;
     }
 
     @Override
@@ -36,8 +37,8 @@ public class UseCaseFunction implements AtomicConstraintFunction<Duty> {
             policyContext.reportProblem("Cannot evaluate operator %s, only %s is supported".formatted(operator, Operator.EQ));
             return false;
         }
-        if (!"active".equalsIgnoreCase(rightOperand.toString())) {
-            policyContext.reportProblem("Use case credentials only support right operand 'active', but found '%s'".formatted(operator.toString()));
+        if (!"level".equalsIgnoreCase(rightOperand.toString())) {
+            policyContext.reportProblem("Data access credentials only support right operand 'level', but found '%s'".formatted(operator.toString()));
             return false;
         }
         var pa = policyContext.getContextData(ParticipantAgent.class);
@@ -49,15 +50,13 @@ public class UseCaseFunction implements AtomicConstraintFunction<Duty> {
         var claims = pa.getClaims();
 
         String version = getClaim("contractVersion", claims);
-        String holderIdentifier = getClaim("holderIdentifier", claims);
-        String contractTemplate = getClaim("contractTemplate", claims);
+        String level = getClaim("level", claims);
 
-        return version != null && holderIdentifier != null && contractTemplate != null &&
-                contractTemplate.contains(usecase);
+        return version != null && Objects.equals(level, rightOperand);
     }
 
     public String key() {
-        return "FrameworkCredential.%s".formatted(usecase);
+        return "DataAccess.level";
     }
 
     @SuppressWarnings("unchecked")

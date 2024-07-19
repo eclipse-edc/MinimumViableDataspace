@@ -58,7 +58,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n            \"@context\": {},\n            \"@id\": \"asset-2\",\n            \"@type\": \"Asset\",\n            \"properties\": {\n                \"description\": \"This asset requires Membership to view and Sustainability to negotiate.\"\n            },\n            \"dataAddress\": {\n                \"@type\": \"DataAddress\",\n                \"type\": \"HttpData\",\n                \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n                \"proxyPath\": \"true\",\n                \"proxyQueryParams\": \"true\"\n            }\n        }"
+							"raw": "{\n            \"@context\": {},\n            \"@id\": \"asset-2\",\n            \"@type\": \"Asset\",\n            \"properties\": {\n                \"description\": \"This asset requires Membership to view and SensitiveData credential to negotiate.\"\n            },\n            \"dataAddress\": {\n                \"@type\": \"DataAddress\",\n                \"type\": \"HttpData\",\n                \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n                \"proxyPath\": \"true\",\n                \"proxyQueryParams\": \"true\"\n            }\n        }"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/assets",
@@ -109,7 +109,7 @@
 					"response": []
 				},
 				{
-					"name": "Create PCF Use case policy",
+					"name": "Create DataProcessor policy",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -124,7 +124,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-pcf\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"FrameworkCredential.pcf\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-dataprocessor\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"use\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"DataAccess.level\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"processing\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/policydefinitions",
@@ -142,7 +142,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Sustainability Use case policy",
+					"name": "Create Sensitive Data Processor policy",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -157,7 +157,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-sustainability\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"FrameworkCredential.sustainability\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"@type\": \"PolicyDefinitionRequestDto\",\n    \"@id\": \"require-sensitive\",\n    \"policy\": {\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Set\",\n        \"odrl:obligation\": [\n            {\n                \"odrl:action\": \"USE\",\n                \"odrl:constraint\": {\n                    \"@type\": \"LogicalConstraint\",\n                    \"odrl:leftOperand\": \"DataAccess.level\",\n                    \"odrl:operator\": {\n                        \"@id\": \"odrl:eq\"\n                    },\n                    \"odrl:rightOperand\": \"sensitive\"\n                }\n            }\n        ]\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/policydefinitions",
@@ -175,7 +175,7 @@
 					"response": []
 				},
 				{
-					"name": "Create \"member-and-pcf-cred\" definition",
+					"name": "Create \"member-and-data-cred\" definition",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -190,7 +190,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"@context\": {},\n        \"@id\": \"member-and-pcf-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-pcf\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-1\"\n        }\n    }"
+							"raw": "{\n        \"@context\": {},\n        \"@id\": \"member-and-dataprocessor-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-dataprocessor\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-1\"\n        }\n    }"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
@@ -208,7 +208,7 @@
 					"response": []
 				},
 				{
-					"name": "Create \"require sustainability\" definition",
+					"name": "Create \"require sensitive\" definition",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -223,7 +223,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"@context\": {},\n        \"@id\": \"sustainability-only-def\",\n        \"@type\": \"ContractDefinition\",\n        \"accessPolicyId\": \"require-membership\",\n        \"contractPolicyId\": \"require-sustainability\",\n        \"assetsSelector\" : {\n            \"@type\" : \"CriterionDto\",\n            \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n            \"operator\": \"=\",\n            \"operandRight\": \"asset-2\"\n        }\n    }"
+							"raw": "{\n    \"@context\": {},\n    \"@id\": \"sensitive-only-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-sensitive\",\n    \"assetsSelector\": {\n        \"@type\": \"CriterionDto\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"asset-2\"\n    }\n}"
 						},
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
@@ -570,7 +570,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MDIxM2MzZDQtMzE3NS00MzFmLWIzM2UtNDFkY2I2Y2RhZjU1\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"use\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"FrameworkCredential.pcf\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"active\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"https://w3id.org/edc/v0.0.1/ns/ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@context\": \"http://www.w3.org/ns/odrl.jsonld\",\n        \"@type\": \"http://www.w3.org/ns/odrl/2/Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1kYXRhcHJvY2Vzc29yLWRlZg==:YXNzZXQtMQ==:MjcyMzMyZjgtZWM2ZS00MTQ0LWIyYjgtM2ExMzIzMDFjZmQ1\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"odrl:obligation\": {\n            \"odrl:action\": {\n                \"@id\": \"use\"\n            },\n            \"odrl:constraint\": {\n                \"odrl:leftOperand\": {\n                    \"@id\": \"DataAccess.level\"\n                },\n                \"odrl:operator\": {\n                    \"@id\": \"odrl:eq\"\n                },\n                \"odrl:rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -633,7 +633,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"76ee7bc5-73b0-44c8-8e03-032726616996\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
+							"raw": "{\n    \"@context\": {\n        \"odrl\": \"http://www.w3.org/ns/odrl/2/\"\n    },\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"5613c232-d12e-41de-b0d6-befc290e5309\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -734,7 +734,7 @@
 							}
 						],
 						"url": {
-							"raw": "{{HOST}}/api/management/v3/edrs/392d1767-e546-4b54-ab6e-6fb20a3dc12a/dataaddress",
+							"raw": "{{HOST}}/api/management/v3/edrs/cb60556e-5544-4d37-a5ca-6412b293fc98/dataaddress",
 							"host": [
 								"{{HOST}}"
 							],
@@ -743,7 +743,7 @@
 								"management",
 								"v3",
 								"edrs",
-								"392d1767-e546-4b54-ab6e-6fb20a3dc12a",
+								"cb60556e-5544-4d37-a5ca-6412b293fc98",
 								"dataaddress"
 							]
 						}
@@ -753,6 +753,9 @@
 				{
 					"name": "Download Data from Public API",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -761,7 +764,7 @@
 							},
 							{
 								"key": "Authorization",
-								"value": "eyJraWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMja2V5LTEiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJhdWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwODMiLCJzdWIiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJpYXQiOjE3MjA3Nzk3MjMwMjAsImp0aSI6ImJhZjUwM2ZmLTQ0YTEtNGEzNS1hNDJjLTgwNGM1ODNhYTIxZiJ9.JX6nLTgAJZ6lAEv68ZqVawjMQep2gkWS4Xoco2elm_7TyoWQcxHnxPbrYYFxNg-ATdeARfqr5EiyO3l8A6vAyQ",
+								"value": "eyJraWQiOiJkaWQ6d2ViOnByb3ZpZGVyLWlkZW50aXR5aHViJTNBNzA4Mzpwcm92aWRlciNrZXktMSIsImFsZyI6IkVTMjU2In0.eyJpc3MiOiJkaWQ6d2ViOnByb3ZpZGVyLWlkZW50aXR5aHViJTNBNzA4Mzpwcm92aWRlciIsImF1ZCI6ImRpZDp3ZWI6Y29uc3VtZXItaWRlbnRpdHlodWIlM0E3MDgzOmNvbnN1bWVyIiwic3ViIjoiZGlkOndlYjpwcm92aWRlci1pZGVudGl0eWh1YiUzQTcwODM6cHJvdmlkZXIiLCJpYXQiOjE3MjExMjUwMTY4NTUsImp0aSI6ImMzODM0YWJmLWE3YjYtNDNmNC05ZWU3LTBjYjIzNzI2NGIzZiJ9.Ok7g_ekPgOuevytQEf3gDaixyUEphTbZa496lUqKYoyS0QIsKsxtYfkbD0tCitUtCkZIgGOIBsq5-A8ia_7UHg",
 								"type": "text"
 							}
 						],

@@ -24,8 +24,11 @@ import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
 import static org.eclipse.edc.demo.dcp.policy.MembershipCredentialEvaluationFunction.MEMBERSHIP_CONSTRAINT_KEY;
+import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.CATALOG_REQUEST_SCOPE;
 import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.CATALOG_SCOPE;
+import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.NEGOTIATION_REQUEST_SCOPE;
 import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.NEGOTIATION_SCOPE;
+import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.TRANSFER_PROCESS_REQUEST_SCOPE;
 import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.TRANSFER_PROCESS_SCOPE;
 import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
 
@@ -44,21 +47,22 @@ public class PolicyEvaluationExtension implements ServiceExtension {
         this.bindPermissionFunction(fct, NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
         this.bindPermissionFunction(fct, CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
-        registerUseCase("pcf");
-        registerUseCase("traceability");
-        registerUseCase("sustainability");
-        registerUseCase("quality");
-        registerUseCase("resiliency");
+        registerDataAccessLevelFunction("processing");
+        registerDataAccessLevelFunction("sensitive");
 
     }
 
-    private void registerUseCase(String useCaseName) {
-        var frameworkFunction = new UseCaseFunction(useCaseName);
-        var usecase = frameworkFunction.key();
+    private void registerDataAccessLevelFunction(String accessLevel) {
+        var function = new DataAccessLevelFunction(accessLevel);
+        var accessLevelKey = function.key();
 
-        bindDutyFunction(frameworkFunction, TRANSFER_PROCESS_SCOPE, usecase);
-        bindDutyFunction(frameworkFunction, NEGOTIATION_SCOPE, usecase);
-        bindDutyFunction(frameworkFunction, CATALOG_SCOPE, usecase);
+        bindDutyFunction(function, TRANSFER_PROCESS_SCOPE, accessLevelKey);
+        bindDutyFunction(function, NEGOTIATION_SCOPE, accessLevelKey);
+        bindDutyFunction(function, CATALOG_SCOPE, accessLevelKey);
+
+        bindDutyFunction(function, TRANSFER_PROCESS_REQUEST_SCOPE, accessLevelKey);
+        bindDutyFunction(function, NEGOTIATION_REQUEST_SCOPE, accessLevelKey);
+        bindDutyFunction(function, CATALOG_REQUEST_SCOPE, accessLevelKey);
     }
 
     private void bindPermissionFunction(AtomicConstraintFunction<Permission> function, String scope, String constraintType) {

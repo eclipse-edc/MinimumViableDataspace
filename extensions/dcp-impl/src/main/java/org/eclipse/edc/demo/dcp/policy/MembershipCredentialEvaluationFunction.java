@@ -28,8 +28,8 @@ import java.util.Map;
 public class MembershipCredentialEvaluationFunction implements AtomicConstraintFunction<Permission> {
     public static final String MEMBERSHIP_CONSTRAINT_KEY = "MembershipCredential";
 
-    private static final String MEMBERSHIP_CLAIM = "https://w3id.org/catenax/credentials/membership";
-    private static final String MEMBERSHIP_SINCE_CLAIM = "https://w3id.org/catenax/credentials/since";
+    private static final String MEMBERSHIP_CLAIM = "https://w3id.org/mvd/credentials/membership";
+    private static final String MEMBERSHIP_SINCE_CLAIM = "https://w3id.org/mvd/credentials/since";
 
     @SuppressWarnings("unchecked")
     @Override

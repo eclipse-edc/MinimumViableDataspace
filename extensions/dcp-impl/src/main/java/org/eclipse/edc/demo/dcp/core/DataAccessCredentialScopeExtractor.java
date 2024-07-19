@@ -20,27 +20,19 @@ import org.eclipse.edc.policy.model.Operator;
 
 import java.util.Set;
 
-class FrameworkCredentialScopeExtractor implements ScopeExtractor {
-    private static final String FRAMEWORK_CREDENTIAL_PREFIX = "FrameworkCredential.";
+class DataAccessCredentialScopeExtractor implements ScopeExtractor {
+    private static final String DATA_ACCESS_CONSTRAINT_PREFIX = "DataAccess.";
     private static final String CREDENTIAL_TYPE_NAMESPACE = "org.eclipse.edc.vc.type";
-
-    FrameworkCredentialScopeExtractor() {
-    }
+    public static final String DATA_PROCESSOR_CREDENTIAL_TYPE = "DataProcessorCredential";
 
     @Override
     public Set<String> extractScopes(Object leftValue, Operator operator, Object rightValue, PolicyContext context) {
         Set<String> scopes = Set.of();
         if (leftValue instanceof String leftOperand) {
-            if (leftOperand.startsWith(FRAMEWORK_CREDENTIAL_PREFIX)) {
-                var credentialType = leftOperand.replace(FRAMEWORK_CREDENTIAL_PREFIX, "");
-                credentialType = "%sCredential".formatted(capitalize(credentialType));
-                scopes = Set.of("%s:%s:read".formatted(CREDENTIAL_TYPE_NAMESPACE, credentialType));
+            if (leftOperand.startsWith(DATA_ACCESS_CONSTRAINT_PREFIX)) {
+                scopes = Set.of("%s:%s:read".formatted(CREDENTIAL_TYPE_NAMESPACE, DATA_PROCESSOR_CREDENTIAL_TYPE));
             }
         }
         return scopes;
-    }
-
-    private String capitalize(String input) {
-        return input.substring(0, 1).toUpperCase() + input.substring(1).toLowerCase();
     }
 }
