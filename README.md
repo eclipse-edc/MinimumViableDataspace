@@ -1,28 +1,45 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
+* [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
+  * [1. Introduction](#1-introduction)
+  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+  * [3. The Scenario](#3-the-scenario)
+    * [3.1 Participants](#31-participants)
+    * [3.2 Data setup](#32-data-setup)
+    * [3.3 Access control](#33-access-control)
+  * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
+  * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
+    * [5.1 Build the runtime images](#51-build-the-runtime-images)
+    * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
+    * [5.3 Seed the dataspace](#53-seed-the-dataspace)
+  * [6. Executing REST requests using Postman](#6-executing-rest-requests-using-postman)
+    * [6.1 Get the catalog](#61-get-the-catalog)
+    * [6.2 Initiate the contract negotiation](#62-initiate-the-contract-negotiation)
+    * [6.3 Query negotiation status](#63-query-negotiation-status)
+    * [6.4 Initiate data transfer](#64-initiate-data-transfer)
+    * [6.5 Query data transfers](#65-query-data-transfers)
+    * [6.6 Get EndpointDataReference](#66-get-endpointdatareference)
+    * [6.7 Get access token for EDR](#67-get-access-token-for-edr)
+    * [6.8 Fetch data](#68-fetch-data)
+  * [7. Custom extensions in MVD](#7-custom-extensions-in-mvd)
+    * [7.1 Catalog Node Resolver](#71-catalog-node-resolver)
+    * [7.2 Default scope mapping function](#72-default-scope-mapping-function)
+    * [7.3 Scope extractor for `DataProcessor` credentials](#73-scope-extractor-for-dataprocessor-credentials)
+    * [7.4 Policy evaluation functions](#74-policy-evaluation-functions)
+      * [7.4.1 Membership evaluation function](#741-membership-evaluation-function)
+      * [7.4.2 DataAccessLevel evaluation function](#742-dataaccesslevel-evaluation-function)
+    * [7.5 Scope-to-criterion transformer](#75-scope-to-criterion-transformer)
+    * [7.6 Super-user seeding](#76-super-user-seeding)
+  * [8. Other caveats, shortcuts and workarounds](#8-other-caveats-shortcuts-and-workarounds)
+    * [8.1 In-memory stores in local deployment](#81-in-memory-stores-in-local-deployment)
+    * [8.2 DID resolution](#82-did-resolution)
+      * [8.2.1 `did:web` for participants](#821-didweb-for-participants)
+      * [8.2.2 `did:example` for the dataspace credential issuer](#822-didexample-for-the-dataspace-credential-issuer)
+    * [8.3 No issuance (yet)](#83-no-issuance-yet)
+<!-- TOC -->
 
-- [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-    - [Introduction](#introduction)
-    - [Purpose of this Demo](#purpose-of-this-demo)
-    - [The Scenario](#the-scenario)
-        - [Participants](#participants)
-        - [Data setup](#data-setup)
-        - [Access control](#access-control)
-    - [Running the demo (inside IntelliJ)](#running-the-demo-inside-intellij)
-    - [Running the Demo (Kubernetes)](#running-the-demo-kubernetes)
-        - [1. Build the runtime images](#1-build-the-runtime-images)
-    - [Executing REST requests using Postman](#executing-rest-requests-using-postman)
-    - [Other caveats, shortcuts and workarounds](#other-caveats-shortcuts-and-workarounds)
-        - [1. In-memory stores in local deployment](#1-in-memory-stores-in-local-deployment)
-        - [2. Policy Extractor](#2-policy-extractor)
-        - [3. Scope-to-criterion transformer](#3-scope-to-criterion-transformer)
-        - [4. DID resolution](#4-did-resolution)
-            - [4.1 `did:web` for participants](#41-didweb-for-participants)
-            - [4.2 `did:example` for the dataspace credential issuer](#42-didexample-for-the-dataspace-credential-issuer) \* [5. No issuance (yet)](#5-no-issuance-yet)
-  <!-- TOC -->
-
-## Introduction
+## 1. Introduction
 
 The Decentralized Claims Protocols define a secure way how to participants in a dataspace can exchange and present
 credential information. In particular, the [DCP specification](https://github.com/eclipse-tractusx/identity-trust)
@@ -36,7 +53,7 @@ The Presentation Flow was adopted in the Eclipse Dataspace Components project an
 pertaining to the [Connector](https://github.com/eclipse-edc/connector) as well as
 the [IdentityHub](https://github.com/eclipse-edc/IdentityHub).
 
-## Purpose of this Demo
+## 2. Purpose of this Demo
 
 This demo is to demonstrate how two dataspace participants can perform a credential exchange prior to a DSP message
 exchange, for example requesting a catalog or negotiating a contract.
@@ -50,12 +67,12 @@ It merely is a playground for developers wanting to kick the tires in the EDC an
 demonstrate how DCP works to an
 otherwise unassuming audience.
 
-## The Scenario
+## 3. The Scenario
 
 _In this example, we will see how two companies can share data through federated catalogs
 using [Management Domains](https://github.com/eclipse-edc/Connector/blob/main/docs/developer/management-domains/management-domains.md)._
 
-### Participants
+### 3.1 Participants
 
 There are two ficticious companies, called "Provider Corp" and "Consumer Corp". "Consumer Corp" wants to
 consume information from "Provider Corp". Furthermore, Provider Corp has two departments "Q&A" and "Manufacturing".
@@ -67,7 +84,7 @@ A catalog server is a stripped-down EDC runtime, that only contains modules for 
 
 Consumer Corp has a connector plus its own IdentityHub.
 
-### Data setup
+### 3.2 Data setup
 
 "provider-qna" and "provider-manufacturing" both have two data assets each, named `"asset-1"` and `"asset-2"` but
 neither "provider-qna" nor "provider-manufacturing" expose their catalog endpoint directly to the internet. Instead, the
@@ -76,7 +93,7 @@ provider-qna"'s and "provider-manufacturing"'s connectors. We call this a "root 
 catalog assets". This means, that by resolving the root catalog, and by following the links in it, "Consumer Corp" can
 resolve the actual asset from "provider-qna" and "provider-manufacturing".
 
-### Access control
+### 3.3 Access control
 
 Both assets of "provider-qna" and "provider-manufacturing" have some access restrictions on them:
 
@@ -114,7 +131,7 @@ credentials:
   or `DataProcessorCredential(level=sensitive)`, respectively
 - transfer process: `MembershipCredential`
 
-## Running the demo (inside IntelliJ)
+## 4. Running the demo (inside IntelliJ)
 
 There are several run configurations for IntelliJ in the `.run/` folder. One each for the consumer and provider
 connectors runtimes and IdentityHub runtimes plus one for the provider catalog server, and one named "dataspace". The
@@ -141,7 +158,7 @@ and [Import from Postman Collections](https://plugins.jetbrains.com/plugin/22438
 plugins, the Postman collection can be imported and then executed by means of the
 [environment file](./deployment/postman/http-client.env.json), selecting the "Local" environment.
 
-## Running the Demo (Kubernetes)
+## 5. Running the Demo (Kubernetes)
 
 For this section a basic understanding of Kubernetes, Docker, Gradle and Terraform is required. It is assumed that the
 following tools are installed and readily available:
@@ -158,7 +175,7 @@ following tools are installed and readily available:
 
 All commands are executed from the **repository's root folder** unless stated otherwise via `cd` commands.
 
-### 1. Build the runtime images
+### 5.1 Build the runtime images
 
 ```shell
 ./gradlew build
@@ -171,7 +188,11 @@ and `identity-hub:latest` in the local docker image cache. Note the `-Ppersisten
 module and PostgreSQL persistence modules on the classpath. These obviously require additional configuration, which is
 handled by the Terraform scripts.
 
-Next, we bring up and configure the Kubernetes Cluster
+### 5.2 Create the K8S cluster
+
+After the runtime images are built, we bring up and configure the Kubernetes Cluster. We are using KinD here, but this
+should work similarly well on other cluster runtimes, such as MicroK8s, K3s or Minikube. Please refer to the respective
+documentation for more information.
 
 ```shell
 # Create the cluster
@@ -224,6 +245,8 @@ expected. If pods _don't_ come up after a reasonable amount of time, it is time 
 
 Remote Debugging is possible, but Kubernetes port-forwards are necessary.
 
+### 5.3 Seed the dataspace
+
 Once all the deployments are up-and-running, the seed script needs to be executed which should produce command line
 output similar to this:
 
@@ -252,7 +275,7 @@ ZGlkOndlYjpib2ItaWRlbnRpdHlodWIlM0E3MDgzOmJvYg==.wBgVb44W6oi3lXlmeYsH6Xt3FAVO1g2
 
 _Note the `node` warnings are harmless and can be ignored_
 
-## Executing REST requests using Postman
+## 6. Executing REST requests using Postman
 
 This demos comes with a Postman collection located in `deployment/postman`. Be aware that the collection has
 different sets of variables in different environments, "MVD local development" and "MVD K8S".
@@ -262,7 +285,7 @@ execute a data transfer.
 
 The following sequence must be observed:
 
-### 1. Get the catalog
+### 6.1 Get the catalog
 
 to get the dataspace catalog across all participants, execute `ControlPlane Management/Get Cached Catalog`. Note that it
 takes a few seconds for the consumer connector to collect all entries.
@@ -304,18 +327,20 @@ for the purposes of this tutorial we'll focus on the offers from the Provider's 
 service entry should be:
 
 ```json
-"http://www.w3.org/ns/dcat#service": {
-// ...
-"http://www.w3.org/ns/dcat#endpointUrl": "http://provider-qna-controlplane:8082/api/dsp",
-"http://purl.org/dc/terms/terms": "dspace:connector",
-"http://purl.org/dc/terms/endpointUrl": "http://provider-qna-controlplane:8082/api/dsp"
-// ...
+{
+  "http://www.w3.org/ns/dcat#service": {
+    // ...
+    "http://www.w3.org/ns/dcat#endpointUrl": "http://provider-qna-controlplane:8082/api/dsp",
+    "http://purl.org/dc/terms/terms": "dspace:connector",
+    "http://purl.org/dc/terms/endpointUrl": "http://provider-qna-controlplane:8082/api/dsp"
+    // ...
+  }
 }
 ```
 
 Important: copy the `@id` value of the `odrl:hasPolicy`, we'll need that to initiate the negotiation!
 
-### 2. Initiate the contract negotiation
+### 6.2 Initiate the contract negotiation
 
 From the previous step we have the `odrl:hasPolicy.@id` value, that should look something
 like `bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4`.
@@ -336,10 +361,10 @@ of the Postman collection:
 You will receive a response immediately, but that only means that the request has been received. In order to get the
 current status of the negotiation, we'll have to inquire periodically.
 
-### 3. Query negotiation status
+### 6.3 Query negotiation status
 
 With the `ControlPlane Management/Get Contract Negotiations` request we can periodically query the status of all our
-contract negotiations. Once the `state: FINALIZED`, we copy the value of the `contractAgreementId`:
+contract negotiations. Once the state shows `FINALIZED`, we copy the value of the `contractAgreementId`:
 
 ```json
 {
@@ -350,7 +375,7 @@ contract negotiations. Once the `state: FINALIZED`, we copy the value of the `co
 }
 ```
 
-### 4. Initiate data transfer
+### 6.4 Initiate data transfer
 
 From the previous step we have the `contractAgreementId` value `3fb08a81-62b4-46fb-9a40-c574ec437759`. In
 the `ControlPlane Management/Initiate Transfer` request we will paste that into the `contractId` field:
@@ -367,7 +392,7 @@ the `ControlPlane Management/Initiate Transfer` request we will paste that into 
 }
 ```
 
-### 5. Query data transfers
+### 6.5 Query data transfers
 
 Like with contract negotiations, data transfers are asynchronous processes so we need to periodically query their status
 using the `ControlPlane Management/Get transfer processes` request. Once we find a `"state": "STARTED"` field in the
@@ -378,7 +403,7 @@ dataplane's public endpoint, as we would query any other REST API. However, an a
 the request. This access token is provided to the consumer in the form of an EndpointDataReference (EDR). We must thus
 query the consumer's EDR endpoint to obtain the token.
 
-### 6. Get EndpointDataReference
+### 6.6 Get EndpointDataReference
 
 Using the `ControlPlane Management/Get Cached EDRs` request, we fetch the EDR and note down the value of the `@id`
 field, for example `392d1767-e546-4b54-ab6e-6fb20a3dc12a`. This should be identical to the value of
@@ -386,7 +411,7 @@ the `transferProcessId` field.
 
 With that value, we can obtain the access token for this particular EDR.
 
-### 7. Get access token for EDR
+### 6.7 Get access token for EDR
 
 In the `ControlPlane Management/Get EDR DataAddress for TransferId` request we have to paste the `transferProcessId`
 value from the previous step in the URL path, for example:
@@ -411,7 +436,7 @@ authorization token:
 
 Note that the token was abbreviated for legibility.
 
-### 8. Fetch data
+### 6.8 Fetch data
 
 Using the endpoint and the authorization token from the previous step, we can then download data using
 the `ControlPlane Management/Download Data from Public API` request. To do that, the token must be copied into the
@@ -421,60 +446,154 @@ Important: do not prepend a `bearer` prefix!
 
 This will return some dummy JSON data.
 
-## Other caveats, shortcuts and workarounds
+## 7. Custom extensions in MVD
 
-Once again, this is a **DEMO**, does not any provide guarantee w.r.t. operational readiness and comes with a few
-significant workarounds and shortcuts. These are:
+EDC is not a turn-key application, rather it is a generic set of modules, that have to be configured, customized
+and extended to fit the needs of any particular dataspace.
 
-### 1. In-memory stores in local deployment
+For our demo dataspace there are a several extensions that are required. These can generally be found in
+the `extensions/` directory, or directly in the `src/main/java` folder of the launcher.
+
+### 7.1 Catalog Node Resolver
+
+Out-of-the-box the FederatedCatalog comes with an in-memory implementation of the `TargetNodeDirectory`.
+A `TargetNodeDirectory` is a high-level list of participants of the dataspace, a "phone book" if you will. In MVD that
+phone book is constituted by a hard-coded [file](./deployment/assets/participants), where every participant is listed
+with their DID.
+
+To keep things simple, MVD comes with a
+custom [implementation](extensions/catalog-node-resolver/src/main/java/org/eclipse/edc/demo/participants/resolver/LazyLoadNodeDirectory.java)
+for those participant directory files.
+
+Everything we need such as DSP URLs, public keys, CredentialService URLs is resolved from the DID document.
+
+### 7.2 Default scope mapping function
+
+As per our [dataspace rules](#33-access-control), every DSP request has to be secured by presenting the Membership
+credential, even the Catalog request.
+In detail, this means, that every DSP request that the consumer sends, must carry a token in the Authorization header,
+which authorizes the verifier to obtain the MembershipCredential from the consumer's IdentityHub.
+
+We achieve this by intercepting the DSP request and adding the correct scope -
+here: `"org.eclipse.edc.vc.type:MembershipCredential:read"` - to the request builder. Technically, this is achieved by
+registering a `postValidator` function for the relevant policy scopes, check out
+the [DcpPatchExtension.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/core/DcpPatchExtension.java)
+class.
+
+### 7.3 Scope extractor for `DataProcessor` credentials
+
+When the consumer wants to negotiate a contract for an offer, that has a `DataAccess.level` constraint, it must add the
+relevant scope string to the access token upon DSP egress. A policy, that requires the consumer to present
+a `DataProcessorCredential`, where the access level is `processing` would look like this:
+
+```json
+{
+  "@type": "http://www.w3.org/ns/odrl/2/Set",
+  "odrl:obligation": [
+    {
+      "odrl:action": "use",
+      "odrl:constraint": {
+        "@type": "LogicalConstraint",
+        "odrl:leftOperand": "DataAccess.level",
+        "odrl:operator": {
+          "@id": "odrl:eq"
+        },
+        "odrl:rightOperand": "processing"
+      }
+    }
+  ]
+}
+```
+
+The [DataAccessCredentialScopeExtractor.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/core/DataAccessCredentialScopeExtractor.java)
+class would convert this into a scope string `org.eclipse.edc.vc.type:DataProcessorCredential:read` and add it to the
+consumer's access token.
+
+### 7.4 Policy evaluation functions
+
+Being able to express a constraint in ODRL gets us only halfway there, we also need some code to evaluate that
+expression. In EDC, we do this by registering policy evaluation functions with the policy engine.
+
+Since our dataspace defines two credential types, which can be used in policies, we also need two evaluation functions.
+
+#### 7.4.1 Membership evaluation function
+
+This function is used to evaluate Membership constraints in policies by asserting that the Membership credential is
+present, is not expired and the membership is in force. This is implemented in
+the [MembershipCredentialEvaluationFunction.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/policy/MembershipCredentialEvaluationFunction.java).
+
+#### 7.4.2 DataAccessLevel evaluation function
+
+Similarly, to evaluate `DataAccess.level` constraints, there is
+a [DataAccessLevelFunction.java](org/eclipse/edc/demo/dcp/policy/DataAccessLevelFunction.java) class, that asserts that
+a DataProcessor credential is present, and that the level is appropriate. Note that to do that, the function
+implementation needs to have knowledge about the shape and schema of the `credentialSubject` of the DataProcessor VC.
+
+> Hint: all credentials, where the `credentialSubject` has the same shape/schema can be evaluated by the same function!
+
+### 7.5 Scope-to-criterion transformer
+
+When IdentityHub receives a Presentation query, that carries an access token, it must be able to convert a scope string
+into a filter expression, for example `org.eclipse.edc.vc.type:DataProcessorCredential:read` is converted
+into `verifiableCredential.credential.type = DataProcessorCredential`. This filter expression is then used by
+IdentityHub to query for `DataProcessorCredentials` in the database.
+
+This is implemented in
+the [MvdScopeTransformer.java](launchers/identity-hub/src/main/java/org/eclipse/edc/demo/dcp/ih/MvdScopeTransformer.java)
+class.
+
+### 7.6 Super-user seeding
+
+IdentityHub's [Identity API](https://github.com/eclipse-edc/IdentityHub/blob/main/docs/developer/architecture/identityhub-apis.md#identity-api)
+is secured with a basic RBAC system. For this, there is a special role called the `"super-user"`. Creating participants
+must be done using this role, but unless this role exists, we can't create any participants... so we are facing a bit of
+a chicken-and-egg problem.
+
+This is why seeding the "super-user" is done directly from code using
+the [ParticipantContextSeedExtension.java](extensions/superuser-seed/src/main/java/org/eclipse/edc/identityhub/seed/ParticipantContextSeedExtension.java).
+
+If a "super-user" does not already exist, one is created in the database using defaults. Feel free to override the
+defaults and customize your "super-user" and find out what breaks :)
+
+> NB: doing this in anything but a demo installation is **not** recommended, as it poses significant security risks!
+
+## 8. Other caveats, shortcuts and workarounds
+
+It must be emphasized that this is a **DEMO**, it does not come with any guarantee w.r.t. operational readiness and
+comes with a few significant shortcuts affecting security amongst other things, for the sake of simplicity. These are:
+
+### 8.1 In-memory stores in local deployment
 
 When running the MVD from IntelliJ, the runtimes exclusively use in-memory stores and in-memory vaults. We opted for
-this to avoid having to either provide a docker-compose scenario, or to put users through a significant amount of setup
-and configuration.
+this to avoid having to either provide (and maintain) a docker-compose file for those services, or to put users through
+an arduous amount of setup and configuration.
 
 The Kubernetes deployment uses both persistent storage (PostgreSQL) and secure vaults (Hashicorp Vault).
 
-### 2. Policy Extractor
+### 8.2 DID resolution
 
-Constructing scope strings out of Policy constraints cannot be done in a generic way, because it is highly dependent on
-the constraint expression syntax, which is specific to the dataspace. In this demo, there are two extractors:
-
-- `DefaultScopeExtractor`: adds the `org.eclipse.edc.vc.type:MembershipCredential:read` scope to every request. That
-  means that the MembershipCredential credential must always be presented.
-- `FrameworkCredentialScopeExtractor`: adds the correct scope for a "Use case credential" (
-  check [here](https://github.com/eclipse-tractusx/ssi-docu/blob/main/docs/architecture/policy_credentialtype_scope.md)
-  for details), whenever a `FrameworkCredential.XYZ` is required by a policy.
-
-For the sake of simplicity, it is only possible to assert the presence of a particular credential. Introspecting the
-schema of the credentials' subjects is not yet implemented.
-
-### 3. Scope-to-criterion transformer
-
-This is similar to the [policy extractor](#5-policy-extractor), as it deals with the reverse mapping from a scope string
-onto a `Criterion`. On the IdentityHub, when the VP request is received, we need to be able to query the database based
-on the scope string that was received. 
-
-### 4. DID resolution
-
-#### 4.1 `did:web` for participants
+#### 8.2.1 `did:web` for participants
 
 Every participant hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
-accessible
-for all other participants. For access to pods from outside the cluster we are using an ingress controller, but the
-other pods on a cluster cannot access it, due to missing DNS entries. That
-means, that the DID cannot use the _ingress URL_, but must use the _service's_ URL. A service in turn is not accessible
-from
-outside the cluster, so DIDs are only resolvable from _inside_ the cluster. Unfortunately, there is no way around this,
-unless we put DIDs on a publicly resolvable DNS or similar.
+accessible for all other participants. For example, every participant pod in the cluster must be able to resolve a DID
+from every other participant. For access to pods from outside the cluster we would be using an ingress controller, but
+then the other pods in the cluster cannot access it, due to missing DNS entries.
+That means, that the DID cannot use the _ingress URL_, but must use the _service's_ URL. A service in turn is not
+accessible from outside the cluster, so DIDs are only resolvable from _inside_ the cluster. Unfortunately, there is no
+way around this, unless we put DIDs on a publicly resolvable CDN or webserver.
 
-#### 4.2 `did:example` for the dataspace credential issuer
+#### 8.2.2 `did:example` for the dataspace credential issuer
 
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
-introducing the (fictitious) `"did:example"` method, for which there is a custom-built DID resolver in the code.
+introducing the (completely made up) `"did:example"` method, for which there is
+a [custom-built DID resolver](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/DidExampleResolver.java)
+in the code.
 
-### 5. No issuance (yet)
+### 8.3 No issuance (yet)
 
 All credentials are pre-generated manually because the DCP Issuance Flow is not implemented yet. Credentials are put
-into
-the stores by an extension called `IdentityHubExtension.java` and are **different** for local deployments and Kubernetes
-deployments.
+into the stores by an extension called `IdentityHubExtension.java` and are **different** for local deployments and
+Kubernetes deployments.
+
+The [JwtSigner.java](launchers/identity-hub/src/test/java/org/eclipse/edc/demo/dcp/JwtSigner.java) test class can be
+used to re-generate and sign all credentials.

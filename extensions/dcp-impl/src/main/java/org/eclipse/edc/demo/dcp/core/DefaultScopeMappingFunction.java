@@ -23,10 +23,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
 
-public class DefaultContextMappingFunction implements BiFunction<Policy, PolicyContext, Boolean> {
+public class DefaultScopeMappingFunction implements BiFunction<Policy, PolicyContext, Boolean> {
     private final Set<String> defaultScopes;
 
-    public DefaultContextMappingFunction(Set<String> defaultScopes) {
+    public DefaultScopeMappingFunction(Set<String> defaultScopes) {
         this.defaultScopes = defaultScopes;
     }
 
