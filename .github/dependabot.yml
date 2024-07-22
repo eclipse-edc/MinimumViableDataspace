@@ -51,10 +51,40 @@ updates:
       - "dependencies"
       - "terraform"
 
-  # Docker
+  # Docker catalog-server
   - package-ecosystem: "docker"
     target-branch: main
-    directory: "./launchers"
+    directory: "./launchers/catalog-server/src/main/docker/"
+    labels:
+      - "dependabot"
+      - "docker"
+    schedule:
+      interval: "weekly"
+
+  # Docker CP
+  - package-ecosystem: "docker"
+    target-branch: main
+    directory: "./launchers/controlplane/src/main/docker/"
+    labels:
+      - "dependabot"
+      - "docker"
+    schedule:
+      interval: "weekly"
+
+  # Docker DP
+  - package-ecosystem: "docker"
+    target-branch: main
+    directory: "./launchers/dataplane/src/main/docker/"
+    labels:
+      - "dependabot"
+      - "docker"
+    schedule:
+      interval: "weekly"
+
+  # Docker IH
+  - package-ecosystem: "docker"
+    target-branch: main
+    directory: "./launchers/identity-hub/src/main/docker/"
     labels:
       - "dependabot"
       - "docker"
