@@ -48,6 +48,6 @@ jobs:
           # - Add cool feature
           # - Feature/some cool improvement
           # - fix: resolve minor issue.
-          regex: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\w+((,|\/|\\)?\s?\w+)+\))?!?: [\S ]{1,80}[^\.]$'
+          regex: '^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\(\w+((,|\/|\\)?\s?\w+)+\))?!?: [\S ]{1,160}[^\.]$'
           allowed_prefixes: 'build,chore,ci,docs,feat,fix,perf,refactor,revert,style,test'
           prefix_case_sensitive: true
