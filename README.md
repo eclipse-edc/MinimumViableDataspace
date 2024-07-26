@@ -59,7 +59,7 @@ This demo is to demonstrate how two dataspace participants can perform a credent
 exchange, for example requesting a catalog or negotiating a contract.
 
 It must be stated in the strongest terms that this is **NOT** a production grade installation, nor should any
-production-grade developments be based on it. [Shortcuts](#other-caveats-shortcuts-and-workarounds) were taken, and
+production-grade developments be based on it. [Shortcuts](#8-other-caveats-shortcuts-and-workarounds) were taken, and
 assumptions
 were made that are potentially invalid in other scenarios.
 
@@ -74,7 +74,7 @@ using [Management Domains](https://github.com/eclipse-edc/Connector/blob/main/do
 
 ### 3.1 Participants
 
-There are two ficticious companies, called "Provider Corp" and "Consumer Corp". "Consumer Corp" wants to
+There are two fictitious companies, called "Provider Corp" and "Consumer Corp". "Consumer Corp" wants to
 consume information from "Provider Corp". Furthermore, Provider Corp has two departments "Q&A" and "Manufacturing".
 Both are independent and host their own EDC connectors dubbed "provider-qna" and "provider-manufacturing". Provider Corp
 also hosts a catalog server, plus an IdentityHub that is shared between the catalog server, ""provider-qna""
@@ -120,7 +120,7 @@ All participants of the dataspace are in possession of the `MembershipCredential
 a `DataProcessorCredential` with level `"processing"`.
 _None possess the `DataProcessorCredential` with level="sensitive"_. That means that no contract for `asset-2` can be
 negotiated. For the purposes of this demo the VerifiableCredentials are pre-created and are seeded to the participants'
-credential storage ([no issuance](#5-no-issuance-yet)).
+credential storage ([no issuance](#83-no-issuance-yet)).
 
 If the consumer wants to view the consolidated catalog (containing assets from the provider's Q&A and manufacturing
 departments), then negotiate a contract for an asset, and then transfer the asset, she needs to present several
@@ -525,9 +525,10 @@ the [MembershipCredentialEvaluationFunction.java](extensions/dcp-impl/src/main/j
 #### 7.4.2 DataAccessLevel evaluation function
 
 Similarly, to evaluate `DataAccess.level` constraints, there is
-a [DataAccessLevelFunction.java](org/eclipse/edc/demo/dcp/policy/DataAccessLevelFunction.java) class, that asserts that
-a DataProcessor credential is present, and that the level is appropriate. Note that to do that, the function
-implementation needs to have knowledge about the shape and schema of the `credentialSubject` of the DataProcessor VC.
+a [DataAccessLevelFunction.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/policy/DataAccessLevelFunction.java)
+class, that asserts that a DataProcessor credential is present, and that the level is appropriate. Note that to do that,
+the function implementation needs to have knowledge about the shape and schema of the `credentialSubject` of the
+DataProcessor VC.
 
 > Hint: all credentials, where the `credentialSubject` has the same shape/schema can be evaluated by the same function!
 
