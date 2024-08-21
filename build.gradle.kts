@@ -36,7 +36,7 @@ allprojects {
 
     // configure which version of the annotation processor to use. defaults to the same version as the plugin
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {
-        outputDirectory.set(project.buildDir)
+        outputDirectory.set(project.layout.buildDirectory.asFile)
         processorVersion.set(annotationProcessorVersion)
     }
 
