@@ -19,6 +19,7 @@ plugins {
 }
 
 dependencies {
+    runtimeOnly(libs.bundles.connector)
     runtimeOnly(libs.edc.ext.observability)
     runtimeOnly(libs.edc.dataplane.core)
     runtimeOnly(libs.edc.dataplane.api.control.config)
