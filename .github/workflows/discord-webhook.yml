@@ -34,7 +34,7 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         if: ${{ (github.event_name == 'discussion') }}
         with:
-          webhook-url: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
+          webhook-url: ${{ secrets.DISCORD_GITHUB_WEBHOOK }}
           avatar-url: https://avatars.githubusercontent.com/u/9919?s=200&v=4
           embed-author-name: ${{ github.event.sender.login }}
           embed-author-url: ${{ github.event.sender.html_url }}
@@ -47,7 +47,7 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         if: ${{ (github.event_name == 'issues') }}
         with:
-          webhook-url: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
+          webhook-url: ${{ secrets.DISCORD_GITHUB_WEBHOOK }}
           avatar-url: https://avatars.githubusercontent.com/u/9919?s=200&v=4
           embed-author-name: ${{ github.event.sender.login }}
           embed-author-url: ${{ github.event.sender.html_url }}
@@ -60,7 +60,7 @@ jobs:
         uses: tsickert/discord-webhook@v6.0.0
         if: ${{ (github.event_name == 'pull_request_target') }}
         with:
-          webhook-url: ${{ secrets.DISCORD_WEBHOOK_GITHUB }}
+          webhook-url: ${{ secrets.DISCORD_GITHUB_WEBHOOK }}
           avatar-url: https://avatars.githubusercontent.com/u/9919?s=200&v=4
           embed-author-name: ${{ github.event.sender.login }}
           embed-author-url: ${{ github.event.sender.html_url }}
