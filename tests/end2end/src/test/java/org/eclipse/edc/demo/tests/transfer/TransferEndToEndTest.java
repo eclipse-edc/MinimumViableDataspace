@@ -150,7 +150,7 @@ public class TransferEndToEndTest {
                                 .findFirst()
                                 .orElse(null);
                     }).toList();
-                    assertThat(offerIdsFiltered).hasSize(1);
+                    assertThat(offerIdsFiltered).hasSize(1).doesNotContainNull();
                     var oid = offerIdsFiltered.get(0);
                     assertThat(oid).isNotNull();
                     offerId.set(oid);

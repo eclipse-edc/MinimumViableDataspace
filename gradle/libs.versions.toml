@@ -92,6 +92,7 @@ edc-dataplane-http-oauth2 = { module = "org.eclipse.edc:data-plane-http-oauth2",
 edc-dataplane-api-control = { module = "org.eclipse.edc:data-plane-control-api", version.ref = "edc" }
 edc-dataplane-api-public = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
 edc-dataplane-api-signaling = { module = "org.eclipse.edc:data-plane-signaling-api", version.ref = "edc" }
+edc-dataplane-iam = { module = "org.eclipse.edc:data-plane-iam", version.ref = "edc" }
 
 
 # EDC Postgres modules

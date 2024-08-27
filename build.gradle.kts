@@ -28,7 +28,6 @@ buildscript {
     }
 }
 
-val metaModelVersion: String by project
 val annotationProcessorVersion: String by project
 
 allprojects {
@@ -41,10 +40,6 @@ allprojects {
     }
 
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
-        versions {
-            // override default dependency versions here
-            metaModel.set(metaModelVersion)
-        }
         swagger {
             title.set("Identity HUB REST API")
             description = "Identity HUB REST APIs - merged by OpenApiMerger"
