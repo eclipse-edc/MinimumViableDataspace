@@ -30,6 +30,7 @@ dependencies {
     runtimeOnly(libs.edc.dataplane.api.control)
     runtimeOnly(libs.edc.dataplane.api.public)
     runtimeOnly(libs.edc.dataplane.api.signaling)
+    runtimeOnly(libs.edc.dataplane.iam)
     runtimeOnly(libs.edc.ext.jsonld) // needed by the DataPlaneSignalingApi
     runtimeOnly(libs.edc.dpf.selector.client) // for the selector service -> self registration
 

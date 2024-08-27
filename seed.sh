@@ -17,7 +17,7 @@
 ## This script must be executed when running the dataspace from IntelliJ. Neglecting to do that will render the connectors
 ## inoperable!
 
-## Seed asset/policy/contract-def data to both "Ted" and "Carol"
+## Seed asset/policy/contract-def data to both "provider-qna" and "provider-manufacturing"
 for url in 'http://127.0.0.1:8191' 'http://127.0.0.1:8291'
 do
   newman run \
