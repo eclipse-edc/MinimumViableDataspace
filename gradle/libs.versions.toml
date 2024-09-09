@@ -4,7 +4,7 @@ format.version = "1.1"
 [versions]
 assertj = "3.24.2"
 awaitility = "4.2.2"
-edc = "0.8.2-SNAPSHOT"
+edc = "0.10.0-SNAPSHOT"
 failsafe = "3.3.2"
 jackson = "2.17.2"
 jakarta-json = "2.1.3"
@@ -39,6 +39,7 @@ edc-config-filesystem = { module = "org.eclipse.edc:configuration-filesystem", v
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
 edc-auth-configuration = { module = "org.eclipse.edc:auth-configuration", version.ref = "edc" }
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
+edc-api-management-jsonld-context = { module = "org.eclipse.edc:management-api-json-ld-context", version.ref = "edc" }
 edc-api-version = { module = "org.eclipse.edc:version-api", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
 edc-api-management-asset = { module = "org.eclipse.edc:asset-api", version.ref = "edc" }
@@ -165,7 +166,8 @@ dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-
 
 connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
 
-controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config","edc-api-management-edr","edc-api-management-dataplaneselector",
+controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management", "edc-api-management-config",
+    "edc-api-management-jsonld-context","edc-api-management-edr","edc-api-management-dataplaneselector",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
     "edc-identity-core-did", "edc-dcp-core", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
     "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020", "edc-core-edrstore", "edc-edr-storereceiver"]
