@@ -27,7 +27,6 @@ dependencies {
     runtimeOnly(libs.edc.dataplane.selfregistration)
     runtimeOnly(libs.edc.dataplane.http)
     runtimeOnly(libs.edc.dataplane.http.oauth2)
-    runtimeOnly(libs.edc.dataplane.api.control)
     runtimeOnly(libs.edc.dataplane.api.public)
     runtimeOnly(libs.edc.dataplane.api.signaling)
     runtimeOnly(libs.edc.dataplane.iam)

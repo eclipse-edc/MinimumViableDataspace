@@ -136,17 +136,14 @@ These requirements are formulated as EDC policies:
 ```json
 {
   "policy": {
-    "@type": "http://www.w3.org/ns/odrl/2/Set",
-    "odrl:obligation": [
+    "@type": "Set",
+    "obligation": [
       {
-        "odrl:action": "use",
-        "odrl:constraint": {
-          "@type": "LogicalConstraint",
-          "odrl:leftOperand": "DataAccess.level",
-          "odrl:operator": {
-            "@id": "odrl:eq"
-          },
-          "odrl:rightOperand": "processing"
+        "action": "use",
+        "constraint": {
+          "leftOperand": "DataAccess.level",
+          "operator": "eq",
+          "rightOperand": "processing"
         }
       }
     ]
@@ -378,7 +375,7 @@ similar to this:
 ```json
                   {
   "@id": "asset-1",
-  "@type": "http://www.w3.org/ns/dcat#Dataset",
+  "@type": "dcat:Dataset",
   "odrl:hasPolicy": {
     "@id": "bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4",
     "@type": "odrl:Offer",
@@ -390,16 +387,16 @@ similar to this:
       },
       "odrl:constraint": {
         "odrl:leftOperand": {
-          "@id": "FrameworkCredential.pcf"
+          "@id": "DataAccess.level"
         },
         "odrl:operator": {
           "@id": "odrl:eq"
         },
-        "odrl:rightOperand": "active"
+        "odrl:rightOperand": "processing"
       }
     }
   },
-  "http://www.w3.org/ns/dcat#distribution": [
+  "dcat:distribution": [
     //...
   ],
   "description": "This asset requires Membership to view and negotiate.",
@@ -412,11 +409,10 @@ service entry should be:
 
 ```json
 {
-  "http://www.w3.org/ns/dcat#service": {
+  "dcat:service": {
     // ...
-    "http://www.w3.org/ns/dcat#endpointUrl": "http://provider-qna-controlplane:8082/api/dsp",
-    "http://purl.org/dc/terms/terms": "dspace:connector",
-    "http://purl.org/dc/terms/endpointUrl": "http://provider-qna-controlplane:8082/api/dsp"
+    "dcat:endpointUrl": "http://provider-qna-controlplane:8082/api/dsp",
+    "dcat:endpointDescription": "dspace:connector",
     // ...
   }
 }
@@ -435,9 +431,8 @@ into the `policy.@id` field of the `ControlPlane Management/Initiate Negotiation
 "counterPartyId": "{{PROVIDER_ID}}",
 "protocol": "dataspace-protocol-http",
 "policy": {
-"@context": "http://www.w3.org/ns/odrl.jsonld",
-"@type": "http://www.w3.org/ns/odrl/2/Offer",
-"@id": "bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4",
+  "@type": "Offer",
+  "@id": "bWVtYmVyLWFuZC1wY2YtZGVm:YXNzZXQtMQ==:MThhNTgwMzEtNjE3Zi00N2U2LWFlNjMtMTlkZmZlMjA5NDE4",
 //...
 ```
 
@@ -570,17 +565,14 @@ relevant scope string to the access token upon DSP egress. A policy, that requir
 
 ```json
 {
-  "@type": "http://www.w3.org/ns/odrl/2/Set",
-  "odrl:obligation": [
+  "@type": "Set",
+  "obligation": [
     {
-      "odrl:action": "use",
-      "odrl:constraint": {
-        "@type": "LogicalConstraint",
-        "odrl:leftOperand": "DataAccess.level",
-        "odrl:operator": {
-          "@id": "odrl:eq"
-        },
-        "odrl:rightOperand": "processing"
+      "action": "use",
+      "constraint": {
+        "leftOperand": "DataAccess.level",
+        "operator": "eq",
+        "rightOperand": "processing"
       }
     }
   ]

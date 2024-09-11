@@ -1,30 +1,23 @@
 {
-  "@context": {
-    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
-  },
-  "@type": "https://w3id.org/edc/v0.0.1/ns/ContractRequest",
+  "@context": [
+    "https://w3id.org/edc/connector/management/v0.0.1"
+  ],
+  "@type": "ContractRequest",
   "counterPartyAddress": "{{PROVIDER_DSP_URL}}/api/dsp",
   "counterPartyId": "{{PROVIDER_ID}}",
   "protocol": "dataspace-protocol-http",
   "policy": {
-    "@context": "http://www.w3.org/ns/odrl.jsonld",
-    "@type": "http://www.w3.org/ns/odrl/2/Offer",
+    "@type": "Offer",
     "@id": "{{OFFER_ID}}",
     "assigner": "{{PROVIDER_ID}}",
     "permission": [],
     "prohibition": [],
-    "odrl:obligation": {
-      "odrl:action": {
-        "@id": "use"
-      },
-      "odrl:constraint": {
-        "odrl:leftOperand": {
-          "@id": "DataAccess.level"
-        },
-        "odrl:operator": {
-          "@id": "odrl:eq"
-        },
-        "odrl:rightOperand": "processing"
+    "obligation": {
+      "action": "use",
+      "constraint": {
+        "leftOperand":  "DataAccess.level",
+        "operator": "eq",
+        "rightOperand": "processing"
       }
     },
     "target": "asset-1"
