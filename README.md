@@ -293,7 +293,7 @@ terraform init
 terraform apply
 ```
 
-Once Terraform has completed the deployment, type `kubectl get pods` and verify the output:
+Once Terraform has completed the deployment, type `kubectl get pods --namespace mvd` and verify the output:
 
 ```shell
 ❯ kubectl get pods --namespace mvd
@@ -328,6 +328,8 @@ Once all the deployments are up-and-running, the seed script needs to be execute
 output similar to this:
 
 ```shell
+# We are in `/deployment` and we need to go back to the root where the seed script resides
+❯ cd ..
 ❯ ./seed-k8s.sh
 
 
