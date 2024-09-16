@@ -32,6 +32,7 @@ import org.eclipse.edc.transform.transformer.edc.to.JsonValueToGenericTypeTransf
 import java.util.Map;
 import java.util.Set;
 
+import static org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerRegistry.WILDCARD;
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 public class DcpPatchExtension implements ServiceExtension {
@@ -60,7 +61,7 @@ public class DcpPatchExtension implements ServiceExtension {
         signatureSuiteRegistry.register(VcConstants.JWS_2020_SIGNATURE_SUITE, suite);
 
         // register dataspace issuer
-        trustedIssuerRegistry.addIssuer(new Issuer("did:example:dataspace-issuer", Map.of()));
+        trustedIssuerRegistry.register(new Issuer("did:example:dataspace-issuer", Map.of()), WILDCARD);
 
         // register a default scope provider
         var contextMappingFunction = new DefaultScopeMappingFunction(Set.of(

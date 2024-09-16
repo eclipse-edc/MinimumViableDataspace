@@ -25,7 +25,6 @@ dependencies {
     runtimeOnly(libs.bundles.connector) // base runtime
     runtimeOnly(libs.edc.api.management)
     runtimeOnly(libs.edc.api.management.config)
-    runtimeOnly(libs.edc.api.management.jsonld.context)
     runtimeOnly(libs.edc.controlplane.core) //default store impls, etc.
     runtimeOnly(libs.edc.controlplane.services) // aggregate services
     runtimeOnly(libs.edc.dsp) // protocol webhook
