@@ -117,11 +117,12 @@ edc-sql-ih-didstore-sql = { module = "org.eclipse.edc:identity-hub-did-store-sql
 edc-sql-ih-keypairstore-sql = { module = "org.eclipse.edc:identity-hub-keypair-store-sql", version.ref = "edc" }
 edc-sql-ih-pcstore-sql = { module = "org.eclipse.edc:identity-hub-participantcontext-store-sql", version.ref = "edc" }
 
-# identityhub dependenciesl
+# identityhub dependencies
 edc-ih-core = { module = "org.eclipse.edc:identity-hub-core", version.ref = "edc" }
 edc-ih-keypairs = { module = "org.eclipse.edc:identity-hub-keypairs", version.ref = "edc" }
 edc-ih-did = { module = "org.eclipse.edc:identity-hub-did", version.ref = "edc" }
 edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
+edc-sts-accountprovisioner =  { module = "org.eclipse.edc:sts-account-provisioner", version.ref = "edc" }
 
 # identityhub SPI modules
 edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
@@ -176,7 +177,7 @@ did = ["edc-did-web", "edc-did-core", "edc-ih-did", "edc-ih-did-localpub"]
 identity-api = ["edc-ih-mgmt-config", "edc-ih-mgmt-did", "edc-ih-mgmt-participantcontext", "edc-ih-mgmt-verifiablecredential",
     "edc-ih-mgmt-keypairs", "edc-ih-mgmt-authentication", "edc-ih-mgmt-authorization"]
 
-identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs"]
+identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", "edc-ih-keypairs", "edc-sts-accountprovisioner"]
 
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
