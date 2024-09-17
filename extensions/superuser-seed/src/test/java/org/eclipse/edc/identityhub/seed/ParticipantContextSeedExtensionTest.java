@@ -27,6 +27,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.contains;
@@ -41,6 +43,7 @@ import static org.mockito.Mockito.when;
 class ParticipantContextSeedExtensionTest {
 
     public static final String SUPER_USER = "super-user";
+    public static final String API_KEY = "apiKey";
     private final ParticipantContextService participantContextService = mock();
     private final Vault vault = mock();
     private final Monitor monitor = mock();
@@ -55,9 +58,9 @@ class ParticipantContextSeedExtensionTest {
 
     @Test
     void start_verifySuperUser(ParticipantContextSeedExtension ext,
-                                    ServiceExtensionContext context) {
+                               ServiceExtensionContext context) {
 
-        when(participantContextService.createParticipantContext(any())).thenReturn(ServiceResult.success("some-key"));
+        when(participantContextService.createParticipantContext(any())).thenReturn(ServiceResult.success(Map.of(API_KEY, "some-key")));
         ext.initialize(context);
 
         ext.start();
@@ -81,7 +84,7 @@ class ParticipantContextSeedExtensionTest {
 
     @Test
     void start_withApiKeyOverride(ParticipantContextSeedExtension ext,
-                                       ServiceExtensionContext context) {
+                                  ServiceExtensionContext context) {
 
 
         when(vault.storeSecret(any(), any())).thenReturn(Result.success());
@@ -91,7 +94,7 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(apiKeyOverride);
 
         when(participantContextService.createParticipantContext(any()))
-                .thenReturn(ServiceResult.success("generated-api-key"));
+                .thenReturn(ServiceResult.success(Map.of(API_KEY, "generated-api-key")));
         when(participantContextService.getParticipantContext(eq(SUPER_USER)))
                 .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
@@ -106,7 +109,7 @@ class ParticipantContextSeedExtensionTest {
 
     @Test
     void start_withInvalidKeyOverride(ParticipantContextSeedExtension ext,
-                                           ServiceExtensionContext context) {
+                                      ServiceExtensionContext context) {
         when(vault.storeSecret(any(), any())).thenReturn(Result.success());
 
         var apiKeyOverride = "some-invalid-key";
@@ -114,7 +117,7 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(apiKeyOverride);
 
         when(participantContextService.createParticipantContext(any()))
-                .thenReturn(ServiceResult.success("generated-api-key"));
+                .thenReturn(ServiceResult.success(Map.of(API_KEY, "generated-api-key")));
         when(participantContextService.getParticipantContext(eq(SUPER_USER)))
                 .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
@@ -130,7 +133,7 @@ class ParticipantContextSeedExtensionTest {
 
     @Test
     void start_whenVaultReturnsFailure(ParticipantContextSeedExtension ext,
-                                            ServiceExtensionContext context) {
+                                       ServiceExtensionContext context) {
         when(vault.storeSecret(any(), any())).thenReturn(Result.failure("test-failure"));
 
         var apiKeyOverride = "c3VwZXItdXNlcgo=.asdfl;jkasdfl;kasdf";
@@ -138,7 +141,7 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(apiKeyOverride);
 
         when(participantContextService.createParticipantContext(any()))
-                .thenReturn(ServiceResult.success("generated-api-key"));
+                .thenReturn(ServiceResult.success(Map.of(API_KEY, "generated-api-key")));
         when(participantContextService.getParticipantContext(eq(SUPER_USER)))
                 .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));

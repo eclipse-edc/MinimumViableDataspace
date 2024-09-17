@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "identityhub" {
           }
           port {
             container_port = var.ports.ih-identity-api
-            name           = "did-mgmt"
+            name           = "identity"
           }
           port {
             container_port = var.ports.ih-did
