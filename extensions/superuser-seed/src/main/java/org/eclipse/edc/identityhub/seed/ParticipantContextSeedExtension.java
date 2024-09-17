@@ -91,7 +91,7 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
                                         .onFailure(f -> monitor.warning("Error overriding API key for '%s': %s".formatted(superUserParticipantId, f.getFailureDetail())));
                                 return key;
                             })
-                            .orElse(generatedKey);
+                            .orElse(generatedKey.get("apiKey").toString());
                     monitor.info("Created user 'super-user'. Please take note of the API Key: %s".formatted(apiKey));
                 })
                 .orElseThrow(f -> new EdcException("Error creating Super-User: " + f.getFailureDetail()));
