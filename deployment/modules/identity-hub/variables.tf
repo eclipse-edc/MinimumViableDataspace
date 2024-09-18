@@ -42,7 +42,7 @@ variable "ports" {
     ih-debug        = number
     ih-did          = number
     ih-identity-api = number
-    resolution-api  = number
+    presentation-api  = number
   })
   default = {
     web             = 7080
@@ -50,7 +50,7 @@ variable "ports" {
     ih-debug        = 1045
     ih-did          = 7083
     ih-identity-api = 7081
-    resolution-api  = 7082
+    presentation-api  = 7082
   }
 }
 
