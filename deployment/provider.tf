@@ -25,9 +25,9 @@ module "provider-qna-connector" {
     password = "provider-qna"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_qna"
   }
-  namespace = kubernetes_namespace.ns.metadata.0.name
-  vault-url = "http://provider-vault:8200"
-  sts-token-url     = "http://provider-identityhub:7084/api/sts/token"
+  namespace     = kubernetes_namespace.ns.metadata.0.name
+  vault-url     = "http://provider-vault:8200"
+  sts-token-url = "http://provider-identityhub:7084/api/sts/token"
 
 }
 
