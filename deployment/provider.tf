@@ -27,8 +27,7 @@ module "provider-qna-connector" {
   }
   namespace     = kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
-  sts-token-url = "http://provider-identityhub:7084/api/sts/token"
-
+  sts-token-url = module.provider-identityhub.sts-token-url
 }
 
 # Second provider connector "provider-manufacturing"
@@ -43,7 +42,7 @@ module "provider-manufacturing-connector" {
   }
   namespace     = kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
-  sts-token-url = "http://provider-identityhub:7084/api/sts/token"
+  sts-token-url = module.provider-identityhub.sts-token-url
 }
 
 module "provider-identityhub" {
@@ -70,7 +69,7 @@ module "provider-catalog-server" {
   participantId     = var.provider-did
   namespace         = kubernetes_namespace.ns.metadata.0.name
   vault-url         = "http://provider-vault:8200"
-  sts-token-url     = "http://provider-identityhub:7084/api/sts/token"
+  sts-token-url     = module.provider-identityhub.sts-token-url
 
   database = {
     user     = "catalog_server"

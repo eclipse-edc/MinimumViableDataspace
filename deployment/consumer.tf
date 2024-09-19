@@ -26,7 +26,7 @@ module "consumer-connector" {
   }
   vault-url     = "http://consumer-vault:8200"
   namespace     = kubernetes_namespace.ns.metadata.0.name
-  sts-token-url = "http://consumer-identityhub:7084/api/sts/token"
+  sts-token-url = module.consumer-identityhub.sts-token-url
 }
 
 # consumer identity hub
