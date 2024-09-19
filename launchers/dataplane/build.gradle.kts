@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     runtimeOnly(libs.bundles.connector)
-    runtimeOnly(libs.edc.ext.observability)
+    runtimeOnly(libs.edc.api.observability)
     runtimeOnly(libs.edc.dataplane.core)
     runtimeOnly(libs.edc.dataplane.api.control.config)
     runtimeOnly(libs.edc.dataplane.api.control.client)
@@ -36,7 +36,8 @@ dependencies {
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.bundles.sql.edc.dataplane)
-        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
+        runtimeOnly(libs.edc.sts.remote.client)
+        println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
 
 }

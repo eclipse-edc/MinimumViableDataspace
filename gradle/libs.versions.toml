@@ -28,7 +28,6 @@ edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = 
 edc-core-crypto = { module = "org.eclipse.edc:crypto-core", version.ref = "edc" }
 edc-core-edrstore = { module = "org.eclipse.edc:edr-store-core", version.ref = "edc" }
 edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
-edc-ext-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
 edc-api-dsp-config = { module = "org.eclipse.edc:dsp-http-api-configuration", version.ref = "edc" }
 edc-dcp = { module = "org.eclipse.edc:identity-trust-service", version.ref = "edc" }
@@ -122,7 +121,6 @@ edc-ih-core = { module = "org.eclipse.edc:identity-hub-core", version.ref = "edc
 edc-ih-keypairs = { module = "org.eclipse.edc:identity-hub-keypairs", version.ref = "edc" }
 edc-ih-did = { module = "org.eclipse.edc:identity-hub-did", version.ref = "edc" }
 edc-ih-participants = { module = "org.eclipse.edc:identity-hub-participants", version.ref = "edc" }
-edc-sts-accountprovisioner =  { module = "org.eclipse.edc:sts-account-provisioner", version.ref = "edc" }
 
 # identityhub SPI modules
 edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
@@ -141,6 +139,14 @@ edc-ih-mgmt-keypairs = { module = "org.eclipse.edc:keypair-api", version.ref = "
 edc-ih-did-localpub = { module = "org.eclipse.edc:local-did-publisher", version.ref = "edc" }
 edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", version.ref = "edc" }
 edc-oauth2-client = { module = "org.eclipse.edc:oauth2-client", version.ref = "edc" }
+
+# EDC STS dependencies, used in IdentityHub
+edc-sts-spi = { module = "org.eclipse.edc:identity-trust-sts-spi", version.ref = "edc" }
+edc-sts-core = { module = "org.eclipse.edc:identity-trust-sts-core", version.ref = "edc" }
+edc-sts = { module = "org.eclipse.edc:identity-trust-sts-embedded", version.ref = "edc" }
+edc-sts-api = { module = "org.eclipse.edc:identity-trust-sts-api", version.ref = "edc" }
+edc-sts-accountprovisioner = { module = "org.eclipse.edc:sts-account-provisioner", version.ref = "edc" }
+edc-sts-remote-client = { module = "org.eclipse.edc:identity-trust-sts-remote-client", version.ref = "edc" }
 
 # federated catalog modules
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
@@ -164,13 +170,13 @@ parsson = { module = "org.eclipse.parsson:parsson", version.ref = "parsson" }
 [bundles]
 dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-control-api", "edc-dpf-signaling-client", "edc-dpf-transfer-signaling"]
 
-connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-ext-observability", "edc-ext-jsonld"]
+connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld"]
 
 controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management",
-    "edc-api-management-config", "edc-api-management-edr","edc-api-management-dataplaneselector",
+    "edc-api-management-config", "edc-api-management-edr", "edc-api-management-dataplaneselector",
     "edc-api-observability", "edc-dsp", "edc-spi-jwt", "edc-ext-http", "edc-controlplane-callback-dispatcher-event", "edc-controlplane-callback-dispatcher-http",
-    "edc-identity-core-did", "edc-dcp-core", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
-    "edc-identity-vc-ldp", "edc-did-web", "edc-lib-jws2020", "edc-core-edrstore", "edc-edr-storereceiver"]
+    "edc-identity-core-did", "edc-identity-trust-transform", "edc-api-control-configuration", "edc-lib-transform",
+    "edc-identity-vc-ldp", "edc-lib-jws2020", "edc-core-edrstore", "edc-edr-storereceiver"]
 
 did = ["edc-did-web", "edc-did-core", "edc-ih-did", "edc-ih-did-localpub"]
 
@@ -181,10 +187,12 @@ identityhub = ["edc-ih-core", "edc-ih-api-presentation", "edc-ih-participants", 
 
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
-sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore","edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 sql-edc-dataplane = ["edc-sql-accesstokendata", "edc-sql-dataplane", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "edc-sql-dataplane-instancestore", "postgres"]
 
 sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+
+sts = ["edc-sts-core", "edc-sts-api", "edc-sts-accountprovisioner", "edc-sts-spi", "edc-sts"]
 
 sql-fc = ["edc-fc-cache-sql"]
 

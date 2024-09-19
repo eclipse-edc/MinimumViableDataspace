@@ -43,6 +43,7 @@ variable "ports" {
     ih-did           = number
     ih-identity-api  = number
     presentation-api = number
+    sts-api          = number
   })
   default = {
     web              = 7080
@@ -51,6 +52,7 @@ variable "ports" {
     ih-did           = 7083
     ih-identity-api  = 7081
     presentation-api = 7082
+    sts-api          = 7084
   }
 }
 

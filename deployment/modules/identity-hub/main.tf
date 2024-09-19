@@ -74,8 +74,9 @@ resource "kubernetes_deployment" "identityhub" {
           }
 
           liveness_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/liveness"]
+            http_get {
+              path = "/api/check/liveness"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -83,8 +84,9 @@ resource "kubernetes_deployment" "identityhub" {
           }
 
           readiness_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/readiness"]
+            http_get {
+              path = "/api/check/readiness"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -92,8 +94,9 @@ resource "kubernetes_deployment" "identityhub" {
           }
 
           startup_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/startup"]
+            http_get {
+              path = "/api/check/startup"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -146,6 +149,8 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_PRESENTATION_PATH      = "/api/presentation"
     WEB_HTTP_DID_PORT               = var.ports.ih-did
     WEB_HTTP_DID_PATH               = "/"
+    WEB_HTTP_STS_PORT               = var.ports.sts-api
+    WEB_HTTP_STS_PATH               = "/api/sts"
     JAVA_TOOL_OPTIONS               = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.ih-debug}"
     EDC_IAM_STS_PRIVATEKEY_ALIAS    = var.aliases.sts-private-key
     EDC_IAM_STS_PUBLICKEY_ID        = var.aliases.sts-public-key-id

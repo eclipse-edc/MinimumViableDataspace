@@ -86,6 +86,11 @@ variable "vault-url" {
   type        = string
 }
 
+variable "sts-token-url" {
+  description = "Full URL of the STS token endpoint"
+  type        = string
+}
+
 variable "aliases" {
   type = object({
     sts-private-key   = string

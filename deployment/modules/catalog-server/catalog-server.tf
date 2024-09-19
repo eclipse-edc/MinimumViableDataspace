@@ -67,8 +67,9 @@ resource "kubernetes_deployment" "connector" {
           }
 
           liveness_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/liveness"]
+            http_get {
+              path = "/api/check/liveness"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -76,8 +77,9 @@ resource "kubernetes_deployment" "connector" {
           }
 
           readiness_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/readiness"]
+            http_get {
+              path = "/api/check/readiness"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -85,8 +87,9 @@ resource "kubernetes_deployment" "connector" {
           }
 
           startup_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/startup"]
+            http_get {
+              path = "/api/check/startup"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -119,10 +122,10 @@ resource "kubernetes_config_map" "catalog-server-config" {
   ## Create databases for keycloak and MIW, create users and assign privileges
   data = {
     EDC_API_AUTH_KEY                = "password"
-    EDC_IAM_ISSUER_ID               = var.participant-did
+    EDC_IAM_ISSUER_ID               = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS       = false
     WEB_HTTP_PORT                   = var.ports.web
-    WEB_HTTP_PATH                   = "/"
+    WEB_HTTP_PATH                   = "/api"
     WEB_HTTP_MANAGEMENT_PORT        = var.ports.management
     WEB_HTTP_MANAGEMENT_PATH        = "/api/management"
     WEB_HTTP_CONTROL_PORT           = var.ports.control
@@ -132,7 +135,7 @@ resource "kubernetes_config_map" "catalog-server-config" {
     EDC_API_AUTH_KEY                = "password"
     EDC_DSP_CALLBACK_ADDRESS        = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS    = "${var.participantId}#${var.aliases.sts-private-key}"
-    EDC_IAM_STS_PUBLICKEY_ID        = "${var.participant-did}#${var.aliases.sts-public-key-id}"
+    EDC_IAM_STS_PUBLICKEY_ID        = "${var.participantId}#${var.aliases.sts-public-key-id}"
     JAVA_TOOL_OPTIONS               = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH   = "/etc/registry/registry.json"
     EDC_PARTICIPANT_ID              = var.participantId
@@ -142,5 +145,10 @@ resource "kubernetes_config_map" "catalog-server-config" {
     EDC_DATASOURCE_DEFAULT_URL      = var.database.url
     EDC_DATASOURCE_DEFAULT_USER     = var.database.user
     EDC_DATASOURCE_DEFAULT_PASSWORD = var.database.password
+
+    # remote STS configuration
+    EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
+    EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
   }
 }

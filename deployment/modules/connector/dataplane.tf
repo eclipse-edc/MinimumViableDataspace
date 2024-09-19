@@ -66,8 +66,9 @@ resource "kubernetes_deployment" "dataplane" {
           }
 
           liveness_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/liveness"]
+            http_get {
+              path = "/api/check/liveness"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -75,8 +76,9 @@ resource "kubernetes_deployment" "dataplane" {
           }
 
           readiness_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/readiness"]
+            http_get {
+              path = "/api/check/readiness"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -84,8 +86,9 @@ resource "kubernetes_deployment" "dataplane" {
           }
 
           startup_probe {
-            exec {
-              command = ["curl", "-X GET", "http://localhost:${var.ports.web}/api/check/startup"]
+            http_get {
+              path = "/api/check/startup"
+              port = var.ports.web
             }
             failure_threshold = 10
             period_seconds    = 5
@@ -124,5 +127,10 @@ resource "kubernetes_config_map" "dataplane-config" {
     EDC_DATASOURCE_DEFAULT_URL                        = var.database.url
     EDC_DATASOURCE_DEFAULT_USER                       = var.database.user
     EDC_DATASOURCE_DEFAULT_PASSWORD                   = var.database.password
+
+    # remote STS configuration
+    EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
+    EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "consumer-participant-sts-client-secret"
   }
 }
