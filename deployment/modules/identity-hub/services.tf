@@ -23,8 +23,8 @@ resource "kubernetes_service" "ih-service" {
     }
     # we need a stable IP, otherwise there will be a cycle with the issuer
     port {
-      name = "resolution"
-      port = var.ports.resolution-api
+      name = "presentation"
+      port = var.ports.presentation-api
     }
     port {
       name = "debug"

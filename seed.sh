@@ -48,7 +48,7 @@ DATA_CONSUMER=$(jq -n --arg pem "$PEM_CONSUMER" '{
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "http://localhost:7081/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
+                "serviceEndpoint": "http://localhost:7081/api/presentation/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
                 "id": "consumer-credentialservice-1"
              },
              {
@@ -82,7 +82,7 @@ DATA_PROVIDER=$(jq -n --arg pem "$PEM_PROVIDER" '{
             "serviceEndpoints":[
               {
                  "type": "CredentialService",
-                 "serviceEndpoint": "http://localhost:7091/api/resolution/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDkz",
+                 "serviceEndpoint": "http://localhost:7091/api/presentation/v1/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDkz",
                  "id": "provider-credentialservice-1"
               },
               {
