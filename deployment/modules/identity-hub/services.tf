@@ -38,5 +38,9 @@ resource "kubernetes_service" "ih-service" {
       name = "did"
       port = var.ports.ih-did
     }
+    port {
+      name = "sts"
+      port = var.ports.sts-api
+    }
   }
 }

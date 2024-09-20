@@ -36,3 +36,7 @@ output "credentials" {
     content = fileset(var.credentials-dir, "*-credential.json")
   }
 }
+
+output "sts-token-url" {
+  value = "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.sts-api}/api/sts/token"
+}

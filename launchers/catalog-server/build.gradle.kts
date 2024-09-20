@@ -34,7 +34,8 @@ dependencies {
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.bundles.sql.edc)
-        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
+        runtimeOnly(libs.edc.sts.remote.client)
+        println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
 
 }

@@ -25,8 +25,9 @@ module "provider-qna-connector" {
     password = "provider-qna"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_qna"
   }
-  namespace = kubernetes_namespace.ns.metadata.0.name
-  vault-url = "http://provider-vault:8200"
+  namespace     = kubernetes_namespace.ns.metadata.0.name
+  vault-url     = "http://provider-vault:8200"
+  sts-token-url = module.provider-identityhub.sts-token-url
 }
 
 # Second provider connector "provider-manufacturing"
@@ -39,8 +40,9 @@ module "provider-manufacturing-connector" {
     password = "provider-manufacturing"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_manufacturing"
   }
-  namespace = kubernetes_namespace.ns.metadata.0.name
-  vault-url = "http://provider-vault:8200"
+  namespace     = kubernetes_namespace.ns.metadata.0.name
+  vault-url     = "http://provider-vault:8200"
+  sts-token-url = module.provider-identityhub.sts-token-url
 }
 
 module "provider-identityhub" {
@@ -65,9 +67,10 @@ module "provider-catalog-server" {
   source            = "./modules/catalog-server"
   humanReadableName = "provider-catalog-server"
   participantId     = var.provider-did
-  participant-did   = var.provider-did
   namespace         = kubernetes_namespace.ns.metadata.0.name
   vault-url         = "http://provider-vault:8200"
+  sts-token-url     = module.provider-identityhub.sts-token-url
+
   database = {
     user     = "catalog_server"
     password = "catalog_server"

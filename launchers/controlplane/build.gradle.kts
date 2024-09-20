@@ -25,13 +25,15 @@ dependencies {
     implementation(libs.edc.spi.core) // we need some constants
 
     implementation(libs.bundles.controlplane)
+    implementation(libs.bundles.dcp)
     implementation(libs.edc.core.connector)
 
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.bundles.sql.edc)
         runtimeOnly(libs.bundles.sql.fc)
-        println("This runtime compiles with Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
+        runtimeOnly(libs.edc.sts.remote.client)
+        println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
     runtimeOnly(libs.bundles.dpf)
     runtimeOnly(libs.edc.api.version)

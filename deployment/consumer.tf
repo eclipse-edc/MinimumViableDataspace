@@ -24,8 +24,9 @@ module "consumer-connector" {
     password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
-  vault-url = "http://consumer-vault:8200"
-  namespace = kubernetes_namespace.ns.metadata.0.name
+  vault-url     = "http://consumer-vault:8200"
+  namespace     = kubernetes_namespace.ns.metadata.0.name
+  sts-token-url = module.consumer-identityhub.sts-token-url
 }
 
 # consumer identity hub

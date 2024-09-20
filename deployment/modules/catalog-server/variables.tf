@@ -34,11 +34,6 @@ variable "humanReadableName" {
 
 variable "participantId" {
   type        = string
-  description = "Participant ID of the connector. Usually a DID"
-}
-
-variable "participant-did" {
-  type        = string
   description = "DID:WEB identifier of the participant"
 }
 
@@ -90,6 +85,11 @@ variable "vault-token" {
 
 variable "vault-url" {
   description = "URL of the Hashicorp Vault"
+  type        = string
+}
+
+variable "sts-token-url" {
+  description = "Full URL of the STS token endpoint"
   type        = string
 }
 
