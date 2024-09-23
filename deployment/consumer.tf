@@ -70,15 +70,11 @@ resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
   }
   data = {
     "consumer-initdb-config.sql" = <<-EOT
-        CREATE USER consumer WITH ENCRYPTED PASSWORD 'consumer';
+        CREATE USER consumer WITH ENCRYPTED PASSWORD 'consumer' SUPERUSER;
         CREATE DATABASE consumer;
-        \c consumer
+        \c consumer consumer
 
-        ${file("./assets/postgres/edc_schema.sql")}
 
-        ${file("./assets/postgres/ih_schema.sql")}
-
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO consumer;
       EOT
   }
 }

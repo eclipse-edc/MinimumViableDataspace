@@ -105,13 +105,10 @@ resource "kubernetes_config_map" "postgres-initdb-config-cs" {
   }
   data = {
     "cs-initdb-config.sql" = <<-EOT
-        CREATE USER catalog_server WITH ENCRYPTED PASSWORD 'catalog_server';
+        CREATE USER catalog_server WITH ENCRYPTED PASSWORD 'catalog_server' SUPERUSER;
         CREATE DATABASE catalog_server;
         \c catalog_server
 
-        ${file("./assets/postgres/edc_schema.sql")}
-
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO catalog_server;
       EOT
   }
 }
@@ -123,13 +120,10 @@ resource "kubernetes_config_map" "postgres-initdb-config-pqna" {
   }
   data = {
     "provider-qna-initdb-config.sql" = <<-EOT
-        CREATE USER qna WITH ENCRYPTED PASSWORD 'provider-qna';
+        CREATE USER qna WITH ENCRYPTED PASSWORD 'provider-qna' SUPERUSER;
         CREATE DATABASE provider_qna;
         \c provider_qna
 
-        ${file("./assets/postgres/edc_schema.sql")}
-
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO qna;
       EOT
   }
 }
@@ -141,13 +135,10 @@ resource "kubernetes_config_map" "postgres-initdb-config-pm" {
   }
   data = {
     "provider-manufacturing-initdb-config.sql" = <<-EOT
-        CREATE USER manufacturing WITH ENCRYPTED PASSWORD 'provider-manufacturing';
+        CREATE USER manufacturing WITH ENCRYPTED PASSWORD 'provider-manufacturing' SUPERUSER;
         CREATE DATABASE provider_manufacturing;
         \c provider_manufacturing
 
-        ${file("./assets/postgres/edc_schema.sql")}
-
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO manufacturing;
       EOT
   }
 }
@@ -159,13 +150,10 @@ resource "kubernetes_config_map" "postgres-initdb-config-ih" {
   }
   data = {
     "ih-initdb-config.sql" = <<-EOT
-        CREATE USER identityhub WITH ENCRYPTED PASSWORD 'identityhub';
+        CREATE USER identityhub WITH ENCRYPTED PASSWORD 'identityhub' SUPERUSER;
         CREATE DATABASE identityhub;
         \c identityhub
 
-        ${file("./assets/postgres/ih_schema.sql")}
-
-        GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO identityhub;
       EOT
   }
 }
