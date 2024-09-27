@@ -2085,6 +2085,11 @@
 						"key": "value",
 						"value": "{{IH_API_TOKEN}}",
 						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "X-Api-Key",
+						"type": "string"
 					}
 				]
 			},
