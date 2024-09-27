@@ -740,6 +740,17 @@
 							"name": "Get Participant By ID",
 							"event": [
 								{
+									"listen": "prerequest",
+									"script": {
+										"type": "text/javascript",
+										"exec": [
+											"if(pm.request.method == \"POST\" || pm.request.method == \"PUT\"){",
+											"    pm.request.headers.add(\"Content-Type: application/json\");",
+											"}"
+										]
+									}
+								},
+								{
 									"listen": "test",
 									"script": {
 										"exec": [
@@ -847,12 +858,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"active\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EdDSA\",\n            \"curve\": \"Ed25519\"\n        }\n    }\n}",
@@ -904,12 +910,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"active\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\\n-----END PUBLIC KEY-----\"\n    }\n}",
@@ -961,12 +962,7 @@
 							],
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "[\n    \"role1\", \"role2\", \"admin\"\n]",
@@ -1019,12 +1015,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "",
@@ -1077,12 +1068,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
@@ -1141,12 +1127,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
@@ -1205,12 +1186,7 @@
 							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
@@ -1333,12 +1309,7 @@
 							],
 							"request": {
 								"method": "PUT",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"keyId\": \"key6\",\n    \"privateKeyAlias\": \"new-foobar-alias5\",\n    \"keyGeneratorParams\": {\n        \"algorithm\": \"EdDSA\",\n        \"curve\": \"Ed25519\"\n    }\n}",
@@ -1391,12 +1362,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"keyId\": \"key2\",\n    \"privateKeyAlias\": \"new-foobar-alias\",\n    \"keyGeneratorParams\": {\n        \"algorithm\": \"EC\",\n        \"curve\": \"secp256r1\"\n    }\n}",
@@ -1451,12 +1417,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "",
@@ -1536,12 +1497,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \n}",
@@ -1649,12 +1605,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"did\": \"did:web:BPN0000001\"\n}",
@@ -1708,12 +1659,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"id\": \"some-other-id\",\n    \"type\": \"CredentialService\",\n    \"serviceEndpoint\": \"https://foobar.myconnector.com\"\n}",
@@ -1768,12 +1714,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
@@ -1827,12 +1768,7 @@
 							],
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
@@ -1885,12 +1821,7 @@
 							],
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"did\": \"did:web:BPN0000001\"\n}",
