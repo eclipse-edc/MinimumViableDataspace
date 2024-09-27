@@ -640,17 +640,6 @@
 							"name": "Get Participant By ID",
 							"event": [
 								{
-									"listen": "prerequest",
-									"script": {
-										"type": "text/javascript",
-										"exec": [
-											"if(pm.request.method == \"POST\" || pm.request.method == \"PUT\"){",
-											"    pm.request.headers.add(\"Content-Type: application/json\");",
-											"}"
-										]
-									}
-								},
-								{
 									"listen": "test",
 									"script": {
 										"exec": [
@@ -1924,6 +1913,17 @@
 		]
 	},
 	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if(pm.request.method == \"POST\" || pm.request.method == \"PUT\"){",
+					"    pm.request.headers.add(\"Content-Type: application/json\");",
+					"}"
+				]
+			}
+		},
 		{
 			"listen": "prerequest",
 			"script": {
