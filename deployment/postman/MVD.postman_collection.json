@@ -683,12 +683,7 @@
 					"name": "Get EDR DataAddress for TransferId",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [],
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/edrs/713dfab7-c70a-4c7b-9756-d372647276b5/dataaddress",
 							"host": [
@@ -767,12 +762,7 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}",
 									"host": [
@@ -815,12 +805,7 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{CS_URL}}/api/identity/v1alpha/participants",
 									"host": [
@@ -1282,12 +1267,7 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/BPN0000001/keypairs",
 									"host": [
@@ -1309,12 +1289,7 @@
 							"name": "Get all KeyPairs",
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{CS_URL}}/api/identity/v1alpha/keypairs",
 									"host": [
@@ -1623,12 +1598,7 @@
 							},
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \n}",
@@ -2003,12 +1973,7 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/credentials",
 									"host": [
@@ -2054,12 +2019,7 @@
 							],
 							"request": {
 								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+								"header": [],
 								"url": {
 									"raw": "{{CS_URL}}/api/identity/v1alpha/credentials",
 									"host": [
