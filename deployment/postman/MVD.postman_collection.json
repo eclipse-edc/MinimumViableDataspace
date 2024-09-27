@@ -14,11 +14,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"asset-1\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This asset requires Membership to view and negotiate.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
@@ -43,11 +43,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"asset-2\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This asset requires Membership to view and SensitiveData credential to negotiate.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
@@ -72,11 +72,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"permission\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"MembershipCredential\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
@@ -101,11 +101,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-dataprocessor\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"obligation\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"DataAccess.level\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"processing\"\n                }\n            }\n        ]\n    }\n}"
@@ -130,11 +130,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-sensitive\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"obligation\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"DataAccess.level\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"sensitive\"\n                }\n            }\n        ]\n    }\n}"
@@ -159,11 +159,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"member-and-dataprocessor-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-dataprocessor\",\n    \"assetsSelector\": {\n        \"@type\": \"Criterion\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"asset-1\"\n    }\n}"
@@ -188,11 +188,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"sensitive-only-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-sensitive\",\n    \"assetsSelector\": {\n        \"@type\": \"Criterion\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"asset-2\"\n    }\n}"
@@ -244,11 +244,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"linked-asset-provider-qna\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to the catalog of the provider's Q&A department.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_QNA_DSP_URL}}/api/dsp\"\n    }\n}",
@@ -278,11 +278,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"linked-asset-provider-manufacturing\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to the catalog of the provider's Manufacturing department.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_MF_DSP_URL}}/api/dsp\"\n    }\n}",
@@ -312,11 +312,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"normal-asset-1\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a conventional asset, not a CatalogAsset.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
@@ -341,11 +341,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"permission\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"MembershipCredential\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
@@ -370,11 +370,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"membership-required-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-membership\",\n    \"assetsSelector\": {\n        \"@type\": \"Criterion\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"in\",\n        \"operandRight\": [\n            \"linked-asset-provider-qna\",\n            \"linked-asset-provider-manufacturing\",\n            \"normal-asset-1\"\n        ]\n    }\n}"
@@ -426,11 +426,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}"
@@ -456,11 +456,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{CATALOG_SERVER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
@@ -486,11 +486,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
@@ -521,11 +521,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@type\": \"Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1kYXRhcHJvY2Vzc29yLWRlZg==:YXNzZXQtMQ==:MmQ0ZWZjZTYtYzJjNy00NTM5LTk5ODAtZDAwOTlkZDNkOWQy\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"action\": \"use\",\n            \"constraint\": {\n                \"leftOperand\": \"DataAccess.level\",\n                \"operator\": \"eq\",\n                \"rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
@@ -555,11 +555,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n   \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}"
@@ -585,11 +585,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"47e43627-d9b0-4e35-b534-cef450d7de88\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
@@ -619,11 +619,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
@@ -654,11 +654,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}"
@@ -684,11 +684,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
 						"url": {
 							"raw": "{{HOST}}/api/management/v3/edrs/713dfab7-c70a-4c7b-9756-d372647276b5/dataaddress",
 							"host": [
