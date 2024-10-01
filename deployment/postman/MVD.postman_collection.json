@@ -503,6 +503,22 @@
 				},
 				{
 					"name": "Get Contract Negotiations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the contact agreement id and save it as an environment variable",
+									"const contractAgreementId = pm.response.json()[0][\"contractAgreementId\"];",
+									"pm.environment.set(\"CONTRACT_AGREEMENT_ID\", contractAgreementId);",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -528,12 +544,26 @@
 				},
 				{
 					"name": "Initiate Transfer",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"CONTRACT_AGREEMENT_ID\")){",
+									"    throw new Error('Contract Agreement ID is not yet available, please execute request \"Initiate Negotiation and Get Contract Negotiation\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"47e43627-d9b0-4e35-b534-cef450d7de88\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"{{CONTRACT_AGREEMENT_ID}}\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
