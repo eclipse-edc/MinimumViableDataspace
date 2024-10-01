@@ -418,13 +418,10 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"const response = JSON.stringify(pm.response.json())",
-									"const pattern_hasPolicy = /\"odrl:hasPolicy\":\\s*{\\s*\"@id\":\\s*\"([^\"]+)\"/gm;",
-									"// get all policy ids from json response the request",
-									"const policy_ids = response.match(pattern_hasPolicy);",
-									"// get the first policy id, which should correspond to the policy id of \"asset-1\"",
-									"const policyId_asset1 = policy_ids[1].match(/\"@id\":\\s*\"([^\"]+)\"/)[1];",
-									"pm.environment.set(\"POLICY_ID_ASSET_1\", policyId_asset1);",
+									"// get the policy id of \"asset-1\" and save it as an environment variable",
+									"const dcat_datasets = pm.response.json()[0][\"dcat:dataset\"][1][\"dcat:dataset\"]",
+									"const asset_1 = dcat_datasets.find((asset) => asset[\"@id\"] == \"asset-1\")",
+									"pm.environment.set(\"POLICY_ID_ASSET_1\", asset_1[\"odrl:hasPolicy\"][\"@id\"]);",
 									"",
 									""
 								],
