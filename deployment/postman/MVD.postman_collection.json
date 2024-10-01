@@ -509,8 +509,11 @@
 							"script": {
 								"exec": [
 									"// get the contact agreement id and save it as an environment variable",
-									"const contractAgreementId = pm.response.json()[0][\"contractAgreementId\"];",
-									"pm.environment.set(\"CONTRACT_AGREEMENT_ID\", contractAgreementId);",
+									"if(pm.response.code==200){",
+									"  //using the first contract agreement id found",
+									"  const contractAgreementId = pm.response.json()[0][\"contractAgreementId\"];",
+									"  pm.environment.set(\"CONTRACT_AGREEMENT_ID\", contractAgreementId);",
+									"}",
 									"",
 									""
 								],
@@ -617,6 +620,25 @@
 				},
 				{
 					"name": "Get cached EDRs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the transfer process id of \"asset-1\" and save it as an environment variable",
+									"if(pm.response.code==200){",
+									"  //using the first transfer process id found",
+									"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
+									"  pm.environment.set(\"TRANSFER_PROCESS_ID\", transferProcessId);",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -642,11 +664,41 @@
 				},
 				{
 					"name": "Get EDR DataAddress for TransferId",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"if(!pm.environment.has(\"TRANSFER_PROCESS_ID\")){",
+									"    throw new Error('Transfer Process ID is not yet available, please execute request \"Get Transfer Processes\" first!');",
+									"}"
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the authorization token and save it as an environment variable",
+									"if(pm.response.code==200){",
+									"  //using the first authorization token found",
+									"  const authorization = pm.response.json()[\"authorization\"];",
+									"  pm.environment.set(\"AUTHORIZATION\", authorization);",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/api/management/v3/edrs/713dfab7-c70a-4c7b-9756-d372647276b5/dataaddress",
+							"raw": "{{HOST}}/api/management/v3/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress",
 							"host": [
 								"{{HOST}}"
 							],
@@ -655,7 +707,7 @@
 								"management",
 								"v3",
 								"edrs",
-								"713dfab7-c70a-4c7b-9756-d372647276b5",
+								"{{TRANSFER_PROCESS_ID}}",
 								"dataaddress"
 							]
 						}
@@ -664,6 +716,20 @@
 				},
 				{
 					"name": "Download Data from Public API",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"AUTHORIZATION\")){",
+									"    throw new Error(' The authorization token is not yet available, please execute request \"Get EDR DataAddress for TransferId\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -672,7 +738,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJraWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMja2V5LTEiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJhdWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwODMiLCJzdWIiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJpYXQiOjE3MjEzOTMxNjU5ODgsImp0aSI6ImFmOWI2YWIyLTMwNjYtNDNlNi1hNjg1LWIyMDVjNTFkZmJhMyJ9.ute0sLuMgc0bzG_ZUGG9G3pliFfANf9pWDxReiRrWjGudgUa4YmR9ftB5LeZTOvKCBJshRpbZX-hnQxR8fXMWA",
+								"value": "{{AUTHORIZATION}}",
 								"type": "text"
 							}
 						],
