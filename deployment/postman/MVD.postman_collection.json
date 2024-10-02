@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "7921ef6e-cb34-4f23-b401-f00bf74a12ec",
+		"_postman_id": "31e4b7bb-ba63-490c-8a3d-dbc73ccbe1ca",
 		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27652630"
+		"_exporter_id": "5621979"
 	},
 	"item": [
 		{
@@ -490,6 +490,27 @@
 								"v3",
 								"contractnegotiations",
 								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Agreement ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractnegotiations/e85301ab-8279-48b0-8a6a-6e8592bd18fd",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractnegotiations",
+								"e85301ab-8279-48b0-8a6a-6e8592bd18fd"
 							]
 						}
 					},
