@@ -509,7 +509,7 @@
 							"script": {
 								"exec": [
 									"// get the contact agreement id and save it as an environment variable",
-									"if(pm.response.code==200){",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
 									"  //using the first contract agreement id found",
 									"  const contractAgreementId = pm.response.json()[0][\"contractAgreementId\"];",
 									"  pm.environment.set(\"CONTRACT_AGREEMENT_ID\", contractAgreementId);",
@@ -553,7 +553,7 @@
 							"script": {
 								"exec": [
 									"if(!pm.environment.has(\"CONTRACT_AGREEMENT_ID\")){",
-									"    throw new Error('Contract Agreement ID is not yet available, please execute request \"Initiate Negotiation and Get Contract Negotiation\" first!');",
+									"    throw new Error('Contract Agreement ID is not yet available, please execute requests \"Initiate Negotiation and Get Contract Negotiation\" first!');",
 									"}"
 								],
 								"type": "text/javascript",
@@ -626,8 +626,7 @@
 							"script": {
 								"exec": [
 									"// get the transfer process id of \"asset-1\" and save it as an environment variable",
-									"if(pm.response.code==200){",
-									"  //using the first transfer process id found",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
 									"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
 									"  pm.environment.set(\"TRANSFER_PROCESS_ID\", transferProcessId);",
 									"}",
@@ -681,7 +680,7 @@
 							"script": {
 								"exec": [
 									"// get the authorization token and save it as an environment variable",
-									"if(pm.response.code==200){",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
 									"  //using the first authorization token found",
 									"  const authorization = pm.response.json()[\"authorization\"];",
 									"  pm.environment.set(\"AUTHORIZATION\", authorization);",
