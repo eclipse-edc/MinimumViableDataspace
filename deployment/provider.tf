@@ -27,7 +27,7 @@ module "provider-qna-connector" {
   }
   namespace     = kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
-  sts-token-url = module.provider-identityhub.sts-token-url
+  sts-token-url = "${module.provider-sts.sts-token-url}/token"
 }
 
 # Second provider connector "provider-manufacturing"
@@ -42,7 +42,7 @@ module "provider-manufacturing-connector" {
   }
   namespace     = kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
-  sts-token-url = module.provider-identityhub.sts-token-url
+  sts-token-url = "${module.provider-sts.sts-token-url}/token"
 }
 
 module "provider-identityhub" {
@@ -60,6 +60,21 @@ module "provider-identityhub" {
     password = "identityhub"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/identityhub"
   }
+  sts-accounts-api-url = module.provider-sts.sts-accounts-url
+}
+
+# provider standalone STS
+module "provider-sts" {
+  depends_on        = [module.provider-vault]
+  source            = "./modules/sts"
+  humanReadableName = "provider-sts"
+  namespace         = kubernetes_namespace.ns.metadata.0.name
+  database = {
+    user     = "sts"
+    password = "sts"
+    url      = "jdbc:postgresql://${module.provider-postgres.database-url}/sts"
+  }
+  vault-url         = "http://provider-vault:8200"
 }
 
 # Catalog server runtime
@@ -69,7 +84,7 @@ module "provider-catalog-server" {
   participantId     = var.provider-did
   namespace         = kubernetes_namespace.ns.metadata.0.name
   vault-url         = "http://provider-vault:8200"
-  sts-token-url     = module.provider-identityhub.sts-token-url
+  sts-token-url     = "${module.provider-sts.sts-token-url}/token"
 
   database = {
     user     = "catalog_server"
@@ -93,7 +108,8 @@ module "provider-postgres" {
     kubernetes_config_map.postgres-initdb-config-cs.metadata[0].name,
     kubernetes_config_map.postgres-initdb-config-pqna.metadata[0].name,
     kubernetes_config_map.postgres-initdb-config-pm.metadata[0].name,
-    kubernetes_config_map.postgres-initdb-config-ih.metadata[0].name
+    kubernetes_config_map.postgres-initdb-config-ih.metadata[0].name,
+    kubernetes_config_map.postgres-initdb-config-sts.metadata[0].name
   ]
   namespace = kubernetes_namespace.ns.metadata.0.name
 }
@@ -153,7 +169,20 @@ resource "kubernetes_config_map" "postgres-initdb-config-ih" {
         CREATE USER identityhub WITH ENCRYPTED PASSWORD 'identityhub' SUPERUSER;
         CREATE DATABASE identityhub;
         \c identityhub
+      EOT
+  }
+}
 
+resource "kubernetes_config_map" "postgres-initdb-config-sts" {
+  metadata {
+    name      = "sts-initdb-config"
+    namespace = kubernetes_namespace.ns.metadata.0.name
+  }
+  data = {
+    "sts-initdb-config.sql" = <<-EOT
+        CREATE USER sts WITH ENCRYPTED PASSWORD 'sts' SUPERUSER;
+        CREATE DATABASE sts;
+        \c sts
       EOT
   }
 }

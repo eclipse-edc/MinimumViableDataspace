@@ -151,6 +151,7 @@ edc-sts-accountprovisioner = { module = "org.eclipse.edc:sts-account-provisioner
 edc-sts-accountservice-local = { module = "org.eclipse.edc:sts-account-service-local", version.ref = "edc" }
 edc-sts-accountservice-remote = { module = "org.eclipse.edc:sts-account-service-remote", version.ref = "edc" }
 edc-sts-remote-client = { module = "org.eclipse.edc:identity-trust-sts-remote-client", version.ref = "edc" }
+edc-sts-api-accounts = { module = "org.eclipse.edc:identity-trust-sts-accounts-api", version.ref = "edc" }
 
 # federated catalog modules
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
@@ -196,7 +197,9 @@ sql-edc-dataplane = ["edc-sql-accesstokendata", "edc-sql-dataplane", "edc-sql-co
 
 sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
-sts = ["edc-sts-core", "edc-sts-api", "edc-sts-accountprovisioner", "edc-sts-spi", "edc-sts", "edc-sts-accountservice-local"]
+sql-sts = [ "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+
+sts = ["edc-sts-core", "edc-sts-api", "edc-sts-spi", "edc-sts", "edc-sts-api-accounts"]
 
 sql-fc = ["edc-fc-cache-sql"]
 

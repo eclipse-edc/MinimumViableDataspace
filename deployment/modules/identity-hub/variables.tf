@@ -61,11 +61,6 @@ variable "credentials-dir" {
   description = "JSON object containing the credentials to seed, sorted by human-readable participant name"
 }
 
-variable "participant-list-file" {
-  type    = string
-  default = "./assets/participants/participants.k8s.json"
-}
-
 variable "ih_superuser_apikey" {
   default     = "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
   description = "Management API Key for the Super-User. Defaults to 'base64(super-user).base64(super-secret-key)"
@@ -105,4 +100,9 @@ variable "database" {
     user     = string
     password = string
   })
+}
+
+variable "sts-accounts-api-url" {
+  description = "Base URL for the STS Accounts API"
+  type        = string
 }
