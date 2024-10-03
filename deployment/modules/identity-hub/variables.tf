@@ -48,7 +48,7 @@ variable "ports" {
   default = {
     web              = 7080
     debug            = 1044
-    ih-debug         = 1045
+    ih-debug         = 1044
     ih-did           = 7083
     ih-identity-api  = 7081
     presentation-api = 7082

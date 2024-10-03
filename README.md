@@ -1,50 +1,53 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
+
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-  * [1. Introduction](#1-introduction)
-  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
-  * [3. The Scenario](#3-the-scenario)
-    * [3.1 Participants](#31-participants)
-    * [3.2 Data setup](#32-data-setup)
-    * [3.3 Access control](#33-access-control)
-    * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-  * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
-    * [4.1 Starting the runtimes](#41-starting-the-runtimes)
-    * [4.2 Seeding the dataspace](#42-seeding-the-dataspace)
-    * [4.3 Next steps](#43-next-steps)
-  * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
-    * [5.1 Build the runtime images](#51-build-the-runtime-images)
-    * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
-    * [5.3 Seed the dataspace](#53-seed-the-dataspace)
-  * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
-    * [6.1 In-memory databases](#61-in-memory-databases)
-    * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
-    * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
-  * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
-    * [7.1 Get the catalog](#71-get-the-catalog)
-    * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
-    * [7.3 Query negotiation status](#73-query-negotiation-status)
-    * [7.4 Initiate data transfer](#74-initiate-data-transfer)
-    * [7.5 Query data transfers](#75-query-data-transfers)
-    * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
-    * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
-    * [7.8 Fetch data](#78-fetch-data)
-  * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
-    * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
-    * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
-    * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
-    * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
-      * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
-      * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
-    * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
-    * [8.6 Super-user seeding](#86-super-user-seeding)
-  * [9. Other caveats, shortcuts and workarounds](#9-other-caveats-shortcuts-and-workarounds)
-    * [9.1 In-memory stores in local deployment](#91-in-memory-stores-in-local-deployment)
-    * [9.2 DID resolution](#92-did-resolution)
-      * [9.2.1 `did:web` for participants](#921-didweb-for-participants)
-      * [9.2.2 `did:example` for the dataspace credential issuer](#922-didexample-for-the-dataspace-credential-issuer)
-    * [9.3 No issuance (yet)](#93-no-issuance-yet)
+    * [1. Introduction](#1-introduction)
+    * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+    * [3. The Scenario](#3-the-scenario)
+        * [3.1 Participants](#31-participants)
+        * [3.2 Data setup](#32-data-setup)
+        * [3.3 Access control](#33-access-control)
+        * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
+    * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
+        * [4.1 Starting the runtimes](#41-starting-the-runtimes)
+        * [4.2 Seeding the dataspace](#42-seeding-the-dataspace)
+        * [4.3 Next steps](#43-next-steps)
+    * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
+        * [5.1 Build the runtime images](#51-build-the-runtime-images)
+        * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
+        * [5.3 Seed the dataspace](#53-seed-the-dataspace)
+    * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
+        * [6.1 In-memory databases](#61-in-memory-databases)
+        * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
+        * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
+    * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
+        * [7.1 Get the catalog](#71-get-the-catalog)
+        * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
+        * [7.3 Query negotiation status](#73-query-negotiation-status)
+        * [7.4 Initiate data transfer](#74-initiate-data-transfer)
+        * [7.5 Query data transfers](#75-query-data-transfers)
+        * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
+        * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
+        * [7.8 Fetch data](#78-fetch-data)
+    * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
+        * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
+        * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
+        * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
+        * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
+            * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
+            * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
+        * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
+        * [8.6 Super-user seeding](#86-super-user-seeding)
+    * [9. Other caveats, shortcuts and workarounds](#9-other-caveats-shortcuts-and-workarounds)
+        * [9.1 In-memory stores in local deployment](#91-in-memory-stores-in-local-deployment)
+        * [9.2 DID resolution](#92-did-resolution)
+            * [9.2.1 `did:web` for participants](#921-didweb-for-participants)
+            * [9.2.2
+              `did:example` for the dataspace credential issuer](#922-didexample-for-the-dataspace-credential-issuer)
+        * [9.3 No issuance (yet)](#93-no-issuance-yet)
+
 <!-- TOC -->
 
 ## 1. Introduction
@@ -331,7 +334,7 @@ Once all the deployments are up-and-running, the seed script needs to be execute
 output similar to this:
 
 ```shell
-❯ ./seed-k8s.sh
+./seed-k8s.sh
 
 
 Seed data to "provider-qna" and "provider-manufacturing"
@@ -357,6 +360,35 @@ _the `node` warnings are harmless and can be ignored_
 
 > Failing to run the seed script will leave the dataspace in an uninitialized state and cause all connector-to-connector
 > communication to fail.
+
+### 5.4 Debugging MVD in Kubernetes
+
+All of MVD's runtime images come with remote JVM debugging enabled by default. This is configured by setting an
+environment variable
+
+```
+JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=<DEBUG_PORT>"
+```
+
+All runtimes use port **1044** for debugging, unless configured otherwise in terraform. The only thing left to do for
+you is to create a Kubernetes port-forwarding:
+
+```shell
+kubectl port-forward -n mvd service/consumer-controlplane 1044:1044
+```
+
+This assumes the default Kubernetes namespace `mvd`. Note that the port-forward targets a `service` to have it
+consistent across pod restarts, but targeting a specific pod is also possible. Please refer to the official
+documentation for details.
+
+The host port (the value after the `:`) is completely arbitrary, and should be altered if multiple runtimes are debugged
+in parallel.
+
+When creating a "Remote JVM Debug" run configuration in IntelliJ it is important to select the appropriate module
+classpath. Those are generally located in the `launchers/` directory.
+
+Please also refer to the [official IntelliJ tutorial](https://www.jetbrains.com/help/idea/tutorial-remote-debug.html) on
+how to do remote debugging.
 
 ## 6. Differences between Kubernetes and IntelliJ
 
@@ -384,12 +416,13 @@ all secrets that need to be accessed by multiple components must be pre-populate
 
 ### 6.3 Embedded vs Remote STS
 
-While in the Kubernetes deployment the SecureTokenService is embedded into the IdentityHub runtime, in the IntelliJ
+While in the Kubernetes deployment the SecureTokenService (S)S is a stand-alone component, in the IntelliJ
 deployment it is embedded into the controlplane. The reason for this is, that during seeding a participant context and
 an STS Account is created. This includes a (generated) client secret, that gets stored in the vault.
 
-In the IntelliJ case that vault is isolated in IdentityHub, with no way to access it from the connector's controlplane.
-This makes it necessary that the STS be embedded in the controlplane directly.
+In the IntelliJ case that vault is purely in-memory and is isolated in IdentityHub, with no way to access it from the
+connector's controlplane. So the connector's controlplane and IdentityHub physically cannot share any secrets. To
+overcome this, STS is simply embedded in the controlplane directly.
 
 In the Kubernetes deployment this limitation goes away, because a dedicated vault service (HashiCorp Vault) is used,
 which is accessible from either component.
