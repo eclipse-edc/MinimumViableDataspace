@@ -22,6 +22,7 @@ plugins {
 dependencies {
     runtimeOnly(libs.bundles.connector)
     runtimeOnly(libs.bundles.sts)
+    runtimeOnly(libs.edc.sts.api.accounts)
     runtimeOnly(libs.edc.api.version)
     runtimeOnly(libs.bundles.sql.sts)
     runtimeOnly(libs.edc.vault.hashicorp)

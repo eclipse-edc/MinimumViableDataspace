@@ -199,7 +199,7 @@ sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-key
 
 sql-sts = [ "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
-sts = ["edc-sts-core", "edc-sts-api", "edc-sts-spi", "edc-sts", "edc-sts-api-accounts"]
+sts = ["edc-sts-core", "edc-sts-api", "edc-sts-spi", "edc-sts"]
 
 sql-fc = ["edc-fc-cache-sql"]
 

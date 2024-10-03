@@ -26,10 +26,6 @@ dependencies {
         runtimeOnly(libs.bundles.sql.ih)
         runtimeOnly(libs.edc.sts.accountservice.remote)
         println("This runtime compiles with a remote STS, Hashicorp Vault and PostgreSQL. You will need properly configured STS, Postgres and HCV instances.")
-    } else {
-        runtimeOnly(libs.bundles.sts)
-        runtimeOnly(libs.edc.sts.accountservice.local)
-        println("This runtime compiles with an embedded STS")
     }
     runtimeOnly(project(":extensions:superuser-seed"))
 
