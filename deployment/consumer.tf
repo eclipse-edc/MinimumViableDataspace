@@ -58,7 +58,7 @@ module "consumer-sts" {
     password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
-  vault-url         = "http://consumer-vault:8200"
+  vault-url = "http://consumer-vault:8200"
 }
 
 # consumer vault

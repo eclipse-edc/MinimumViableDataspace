@@ -50,11 +50,11 @@ variable "sts-path" {
   default = "/api/sts"
 }
 
-variable "vault-url"{
+variable "vault-url" {
   type = string
 }
 
 variable "vault-token" {
-  type = string
+  type    = string
   default = "root"
 }

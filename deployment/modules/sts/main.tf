@@ -122,8 +122,8 @@ resource "kubernetes_config_map" "sts-config" {
     EDC_DATASOURCE_DEFAULT_PASSWORD = var.database.password
     EDC_SQL_SCHEMA_AUTOCREATE       = true
 
-    EDC_VAULT_HASHICORP_URL                = var.vault-url
-    EDC_VAULT_HASHICORP_TOKEN              = var.vault-token
+    EDC_VAULT_HASHICORP_URL   = var.vault-url
+    EDC_VAULT_HASHICORP_TOKEN = var.vault-token
   }
 }
 

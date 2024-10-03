@@ -74,7 +74,7 @@ module "provider-sts" {
     password = "sts"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/sts"
   }
-  vault-url         = "http://provider-vault:8200"
+  vault-url = "http://provider-vault:8200"
 }
 
 # Catalog server runtime
