@@ -24,9 +24,9 @@ dependencies {
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.bundles.sql.ih)
-        runtimeOnly(libs.bundles.sts)
         println("This runtime compiles with an internal STS, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
+    runtimeOnly(libs.bundles.sts)
     runtimeOnly(project(":extensions:superuser-seed"))
 
     runtimeOnly(libs.bundles.identity.api)
