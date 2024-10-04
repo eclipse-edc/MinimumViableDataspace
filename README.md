@@ -17,6 +17,7 @@
     * [5.1 Build the runtime images](#51-build-the-runtime-images)
     * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
     * [5.3 Seed the dataspace](#53-seed-the-dataspace)
+    * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
   * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
     * [6.1 In-memory databases](#61-in-memory-databases)
     * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
@@ -276,10 +277,10 @@ documentation for more information.
 
 ```shell
 # Create the cluster
-kind create cluster -n dcp-demo --config deployment/kind.config.yaml
+kind create cluster -n mvd --config deployment/kind.config.yaml
 
 # Load docker images into KinD
-kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest -n dcp-demo
+kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest sts:latest -n mvd
 
 # Deploy an NGINX ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
@@ -331,7 +332,7 @@ Once all the deployments are up-and-running, the seed script needs to be execute
 output similar to this:
 
 ```shell
-❯ ./seed-k8s.sh
+./seed-k8s.sh
 
 
 Seed data to "provider-qna" and "provider-manufacturing"
@@ -357,6 +358,35 @@ _the `node` warnings are harmless and can be ignored_
 
 > Failing to run the seed script will leave the dataspace in an uninitialized state and cause all connector-to-connector
 > communication to fail.
+
+### 5.4 Debugging MVD in Kubernetes
+
+All of MVD's runtime images come with remote JVM debugging enabled by default. This is configured by setting an
+environment variable
+
+```
+JAVA_TOOL_OPTIONS="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=<DEBUG_PORT>"
+```
+
+All runtimes use port **1044** for debugging, unless configured otherwise in terraform. The only thing left to do for
+you is to create a Kubernetes port-forwarding:
+
+```shell
+kubectl port-forward -n mvd service/consumer-controlplane 1044:1044
+```
+
+This assumes the default Kubernetes namespace `mvd`. Note that the port-forward targets a `service` to have it
+consistent across pod restarts, but targeting a specific pod is also possible. Please refer to the official
+documentation for details.
+
+The host port (the value after the `:`) is completely arbitrary, and should be altered if multiple runtimes are debugged
+in parallel.
+
+When creating a "Remote JVM Debug" run configuration in IntelliJ it is important to select the appropriate module
+classpath. Those are generally located in the `launchers/` directory.
+
+Please also refer to the [official IntelliJ tutorial](https://www.jetbrains.com/help/idea/tutorial-remote-debug.html) on
+how to do remote debugging.
 
 ## 6. Differences between Kubernetes and IntelliJ
 
@@ -384,12 +414,13 @@ all secrets that need to be accessed by multiple components must be pre-populate
 
 ### 6.3 Embedded vs Remote STS
 
-While in the Kubernetes deployment the SecureTokenService is embedded into the IdentityHub runtime, in the IntelliJ
+While in the Kubernetes deployment the SecureTokenService (S)S is a stand-alone component, in the IntelliJ
 deployment it is embedded into the controlplane. The reason for this is, that during seeding a participant context and
 an STS Account is created. This includes a (generated) client secret, that gets stored in the vault.
 
-In the IntelliJ case that vault is isolated in IdentityHub, with no way to access it from the connector's controlplane.
-This makes it necessary that the STS be embedded in the controlplane directly.
+In the IntelliJ case that vault is purely in-memory and is isolated in IdentityHub, with no way to access it from the
+connector's controlplane. So the connector's controlplane and IdentityHub physically cannot share any secrets. To
+overcome this, STS is simply embedded in the controlplane directly.
 
 In the Kubernetes deployment this limitation goes away, because a dedicated vault service (HashiCorp Vault) is used,
 which is accessible from either component.
