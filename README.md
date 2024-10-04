@@ -67,7 +67,7 @@ This demo is to demonstrate how two dataspace participants can perform a credent
 exchange, for example requesting a catalog or negotiating a contract.
 
 It must be stated in the strongest terms that this is **NOT** a production grade installation, nor should any
-production-grade developments be based on it. [Shortcuts](#8-other-caveats-shortcuts-and-workarounds) were taken, and
+production-grade developments be based on it. [Shortcuts](#9-other-caveats-shortcuts-and-workarounds) were taken, and
 assumptions were made that are potentially invalid in other scenarios.
 
 It merely is a playground for developers wanting to kick the tires in the EDC and DCP space, and its purpose is to
@@ -166,7 +166,7 @@ with level `"processing"`.
 
 That means that no contract for `asset-2` can be negotiated by anyone. For the purposes of this demo the
 VerifiableCredentials are pre-created and are seeded directly to the participants' credential storage ([no
-issuance](#83-no-issuance-yet)) via a dedicated
+issuance](#93-no-issuance-yet)) via a dedicated
 [extension](launchers/identity-hub/src/main/java/org/eclipse/edc/demo/dcp/ih/IdentityHubExtension.java).
 
 When the consumer wants to inspect the consolidated catalog (containing assets from both the provider's Q&A and
@@ -232,7 +232,7 @@ Collections](https://plugins.jetbrains.com/plugin/22438-import-from-postman-coll
 can be imported and then executed by means of the [environment file](./deployment/postman/http-client.env.json),
 selecting the "Local" environment.
 
-Please read [chapter 6](#6-executing-rest-requests-using-postman) for details.
+Please read [chapter 7](#7-executing-rest-requests-using-postman) for details.
 
 ## 5. Running the Demo (Kubernetes)
 
