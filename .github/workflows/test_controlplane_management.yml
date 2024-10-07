@@ -1,0 +1,74 @@
+name: Run Newman Test for the Control Plane Management
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  newman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup Helm"
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.8.1
+
+      - name: "Setup Kubectl"
+        uses: azure/setup-kubectl@v4
+
+      - uses: actions/checkout@v4
+
+      - uses: eclipse-edc/.github/.github/actions/setup-build@main
+
+      - name: "Build runtime images"
+        working-directory: ./
+        run: |
+          ./gradlew -Ppersistence=true dockerize 
+
+
+      - name: "Create k8s Kind Cluster"
+        uses: helm/kind-action@v1.10.0
+        with:
+          config: deployment/kind.config.yaml
+          cluster_name: dcp-demo
+
+      - name: "Load runtime images into KinD"
+        run: kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest sts:latest -n dcp-demo
+
+      - name: "Install nginx ingress controller"
+        run: |-
+          echo "::notice title=nginx ingress on KinD::For details how to run nginx ingress on KinD check https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx"
+          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+          kubectl wait --namespace ingress-nginx \
+            --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=90s
+
+      - name: "Terraform init"
+        working-directory: ./deployment
+        run: |-
+          terraform init -reconfigure
+      - name: "Terraform plan"
+        working-directory: ./deployment
+        run: |-
+          terraform plan -out=$GITHUB_SHA.out
+
+      - name: "Terraform apply"
+        working-directory: ./deployment
+        run: |-
+          terraform apply "$GITHUB_SHA.out"
+
+      - name: "Seed dataspace"
+        run: |-
+          chmod +x seed-k8s.sh
+          ./seed-k8s.sh
+
+      - name: "Run Newman"
+        #working-directory: deployment/postman
+        #uses: actions/checkout@master
+        uses: matt-ball/newman-action@master
+        with:
+          collection: deployment/postman/MVD.postman_collection.json
+          environment: deployment/postman/MVD K8S.postman_environment.json
