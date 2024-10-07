@@ -84,17 +84,18 @@ jobs:
           chmod +x seed-k8s.sh
           ./seed-k8s.sh
           
-
+          
+          
       - name: "Install npm"
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
       - name: "Install Newman"
-        run: |- 
-            "npm install -g newman"
+        run: npm install -g newman
 
       - name: "Run Newman"
-        working-directory: ./deployment/postman
+        working-directory: deployment/postman
         run: |-
-          newman run ./deployment/postman/MVD.postman_collection.json -e "./deployment/postman/MVD K8S.postman_environment.json" --folder "ControlPlane Management"
+          newman run "MVD.postman_collection.json" -e "MVD K8S.postman_environment.json" --folder "ControlPlane Management"
+
