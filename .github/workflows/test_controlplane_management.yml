@@ -26,7 +26,7 @@ on:
     branches: [main]
 
 jobs:
-  newman:
+  newman_test:
     runs-on: ubuntu-latest
     steps:
       - name: "Setup Helm"
@@ -83,12 +83,18 @@ jobs:
         run: |-
           chmod +x seed-k8s.sh
           ./seed-k8s.sh
+          
+
+      - name: "Install npm"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: "Install Newman"
+        run: |- 
+            "npm install -g newman"
 
       - name: "Run Newman"
-        #working-directory: deployment/postman
-        #uses: actions/checkout@master
-        uses: matt-ball/newman-action@master
-        with:
-          collection: deployment/postman/MVD.postman_collection.json
-          environment: deployment/postman/MVD K8S.postman_environment.json
-          folder: ControlPlane Management
+        working-directory: ./deployment/postman
+        run: |-
+          newman run ./deployment/postman/MVD.postman_collection.json -e "./deployment/postman/MVD K8S.postman_environment.json" --folder "ControlPlane Management"
