@@ -41,6 +41,9 @@ jobs:
 
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
+
       - name: "Build runtime images"
         working-directory: ./
         run: |
