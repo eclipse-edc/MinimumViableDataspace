@@ -1,0 +1,2257 @@
+{
+	"info": {
+		"_postman_id": "1d81d8db-ffb2-417b-83ca-50da1b42a5df",
+		"name": "MVD+IATP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23917208"
+	},
+	"item": [
+		{
+			"name": "Seed",
+			"item": [
+				{
+					"name": "Create Asset 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"asset-1\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This asset requires Membership to view and negotiate.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Asset 2",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"asset-2\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This asset requires Membership to view and SensitiveData credential to negotiate.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Membership Policy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"permission\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"MembershipCredential\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create DataProcessor policy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-dataprocessor\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"obligation\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"DataAccess.level\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"processing\"\n                }\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sensitive Data Processor policy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-sensitive\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"obligation\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"DataAccess.level\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"sensitive\"\n                }\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create \"member-and-data-cred\" definition",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"member-and-dataprocessor-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-dataprocessor\",\n    \"assetsSelector\": {\n        \"@type\": \"Criterion\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"asset-1\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create \"require sensitive\" definition",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"sensitive-only-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-sensitive\",\n    \"assetsSelector\": {\n        \"@type\": \"Criterion\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"=\",\n        \"operandRight\": \"asset-2\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status is OK or conflict\", function() {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"})"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Seed Catalog Server",
+			"item": [
+				{
+					"name": "Create linked Asset for provider-qna",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"linked-asset-provider-qna\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to the catalog of the provider's Q&A department.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_QNA_DSP_URL}}/api/dsp\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create linked Asset for provider-manufacturing",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"linked-asset-provider-manufacturing\",\n    \"@type\": \"CatalogAsset\",\n    \"properties\": {\n        \"description\": \"This is a linked asset that points to the catalog of the provider's Manufacturing department.\",\n        \"isCatalog\": \"true\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"{{PROVIDER_MF_DSP_URL}}/api/dsp\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create normal asset for CatalogServer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"normal-asset-1\",\n    \"@type\": \"Asset\",\n    \"properties\": {\n        \"description\": \"This is a conventional asset, not a CatalogAsset.\"\n    },\n    \"dataAddress\": {\n        \"@type\": \"DataAddress\",\n        \"type\": \"HttpData\",\n        \"baseUrl\": \"https://jsonplaceholder.typicode.com/todos\",\n        \"proxyPath\": \"true\",\n        \"proxyQueryParams\": \"true\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Membership Policy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"PolicyDefinition\",\n    \"@id\": \"require-membership\",\n    \"policy\": {\n        \"@type\": \"Set\",\n        \"permission\": [\n            {\n                \"action\": \"use\",\n                \"constraint\": {\n                    \"leftOperand\": \"MembershipCredential\",\n                    \"operator\": \"eq\",\n                    \"rightOperand\": \"active\"\n                }\n            }\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/policydefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"policydefinitions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create \"require membership\" definition",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@id\": \"membership-required-def\",\n    \"@type\": \"ContractDefinition\",\n    \"accessPolicyId\": \"require-membership\",\n    \"contractPolicyId\": \"require-membership\",\n    \"assetsSelector\": {\n        \"@type\": \"Criterion\",\n        \"operandLeft\": \"https://w3id.org/edc/v0.0.1/ns/id\",\n        \"operator\": \"in\",\n        \"operandRight\": [\n            \"linked-asset-provider-qna\",\n            \"linked-asset-provider-manufacturing\",\n            \"normal-asset-1\"\n        ]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractdefinitions",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractdefinitions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status is OK or conflict\", function() {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"})"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "ControlPlane Management",
+			"item": [
+				{
+					"name": "Get Assets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": {\n        \"@vocab\": \"https://w3id.org/edc/v0.0.1/ns/\"\n    },\n    \"@type\": \"QuerySpec\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/assets/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"assets",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Request Catalog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"CatalogRequest\",\n    \"counterPartyAddress\": \"{{CATALOG_SERVER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"querySpec\": {\n        \"offset\": 0,\n        \"limit\": 50\n    }\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/catalog/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"catalog",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cached Catalogs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the policy id of \"asset-1\" and save it as an environment variable",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
+									"    if(pm.response.json().length > 0){",
+									"        const dcat_datasets = pm.response.json()[0][\"dcat:dataset\"][1][\"dcat:dataset\"]",
+									"        const asset_1 = dcat_datasets.find((asset) => asset[\"@id\"] == \"asset-1\")",
+									"        pm.environment.set(\"POLICY_ID_ASSET_1\", asset_1[\"odrl:hasPolicy\"][\"@id\"]);",
+									"    }",
+									"}",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Policy id for asset 1 is set\", function(){",
+									"    pm.expect(pm.environment.get(\"POLICY_ID_ASSET_1\")).not.to.be.undefined",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CONSUMER_CATALOG_QUERY_URL}}/api/catalog/v1alpha/catalog/query",
+							"host": [
+								"{{CONSUMER_CATALOG_QUERY_URL}}"
+							],
+							"path": [
+								"api",
+								"catalog",
+								"v1alpha",
+								"catalog",
+								"query"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate negotiation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"POLICY_ID_ASSET_1\")){",
+									"    throw new Error('Policy-ID of Asset-1 is not yet available, please execute request \"Get Cached Catalog\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"CONTRACT_NEGOTIATION_ID\", pm.response.json()[\"@id\"])",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Contract negotiation id is set\", function(){",
+									"    pm.expect(pm.environment.get(\"CONTRACT_NEGOTIATION_ID\")).not.to.be.undefined",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@type\": \"Offer\",\n        \"@id\": \"{{POLICY_ID_ASSET_1}}\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"action\": \"use\",\n            \"constraint\": {\n                \"leftOperand\": \"DataAccess.level\",\n                \"operator\": \"eq\",\n                \"rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractnegotiations",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractnegotiations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contract Negotiations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the contact agreement id and save it as an environment variable",
+									"if(pm.response.code < 300 && pm.response.code >= 200 && pm.response.json().length > 0){",
+									"    var find_negotiation;",
+									"    if (pm.environment.has(\"CONTRACT_NEGOTIATION_ID\")){",
+									"        find_negotiation = pm.response.json().find((el) => el[\"@id\"] == pm.environment.get(\"CONTRACT_NEGOTIATION_ID\"))",
+									"    }",
+									"",
+									"    if(find_negotiation){",
+									"        const contractAgreementId = find_negotiation[\"contractAgreementId\"];",
+									"        pm.environment.set(\"CONTRACT_AGREEMENT_ID\", contractAgreementId);",
+									"    }",
+									"}",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Contract Agreement ID is set\", function(){",
+									"    pm.expect(pm.environment.get(\"CONTRACT_AGREEMENT_ID\")).not.to.be.undefined",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/contractnegotiations/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"contractnegotiations",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Initiate Transfer",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"CONTRACT_AGREEMENT_ID\")){",
+									"    throw new Error('Contract Agreement ID is not yet available, please execute requests \"Initiate Negotiation and Get Contract Negotiation\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"{{CONTRACT_AGREEMENT_ID}}\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/transferprocesses",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"transferprocesses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get transfer processes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/transferprocesses/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"transferprocesses",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cached EDRs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the transfer process id of \"asset-1\" and save it as an environment variable if the response body is not empty",
+									"if(pm.response.code < 300 && pm.response.code >= 200 && pm.response.json().length > 0){",
+									"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
+									"  pm.environment.set(\"TRANSFER_PROCESS_ID\", transferProcessId);",
+									"}",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Transfer process id is set\", function(){",
+									"    pm.expect(pm.environment.get(\"TRANSFER_PROCESS_ID\")).not.to.be.undefined",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"QuerySpec\"\n}"
+						},
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/edrs/request",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"edrs",
+								"request"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get EDR DataAddress for TransferId",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"TRANSFER_PROCESS_ID\")){",
+									"    throw new Error('Transfer Process ID is not yet available, please execute request \"Get Transfer Processes\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the authorization token and save it as an environment variable",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
+									"  //using the first authorization token found",
+									"  const authorization = pm.response.json()[\"authorization\"];",
+									"  pm.environment.set(\"AUTHORIZATION\", authorization);",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{HOST}}/api/management/v3/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"api",
+								"management",
+								"v3",
+								"edrs",
+								"{{TRANSFER_PROCESS_ID}}",
+								"dataaddress"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Data from Public API",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"AUTHORIZATION\")){",
+									"    throw new Error(' The authorization token is not yet available, please execute request \"Get EDR DataAddress for TransferId\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{AUTHORIZATION}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PROVIDER_PUBLIC_API}}/api/public",
+							"host": [
+								"{{PROVIDER_PUBLIC_API}}"
+							],
+							"path": [
+								"api",
+								"public"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "IdentityHub",
+			"item": [
+				{
+					"name": "Participant Context Mgmt API",
+					"item": [
+						{
+							"name": "Get Participant By ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all participants",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"active\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EdDSA\",\n            \"curve\": \"Ed25519\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create Participant (existing key)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"active\": true,\n    \"participantId\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"did\": \"{{NEW_PARTICIPANT_ID}}\",\n    \"key\":{\n        \"keyId\": \"key-1\",\n        \"privateKeyAlias\": \"{{NEW_PARTICIPANT_ID}}-alias\",\n        \"publicKeyPem\":\"-----BEGIN PUBLIC KEY-----\\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\\n-----END PUBLIC KEY-----\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Roles",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "[\n    \"role1\", \"role2\", \"admin\"\n]",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/roles",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"roles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Regenerate Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/token",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activate Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=true",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"state"
+									],
+									"query": [
+										{
+											"key": "isActive",
+											"value": "true"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Deactivate Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=false",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"state"
+									],
+									"query": [
+										{
+											"key": "isActive",
+											"value": "false"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"roles\":[],\n    \"serviceEndpoints\":[],\n    \"isActive\": true,\n    \"participantId\": \"foobar\",\n    \"did\": \"did:web:foobar\",\n    \"key\":{\n        \"keyId\": \"key1\",\n        \"privateKeyAlias\": \"foobar-alias\",\n        \"keyGeneratorParams\":{\n            \"algorithm\": \"EC\",\n            \"curve\": \"secp256r1\"\n        }\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "KeyPair Resources Mgmt API",
+					"item": [
+						{
+							"name": "Get KeyPair for Participant",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/BPN0000001/keypairs",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"BPN0000001",
+										"keypairs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get all KeyPairs",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/keypairs",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"keypairs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add KeyPair",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK or conflict\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"keyId\": \"key6\",\n    \"privateKeyAlias\": \"new-foobar-alias5\",\n    \"keyGeneratorParams\": {\n        \"algorithm\": \"EdDSA\",\n        \"curve\": \"Ed25519\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"keypairs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Rotate key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"keyId\": \"key2\",\n    \"privateKeyAlias\": \"new-foobar-alias\",\n    \"keyGeneratorParams\": {\n        \"algorithm\": \"EC\",\n        \"curve\": \"secp256r1\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key1/rotate",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"keypairs",
+										"key1",
+										"rotate"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Revoke key",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/keypairs/key2/revoke",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"keypairs",
+										"key2",
+										"revoke"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "DID Document Mgmt API",
+					"item": [
+						{
+							"name": "Query DIDs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/BPN0000001/dids/query",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"BPN0000001",
+										"dids",
+										"query"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All DID Documents",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/dids",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"dids"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Publish DID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:BPN0000001\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/publish",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"dids",
+										"publish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Add endpoint",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": \"some-other-id\",\n    \"type\": \"CredentialService\",\n    \"serviceEndpoint\": \"https://foobar.myconnector.com\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/{{DID}}/endpoints",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"dids",
+										"{{DID}}",
+										"endpoints"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Un-Publish DID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/unpublish",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"dids",
+										"unpublish"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete DID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"dids"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get DID Document state",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"did:web:BPN0000001\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/dids/state",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"dids",
+										"state"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status is OK\", function() {",
+									"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+									"})"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "VerifiableCredential Mgmt API",
+					"item": [
+						{
+							"name": "Get Credential By ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/credentials",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID}}",
+										"credentials"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Credentials",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/credentials",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"credentials"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "{{IH_API_TOKEN}}",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "X-Api-Key",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status is OK or conflict\", function() {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"})"
+						]
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "password",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "X-Api-Key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"if(pm.request.method == \"POST\" || pm.request.method == \"PUT\"){",
+					"    pm.request.headers.add(\"Content-Type: application/json\");",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "HOST",
+			"value": "http://localhost:8081",
+			"type": "string"
+		},
+		{
+			"key": "PROVIDER_DSP",
+			"value": "http://localhost:8092",
+			"type": "string"
+		},
+		{
+			"key": "PROVIDER_ID",
+			"value": "did:web:localhost%3A7093",
+			"type": "string"
+		},
+		{
+			"key": "CS_URL",
+			"value": "http://localhost:8181",
+			"type": "string"
+		},
+		{
+			"key": "IH_API_TOKEN",
+			"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
+			"type": "string"
+		},
+		{
+			"key": "PARTICIPANT_ID",
+			"value": "super-user"
+		},
+		{
+			"key": "DID",
+			"value": "did:web:super-user"
+		},
+		{
+			"key": "NEW_PARTICIPANT_ID",
+			"value": "did:web:localhost%3A7083",
+			"type": "string"
+		},
+		{
+			"key": "CATALOG_URL",
+			"value": "http://localhost:8084",
+			"type": "string"
+		},
+		{
+			"key": "TED_DSP_URL",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
