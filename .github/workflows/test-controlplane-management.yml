@@ -17,7 +17,7 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-name: Run Newman Test for the Control Plane Management
+name: Run API tests (postman)
 
 on:
   push:
@@ -87,16 +87,6 @@ jobs:
           chmod +x seed-k8s.sh
           ./seed-k8s.sh
           
-          
-          
-      - name: "Install npm"
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-
-      - name: "Install Newman"
-        run: npm install -g newman
-
       - name: "Run Newman"
         working-directory: ./deployment/postman
         run: |-
