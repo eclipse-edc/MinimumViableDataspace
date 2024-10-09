@@ -714,6 +714,25 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"response = pm.response.json();",
+									"pm.test('Body is not empty', () =>{",
+									"    pm.expect(response.length).to.be.greaterThan(0);",
+									"})",
+									"",
+									"// get the transfer process id of \"asset-1\" and save it as an environment variable if the response body is not empty",
+									"if(pm.response.code < 300 && pm.response.code >= 200 && response.length > 0){",
+									"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
+									"  pm.environment.set(\"TRANSFER_PROCESS_ID\", transferProcessId);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
 									"// get the transfer process id of \"asset-1\" and save it as an environment variable",
 									"if(pm.response.code < 300 && pm.response.code >= 200){",
 									"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
