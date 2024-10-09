@@ -49,7 +49,7 @@ module "provider-identityhub" {
   depends_on        = [module.provider-vault]
   source            = "./modules/identity-hub"
   credentials-dir   = dirname("./assets/credentials/k8s/provider/")
-  humanReadableName = "provider-identityhub" # must be named "bob-identityhub" until we regenerate DIDs and credentials
+  humanReadableName = "provider-identityhub" # must be named "provider-identityhub" until we regenerate DIDs and credentials
   participantId     = var.provider-did
   vault-url         = "http://provider-vault:8200"
   service-name      = "provider"

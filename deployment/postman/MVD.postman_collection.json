@@ -1606,7 +1606,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"raw": "{\n    \"did\": \"did:web:consumer-identityhub%3A7083:connector1\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1660,7 +1660,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"did\": \"did:web:alice-identityhub%3A7083:connector1\"\n}",
+									"raw": "{\n    \"did\": \"did:web:consumer-identityhub%3A7083:connector1\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
