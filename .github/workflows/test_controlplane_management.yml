@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft
+#  Copyright (c) 2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -17,29 +17,18 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
----
-name: "Execute E2E Tests"
+name: Run Newman Test for the Control Plane Management
+
 on:
   push:
+    branches: [main]
   pull_request:
-    branches:
-      - main
-  schedule:
-    - cron: "0 0 * * *" # once a day (1:30 UTC)
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
+    branches: [main]
 
 jobs:
-  Run-E2E-Tests:
+  newman_test:
     runs-on: ubuntu-latest
     steps:
-
       - name: "Setup Helm"
         uses: azure/setup-helm@v4
         with:
@@ -48,18 +37,18 @@ jobs:
       - name: "Setup Kubectl"
         uses: azure/setup-kubectl@v4
 
-      - name: "Setup Terraform"
-        uses: hashicorp/setup-terraform@v3
-
       - uses: actions/checkout@v4
 
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
+
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
 
       - name: "Build runtime images"
         working-directory: ./
         run: |
           ./gradlew -Ppersistence=true dockerize 
-    
+
 
       - name: "Create k8s Kind Cluster"
         uses: helm/kind-action@v1.10.0
@@ -79,8 +68,6 @@ jobs:
             --selector=app.kubernetes.io/component=controller \
             --timeout=90s
 
-
-
       - name: "Terraform init"
         working-directory: ./deployment
         run: |-
@@ -96,19 +83,22 @@ jobs:
           terraform apply "$GITHUB_SHA.out"
 
       - name: "Seed dataspace"
-        run: |- 
+        run: |-
           chmod +x seed-k8s.sh
           ./seed-k8s.sh
+          
+          
+          
+      - name: "Install npm"
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-      - name: "Run E2E Test"
+      - name: "Install Newman"
+        run: npm install -g newman
+
+      - name: "Run Newman"
+        working-directory: ./deployment/postman
         run: |-
-          ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
+          newman run "MVD.postman_collection.json" -e "MVD K8S.postman_environment.json" --folder "ControlPlane Management" --delay-request 5000 --verbose
 
-      - name: "Print log if test failed"
-        if: failure()
-        run: |-
-          kubectl logs deployment/provider-qna-controlplane -n mvd
-
-      - name: "Destroy the KinD cluster"
-        run: >-
-          kind delete cluster -n dcp-demo

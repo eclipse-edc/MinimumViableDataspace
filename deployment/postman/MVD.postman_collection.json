@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "7921ef6e-cb34-4f23-b401-f00bf74a12ec",
+		"_postman_id": "1d81d8db-ffb2-417b-83ca-50da1b42a5df",
 		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "27652630"
+		"_exporter_id": "23917208"
 	},
 	"item": [
 		{
@@ -363,6 +363,20 @@
 			"item": [
 				{
 					"name": "Get Assets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -388,6 +402,20 @@
 				},
 				{
 					"name": "Request Catalog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -413,6 +441,42 @@
 				},
 				{
 					"name": "Get Cached Catalogs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the policy id of \"asset-1\" and save it as an environment variable",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
+									"    if(pm.response.json().length > 0){",
+									"        const dcat_datasets = pm.response.json()[0][\"dcat:dataset\"][1][\"dcat:dataset\"]",
+									"        const asset_1 = dcat_datasets.find((asset) => asset[\"@id\"] == \"asset-1\")",
+									"        pm.environment.set(\"POLICY_ID_ASSET_1\", asset_1[\"odrl:hasPolicy\"][\"@id\"]);",
+									"    }",
+									"}",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Policy id for asset 1 is set\", function(){",
+									"    pm.expect(pm.environment.get(\"POLICY_ID_ASSET_1\")).not.to.be.undefined",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -443,12 +507,43 @@
 				},
 				{
 					"name": "Initiate negotiation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"POLICY_ID_ASSET_1\")){",
+									"    throw new Error('Policy-ID of Asset-1 is not yet available, please execute request \"Get Cached Catalog\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"CONTRACT_NEGOTIATION_ID\", pm.response.json()[\"@id\"])",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Contract negotiation id is set\", function(){",
+									"    pm.expect(pm.environment.get(\"CONTRACT_NEGOTIATION_ID\")).not.to.be.undefined",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@type\": \"Offer\",\n        \"@id\": \"bWVtYmVyLWFuZC1kYXRhcHJvY2Vzc29yLWRlZg==:YXNzZXQtMQ==:MmQ0ZWZjZTYtYzJjNy00NTM5LTk5ODAtZDAwOTlkZDNkOWQy\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"action\": \"use\",\n            \"constraint\": {\n                \"leftOperand\": \"DataAccess.level\",\n                \"operator\": \"eq\",\n                \"rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"@type\": \"ContractRequest\",\n    \"counterPartyAddress\": \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"counterPartyId\": \"{{PROVIDER_ID}}\",\n    \"protocol\": \"dataspace-protocol-http\",\n    \"policy\": {\n        \"@type\": \"Offer\",\n        \"@id\": \"{{POLICY_ID_ASSET_1}}\",\n        \"assigner\": \"{{PROVIDER_ID}}\",\n        \"permission\": [],\n        \"prohibition\": [],\n        \"obligation\": {\n            \"action\": \"use\",\n            \"constraint\": {\n                \"leftOperand\": \"DataAccess.level\",\n                \"operator\": \"eq\",\n                \"rightOperand\": \"processing\"\n            }\n        },\n        \"target\": \"asset-1\"\n    },\n    \"callbackAddresses\": []\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -472,6 +567,37 @@
 				},
 				{
 					"name": "Get Contract Negotiations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the contact agreement id and save it as an environment variable",
+									"if(pm.response.code < 300 && pm.response.code >= 200 && pm.response.json().length > 0){",
+									"    var find_negotiation;",
+									"    if (pm.environment.has(\"CONTRACT_NEGOTIATION_ID\")){",
+									"        find_negotiation = pm.response.json().find((el) => el[\"@id\"] == pm.environment.get(\"CONTRACT_NEGOTIATION_ID\"))",
+									"    }",
+									"",
+									"    if(find_negotiation){",
+									"        const contractAgreementId = find_negotiation[\"contractAgreementId\"];",
+									"        pm.environment.set(\"CONTRACT_AGREEMENT_ID\", contractAgreementId);",
+									"    }",
+									"}",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Contract Agreement ID is set\", function(){",
+									"    pm.expect(pm.environment.get(\"CONTRACT_AGREEMENT_ID\")).not.to.be.undefined",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -497,12 +623,39 @@
 				},
 				{
 					"name": "Initiate Transfer",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"CONTRACT_AGREEMENT_ID\")){",
+									"    throw new Error('Contract Agreement ID is not yet available, please execute requests \"Initiate Negotiation and Get Contract Negotiation\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"47e43627-d9b0-4e35-b534-cef450d7de88\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
+							"raw": "{\n    \"@context\": [\n        \"https://w3id.org/edc/connector/management/v0.0.1\"\n    ],\n    \"assetId\": \"asset-1\",\n    \"counterPartyAddress\":  \"{{PROVIDER_DSP_URL}}/api/dsp\",\n    \"connectorId\": \"{{PROVIDER_ID}}\",\n    \"contractId\": \"{{CONTRACT_AGREEMENT_ID}}\",\n    \"dataDestination\": {\n        \"type\": \"HttpProxy\"\n    },\n    \"protocol\": \"dataspace-protocol-http\",\n    \"transferType\": \"HttpData-PULL\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -526,6 +679,21 @@
 				},
 				{
 					"name": "Get transfer processes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -556,6 +724,30 @@
 				},
 				{
 					"name": "Get cached EDRs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the transfer process id of \"asset-1\" and save it as an environment variable if the response body is not empty",
+									"if(pm.response.code < 300 && pm.response.code >= 200 && pm.response.json().length > 0){",
+									"  const transferProcessId = pm.response.json()[0][\"transferProcessId\"];",
+									"  pm.environment.set(\"TRANSFER_PROCESS_ID\", transferProcessId);",
+									"}",
+									"",
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});",
+									"pm.test(\"Transfer process id is set\", function(){",
+									"    pm.expect(pm.environment.get(\"TRANSFER_PROCESS_ID\")).not.to.be.undefined",
+									"})",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -581,11 +773,54 @@
 				},
 				{
 					"name": "Get EDR DataAddress for TransferId",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"TRANSFER_PROCESS_ID\")){",
+									"    throw new Error('Transfer Process ID is not yet available, please execute request \"Get Transfer Processes\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// get the authorization token and save it as an environment variable",
+									"if(pm.response.code < 300 && pm.response.code >= 200){",
+									"  //using the first authorization token found",
+									"  const authorization = pm.response.json()[\"authorization\"];",
+									"  pm.environment.set(\"AUTHORIZATION\", authorization);",
+									"}",
+									"",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{HOST}}/api/management/v3/edrs/713dfab7-c70a-4c7b-9756-d372647276b5/dataaddress",
+							"raw": "{{HOST}}/api/management/v3/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress",
 							"host": [
 								"{{HOST}}"
 							],
@@ -594,7 +829,7 @@
 								"management",
 								"v3",
 								"edrs",
-								"713dfab7-c70a-4c7b-9756-d372647276b5",
+								"{{TRANSFER_PROCESS_ID}}",
 								"dataaddress"
 							]
 						}
@@ -603,6 +838,32 @@
 				},
 				{
 					"name": "Download Data from Public API",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"if(!pm.environment.has(\"AUTHORIZATION\")){",
+									"    throw new Error(' The authorization token is not yet available, please execute request \"Get EDR DataAddress for TransferId\" first!');",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is >=200 and <300\", function () {",
+									"    pm.expect(pm.response.code < 300 && pm.response.code >= 200).to.be.true",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -611,7 +872,7 @@
 						"header": [
 							{
 								"key": "Authorization",
-								"value": "eyJraWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMja2V5LTEiLCJhbGciOiJFUzI1NiJ9.eyJpc3MiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJhdWQiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwODMiLCJzdWIiOiJkaWQ6d2ViOmxvY2FsaG9zdCUzQTcwOTMiLCJpYXQiOjE3MjEzOTMxNjU5ODgsImp0aSI6ImFmOWI2YWIyLTMwNjYtNDNlNi1hNjg1LWIyMDVjNTFkZmJhMyJ9.ute0sLuMgc0bzG_ZUGG9G3pliFfANf9pWDxReiRrWjGudgUa4YmR9ftB5LeZTOvKCBJshRpbZX-hnQxR8fXMWA",
+								"value": "{{AUTHORIZATION}}",
 								"type": "text"
 							}
 						],
