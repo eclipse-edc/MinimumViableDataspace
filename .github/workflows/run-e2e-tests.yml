@@ -48,6 +48,9 @@ jobs:
       - name: "Setup Kubectl"
         uses: azure/setup-kubectl@v4
 
+      - name: "Setup Terraform"
+        uses: hashicorp/setup-terraform@v3
+
       - uses: actions/checkout@v4
 
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
