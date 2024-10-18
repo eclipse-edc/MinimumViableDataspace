@@ -15,15 +15,11 @@
 package org.eclipse.edc.demo.dcp.core;
 
 import org.eclipse.edc.policy.context.request.spi.RequestPolicyContext;
-import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.engine.spi.PolicyValidatorRule;
 import org.eclipse.edc.policy.model.Policy;
-import org.eclipse.edc.spi.EdcException;
-import org.eclipse.edc.spi.iam.RequestScope;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 public class DefaultScopeMappingFunction implements PolicyValidatorRule<RequestPolicyContext> {
     private final Set<String> defaultScopes;

@@ -14,7 +14,6 @@
 
 package org.eclipse.edc.demo.dcp.core;
 
-import org.eclipse.edc.connector.controlplane.catalog.spi.policy.CatalogPolicyContext;
 import org.eclipse.edc.iam.identitytrust.spi.scope.ScopeExtractorRegistry;
 import org.eclipse.edc.iam.identitytrust.spi.verification.SignatureSuiteRegistry;
 import org.eclipse.edc.iam.verifiablecredentials.spi.VcConstants;
@@ -24,8 +23,6 @@ import org.eclipse.edc.policy.context.request.spi.RequestCatalogPolicyContext;
 import org.eclipse.edc.policy.context.request.spi.RequestContractNegotiationPolicyContext;
 import org.eclipse.edc.policy.context.request.spi.RequestTransferProcessPolicyContext;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
-import org.eclipse.edc.policy.engine.spi.PolicyValidatorRule;
-import org.eclipse.edc.policy.model.Policy;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.security.signature.jws2020.Jws2020SignatureSuite;
 import org.eclipse.edc.spi.system.ServiceExtension;
