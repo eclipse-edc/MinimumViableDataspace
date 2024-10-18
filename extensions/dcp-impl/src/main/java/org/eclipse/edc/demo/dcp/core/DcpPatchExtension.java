@@ -14,12 +14,14 @@
 
 package org.eclipse.edc.demo.dcp.core;
 
-import org.eclipse.edc.iam.identitytrust.core.DcpScopeExtractorExtension;
 import org.eclipse.edc.iam.identitytrust.spi.scope.ScopeExtractorRegistry;
 import org.eclipse.edc.iam.identitytrust.spi.verification.SignatureSuiteRegistry;
 import org.eclipse.edc.iam.verifiablecredentials.spi.VcConstants;
 import org.eclipse.edc.iam.verifiablecredentials.spi.model.Issuer;
 import org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerRegistry;
+import org.eclipse.edc.policy.context.request.spi.RequestCatalogPolicyContext;
+import org.eclipse.edc.policy.context.request.spi.RequestContractNegotiationPolicyContext;
+import org.eclipse.edc.policy.context.request.spi.RequestTransferProcessPolicyContext;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.security.signature.jws2020.Jws2020SignatureSuite;
@@ -64,11 +66,11 @@ public class DcpPatchExtension implements ServiceExtension {
         trustedIssuerRegistry.register(new Issuer("did:example:dataspace-issuer", Map.of()), WILDCARD);
 
         // register a default scope provider
-        var contextMappingFunction = new DefaultScopeMappingFunction(Set.of(
-                "org.eclipse.edc.vc.type:MembershipCredential:read"));
-        policyEngine.registerPostValidator(DcpScopeExtractorExtension.CATALOG_REQUEST_SCOPE, contextMappingFunction);
-        policyEngine.registerPostValidator(DcpScopeExtractorExtension.NEGOTIATION_REQUEST_SCOPE, contextMappingFunction);
-        policyEngine.registerPostValidator(DcpScopeExtractorExtension.TRANSFER_PROCESS_REQUEST_SCOPE, contextMappingFunction);
+        var contextMappingFunction = new DefaultScopeMappingFunction(Set.of("org.eclipse.edc.vc.type:MembershipCredential:read"));
+
+        policyEngine.registerPostValidator(RequestCatalogPolicyContext.class, contextMappingFunction::apply);
+        policyEngine.registerPostValidator(RequestContractNegotiationPolicyContext.class, contextMappingFunction::apply);
+        policyEngine.registerPostValidator(RequestTransferProcessPolicyContext.class, contextMappingFunction::apply);
 
 
         //register scope extractor
