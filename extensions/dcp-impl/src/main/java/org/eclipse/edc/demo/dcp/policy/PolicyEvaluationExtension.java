@@ -14,7 +14,11 @@
 
 package org.eclipse.edc.demo.dcp.policy;
 
-import org.eclipse.edc.policy.engine.spi.AtomicConstraintFunction;
+import org.eclipse.edc.connector.controlplane.catalog.spi.policy.CatalogPolicyContext;
+import org.eclipse.edc.connector.controlplane.contract.spi.policy.ContractNegotiationPolicyContext;
+import org.eclipse.edc.connector.controlplane.contract.spi.policy.TransferProcessPolicyContext;
+import org.eclipse.edc.policy.engine.spi.AtomicConstraintRuleFunction;
+import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.policy.engine.spi.RuleBindingRegistry;
 import org.eclipse.edc.policy.model.Duty;
@@ -24,9 +28,6 @@ import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
 import static org.eclipse.edc.demo.dcp.policy.MembershipCredentialEvaluationFunction.MEMBERSHIP_CONSTRAINT_KEY;
-import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.CATALOG_SCOPE;
-import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.NEGOTIATION_SCOPE;
-import static org.eclipse.edc.demo.dcp.policy.PolicyScopes.TRANSFER_PROCESS_SCOPE;
 import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
 
 public class PolicyEvaluationExtension implements ServiceExtension {
@@ -39,38 +40,37 @@ public class PolicyEvaluationExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var fct = new MembershipCredentialEvaluationFunction();
 
-        bindPermissionFunction(fct, TRANSFER_PROCESS_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        bindPermissionFunction(fct, NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        bindPermissionFunction(fct, CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+
+        bindPermissionFunction(MembershipCredentialEvaluationFunction.createForTransfer(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(MembershipCredentialEvaluationFunction.createForNegotiation(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(MembershipCredentialEvaluationFunction.createForCatalog(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
         registerDataAccessLevelFunction();
 
     }
 
     private void registerDataAccessLevelFunction() {
-        var function = new DataAccessLevelFunction();
-        var accessLevelKey = function.key();
+        var accessLevelKey = "DataAccess.level";
 
-        bindDutyFunction(function, TRANSFER_PROCESS_SCOPE, accessLevelKey);
-        bindDutyFunction(function, NEGOTIATION_SCOPE, accessLevelKey);
-        bindDutyFunction(function, CATALOG_SCOPE, accessLevelKey);
+        bindDutyFunction(DataAccessLevelFunction.createForTransferProcess(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, accessLevelKey);
+        bindDutyFunction(DataAccessLevelFunction.createForNegotiation(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, accessLevelKey);
+        bindDutyFunction(DataAccessLevelFunction.createForCatalog(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, accessLevelKey);
     }
 
-    private void bindPermissionFunction(AtomicConstraintFunction<Permission> function, String scope, String constraintType) {
+    private <C extends PolicyContext> void bindPermissionFunction(AtomicConstraintRuleFunction<Permission, C> function, Class<C> contextClass, String scope, String constraintType) {
         ruleBindingRegistry.bind("use", scope);
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
-        policyEngine.registerFunction(scope, Permission.class, constraintType, function);
+        policyEngine.registerFunction(contextClass, Permission.class, constraintType, function);
     }
 
-    private void bindDutyFunction(AtomicConstraintFunction<Duty> function, String scope, String constraintType) {
+    private <C extends PolicyContext> void bindDutyFunction(AtomicConstraintRuleFunction<Duty, C> function, Class<C> contextClass, String scope, String constraintType) {
         ruleBindingRegistry.bind("use", scope);
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
-        policyEngine.registerFunction(scope, Duty.class, constraintType, function);
+        policyEngine.registerFunction(contextClass, Duty.class, constraintType, function);
     }
 }
