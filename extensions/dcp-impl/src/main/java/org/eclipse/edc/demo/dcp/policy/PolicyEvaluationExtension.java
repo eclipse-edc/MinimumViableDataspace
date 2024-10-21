@@ -41,12 +41,9 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
 
-
-        bindPermissionFunction(MembershipCredentialEvaluationFunction.createForTransfer(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        bindPermissionFunction(MembershipCredentialEvaluationFunction.createForNegotiation(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-        bindPermissionFunction(MembershipCredentialEvaluationFunction.createForCatalog(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
-
-        policyEngine.registerFunction(TransferProcessPolicyContext.class, Permission.class, );
+        bindPermissionFunction(MembershipCredentialEvaluationFunction.create(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(MembershipCredentialEvaluationFunction.create(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
+        bindPermissionFunction(MembershipCredentialEvaluationFunction.create(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
         registerDataAccessLevelFunction();
 
@@ -55,9 +52,9 @@ public class PolicyEvaluationExtension implements ServiceExtension {
     private void registerDataAccessLevelFunction() {
         var accessLevelKey = "DataAccess.level";
 
-        bindDutyFunction(DataAccessLevelFunction.createForTransferProcess(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, accessLevelKey);
-        bindDutyFunction(DataAccessLevelFunction.createForNegotiation(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, accessLevelKey);
-        bindDutyFunction(DataAccessLevelFunction.createForCatalog(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, accessLevelKey);
+        bindDutyFunction(DataAccessLevelFunction.create(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, accessLevelKey);
+        bindDutyFunction(DataAccessLevelFunction.create(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, accessLevelKey);
+        bindDutyFunction(DataAccessLevelFunction.create(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, accessLevelKey);
     }
 
     private <C extends PolicyContext> void bindPermissionFunction(AtomicConstraintRuleFunction<Permission, C> function, Class<C> contextClass, String scope, String constraintType) {
@@ -65,7 +62,7 @@ public class PolicyEvaluationExtension implements ServiceExtension {
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
-//        policyEngine.registerFunction(contextClass, Permission.class, constraintType, function);
+        policyEngine.registerFunction(contextClass, Permission.class, constraintType, function);
     }
 
     private <C extends PolicyContext> void bindDutyFunction(AtomicConstraintRuleFunction<Duty, C> function, Class<C> contextClass, String scope, String constraintType) {
