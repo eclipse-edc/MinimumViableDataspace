@@ -17,11 +17,11 @@ package org.eclipse.edc.demo.dcp.policy;
 import org.eclipse.edc.connector.controlplane.catalog.spi.policy.CatalogPolicyContext;
 import org.eclipse.edc.connector.controlplane.contract.spi.policy.ContractNegotiationPolicyContext;
 import org.eclipse.edc.connector.controlplane.contract.spi.policy.TransferProcessPolicyContext;
+import org.eclipse.edc.participant.spi.ParticipantAgent;
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintRuleFunction;
 import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
-import org.eclipse.edc.spi.agent.ParticipantAgent;
 
 import java.time.Instant;
 import java.util.Map;
@@ -38,7 +38,7 @@ public abstract class MembershipCredentialEvaluationFunction<C extends PolicyCon
 
             @Override
             protected ParticipantAgent getAgent(CatalogPolicyContext policyContext) {
-                return policyContext.agent();
+                return policyContext.participantAgent();
             }
         };
     }
@@ -48,7 +48,7 @@ public abstract class MembershipCredentialEvaluationFunction<C extends PolicyCon
 
             @Override
             protected ParticipantAgent getAgent(TransferProcessPolicyContext policyContext) {
-                return policyContext.agent();
+                return policyContext.participantAgent();
             }
         };
     }
@@ -58,7 +58,7 @@ public abstract class MembershipCredentialEvaluationFunction<C extends PolicyCon
 
             @Override
             protected ParticipantAgent getAgent(ContractNegotiationPolicyContext policyContext) {
-                return policyContext.agent();
+                return policyContext.participantAgent();
             }
         };
     }

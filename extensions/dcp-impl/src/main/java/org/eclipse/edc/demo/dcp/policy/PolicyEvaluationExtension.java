@@ -46,6 +46,8 @@ public class PolicyEvaluationExtension implements ServiceExtension {
         bindPermissionFunction(MembershipCredentialEvaluationFunction.createForNegotiation(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
         bindPermissionFunction(MembershipCredentialEvaluationFunction.createForCatalog(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
+        policyEngine.registerFunction(TransferProcessPolicyContext.class, Permission.class, );
+
         registerDataAccessLevelFunction();
 
     }
@@ -63,7 +65,7 @@ public class PolicyEvaluationExtension implements ServiceExtension {
         ruleBindingRegistry.bind(ODRL_SCHEMA + "use", scope);
         ruleBindingRegistry.bind(constraintType, scope);
 
-        policyEngine.registerFunction(contextClass, Permission.class, constraintType, function);
+//        policyEngine.registerFunction(contextClass, Permission.class, constraintType, function);
     }
 
     private <C extends PolicyContext> void bindDutyFunction(AtomicConstraintRuleFunction<Duty, C> function, Class<C> contextClass, String scope, String constraintType) {
