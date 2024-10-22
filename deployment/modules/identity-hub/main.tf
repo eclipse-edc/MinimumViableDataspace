@@ -13,7 +13,7 @@
 
 resource "kubernetes_deployment" "identityhub" {
   metadata {
-    name = lower(var.humanReadableName)
+    name      = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
       App = lower(var.humanReadableName)
@@ -163,7 +163,6 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_SQL_SCHEMA_AUTOCREATE              = true
     EDC_STS_ACCOUNT_API_URL                = var.sts-accounts-api-url
     EDC_STS_ACCOUNTS_API_AUTH_HEADER_VALUE = "password"
-    EDC_IAM_ACCESSTOKEN_JTI_VALIDATION     = true
   }
 }
 
