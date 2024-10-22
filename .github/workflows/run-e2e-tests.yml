@@ -104,6 +104,12 @@ jobs:
         run: |-
           ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
 
+      - name: "Run Newman"
+        continue-on-error: true
+        working-directory: ./deployment/postman
+        run: |-
+          newman run "MVD.postman_collection.json" -e "MVD K8S.postman_environment.json" --folder "ControlPlane Management" --delay-request 5000 --verbose
+
       - name: "Print log if test failed"
         if: failure()
         run: |-
