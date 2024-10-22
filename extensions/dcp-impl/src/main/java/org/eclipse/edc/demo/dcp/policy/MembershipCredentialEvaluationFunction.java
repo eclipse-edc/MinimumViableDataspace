@@ -14,52 +14,26 @@
 
 package org.eclipse.edc.demo.dcp.policy;
 
-import org.eclipse.edc.connector.controlplane.catalog.spi.policy.CatalogPolicyContext;
-import org.eclipse.edc.connector.controlplane.contract.spi.policy.ContractNegotiationPolicyContext;
-import org.eclipse.edc.connector.controlplane.contract.spi.policy.TransferProcessPolicyContext;
+import org.eclipse.edc.participant.spi.ParticipantAgentPolicyContext;
 import org.eclipse.edc.policy.engine.spi.AtomicConstraintRuleFunction;
-import org.eclipse.edc.policy.engine.spi.PolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 import org.eclipse.edc.policy.model.Permission;
-import org.eclipse.edc.spi.agent.ParticipantAgent;
 
 import java.time.Instant;
 import java.util.Map;
 
-public abstract class MembershipCredentialEvaluationFunction<C extends PolicyContext> extends AbstractCredentialEvaluationFunction implements AtomicConstraintRuleFunction<Permission, C> {
+public class MembershipCredentialEvaluationFunction<C extends ParticipantAgentPolicyContext> extends AbstractCredentialEvaluationFunction implements AtomicConstraintRuleFunction<Permission, C> {
     public static final String MEMBERSHIP_CONSTRAINT_KEY = "MembershipCredential";
 
     private static final String MEMBERSHIP_CLAIM = "membership";
     private static final String SINCE_CLAIM = "since";
     private static final String ACTIVE = "active";
 
-    public static MembershipCredentialEvaluationFunction<CatalogPolicyContext> createForCatalog() {
-        return new MembershipCredentialEvaluationFunction<>() {
-
-            @Override
-            protected ParticipantAgent getAgent(CatalogPolicyContext policyContext) {
-                return policyContext.agent();
-            }
-        };
+    private MembershipCredentialEvaluationFunction() {
     }
 
-    public static MembershipCredentialEvaluationFunction<TransferProcessPolicyContext> createForTransfer() {
+    public static <C extends ParticipantAgentPolicyContext> MembershipCredentialEvaluationFunction<C> create() {
         return new MembershipCredentialEvaluationFunction<>() {
-
-            @Override
-            protected ParticipantAgent getAgent(TransferProcessPolicyContext policyContext) {
-                return policyContext.agent();
-            }
-        };
-    }
-
-    public static MembershipCredentialEvaluationFunction<ContractNegotiationPolicyContext> createForNegotiation() {
-        return new MembershipCredentialEvaluationFunction<>() {
-
-            @Override
-            protected ParticipantAgent getAgent(ContractNegotiationPolicyContext policyContext) {
-                return policyContext.agent();
-            }
         };
     }
 
@@ -75,7 +49,7 @@ public abstract class MembershipCredentialEvaluationFunction<C extends PolicyCon
             return false;
         }
 
-        var pa = getAgent(policyContext);
+        var pa = policyContext.participantAgent();
         if (pa == null) {
             policyContext.reportProblem("No ParticipantAgent found on context.");
             return false;
@@ -96,7 +70,5 @@ public abstract class MembershipCredentialEvaluationFunction<C extends PolicyCon
                     return membershipStartDate.isBefore(Instant.now());
                 });
     }
-
-    protected abstract ParticipantAgent getAgent(C policyContext);
 
 }

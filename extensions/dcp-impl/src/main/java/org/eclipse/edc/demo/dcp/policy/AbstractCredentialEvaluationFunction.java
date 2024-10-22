@@ -15,7 +15,7 @@
 package org.eclipse.edc.demo.dcp.policy;
 
 import org.eclipse.edc.iam.verifiablecredentials.spi.model.VerifiableCredential;
-import org.eclipse.edc.spi.agent.ParticipantAgent;
+import org.eclipse.edc.participant.spi.ParticipantAgent;
 import org.eclipse.edc.spi.result.Result;
 
 import java.util.List;
