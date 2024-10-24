@@ -25,7 +25,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 0 * * *" # once a day (1:30 UTC)
+    - cron: "0 5 * * *" # once a day
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -33,7 +33,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 
 jobs:
   Run-E2E-Tests:
@@ -118,3 +117,30 @@ jobs:
       - name: "Destroy the KinD cluster"
         run: >-
           kind delete cluster -n dcp-demo
+
+  Secrets-Presence:
+    name: "Check for required credentials"
+    runs-on: ubuntu-latest
+    outputs:
+      HAS_WEBHOOK: ${{ steps.secrets-presence.outputs.HAS_WEBHOOK }}
+    steps:
+      - name: Check whether secrets exist
+        id: secrets-presence
+        run: |
+          [ ! -z "${{ secrets.DISCORD_GITHUB_CI_WEBHOOK }}" ] && echo "HAS_WEBHOOK=true" >> $GITHUB_OUTPUT
+          exit 0
+
+  Post-To-Discord:
+    needs: [ Run-E2E-Tests, Secrets-Presence ]
+    if: "needs.Secrets-Presence.outputs.HAS_WEBHOOK && always() && github.event_name == 'schedule'"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: sarisia/actions-status-discord@v1
+        name: "Post discord webhook"
+        with:
+          webhook: ${{ secrets.DISCORD_GITHUB_CI_WEBHOOK }}
+          # if the publishing is skipped, that means the preceding test run failed
+          status: ${{ needs.Run-E2E-Tests.result == 'skipped' && 'Failure' || needs.Run-E2E-Tests.result }}
+          title: "Nightly MVD E2E-Test"
+          description: Nightly E2E test run against the latest artefacts"
+          username: GitHub Actions
