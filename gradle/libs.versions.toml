@@ -26,6 +26,7 @@ edc-did-core = { module = "org.eclipse.edc:identity-did-core", version.ref = "ed
 edc-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
 edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 edc-core-crypto = { module = "org.eclipse.edc:crypto-core", version.ref = "edc" }
+edc-core-token = { module = "org.eclipse.edc:token-core", version.ref = "edc" }
 edc-core-edrstore = { module = "org.eclipse.edc:edr-store-core", version.ref = "edc" }
 edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
 edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
@@ -109,6 +110,7 @@ edc-sql-transactionlocal = { module = "org.eclipse.edc:transaction-local", versi
 edc-sql-accesstokendata = { module = "org.eclipse.edc:accesstokendata-store-sql", version.ref = "edc" }
 edc-sql-dataplane = { module = "org.eclipse.edc:data-plane-store-sql", version.ref = "edc" }
 edc-sql-dataplane-instancestore = { module = "org.eclipse.edc:data-plane-instance-store-sql", version.ref = "edc" }
+edc-sql-jtivdalidation = { module = "org.eclipse.edc:jti-validation-store-sql", version.ref = "edc" }
 
 
 # identity hub SQL implementations
@@ -176,7 +178,7 @@ parsson = { module = "org.eclipse.parsson:parsson", version.ref = "parsson" }
 [bundles]
 dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-control-api", "edc-dpf-signaling-client", "edc-dpf-transfer-signaling"]
 
-connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld"]
+connector = ["edc-boot", "edc-core-connector", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token"]
 
 controlplane = ["edc-controlplane-core", "edc-config-filesystem", "edc-auth-tokenbased", "edc-auth-configuration", "edc-api-management",
     "edc-api-management-config", "edc-api-management-edr", "edc-api-management-dataplaneselector",
@@ -196,9 +198,9 @@ dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-c
 sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 sql-edc-dataplane = ["edc-sql-accesstokendata", "edc-sql-dataplane", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "edc-sql-dataplane-instancestore", "postgres"]
 
-sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-ih = ["edc-sql-ih-credstore-sql","edc-sql-jtivdalidation", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
-sql-sts = [ "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-sts = ["edc-sql-ih-stsstore-sql", "edc-sql-jtivdalidation", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
 sts = ["edc-sts-core", "edc-sts-api", "edc-sts-spi", "edc-sts"]
 

@@ -56,9 +56,9 @@ module "provider-identityhub" {
   namespace         = kubernetes_namespace.ns.metadata.0.name
 
   database = {
-    user     = "identityhub"
-    password = "identityhub"
-    url      = "jdbc:postgresql://${module.provider-postgres.database-url}/identityhub"
+    user     = "identity"
+    password = "identity"
+    url      = "jdbc:postgresql://${module.provider-postgres.database-url}/identity"
   }
   sts-accounts-api-url = module.provider-sts.sts-accounts-url
 }
@@ -70,9 +70,9 @@ module "provider-sts" {
   humanReadableName = "provider-sts"
   namespace         = kubernetes_namespace.ns.metadata.0.name
   database = {
-    user     = "sts"
-    password = "sts"
-    url      = "jdbc:postgresql://${module.provider-postgres.database-url}/sts"
+    user     = "identity"
+    password = "identity"
+    url      = "jdbc:postgresql://${module.provider-postgres.database-url}/identity"
   }
   vault-url = "http://provider-vault:8200"
 }
@@ -109,7 +109,6 @@ module "provider-postgres" {
     kubernetes_config_map.postgres-initdb-config-pqna.metadata[0].name,
     kubernetes_config_map.postgres-initdb-config-pm.metadata[0].name,
     kubernetes_config_map.postgres-initdb-config-ih.metadata[0].name,
-    kubernetes_config_map.postgres-initdb-config-sts.metadata[0].name
   ]
   namespace = kubernetes_namespace.ns.metadata.0.name
 }
@@ -166,23 +165,9 @@ resource "kubernetes_config_map" "postgres-initdb-config-ih" {
   }
   data = {
     "ih-initdb-config.sql" = <<-EOT
-        CREATE USER identityhub WITH ENCRYPTED PASSWORD 'identityhub' SUPERUSER;
-        CREATE DATABASE identityhub;
-        \c identityhub
-      EOT
-  }
-}
-
-resource "kubernetes_config_map" "postgres-initdb-config-sts" {
-  metadata {
-    name      = "sts-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
-  }
-  data = {
-    "sts-initdb-config.sql" = <<-EOT
-        CREATE USER sts WITH ENCRYPTED PASSWORD 'sts' SUPERUSER;
-        CREATE DATABASE sts;
-        \c sts
+        CREATE USER identity WITH ENCRYPTED PASSWORD 'identity' SUPERUSER;
+        CREATE DATABASE identity;
+        \c identity
       EOT
   }
 }
