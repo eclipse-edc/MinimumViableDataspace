@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.bundles.controlplane)
     implementation(libs.bundles.dcp)
     implementation(libs.edc.core.connector)
+    implementation(libs.edc.core.token)
 
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
