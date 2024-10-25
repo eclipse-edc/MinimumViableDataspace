@@ -57,8 +57,8 @@ public class JwtSigner {
     public static final String ISSUER_PRIVATE_KEY_FILE_PATH = System.getProperty("user.dir") + "/../../deployment/assets/issuer_private.pem";
     public static final String ISSUER_PUBLIC_KEY_FILE_PATH = System.getProperty("user.dir") + "/../../deployment/assets/issuer_public.pem";
     public static final File ISSUER_DID_DOCUMENT_LOCAL = new File(System.getProperty("user.dir") + "/../../deployment/assets/issuer/did.docker.json");
-    public static final File ISSUER_DID_DOCUMENT_K8S = new File(System.getProperty("user.dir") + "/../../deployment/assets/issuer/id.k8s.json");
-    public static final String DATASPACE_ISSUER_DID_LOCAL = "did:web:localhost";
+    public static final File ISSUER_DID_DOCUMENT_K8S = new File(System.getProperty("user.dir") + "/../../deployment/assets/issuer/did.k8s.json");
+    public static final String DATASPACE_ISSUER_DID_LOCAL = "did:web:localhost%3A9876";
     public static final String DATASPACE_ISSUER_DID_K8S = "did:web:dataspace-issuer";
     private final ObjectMapper mapper = new ObjectMapper();
 

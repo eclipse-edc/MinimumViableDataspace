@@ -49,7 +49,7 @@
     * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
     * [10.2 DID resolution](#102-did-resolution)
       * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
-      * [10.2.2 `did:example` for the dataspace credential issuer](#1022-didexample-for-the-dataspace-credential-issuer)
+      * [10.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
     * [10.3 No issuance (yet)](#103-no-issuance-yet)
 <!-- TOC -->
 
@@ -788,7 +788,7 @@ The Kubernetes deployment uses both persistent storage (PostgreSQL) and secure v
 
 #### 10.2.1 `did:web` for participants
 
-Every participant hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
+Participants hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
 accessible for all other participants. For example, every participant pod in the cluster must be able to resolve a DID
 from every other participant. For access to pods from outside the cluster we would be using an ingress controller, but
 then the other pods in the cluster cannot access it, due to missing DNS entries. That means, that the DID cannot use the
@@ -796,12 +796,10 @@ _ingress URL_, but must use the _service's_ URL. A service in turn is not access
 are only resolvable from _inside_ the cluster. Unfortunately, there is no way around this, unless we put DIDs on a
 publicly resolvable CDN or webserver.
 
-#### 10.2.2 `did:example` for the dataspace credential issuer
+#### 10.2.2 `did:web` for the dataspace issuer
 
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
-introducing the (completely made up) `"did:example"` method, for which there is a [custom-built DID
-resolver](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/DidExampleResolver.java)
-in the code.
+simply hosting the dataspace issuer's DID as static file with NGINX.
 
 ### 10.3 No issuance (yet)
 
