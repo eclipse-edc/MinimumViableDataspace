@@ -10,9 +10,10 @@
     * [3.3 Access control](#33-access-control)
     * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
   * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
-    * [4.1 Starting the runtimes](#41-starting-the-runtimes)
-    * [4.2 Seeding the dataspace](#42-seeding-the-dataspace)
-    * [4.3 Next steps](#43-next-steps)
+    * [4.1 Start NGINX](#41-start-nginx)
+    * [4.2 Starting the runtimes](#42-starting-the-runtimes)
+    * [4.3 Seeding the dataspace](#43-seeding-the-dataspace)
+    * [4.4 Next steps](#44-next-steps)
   * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
     * [5.1 Build the runtime images](#51-build-the-runtime-images)
     * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
@@ -208,7 +209,58 @@ There are several run configurations for IntelliJ in the `.run/` folder. One eac
 connectors runtimes and IdentityHub runtimes plus one for the provider catalog server, and one named "dataspace". The
 latter is a compound run config an brings up all other runtimes together.
 
-### 4.1 Starting the runtimes
+### 4.1 Start NGINX
+
+The issuer's DID document is hosted on NGINX, so the easiest way of running NGINX is with a docker container:
+
+```shell
+docker run -d --name nginx -p 9876:80 --rm \
+  -v ${PWD}/deployment/assets/issuer/nginx.conf:/etc/nginx/nginx.conf:ro \
+  -v ${PWD}/deployment/assets/issuer/did.docker.json:/var/www/.well-known/did.json:ro \
+  nginx
+```
+
+To verify that it worked, please execute `curl -X GET http://localhost:9876/.well-known/did.json` and see if it returns
+a
+DID document as JSON structure:
+
+```json
+{
+  "service": [],
+  "verificationMethod": [
+    {
+      "id": "did:web:localhost%3A9876#key-1",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:localhost%3A9876",
+      "publicKeyMultibase": null,
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "Hsq2QXPbbsU7j6JwXstbpxGSgliI04g_fU3z2nwkuVc"
+      }
+    }
+  ],
+  "authentication": [
+    "key-1"
+  ],
+  "id": "did:web:localhost%3A9876",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:web:localhost%3A9876"
+    }
+  ]
+}
+```
+
+The port mapping is **important**, because it influences the DID of the issuer: with a host port of
+`9876` the issuer DID resolves to `did:web:localhost%3A9876`. Changing the port mapping changes the DID, soif you change
+the port mapping, be sure to execute a search-and-replace!
+
+Naturally, you are free to install NGINX natively on your computer or use any other webserver altogether, but this won't
+be supported by us.
+
+### 4.2 Starting the runtimes
 
 The connector runtimes contain both the controlplane and the dataplane. Note that in a real-world scenario those would
 likely be separate runtimes to be able to scale and deploy them individually. Note also, that the Kubernetes deployment
@@ -219,7 +271,7 @@ makes this really easy), or to select whatever JDK you have available in each ru
 
 All run configs take their configuration from `*.env` files which are located in `deployment/assets/env`.
 
-### 4.2 Seeding the dataspace
+### 4.3 Seeding the dataspace
 
 DID documents are dynamically generated when "seeding" the data, specifically when creating the `ParticipantContext`
 objects in IdentityHub. This is automatically being done by a script `seed.sh`.
@@ -228,7 +280,7 @@ After executing the `dataspace` run config in Intellij, be sure to **execute the
 have started**. Omitting to do so will leave the dataspace in an uninitialized state and cause all
 connector-to-connector communication to fail.
 
-### 4.3 Next steps
+### 4.4 Next steps
 
 All REST requests made from the script are available in the [Postman
 collection](./deployment/postman/MVD.postman_collection.json). With the [HTTP
