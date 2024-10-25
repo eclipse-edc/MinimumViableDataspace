@@ -1,51 +1,59 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
+
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-  * [1. Introduction](#1-introduction)
-  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
-  * [3. The Scenario](#3-the-scenario)
-    * [3.1 Participants](#31-participants)
-    * [3.2 Data setup](#32-data-setup)
-    * [3.3 Access control](#33-access-control)
-    * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-  * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
-    * [4.1 Starting the runtimes](#41-starting-the-runtimes)
-    * [4.2 Seeding the dataspace](#42-seeding-the-dataspace)
-    * [4.3 Next steps](#43-next-steps)
-  * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
-    * [5.1 Build the runtime images](#51-build-the-runtime-images)
-    * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
-    * [5.3 Seed the dataspace](#53-seed-the-dataspace)
-    * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
-  * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
-    * [6.1 In-memory databases](#61-in-memory-databases)
-    * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
-    * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
-  * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
-    * [7.1 Get the catalog](#71-get-the-catalog)
-    * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
-    * [7.3 Query negotiation status](#73-query-negotiation-status)
-    * [7.4 Initiate data transfer](#74-initiate-data-transfer)
-    * [7.5 Query data transfers](#75-query-data-transfers)
-    * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
-    * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
-    * [7.8 Fetch data](#78-fetch-data)
-  * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
-    * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
-    * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
-    * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
-    * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
-      * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
-      * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
-    * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
-    * [8.6 Super-user seeding](#86-super-user-seeding)
-  * [9. Other caveats, shortcuts and workarounds](#9-other-caveats-shortcuts-and-workarounds)
-    * [9.1 In-memory stores in local deployment](#91-in-memory-stores-in-local-deployment)
-    * [9.2 DID resolution](#92-did-resolution)
-      * [9.2.1 `did:web` for participants](#921-didweb-for-participants)
-      * [9.2.2 `did:example` for the dataspace credential issuer](#922-didexample-for-the-dataspace-credential-issuer)
-    * [9.3 No issuance (yet)](#93-no-issuance-yet)
+    * [1. Introduction](#1-introduction)
+    * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+    * [3. The Scenario](#3-the-scenario)
+        * [3.1 Participants](#31-participants)
+        * [3.2 Data setup](#32-data-setup)
+        * [3.3 Access control](#33-access-control)
+        * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
+    * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
+        * [4.1 Starting the runtimes](#41-starting-the-runtimes)
+        * [4.2 Seeding the dataspace](#42-seeding-the-dataspace)
+        * [4.3 Next steps](#43-next-steps)
+    * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
+        * [5.1 Build the runtime images](#51-build-the-runtime-images)
+        * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
+        * [5.3 Seed the dataspace](#53-seed-the-dataspace)
+        * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
+    * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
+        * [6.1 In-memory databases](#61-in-memory-databases)
+        * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
+        * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
+    * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
+        * [7.1 Get the catalog](#71-get-the-catalog)
+        * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
+        * [7.3 Query negotiation status](#73-query-negotiation-status)
+        * [7.4 Initiate data transfer](#74-initiate-data-transfer)
+        * [7.5 Query data transfers](#75-query-data-transfers)
+        * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
+        * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
+        * [7.8 Fetch data](#78-fetch-data)
+    * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
+        * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
+        * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
+        * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
+        * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
+            * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
+            * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
+        * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
+        * [8.6 Super-user seeding](#86-super-user-seeding)
+    * [9. Advanced topics](#9-advanced-topics)
+        * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
+        * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
+            * [9.2.1 IntelliJ deployment:](#921-intellij-deployment)
+            * [9.2.2 Kubernetes deployment](#922-kubernetes-deployment)
+    * [10. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
+        * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
+        * [10.2 DID resolution](#102-did-resolution)
+            * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
+            * [10.2.2
+              `did:example` for the dataspace credential issuer](#1022-didexample-for-the-dataspace-credential-issuer)
+        * [10.3 No issuance (yet)](#103-no-issuance-yet)
+
 <!-- TOC -->
 
 ## 1. Introduction
@@ -246,6 +254,7 @@ following tools are installed and readily available:
 - Git
 - a POSIX compliant shell
 - Postman (to comfortably execute REST requests)
+- `openssl`, optional, but required to [regenerate keys](#91-regenerating-issuer-keys)
 - `newman` (to run Postman collections from the command line)
 - not needed, but recommended: Kubernetes monitoring tools like K9s
 
@@ -704,12 +713,73 @@ defaults and customize your "super-user" and find out what breaks :)
 
 > NB: doing this in anything but a demo installation is **not** recommended, as it poses significant security risks!
 
-## 9. Other caveats, shortcuts and workarounds
+## 9. Advanced topics
+
+### 9.1 Regenerating issuer keys
+
+The dataspace issuer is the authoritative entity that can issue Verifiable Credentials to participants. For that, two
+things are needed: a private/public key pair to sign credentials, and a DID document for verifiers to obtain the
+dataspace issuer's public key.
+
+Consequently, when the dataspace issuer's keys should be updated, these aforementioned places are relevant.
+
+The first step is to create a new key pair:
+
+```shell
+openssl genpkey -algorithm ed25519 -out deployment/assets/issuer_private.pem
+openssl pkey -in assets/issuer_private.pem -pubout -out assets/issuer_public.pem
+```
+
+These puts a new key pair in `deployment/assets/`. Note that the path is arbitrary, but needs to be consistent with
+subsequent steps.
+Next, we need to re-sign the participants' credentials, update the database seed data and update the issuer's DID
+document.
+
+There is no easy or convenient way to do this natively on the command line, so we created a test
+named [JwtSigner.java](launchers/identity-hub/src/test/java/org/eclipse/edc/demo/dcp/JwtSigner.java) that does all that.
+Simply executing the test performs all these steps, updates files etc.
+
+The only thing left to do is to clean-rebuild-restart the applications (IntelliJ) or rebuild and redeploy (Kubernetes).
+
+> We strongly encourage readers to closely inspect the `JwtSigner` code, because it shows how key conversion, document
+> handling etc. can be done in EDC!
+
+### 9.2 Regenerating participant keys
+
+#### 9.2.1 IntelliJ deployment:
+
+keys must be seeded at startup time (due to [this limitation](#62-memory-based-secret-vaults)).
+In addition, if consumer and provider have the same key, that makes things a bit easier, because it removes the need to
+seed the keys via config or commandline argument. That said, the process is similar to the dataspace issuer:
+
+```shell
+openssl genpkey -algorithm ed25519 -out deployment/assets/consumer_private.pem
+openssl pkey -in assets/consumer_private.pem -pubout -out assets/consumer_public.pem
+
+# use the same key for provider:
+cp  deployment/assets/consumer_private.pem  deployment/assets/provider_private.pem
+cp  deployment/assets/consumer_public.pem  deployment/assets/provider_public.pem
+```
+
+Now comes the hacky part, reader discretion is advised.
+In [SecretsExtension.java](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/SecretsExtension.java)
+replace the String block for the private and public key with the contents of the newly created `*.pem` files.
+
+Clean-rebuild-restart the applications. Don't forget to [seed](#42-seeding-the-dataspace). Done.
+
+#### 9.2.2 Kubernetes deployment
+
+Here, participant keys are dynamically generated by IdentityHub, so there is no need to pre-generate them. In fact,
+everytime the dataspace is re-deployed and the [seed script](#53-seed-the-dataspace) is executed, a new key pair is
+generated for each participant.
+To be extra-precise, the keys are regenerated when a new `ParticipantContext` is created.
+
+## 10. Other caveats, shortcuts and workarounds
 
 It must be emphasized that this is a **DEMO**, it does not come with any guarantee w.r.t. operational readiness and
 comes with a few significant shortcuts affecting security amongst other things, for the sake of simplicity. These are:
 
-### 9.1 In-memory stores in local deployment
+### 10.1 In-memory stores in local deployment
 
 When running the MVD from IntelliJ, the runtimes exclusively use in-memory stores and in-memory vaults. We opted for
 this to avoid having to either provide (and maintain) a docker-compose file for those services, or to put users through
@@ -717,9 +787,9 @@ an arduous amount of setup and configuration.
 
 The Kubernetes deployment uses both persistent storage (PostgreSQL) and secure vaults (Hashicorp Vault).
 
-### 9.2 DID resolution
+### 10.2 DID resolution
 
-#### 9.2.1 `did:web` for participants
+#### 10.2.1 `did:web` for participants
 
 Every participant hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
 accessible for all other participants. For example, every participant pod in the cluster must be able to resolve a DID
@@ -729,14 +799,14 @@ _ingress URL_, but must use the _service's_ URL. A service in turn is not access
 are only resolvable from _inside_ the cluster. Unfortunately, there is no way around this, unless we put DIDs on a
 publicly resolvable CDN or webserver.
 
-#### 9.2.2 `did:example` for the dataspace credential issuer
+#### 10.2.2 `did:example` for the dataspace credential issuer
 
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
 introducing the (completely made up) `"did:example"` method, for which there is a [custom-built DID
 resolver](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/DidExampleResolver.java)
 in the code.
 
-### 9.3 No issuance (yet)
+### 10.3 No issuance (yet)
 
 All credentials are pre-generated manually because the DCP Issuance Flow is not implemented yet. Credentials are put
 into the stores by an extension called `IdentityHubExtension.java` and are **different** for local deployments and

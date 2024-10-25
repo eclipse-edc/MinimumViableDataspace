@@ -21,6 +21,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import org.eclipse.edc.iam.did.spi.document.DidDocument;
 import org.eclipse.edc.keys.keyparsers.PemParser;
 import org.eclipse.edc.security.token.jwt.CryptoConverter;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -32,8 +33,11 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyPair;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
@@ -48,11 +52,14 @@ import static org.mockito.Mockito.mock;
  *     <li>A public/private key pair in either JWK or PEM format</li>
  * </ul>
  */
+@SuppressWarnings("NewClassNamingConvention")
 public class JwtSigner {
 
+    public static final String ISSUER_PRIVATE_KEY_FILE_PATH = System.getProperty("user.dir") + "/../../deployment/assets/issuer_private.pem";
+    public static final String ISSUER_PUBLIC_KEY_FILE_PATH = System.getProperty("user.dir") + "/../../deployment/assets/issuer_public.pem";
+    public static final String ISSUER_DID_DOCUMENT_FILE_PATH = System.getProperty("user.dir") + "/../../extensions/did-example-resolver/src/main/resources/did_example_dataspace-issuer.json";
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @SuppressWarnings("unchecked")
     @ParameterizedTest
     @ArgumentsSource(InputOutputProvider.class)
     void generateJwt(String rawCredentialFilePath, File vcResource, String did) throws JOSEException, IOException {
@@ -74,16 +81,27 @@ public class JwtSigner {
                 .build();
 
         // this must be the path to the Credential issuer's private key
-        var privateKey = (PrivateKey) new PemParser(mock()).parse(readFile(System.getProperty("user.dir") + "/../../deployment/assets/issuer_private.pem")).orElseThrow(f -> new RuntimeException(f.getFailureDetail()));
+        var privateKey = (PrivateKey) new PemParser(mock()).parse(readFile(ISSUER_PRIVATE_KEY_FILE_PATH)).orElseThrow(f -> new RuntimeException(f.getFailureDetail()));
+        var publicKey = (PublicKey) new PemParser(mock()).parse(readFile(ISSUER_PUBLIC_KEY_FILE_PATH)).orElseThrow(f -> new RuntimeException(f.getFailureDetail()));
 
+        // sign raw credentials with new issuer public key
         var jwt = new SignedJWT(header, claims);
         jwt.sign(CryptoConverter.createSignerFor(privateKey));
 
-        // replace the "rawVc" field in the output file
-
+        // replace the "rawVc" field in the VC resources file, so that it gets seeded to the database
         var content = Files.readString(vcResource.toPath());
         var updatedContent = content.replaceFirst("\"rawVc\":.*,", "\"rawVc\": \"%s\",".formatted(jwt.serialize()));
         Files.write(vcResource.toPath(), updatedContent.getBytes());
+
+        // update issuer DID document with new public key
+        var didDocFile = ISSUER_DID_DOCUMENT_FILE_PATH;
+        var issuerJwk = CryptoConverter.createJwk(new KeyPair(publicKey, null));
+        var didDoc = mapper.readValue(new File(didDocFile), DidDocument.class);
+
+        var issuerPk = didDoc.getVerificationMethod().get(0).getPublicKeyJwk();
+        issuerPk.clear();
+        issuerPk.putAll(issuerJwk.toPublicJWK().toJSONObject());
+        Files.write(Path.of(didDocFile), mapper.writeValueAsBytes(didDoc));
     }
 
     private String readFile(String path) {
