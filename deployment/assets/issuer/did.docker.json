@@ -2,9 +2,9 @@
   "service": [],
   "verificationMethod": [
     {
-      "id": "did:example:dataspace-issuer#key-1",
+      "id": "did:web:localhost%3A9876#key-1",
       "type": "JsonWebKey2020",
-      "controller": "did:example:dataspace-issuer",
+      "controller": "did:web:localhost%3A9876",
       "publicKeyMultibase": null,
       "publicKeyJwk": {
         "kty": "OKP",
@@ -16,11 +16,11 @@
   "authentication": [
     "key-1"
   ],
-  "id": "did:example:dataspace-issuer",
+  "id": "did:web:localhost%3A9876",
   "@context": [
     "https://www.w3.org/ns/did/v1",
     {
-      "@base": "did:example:dataspace-issuer"
+      "@base": "did:web:localhost%3A9876"
     }
   ]
 }

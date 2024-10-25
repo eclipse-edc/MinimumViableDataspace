@@ -1,59 +1,57 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
-
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-    * [1. Introduction](#1-introduction)
-    * [2. Purpose of this Demo](#2-purpose-of-this-demo)
-    * [3. The Scenario](#3-the-scenario)
-        * [3.1 Participants](#31-participants)
-        * [3.2 Data setup](#32-data-setup)
-        * [3.3 Access control](#33-access-control)
-        * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-    * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
-        * [4.1 Starting the runtimes](#41-starting-the-runtimes)
-        * [4.2 Seeding the dataspace](#42-seeding-the-dataspace)
-        * [4.3 Next steps](#43-next-steps)
-    * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
-        * [5.1 Build the runtime images](#51-build-the-runtime-images)
-        * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
-        * [5.3 Seed the dataspace](#53-seed-the-dataspace)
-        * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
-    * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
-        * [6.1 In-memory databases](#61-in-memory-databases)
-        * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
-        * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
-    * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
-        * [7.1 Get the catalog](#71-get-the-catalog)
-        * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
-        * [7.3 Query negotiation status](#73-query-negotiation-status)
-        * [7.4 Initiate data transfer](#74-initiate-data-transfer)
-        * [7.5 Query data transfers](#75-query-data-transfers)
-        * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
-        * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
-        * [7.8 Fetch data](#78-fetch-data)
-    * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
-        * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
-        * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
-        * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
-        * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
-            * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
-            * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
-        * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
-        * [8.6 Super-user seeding](#86-super-user-seeding)
-    * [9. Advanced topics](#9-advanced-topics)
-        * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
-        * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
-            * [9.2.1 IntelliJ deployment:](#921-intellij-deployment)
-            * [9.2.2 Kubernetes deployment](#922-kubernetes-deployment)
-    * [10. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
-        * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
-        * [10.2 DID resolution](#102-did-resolution)
-            * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
-            * [10.2.2
-              `did:example` for the dataspace credential issuer](#1022-didexample-for-the-dataspace-credential-issuer)
-        * [10.3 No issuance (yet)](#103-no-issuance-yet)
-
+  * [1. Introduction](#1-introduction)
+  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+  * [3. The Scenario](#3-the-scenario)
+    * [3.1 Participants](#31-participants)
+    * [3.2 Data setup](#32-data-setup)
+    * [3.3 Access control](#33-access-control)
+    * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
+  * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
+    * [4.1 Start NGINX](#41-start-nginx)
+    * [4.2 Starting the runtimes](#42-starting-the-runtimes)
+    * [4.3 Seeding the dataspace](#43-seeding-the-dataspace)
+    * [4.4 Next steps](#44-next-steps)
+  * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
+    * [5.1 Build the runtime images](#51-build-the-runtime-images)
+    * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
+    * [5.3 Seed the dataspace](#53-seed-the-dataspace)
+    * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
+  * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
+    * [6.1 In-memory databases](#61-in-memory-databases)
+    * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
+    * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
+  * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
+    * [7.1 Get the catalog](#71-get-the-catalog)
+    * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
+    * [7.3 Query negotiation status](#73-query-negotiation-status)
+    * [7.4 Initiate data transfer](#74-initiate-data-transfer)
+    * [7.5 Query data transfers](#75-query-data-transfers)
+    * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
+    * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
+    * [7.8 Fetch data](#78-fetch-data)
+  * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
+    * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
+    * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
+    * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
+    * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
+      * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
+      * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
+    * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
+    * [8.6 Super-user seeding](#86-super-user-seeding)
+  * [9. Advanced topics](#9-advanced-topics)
+    * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
+    * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
+      * [9.2.1 IntelliJ deployment:](#921-intellij-deployment)
+      * [9.2.2 Kubernetes deployment](#922-kubernetes-deployment)
+  * [10. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
+    * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
+    * [10.2 DID resolution](#102-did-resolution)
+      * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
+      * [10.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
+    * [10.3 No issuance (yet)](#103-no-issuance-yet)
 <!-- TOC -->
 
 ## 1. Introduction
@@ -211,7 +209,58 @@ There are several run configurations for IntelliJ in the `.run/` folder. One eac
 connectors runtimes and IdentityHub runtimes plus one for the provider catalog server, and one named "dataspace". The
 latter is a compound run config an brings up all other runtimes together.
 
-### 4.1 Starting the runtimes
+### 4.1 Start NGINX
+
+The issuer's DID document is hosted on NGINX, so the easiest way of running NGINX is with a docker container:
+
+```shell
+docker run -d --name nginx -p 9876:80 --rm \
+  -v ${PWD}/deployment/assets/issuer/nginx.conf:/etc/nginx/nginx.conf:ro \
+  -v ${PWD}/deployment/assets/issuer/did.docker.json:/var/www/.well-known/did.json:ro \
+  nginx
+```
+
+To verify that it worked, please execute `curl -X GET http://localhost:9876/.well-known/did.json` and see if it returns
+a
+DID document as JSON structure:
+
+```json
+{
+  "service": [],
+  "verificationMethod": [
+    {
+      "id": "did:web:localhost%3A9876#key-1",
+      "type": "JsonWebKey2020",
+      "controller": "did:web:localhost%3A9876",
+      "publicKeyMultibase": null,
+      "publicKeyJwk": {
+        "kty": "OKP",
+        "crv": "Ed25519",
+        "x": "Hsq2QXPbbsU7j6JwXstbpxGSgliI04g_fU3z2nwkuVc"
+      }
+    }
+  ],
+  "authentication": [
+    "key-1"
+  ],
+  "id": "did:web:localhost%3A9876",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    {
+      "@base": "did:web:localhost%3A9876"
+    }
+  ]
+}
+```
+
+The port mapping is **important**, because it influences the DID of the issuer: with a host port of
+`9876` the issuer DID resolves to `did:web:localhost%3A9876`. Changing the port mapping changes the DID, soif you change
+the port mapping, be sure to execute a search-and-replace!
+
+Naturally, you are free to install NGINX natively on your computer or use any other webserver altogether, but this won't
+be supported by us.
+
+### 4.2 Starting the runtimes
 
 The connector runtimes contain both the controlplane and the dataplane. Note that in a real-world scenario those would
 likely be separate runtimes to be able to scale and deploy them individually. Note also, that the Kubernetes deployment
@@ -222,7 +271,7 @@ makes this really easy), or to select whatever JDK you have available in each ru
 
 All run configs take their configuration from `*.env` files which are located in `deployment/assets/env`.
 
-### 4.2 Seeding the dataspace
+### 4.3 Seeding the dataspace
 
 DID documents are dynamically generated when "seeding" the data, specifically when creating the `ParticipantContext`
 objects in IdentityHub. This is automatically being done by a script `seed.sh`.
@@ -231,7 +280,7 @@ After executing the `dataspace` run config in Intellij, be sure to **execute the
 have started**. Omitting to do so will leave the dataspace in an uninitialized state and cause all
 connector-to-connector communication to fail.
 
-### 4.3 Next steps
+### 4.4 Next steps
 
 All REST requests made from the script are available in the [Postman
 collection](./deployment/postman/MVD.postman_collection.json). With the [HTTP
@@ -791,7 +840,7 @@ The Kubernetes deployment uses both persistent storage (PostgreSQL) and secure v
 
 #### 10.2.1 `did:web` for participants
 
-Every participant hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
+Participants hosts their DIDs in their IdentityHubs, which means, that the HTTP-URL that the DID maps to must be
 accessible for all other participants. For example, every participant pod in the cluster must be able to resolve a DID
 from every other participant. For access to pods from outside the cluster we would be using an ingress controller, but
 then the other pods in the cluster cannot access it, due to missing DNS entries. That means, that the DID cannot use the
@@ -799,12 +848,10 @@ _ingress URL_, but must use the _service's_ URL. A service in turn is not access
 are only resolvable from _inside_ the cluster. Unfortunately, there is no way around this, unless we put DIDs on a
 publicly resolvable CDN or webserver.
 
-#### 10.2.2 `did:example` for the dataspace credential issuer
+#### 10.2.2 `did:web` for the dataspace issuer
 
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
-introducing the (completely made up) `"did:example"` method, for which there is a [custom-built DID
-resolver](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/DidExampleResolver.java)
-in the code.
+simply hosting the dataspace issuer's DID as static file with NGINX.
 
 ### 10.3 No issuance (yet)
 

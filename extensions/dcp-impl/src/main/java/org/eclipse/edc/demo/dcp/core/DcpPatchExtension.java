@@ -63,7 +63,8 @@ public class DcpPatchExtension implements ServiceExtension {
         signatureSuiteRegistry.register(VcConstants.JWS_2020_SIGNATURE_SUITE, suite);
 
         // register dataspace issuer
-        trustedIssuerRegistry.register(new Issuer("did:example:dataspace-issuer", Map.of()), WILDCARD);
+        trustedIssuerRegistry.register(new Issuer("did:web:dataspace-issuer", Map.of()), WILDCARD);
+        trustedIssuerRegistry.register(new Issuer("did:web:localhost%3A9876", Map.of()), WILDCARD);
 
         // register a default scope provider
         var contextMappingFunction = new DefaultScopeMappingFunction(Set.of("org.eclipse.edc.vc.type:MembershipCredential:read"));
