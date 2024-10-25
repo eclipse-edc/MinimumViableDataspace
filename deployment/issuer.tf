@@ -104,7 +104,7 @@ resource "kubernetes_config_map" "nginx-map" {
   }
 
   data = {
-    "nginx.conf" = file("${path.cwd}/deployment/assets/issuer/nginx.conf")
-    "did.json"   = file("${path.cwd}/deployment/assets/issuer/did.k8s.json")
+    "nginx.conf" = file("${path.root}/assets/issuer/nginx.conf")
+    "did.json"   = file("${path.root}/assets/issuer/did.k8s.json")
   }
 }
