@@ -180,6 +180,9 @@ edc-bom-controlplane = { module = "org.eclipse.edc:controlplane-dcp-bom", versio
 edc-bom-dataplane = { module = "org.eclipse.edc:dataplane-base-bom", version.ref = "edc" }
 edc-bom-controlplane-sql = { module = "org.eclipse.edc:controlplane-feature-sql-bom", version.ref = "edc" }
 edc-bom-dataplane-sql = { module = "org.eclipse.edc:dataplane-feature-sql-bom", version.ref = "edc" }
+edc-bom-identithub = { module = "org.eclipse.edc:identityhub-bom", version.ref = "edc" }
+edc-bom-identithub-sts = { module = "org.eclipse.edc:identityhub-with-sts-bom", version.ref = "edc" }
+edc-bom-identithub-sql = { module = "org.eclipse.edc:identityhub-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
 dpf = ["edc-dpf-selector-core", "edc-spi-dataplane-selector", "edc-dpf-selector-control-api", "edc-dpf-signaling-client", "edc-dpf-transfer-signaling"]
@@ -204,7 +207,7 @@ dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-c
 sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 sql-edc-dataplane = ["edc-sql-accesstokendata", "edc-sql-dataplane", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "edc-sql-dataplane-instancestore", "postgres"]
 
-sql-ih = ["edc-sql-ih-credstore-sql","edc-sql-jtivdalidation", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-ih = ["edc-sql-ih-credstore-sql", "edc-sql-jtivdalidation", "edc-sql-ih-didstore-sql", "edc-sql-ih-keypairstore-sql", "edc-sql-ih-pcstore-sql", "edc-sql-ih-stsstore-sql", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
 sql-sts = ["edc-sql-ih-stsstore-sql", "edc-sql-jtivdalidation", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
