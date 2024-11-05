@@ -19,26 +19,16 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":extensions:did-example-resolver"))
-    implementation(project(":extensions:dcp-impl")) // some patches/impls for DCP
+    runtimeOnly(project(":extensions:did-example-resolver"))
+    runtimeOnly(project(":extensions:dcp-impl")) // some patches/impls for DCP
     runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
-    implementation(libs.edc.spi.core) // we need some constants
-
-    implementation(libs.bundles.controlplane)
-    implementation(libs.bundles.dcp)
-    implementation(libs.edc.core.connector)
-    implementation(libs.edc.core.token)
+    runtimeOnly(libs.edc.bom.controlplane)
 
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.bundles.sql.edc)
-        runtimeOnly(libs.bundles.sql.fc)
-        runtimeOnly(libs.edc.sts.remote.client)
+        runtimeOnly(libs.edc.bom.controlplane.sql)
         println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
-    runtimeOnly(libs.bundles.dpf)
-    runtimeOnly(libs.edc.api.version)
-
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
