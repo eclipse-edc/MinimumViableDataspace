@@ -39,12 +39,10 @@ public class MvdScopeTransformer extends EdcScopeToCriterionTransformer {
         }
         var credentialType = tokens.getContent()[1];
 
-        if (!knownCredentialTypes.contains(credentialType)) {
-            //select based on the credentialSubject.level property
-            // even though "claims" is a Map, we need to access it using the dot notation. See ReflectionUtil.java
-            return success(new Criterion("verifiableCredential.credential.credentialSubject.claims.level", "=", credentialType));
-        } else {
+        if(knownCredentialTypes.contains(credentialType)) {
             return success(new Criterion(TYPE_OPERAND, CONTAINS_OPERATOR, credentialType));
         }
+
+        return failure("Unknown credential type: %s".formatted(credentialType));
     }
 }
