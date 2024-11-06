@@ -19,27 +19,14 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.bundles.connector)
-    runtimeOnly(libs.edc.api.observability)
-    runtimeOnly(libs.edc.dataplane.core)
-    runtimeOnly(libs.edc.dataplane.api.control.config)
-    runtimeOnly(libs.edc.dataplane.api.control.client)
-    runtimeOnly(libs.edc.dataplane.selfregistration)
-    runtimeOnly(libs.edc.dataplane.http)
-    runtimeOnly(libs.edc.dataplane.http.oauth2)
-    runtimeOnly(libs.edc.dataplane.api.public)
-    runtimeOnly(libs.edc.dataplane.api.signaling)
-    runtimeOnly(libs.edc.dataplane.iam)
-    runtimeOnly(libs.edc.ext.jsonld) // needed by the DataPlaneSignalingApi
-    runtimeOnly(libs.edc.dpf.selector.client) // for the selector service -> self registration
+    runtimeOnly(libs.edc.bom.dataplane)
 
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.bundles.sql.edc.dataplane)
+        runtimeOnly(libs.edc.bom.dataplane.sql)
         runtimeOnly(libs.edc.sts.remote.client)
         println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
     }
-
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
