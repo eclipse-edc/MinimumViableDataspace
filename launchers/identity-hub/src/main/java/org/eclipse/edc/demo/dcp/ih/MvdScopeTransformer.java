@@ -39,7 +39,7 @@ public class MvdScopeTransformer extends EdcScopeToCriterionTransformer {
         }
         var credentialType = tokens.getContent()[1];
 
-        if(knownCredentialTypes.contains(credentialType)) {
+        if (knownCredentialTypes.contains(credentialType)) {
             return success(new Criterion(TYPE_OPERAND, CONTAINS_OPERATOR, credentialType));
         }
 
