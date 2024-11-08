@@ -735,18 +735,7 @@ DataProcessor VC.
 
 > Hint: all credentials, where the `credentialSubject` has the same shape/schema can be evaluated by the same function!
 
-### 8.5 Scope-to-criterion transformer
-
-When IdentityHub receives a Presentation query, that carries an access token, it must be able to convert a scope string
-into a filter expression, for example `org.eclipse.edc.vc.type:DataProcessorCredential:read` is converted into
-`verifiableCredential.credential.type = DataProcessorCredential`. This filter expression is then used by IdentityHub to
-query for `DataProcessorCredentials` in the database.
-
-This is implemented in the
-[MvdScopeTransformer.java](launchers/identity-hub/src/main/java/org/eclipse/edc/demo/dcp/ih/MvdScopeTransformer.java)
-class.
-
-### 8.6 Super-user seeding
+### 8.5 Super-user seeding
 
 IdentityHub's [Identity
 API](https://github.com/eclipse-edc/IdentityHub/blob/main/docs/developer/architecture/identityhub-apis.md#identity-api)
@@ -861,3 +850,13 @@ Kubernetes deployments.
 
 The [JwtSigner.java](launchers/identity-hub/src/test/java/org/eclipse/edc/demo/dcp/JwtSigner.java) test class can be
 used to re-generate and sign all credentials.
+
+### 10.4 Default scope-to-criterion transformer
+
+When IdentityHub receives a Presentation query, that carries an access token, it must be able to convert a scope string
+into a filter expression, for example `org.eclipse.edc.vc.type:DataProcessorCredential:read` is converted into
+`verifiableCredential.credential.type = DataProcessorCredential`. This filter expression is then used by IdentityHub to
+query for `DataProcessorCredentials` in the database.
+
+The MVD uses the default `EdcScopeToCriterionTransformer` to achieve this. It is recommended to implement a custom
+`ScopeToCriterionTransformer` for an actual production scenario.
