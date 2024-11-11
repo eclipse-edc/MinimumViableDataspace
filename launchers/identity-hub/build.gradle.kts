@@ -19,24 +19,22 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.bundles.identityhub)
-    runtimeOnly(libs.edc.api.observability)
+    runtimeOnly(project(":extensions:superuser-seed"))
+    runtimeOnly(project(":extensions:did-example-resolver"))
+
+    implementation(libs.edc.ih.lib.credentialquery) // needed in the extensions here
+
+
     if (project.properties.getOrDefault("persistence", "false") == "true") {
+        runtimeOnly(libs.edc.bom.identithub)
         runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.bundles.sql.ih)
+        runtimeOnly(libs.edc.bom.identithub.sql)
         runtimeOnly(libs.edc.sts.accountservice.remote)
         println("This runtime compiles with a remote STS, Hashicorp Vault and PostgreSQL. You will need properly configured STS, Postgres and HCV instances.")
+    }else{
+        runtimeOnly(libs.edc.bom.identithub.sts)
     }
-    runtimeOnly(project(":extensions:superuser-seed"))
 
-    runtimeOnly(libs.bundles.identity.api)
-
-    implementation(libs.bundles.did)
-    implementation(project(":extensions:did-example-resolver"))
-    implementation(libs.bundles.connector)
-    implementation(libs.edc.ih.spi.store)
-    implementation(libs.edc.identity.vc.ldp)
-    implementation(libs.edc.ih.lib.credentialquery)
 
     testImplementation(libs.edc.lib.crypto)
     testImplementation(libs.edc.lib.keys)

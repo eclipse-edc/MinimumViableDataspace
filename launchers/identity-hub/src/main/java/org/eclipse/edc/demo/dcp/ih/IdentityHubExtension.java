@@ -14,12 +14,10 @@
 
 package org.eclipse.edc.demo.dcp.ih;
 
-import org.eclipse.edc.identityhub.spi.ScopeToCriterionTransformer;
 import org.eclipse.edc.identityhub.spi.store.CredentialStore;
 import org.eclipse.edc.identityhub.spi.verifiablecredentials.model.VerifiableCredentialResource;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
-import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -27,7 +25,6 @@ import org.eclipse.edc.spi.types.TypeManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
@@ -58,11 +55,6 @@ public class IdentityHubExtension implements ServiceExtension {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Provider
-    public ScopeToCriterionTransformer createScopeTransformer() {
-        return new MvdScopeTransformer(List.of("MembershipCredential", "DataProcessorCredential"));
     }
 
     private void seedCredentials(String credentialsSourceDirectory, Monitor monitor) throws IOException {
