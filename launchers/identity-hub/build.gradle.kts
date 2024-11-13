@@ -31,7 +31,7 @@ dependencies {
         runtimeOnly(libs.edc.bom.identithub.sql)
         runtimeOnly(libs.edc.sts.accountservice.remote)
         println("This runtime compiles with a remote STS, Hashicorp Vault and PostgreSQL. You will need properly configured STS, Postgres and HCV instances.")
-    }else{
+    } else {
         runtimeOnly(libs.edc.bom.identithub.sts)
     }
 
