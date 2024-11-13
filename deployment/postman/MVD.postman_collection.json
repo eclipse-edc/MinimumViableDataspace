@@ -449,7 +449,7 @@
 									"// get the policy id of \"asset-1\" and save it as an environment variable",
 									"if(pm.response.code < 300 && pm.response.code >= 200){",
 									"    if(pm.response.json().length > 0){",
-									"        const dcat_datasets = pm.response.json()[0][\"dcat:dataset\"][1][\"dcat:dataset\"]",
+									"        const dcat_datasets = pm.response.json()[0][\"dcat:catalog\"][1][\"dcat:dataset\"]",
 									"        const asset_1 = dcat_datasets.find((asset) => asset[\"@id\"] == \"asset-1\")",
 									"        pm.environment.set(\"POLICY_ID_ASSET_1\", asset_1[\"odrl:hasPolicy\"][\"@id\"]);",
 									"    }",
