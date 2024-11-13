@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1d81d8db-ffb2-417b-83ca-50da1b42a5df",
+		"_postman_id": "d7d568f5-e178-4d6c-b74b-434a8f7530a6",
 		"name": "MVD+IATP",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "23917208"
+		"_exporter_id": "647585"
 	},
 	"item": [
 		{
@@ -2056,7 +2056,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/credentials",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/credentials/CREDENTIAL-ID",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -2066,7 +2066,8 @@
 										"v1alpha",
 										"participants",
 										"{{PARTICIPANT_ID}}",
-										"credentials"
+										"credentials",
+										"CREDENTIAL-ID"
 									]
 								}
 							},
