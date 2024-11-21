@@ -73,7 +73,7 @@ This demo is to demonstrate how two dataspace participants can perform a credent
 exchange, for example requesting a catalog or negotiating a contract.
 
 It must be stated in the strongest terms that this is **NOT** a production grade installation, nor should any
-production-grade developments be based on it. [Shortcuts](#9-other-caveats-shortcuts-and-workarounds) were taken, and
+production-grade developments be based on it. [Shortcuts](#10-other-caveats-shortcuts-and-workarounds) were taken, and
 assumptions were made that are potentially invalid in other scenarios.
 
 It merely is a playground for developers wanting to kick the tires in the EDC and DCP space, and its purpose is to
@@ -172,7 +172,7 @@ with level `"processing"`.
 
 That means that no contract for `asset-2` can be negotiated by anyone. For the purposes of this demo the
 VerifiableCredentials are pre-created and are seeded directly to the participants' credential storage ([no
-issuance](#93-no-issuance-yet)) via a dedicated
+issuance](#103-no-issuance-yet)) via a dedicated
 [extension](launchers/identity-hub/src/main/java/org/eclipse/edc/demo/dcp/ih/IdentityHubExtension.java).
 
 When the consumer wants to inspect the consolidated catalog (containing assets from both the provider's Q&A and
@@ -215,8 +215,8 @@ The issuer's DID document is hosted on NGINX, so the easiest way of running NGIN
 
 ```shell
 docker run -d --name nginx -p 9876:80 --rm \
-  -v ${PWD}/deployment/assets/issuer/nginx.conf:/etc/nginx/nginx.conf:ro \
-  -v ${PWD}/deployment/assets/issuer/did.docker.json:/var/www/.well-known/did.json:ro \
+  -v "$PWD"/deployment/assets/issuer/nginx.conf:/etc/nginx/nginx.conf:ro \
+  -v "$PWD"/deployment/assets/issuer/did.docker.json:/var/www/.well-known/did.json:ro \
   nginx
 ```
 
@@ -803,7 +803,7 @@ Now comes the hacky part, reader discretion is advised.
 In [SecretsExtension.java](extensions/did-example-resolver/src/main/java/org/eclipse/edc/iam/identitytrust/core/SecretsExtension.java)
 replace the String block for the private and public key with the contents of the newly created `*.pem` files.
 
-Clean-rebuild-restart the applications. Don't forget to [seed](#42-seeding-the-dataspace). Done.
+Clean-rebuild-restart the applications. Don't forget to [seed](#43-seeding-the-dataspace). Done.
 
 #### 9.2.2 Kubernetes deployment
 
