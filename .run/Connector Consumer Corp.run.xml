@@ -1,12 +1,13 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Connector Consumer Corp" type="Application" factoryName="Application">
-    <option name="ALTERNATIVE_JRE_PATH" value="temurin-22" />
+    <option name="ALTERNATIVE_JRE_PATH" value="temurin-21" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="envFilePaths">
       <option value="$PROJECT_DIR$/deployment/assets/env/consumer_connector.env" />
     </option>
     <option name="MAIN_CLASS_NAME" value="org.eclipse.edc.boot.system.runtime.BaseRuntime" />
     <module name="mvd.launchers.runtime-embedded.main" />
+    <option name="PROGRAM_PARAMETERS" value="--log-level=debug" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

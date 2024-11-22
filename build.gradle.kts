@@ -28,7 +28,7 @@ buildscript {
     }
 }
 
-val annotationProcessorVersion: String by project
+val edcGradlePluginsVersion: String by project
 
 allprojects {
     apply(plugin = "${group}.edc-build")
@@ -36,7 +36,7 @@ allprojects {
     // configure which version of the annotation processor to use. defaults to the same version as the plugin
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {
         outputDirectory.set(project.layout.buildDirectory.asFile)
-        processorVersion.set(annotationProcessorVersion)
+        processorVersion.set(edcGradlePluginsVersion)
     }
 
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
