@@ -24,4 +24,4 @@ HEALTHCHECK --interval=5s --timeout=5s --retries=10 CMD curl --fail http://local
 ENV ENV_JVM_ARGS=$JVM_ARGS
 # need the sh -c syntax so that the SECRETS variable gets expanded
 # use the "exec" syntax so that SIGINT reaches the JVM -> graceful termination
-CMD ["sh", "-c", "exec java -Dedc.fs.config=/app/configuration.properties -Dedc.vault.secrets=\"${SECRETS}\" -Djava.util.logging.config.file=/app/logging.properties -Djava.security.egd=file:/dev/urandom -jar edc-dataplane.jar"]
+CMD ["sh", "-c", "exec java -Dedc.fs.config=/app/configuration.properties -Dedc.vault.secrets=\"${SECRETS}\" -Djava.util.logging.config.file=/app/logging.properties -Djava.security.egd=file:/dev/urandom -jar edc-dataplane.jar --log-level=debug"]
