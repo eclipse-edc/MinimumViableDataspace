@@ -15,6 +15,7 @@
 package org.eclipse.edc.identityhub.seed;
 
 import org.eclipse.edc.identityhub.spi.participantcontext.ParticipantContextService;
+import org.eclipse.edc.identityhub.spi.participantcontext.model.CreateParticipantContextResponse;
 import org.eclipse.edc.identityhub.spi.participantcontext.model.ParticipantContext;
 import org.eclipse.edc.junit.extensions.DependencyInjectionExtension;
 import org.eclipse.edc.spi.EdcException;
@@ -26,8 +27,6 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,7 +59,7 @@ class ParticipantContextSeedExtensionTest {
     void start_verifySuperUser(ParticipantContextSeedExtension ext,
                                ServiceExtensionContext context) {
 
-        when(participantContextService.createParticipantContext(any())).thenReturn(ServiceResult.success(Map.of(API_KEY, "some-key")));
+        when(participantContextService.createParticipantContext(any())).thenReturn(ServiceResult.success(new CreateParticipantContextResponse("some-key", null, null)));
         ext.initialize(context);
 
         ext.start();
@@ -94,7 +93,7 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(apiKeyOverride);
 
         when(participantContextService.createParticipantContext(any()))
-                .thenReturn(ServiceResult.success(Map.of(API_KEY, "generated-api-key")));
+                .thenReturn(ServiceResult.success(new CreateParticipantContextResponse("generated-api-key", null, null)));
         when(participantContextService.getParticipantContext(eq(SUPER_USER)))
                 .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
@@ -117,7 +116,7 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(apiKeyOverride);
 
         when(participantContextService.createParticipantContext(any()))
-                .thenReturn(ServiceResult.success(Map.of(API_KEY, "generated-api-key")));
+                .thenReturn(ServiceResult.success(new CreateParticipantContextResponse("generated-api-key", null, null)));
         when(participantContextService.getParticipantContext(eq(SUPER_USER)))
                 .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
@@ -141,7 +140,7 @@ class ParticipantContextSeedExtensionTest {
                 .thenReturn(apiKeyOverride);
 
         when(participantContextService.createParticipantContext(any()))
-                .thenReturn(ServiceResult.success(Map.of(API_KEY, "generated-api-key")));
+                .thenReturn(ServiceResult.success(new CreateParticipantContextResponse("generated-api-key", null, null)));
         when(participantContextService.getParticipantContext(eq(SUPER_USER)))
                 .thenReturn(ServiceResult.notFound("foobar"))
                 .thenReturn(ServiceResult.success(superUserContext().build()));
