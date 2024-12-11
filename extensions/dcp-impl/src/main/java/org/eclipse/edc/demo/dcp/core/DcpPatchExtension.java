@@ -22,6 +22,7 @@ import org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerReg
 import org.eclipse.edc.policy.context.request.spi.RequestCatalogPolicyContext;
 import org.eclipse.edc.policy.context.request.spi.RequestContractNegotiationPolicyContext;
 import org.eclipse.edc.policy.context.request.spi.RequestTransferProcessPolicyContext;
+import org.eclipse.edc.policy.context.request.spi.RequestVersionPolicyContext;
 import org.eclipse.edc.policy.engine.spi.PolicyEngine;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.security.signature.jws2020.Jws2020SignatureSuite;
@@ -72,6 +73,7 @@ public class DcpPatchExtension implements ServiceExtension {
         policyEngine.registerPostValidator(RequestCatalogPolicyContext.class, contextMappingFunction::apply);
         policyEngine.registerPostValidator(RequestContractNegotiationPolicyContext.class, contextMappingFunction::apply);
         policyEngine.registerPostValidator(RequestTransferProcessPolicyContext.class, contextMappingFunction::apply);
+        policyEngine.registerPostValidator(RequestVersionPolicyContext.class, contextMappingFunction::apply);
 
 
         //register scope extractor
