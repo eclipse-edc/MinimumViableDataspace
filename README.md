@@ -493,6 +493,26 @@ The collection itself is pretty self-explanatory, it allows you to request a cat
 execute a data transfer.
 
 The following sequence must be observed:
+```mermaid
+sequenceDiagram
+participant DC as Data Consumer
+participant DP as Data Provider
+
+    DC->>DP: 7.1 get cached catalog
+    DP-->>DC: Return assets in the catalog
+    DC->>DP: 7.2 initiate  contract negotation with assetID
+    DC->>DP: 7.3 Get Contract negotiation (status)
+    DP-->>DC: Return negotiation status
+    DC->>DP: 7.4 Initiate data transfer with contractAgreementId
+    DC->>DP: 7.5 Get transfer processes (HttpData-PULL)
+    DP-->>DC: Return data transfer status
+    DC->>DP: 7.6 Get Cached EndPointDataReference (EDR)
+    DP-->>DC: Return EDR Id
+    DC->>DP: 7.7 Get EDR DataAddress for TransferId
+    DP-->>DC: Return Authorization Token
+    DC->>DP: 7.8 Fetch data
+    DP-->>DC: Return data
+```
 
 ### 7.1 Get the catalog
 
