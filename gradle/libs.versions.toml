@@ -116,4 +116,5 @@ sql-sts = ["edc-sql-ih-stsstore-sql", "edc-sql-jtivdalidation", "edc-sql-core", 
 sts = ["edc-sts-core", "edc-sts-api", "edc-sts-spi", "edc-sts"]
 
 [plugins]
-shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+shadow = { id = "com.gradleup.shadow", version = "8.3.5" }
+
