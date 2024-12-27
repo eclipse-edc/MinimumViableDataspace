@@ -881,7 +881,7 @@ query for `DataProcessorCredentials` in the database.
 The MVD uses the default `EdcScopeToCriterionTransformer` to achieve this. It is recommended to implement a custom
 `ScopeToCriterionTransformer` for an actual production scenario.
 
-### 11. MVD Repository Structure
+## 11. MVD Repository Structure
 
 - `README.md`: Provides an overview and instructions for running the demos.
 - `gradle/`: `libs.versions.toml` defines the versions and dependencies and plugins for the MVD
