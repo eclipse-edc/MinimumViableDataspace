@@ -880,3 +880,29 @@ query for `DataProcessorCredentials` in the database.
 
 The MVD uses the default `EdcScopeToCriterionTransformer` to achieve this. It is recommended to implement a custom
 `ScopeToCriterionTransformer` for an actual production scenario.
+
+### 11. MVD Repository Structure
+
+- `README.md`: Provides an overview and instructions for running the demos.
+- `gradle/`: `libs.versions.toml` defines the versions and dependencies and plugins for the MVD
+- `deployment/`: Contains deployment/terraform scripts and configuration files 
+  - `postman/`: Contains Postman collections and environment files for testing REST requests.
+  - `assets/`: Contains various assets like environment files (connector, identityhub, catalog) and issuer keys.
+  - `modules/`: terraform scripts for each deployed component
+- `extensions/`: Contains custom extensions required for the demo. 
+  - `catalog-node-resolver/`:  is responsible for resolving participant information from DID documents. It includes the necessary logic to fetch and interpret DID documents to obtain participant details.
+  - `scope-mapping-functions/`: provides functions to map policy scopes to access tokens. It helps in converting scope strings into filter expressions that can be used to query for specific credentials in the database.
+  - `policy-evaluation-functions/`: includes functions to evaluate constraints in policies based on credentials. It ensures that the policies are correctly interpreted and enforced during data exchange. 
+  - `did-example-resolver/`: This extension is used to resolve DIDs (Decentralized Identifiers) and manage the secrets associated with them. It includes functionality to handle private and public keys for participants, ensuring secure communication and data exchange.
+- `launchers/`: Contains the main entry points for different components.
+  - `catalog-server/`: launching the catalog server for the provider. The catalog server hosts a catalog that contains pointers to the provider's connectors, allowing consumers to discover available data assets.
+  - `controlplane/`: launching the control plane to manages the control logic for data exchange, including contract negotiation and policy enforcement.
+  - `dataplane/`: handles the actual data transfer - receiving data from the provider and making it available to the consumer. 
+  - `identity-hub/`: launches the IdentityHub to manages Verifiable Credentials and participant contexts, ensuring secure authentication and authorization.
+  - `runtime-embedded/`: is a combined runtime that includes both the control plane and data plane. It is used for embedded deployments where both planes need to run together.
+  - `sts/`: launches the Secure Token Service (STS) for issuing and managing security tokens used for authentication and authorization.
+- `tests/`: end-to-end and performance tests
+- `resources`: diagrams and other resources
+- `config/`: Checkstyle
+- `.github/`: Actions and Workflows
+

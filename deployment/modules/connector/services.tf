@@ -21,7 +21,14 @@ resource "kubernetes_service" "controlplane-service" {
   metadata {
     name      = local.controlplane-service-name
     namespace = var.namespace
+    # Prometheus annotations for scraping of controlplane metrics
+    annotations = {
+      "prometheus.io/scrape" = "true"
+      "prometheus.io/port"   = var.ports.management
+      "prometheus.io/path"   = "/metrics"
+    }
   }
+
   spec {
     type = "NodePort"
     selector = {
@@ -58,6 +65,13 @@ resource "kubernetes_service" "dataplane-service" {
   metadata {
     name      = local.dataplane-service-name
     namespace = var.namespace
+
+    # Prometheus annotations for scraping of dataplane metrics
+    annotations = {
+      "prometheus.io/scrape" = "true"
+      "prometheus.io/port"   = var.ports.control
+      "prometheus.io/path"   = "/metrics"
+    }
   }
   spec {
     type = "NodePort"

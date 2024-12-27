@@ -38,6 +38,13 @@ provider "kubernetes" {
   config_path = "~/.kube/config"
 }
 
+module "monitoring" {
+  source = "./modules/monitoring"
+  providers = {
+    // kubernetes = kubernetes
+  }
+}
+
 provider "helm" {
   kubernetes {
     config_path = "~/.kube/config"

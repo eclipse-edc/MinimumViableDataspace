@@ -39,6 +39,11 @@ resource "kubernetes_deployment" "connector" {
         labels = {
           App = lower(var.humanReadableName)
         }
+        annotations = {
+          "prometheus.io/scrape" = "true"
+          "prometheus.io/port"   = var.ports.management
+          "prometheus.io/path"   = "/metrics"
+        }
       }
 
       spec {
