@@ -288,7 +288,7 @@ All REST requests made from the script are available in the [Postman
 collection](./deployment/postman/MVD.postman_collection.json). With the [HTTP
 Client](https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html) plugin, the Postman collection
 can be imported (right click on the file in IntelliJ, then `Convert Collection to .http File`).
-Then, open the generated .http file in IntelliJ and run in IntelliJ, select "run with environment: Local" ([environment file](./deployment/postman/http-client.env.json)), and run chosen requests.
+Then, open the generated .http file in IntelliJ, do a search-and-replace (change all `Content-Type: text/plain` to `Content-Type: application/json`), select "run with environment: Local" ([environment file](./deployment/postman/http-client.env.json)), and run chosen requests.
 
 Please read [chapter 7](#7-executing-rest-requests-using-postman) for details.
 
