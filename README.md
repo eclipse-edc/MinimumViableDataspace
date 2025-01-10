@@ -274,7 +274,7 @@ All run configs take their configuration from `*.env` files which are located in
 ### 4.3 Seeding the dataspace
 
 DID documents are dynamically generated when "seeding" the data, specifically when creating the `ParticipantContext`
-objects in IdentityHub. This is automatically being done by a script `seed.sh`.
+objects in IdentityHub. This is automatically being done by a script `seed.sh`. Windows user might need to configure a shell interpreter in IntelliJ first, for which they could use `C:\WINDOWS\system32\CMD.exe` with script option `/C`.
 
 After executing the `dataspace` run config in Intellij, be sure to **execute the `seed.sh` script after all the runtimes
 have started**. Omitting to do so will leave the dataspace in an uninitialized state and cause all
