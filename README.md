@@ -106,8 +106,8 @@ Consumer Corp has a connector plus its own IdentityHub.
 
 "provider-qna" and "provider-manufacturing" both have two data assets each, named `"asset-1"` and `"asset-2"` but
 neither "provider-qna" nor "provider-manufacturing" expose their catalog endpoint directly to the internet. Instead, the
-catalog server (of the Provider Corp) provides a catalog that contains special assets (think: pointers) to both "
-provider-qna"'s and "provider-manufacturing"'s connectors, specifically, their DSP endpoints.
+catalog server (of the Provider Corp) provides a catalog that contains special assets (think: pointers) to both
+"provider-qna"'s and "provider-manufacturing"'s connectors, specifically, their DSP endpoints.
 
 We call this a "root catalog", and the pointers are called "catalog assets". This means, that by resolving the root
 catalog, and by following the links therein, "Consumer Corp" can resolve the actual asset from "provider-qna" and
@@ -211,7 +211,7 @@ latter is a compound run config an brings up all other runtimes together.
 
 ### 4.1 Start NGINX
 
-The issuer's DID document is hosted on NGINX, so the easiest way of running NGINX is with a docker container:
+The issuer's DID document is hosted on NGINX, so the easiest way of running NGINX is with a docker container (Windows users remove all `"` around `$PWD`, and execute this command using the Powershell in the `MinimumViableDataspace` directory):
 
 ```shell
 docker run -d --name nginx -p 9876:80 --rm \
@@ -266,8 +266,10 @@ The connector runtimes contain both the controlplane and the dataplane. Note tha
 likely be separate runtimes to be able to scale and deploy them individually. Note also, that the Kubernetes deployment
 (next chapter) does indeed run them as separate pods.
 
-The run configs use the `temurin-22` JDK. If you don't have it installed already, you can choose to install it (IntelliJ
-makes this really easy), or to select whatever JDK you have available in each run config.
+Select and execute the `dataspace` run configuration to start the runtimes now.
+
+The run configs use the `temurin-21` JDK. If you don't have it installed already, you can choose to install it (IntelliJ
+will prompt you to do so), or to select whatever JDK you have available in each run config.
 
 All run configs take their configuration from `*.env` files which are located in `deployment/assets/env`.
 
