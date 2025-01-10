@@ -8,6 +8,7 @@
     <option name="MAIN_CLASS_NAME" value="org.eclipse.edc.boot.system.runtime.BaseRuntime" />
     <module name="mvd.launchers.runtime-embedded.main" />
     <option name="PROGRAM_PARAMETERS" value="--log-level=debug" />
+    <shortenClasspath name="ARGS_FILE" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
