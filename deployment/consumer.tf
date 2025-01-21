@@ -27,6 +27,7 @@ module "consumer-connector" {
   vault-url     = "http://consumer-vault:8200"
   namespace     = kubernetes_namespace.ns.metadata.0.name
   sts-token-url = "${module.consumer-sts.sts-token-url}/token"
+  useSVE        = var.useSVE
 }
 
 # consumer identity hub
@@ -45,6 +46,7 @@ module "consumer-identityhub" {
   }
   namespace            = kubernetes_namespace.ns.metadata.0.name
   sts-accounts-api-url = module.consumer-sts.sts-accounts-url
+  useSVE               = var.useSVE
 }
 
 # consumer standalone STS
@@ -59,6 +61,7 @@ module "consumer-sts" {
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
   vault-url = "http://consumer-vault:8200"
+  useSVE    = var.useSVE
 }
 
 # consumer vault

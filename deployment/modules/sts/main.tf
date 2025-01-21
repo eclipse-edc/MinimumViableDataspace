@@ -109,7 +109,7 @@ resource "kubernetes_config_map" "sts-config" {
 
   ## Create databases for keycloak and MIW, create users and assign privileges
   data = {
-    JAVA_TOOL_OPTIONS               = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
+    JAVA_TOOL_OPTIONS               = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     WEB_HTTP_ACCOUNTS_PORT          = var.ports.accounts
     WEB_HTTP_ACCOUNTS_PATH          = var.accounts-path
     WEB_HTTP_PORT                   = var.ports.web

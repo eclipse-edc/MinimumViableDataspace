@@ -165,7 +165,7 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = "${var.participantId}#${var.aliases.sts-private-key}"
     EDC_IAM_STS_PUBLICKEY_ID                   = "${var.participantId}#${var.aliases.sts-public-key-id}"
-    JAVA_TOOL_OPTIONS                          = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
+    JAVA_TOOL_OPTIONS                          = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IH_AUDIENCE_REGISTRY_PATH              = "/etc/registry/registry.json"
     EDC_VAULT_HASHICORP_URL                    = var.vault-url
     EDC_VAULT_HASHICORP_TOKEN                  = var.vault-token

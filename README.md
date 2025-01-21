@@ -1,57 +1,59 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
+
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-  * [1. Introduction](#1-introduction)
-  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
-  * [3. The Scenario](#3-the-scenario)
-    * [3.1 Participants](#31-participants)
-    * [3.2 Data setup](#32-data-setup)
-    * [3.3 Access control](#33-access-control)
-    * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-  * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
-    * [4.1 Start NGINX](#41-start-nginx)
-    * [4.2 Starting the runtimes](#42-starting-the-runtimes)
-    * [4.3 Seeding the dataspace](#43-seeding-the-dataspace)
-    * [4.4 Next steps](#44-next-steps)
-  * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
-    * [5.1 Build the runtime images](#51-build-the-runtime-images)
-    * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
-    * [5.3 Seed the dataspace](#53-seed-the-dataspace)
-    * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
-  * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
-    * [6.1 In-memory databases](#61-in-memory-databases)
-    * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
-    * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
-  * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
-    * [7.1 Get the catalog](#71-get-the-catalog)
-    * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
-    * [7.3 Query negotiation status](#73-query-negotiation-status)
-    * [7.4 Initiate data transfer](#74-initiate-data-transfer)
-    * [7.5 Query data transfers](#75-query-data-transfers)
-    * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
-    * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
-    * [7.8 Fetch data](#78-fetch-data)
-  * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
-    * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
-    * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
-    * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
-    * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
-      * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
-      * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
-    * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
-    * [8.6 Super-user seeding](#86-super-user-seeding)
-  * [9. Advanced topics](#9-advanced-topics)
-    * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
-    * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
-      * [9.2.1 IntelliJ deployment:](#921-intellij-deployment)
-      * [9.2.2 Kubernetes deployment](#922-kubernetes-deployment)
-  * [10. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
-    * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
-    * [10.2 DID resolution](#102-did-resolution)
-      * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
-      * [10.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
-    * [10.3 No issuance (yet)](#103-no-issuance-yet)
+    * [1. Introduction](#1-introduction)
+    * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+    * [3. The Scenario](#3-the-scenario)
+        * [3.1 Participants](#31-participants)
+        * [3.2 Data setup](#32-data-setup)
+        * [3.3 Access control](#33-access-control)
+        * [3.4 DIDs, participant lists and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
+    * [4. Running the demo (inside IntelliJ)](#4-running-the-demo-inside-intellij)
+        * [4.1 Start NGINX](#41-start-nginx)
+        * [4.2 Starting the runtimes](#42-starting-the-runtimes)
+        * [4.3 Seeding the dataspace](#43-seeding-the-dataspace)
+        * [4.4 Next steps](#44-next-steps)
+    * [5. Running the Demo (Kubernetes)](#5-running-the-demo-kubernetes)
+        * [5.1 Build the runtime images](#51-build-the-runtime-images)
+        * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
+        * [5.3 Seed the dataspace](#53-seed-the-dataspace)
+        * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
+    * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
+        * [6.1 In-memory databases](#61-in-memory-databases)
+        * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
+        * [6.3 Embedded vs Remote STS](#63-embedded-vs-remote-sts)
+    * [7. Executing REST requests using Postman](#7-executing-rest-requests-using-postman)
+        * [7.1 Get the catalog](#71-get-the-catalog)
+        * [7.2 Initiate the contract negotiation](#72-initiate-the-contract-negotiation)
+        * [7.3 Query negotiation status](#73-query-negotiation-status)
+        * [7.4 Initiate data transfer](#74-initiate-data-transfer)
+        * [7.5 Query data transfers](#75-query-data-transfers)
+        * [7.6 Get EndpointDataReference](#76-get-endpointdatareference)
+        * [7.7 Get access token for EDR](#77-get-access-token-for-edr)
+        * [7.8 Fetch data](#78-fetch-data)
+    * [8. Custom extensions in MVD](#8-custom-extensions-in-mvd)
+        * [8.1 Catalog Node Resolver](#81-catalog-node-resolver)
+        * [8.2 Default scope mapping function](#82-default-scope-mapping-function)
+        * [8.3 Scope extractor for `DataProcessor` credentials](#83-scope-extractor-for-dataprocessor-credentials)
+        * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
+            * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
+            * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
+        * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
+        * [8.6 Super-user seeding](#86-super-user-seeding)
+    * [9. Advanced topics](#9-advanced-topics)
+        * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
+        * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
+            * [9.2.1 IntelliJ deployment:](#921-intellij-deployment)
+            * [9.2.2 Kubernetes deployment](#922-kubernetes-deployment)
+    * [10. Other caveats, shortcuts and workarounds](#10-other-caveats-shortcuts-and-workarounds)
+        * [10.1 In-memory stores in local deployment](#101-in-memory-stores-in-local-deployment)
+        * [10.2 DID resolution](#102-did-resolution)
+            * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
+            * [10.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
+        * [10.3 No issuance (yet)](#103-no-issuance-yet)
+
 <!-- TOC -->
 
 ## 1. Introduction
@@ -416,8 +418,26 @@ _the `node` warnings are harmless and can be ignored_
 
 > Failing to run the seed script will leave the dataspace in an uninitialized state and cause all connector-to-connector
 > communication to fail.
+>
 
-### 5.4 Debugging MVD in Kubernetes
+### 5.4 JVM crashes with `SIGILL` on ARM platforms
+
+We have noticed, that the JVM inside the Docker container sometimes crashes with a `SIGILL` signal right
+away without even starting the runtime. So far we've only seen this on ARM platforms such as Apple Silicon. The `UseSVE`
+option seems to [mitigate this](https://github.com/corretto/corretto-21/issues/85). If you are affected by this, please
+try enabling the `useSVE` switch:
+
+```
+terraform apply -var="useSVE=true"
+```
+
+This will add the `-XX:UseSVE=0` switch to the `JAVA_TOOL_OPTIONS` in all runtimes, enabling the Scalable Vector
+Extensions that are available on ARM processors. Alternatively, you can also set the `useSVE = true` variable in a
+`*.tfvars` file, cf. [documentation](https://developer.hashicorp.com/terraform/language/values/variables).
+
+_Important note: on non-ARM platforms, the `-XX:UseSVE=0` VM option is not recognized and will crash the JVM!_
+
+### 5.5 Debugging MVD in Kubernetes
 
 All of MVD's runtime images come with remote JVM debugging enabled by default. This is configured by setting an
 environment variable

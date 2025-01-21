@@ -151,7 +151,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_DID_PATH                      = "/"
     WEB_HTTP_STS_PORT                      = var.ports.sts-api
     WEB_HTTP_STS_PATH                      = "/api/sts"
-    JAVA_TOOL_OPTIONS                      = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.ih-debug}"
+    JAVA_TOOL_OPTIONS                      = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_IAM_STS_PRIVATEKEY_ALIAS           = var.aliases.sts-private-key
     EDC_IAM_STS_PUBLICKEY_ID               = var.aliases.sts-public-key-id
     EDC_MVD_CREDENTIALS_PATH               = "/etc/credentials/"
