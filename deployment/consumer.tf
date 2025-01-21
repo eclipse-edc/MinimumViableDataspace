@@ -27,13 +27,14 @@ module "consumer-connector" {
   vault-url     = "http://consumer-vault:8200"
   namespace     = kubernetes_namespace.ns.metadata.0.name
   sts-token-url = "${module.consumer-sts.sts-token-url}/token"
+  useSVE        = var.useSVE
 }
 
 # consumer identity hub
 module "consumer-identityhub" {
-  depends_on        = [module.consumer-vault]
+  depends_on = [module.consumer-vault]
   source            = "./modules/identity-hub"
-  credentials-dir   = dirname("./assets/credentials/k8s/consumer/")
+  credentials-dir = dirname("./assets/credentials/k8s/consumer/")
   humanReadableName = "consumer-identityhub"
   participantId     = var.consumer-did
   vault-url         = "http://consumer-vault:8200"
@@ -45,11 +46,12 @@ module "consumer-identityhub" {
   }
   namespace            = kubernetes_namespace.ns.metadata.0.name
   sts-accounts-api-url = module.consumer-sts.sts-accounts-url
+  useSVE               = var.useSVE
 }
 
 # consumer standalone STS
 module "consumer-sts" {
-  depends_on        = [module.consumer-vault]
+  depends_on = [module.consumer-vault]
   source            = "./modules/sts"
   humanReadableName = "consumer-sts"
   namespace         = kubernetes_namespace.ns.metadata.0.name
@@ -59,6 +61,7 @@ module "consumer-sts" {
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
   vault-url = "http://consumer-vault:8200"
+  useSVE    = var.useSVE
 }
 
 # consumer vault
@@ -70,11 +73,11 @@ module "consumer-vault" {
 
 # Postgres database for the consumer
 module "consumer-postgres" {
-  depends_on       = [kubernetes_config_map.postgres-initdb-config-consumer]
-  source           = "./modules/postgres"
-  instance-name    = "consumer"
+  depends_on = [kubernetes_config_map.postgres-initdb-config-consumer]
+  source        = "./modules/postgres"
+  instance-name = "consumer"
   init-sql-configs = ["consumer-initdb-config"]
-  namespace        = kubernetes_namespace.ns.metadata.0.name
+  namespace     = kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database

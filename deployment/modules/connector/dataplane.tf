@@ -123,7 +123,7 @@ resource "kubernetes_config_map" "dataplane-config" {
     WEB_HTTP_PUBLIC_PATH                              = "/api/public"
     EDC_VAULT_HASHICORP_URL                           = var.vault-url
     EDC_VAULT_HASHICORP_TOKEN                         = var.vault-token
-    JAVA_TOOL_OPTIONS                                 = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
+    JAVA_TOOL_OPTIONS                                 = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     EDC_DATASOURCE_DEFAULT_URL                        = var.database.url
     EDC_DATASOURCE_DEFAULT_USER                       = var.database.user
     EDC_DATASOURCE_DEFAULT_PASSWORD                   = var.database.password
