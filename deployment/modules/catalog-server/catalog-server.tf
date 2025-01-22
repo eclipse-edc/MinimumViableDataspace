@@ -19,7 +19,7 @@
 
 resource "kubernetes_deployment" "connector" {
   metadata {
-    name = lower(var.humanReadableName)
+    name      = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
       App = lower(var.humanReadableName)
@@ -43,7 +43,7 @@ resource "kubernetes_deployment" "connector" {
 
       spec {
         container {
-          name = lower(var.humanReadableName)
+          name              = lower(var.humanReadableName)
           image             = "catalog-server:latest"
           image_pull_policy = "Never"
 
@@ -144,7 +144,7 @@ resource "kubernetes_config_map" "catalog-server-config" {
     EDC_DATASOURCE_DEFAULT_URL      = var.database.url
     EDC_DATASOURCE_DEFAULT_USER     = var.database.user
     EDC_DATASOURCE_DEFAULT_PASSWORD = var.database.password
-    EDC_SQL_SCHEMA_AUTOCREATE = true
+    EDC_SQL_SCHEMA_AUTOCREATE       = true
 
     # remote STS configuration
     EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
