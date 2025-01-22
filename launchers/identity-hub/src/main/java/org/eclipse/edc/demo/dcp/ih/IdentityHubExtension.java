@@ -14,12 +14,6 @@
 
 package org.eclipse.edc.demo.dcp.ih;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.stream.Stream;
-
-import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
-
 import org.eclipse.edc.identityhub.spi.verifiablecredentials.model.VerifiableCredentialResource;
 import org.eclipse.edc.identityhub.spi.verifiablecredentials.store.CredentialStore;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
@@ -28,6 +22,12 @@ import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.stream.Stream;
+
+import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 
 @Extension("DCP Demo: Core Extension for IdentityHub")
