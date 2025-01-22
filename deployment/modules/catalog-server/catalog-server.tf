@@ -121,18 +121,17 @@ resource "kubernetes_config_map" "catalog-server-config" {
 
   ## Create databases for keycloak and MIW, create users and assign privileges
   data = {
-    EDC_API_AUTH_KEY                = "password"
     EDC_IAM_ISSUER_ID               = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS       = false
     WEB_HTTP_PORT                   = var.ports.web
     WEB_HTTP_PATH                   = "/api"
     WEB_HTTP_MANAGEMENT_PORT        = var.ports.management
     WEB_HTTP_MANAGEMENT_PATH        = "/api/management"
+    WEB_HTTP_MANAGEMENT_AUTH_KEY    = "password"
     WEB_HTTP_CONTROL_PORT           = var.ports.control
     WEB_HTTP_CONTROL_PATH           = "/api/control"
     WEB_HTTP_PROTOCOL_PORT          = var.ports.protocol
     WEB_HTTP_PROTOCOL_PATH          = "/api/dsp"
-    EDC_API_AUTH_KEY                = "password"
     EDC_DSP_CALLBACK_ADDRESS        = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS    = "${var.participantId}#${var.aliases.sts-private-key}"
     EDC_IAM_STS_PUBLICKEY_ID        = "${var.participantId}#${var.aliases.sts-public-key-id}"

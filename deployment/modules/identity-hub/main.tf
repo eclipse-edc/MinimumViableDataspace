@@ -136,7 +136,6 @@ resource "kubernetes_config_map" "identityhub-config" {
 
   data = {
     # IdentityHub variables
-    EDC_API_AUTH_KEY                       = "password"
     EDC_IH_IAM_ID                          = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS              = false
     EDC_IH_IAM_PUBLICKEY_ALIAS             = local.public-key-alias
@@ -145,6 +144,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_PATH                          = "/api"
     WEB_HTTP_IDENTITY_PORT                 = var.ports.ih-identity-api
     WEB_HTTP_IDENTITY_PATH                 = "/api/identity"
+    WEB_HTTP_IDENTITY_AUTH_KEY             = "password"
     WEB_HTTP_PRESENTATION_PORT             = var.ports.presentation-api
     WEB_HTTP_PRESENTATION_PATH             = "/api/presentation"
     WEB_HTTP_DID_PORT                      = var.ports.ih-did

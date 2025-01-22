@@ -58,11 +58,6 @@ jobs:
       - name: Run Checkstyle
         run: ./gradlew checkstyleMain checkstyleTest
 
-      - name: Check Terraform files are properly formatted (run "terraform fmt -recursive" to fix)
-        run: |
-          terraform fmt -recursive
-          git diff --exit-code
-
   validate-terraform:
     runs-on: ubuntu-latest
     steps:

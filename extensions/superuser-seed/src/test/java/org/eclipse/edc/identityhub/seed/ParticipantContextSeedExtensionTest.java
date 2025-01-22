@@ -156,7 +156,7 @@ class ParticipantContextSeedExtensionTest {
 
     private ParticipantContext.Builder superUserContext() {
         return ParticipantContext.Builder.newInstance()
-                .participantId(SUPER_USER)
+                .participantContextId(SUPER_USER)
                 .apiTokenAlias("super-user-apikey");
 
     }

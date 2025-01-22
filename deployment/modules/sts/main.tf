@@ -116,7 +116,6 @@ resource "kubernetes_config_map" "sts-config" {
     WEB_HTTP_PATH                   = "/internal"
     WEB_HTTP_STS_PORT               = var.ports.sts
     WEB_HTTP_STS_PATH               = var.sts-path
-    EDC_API_ACCOUNTS_KEY            = "password"
     EDC_DATASOURCE_DEFAULT_URL      = var.database.url
     EDC_DATASOURCE_DEFAULT_USER     = var.database.user
     EDC_DATASOURCE_DEFAULT_PASSWORD = var.database.password
