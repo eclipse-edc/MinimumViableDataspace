@@ -112,6 +112,8 @@ resource "kubernetes_config_map" "sts-config" {
     JAVA_TOOL_OPTIONS               = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
     WEB_HTTP_ACCOUNTS_PORT          = var.ports.accounts
     WEB_HTTP_ACCOUNTS_PATH          = var.accounts-path
+    WEB_HTTP_ACCOUNTS_AUTH_TYPE     = "tokenbased"
+    WEB_HTTP_ACCOUNTS_AUTH_KEY      = "password"
     WEB_HTTP_PORT                   = var.ports.web
     WEB_HTTP_PATH                   = "/internal"
     WEB_HTTP_STS_PORT               = var.ports.sts
