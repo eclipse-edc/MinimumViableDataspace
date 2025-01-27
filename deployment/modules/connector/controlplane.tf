@@ -152,6 +152,7 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_PATH                              = "/api"
     WEB_HTTP_MANAGEMENT_PORT                   = var.ports.management
     WEB_HTTP_MANAGEMENT_PATH                   = "/api/management"
+    WEB_HTTP_MANAGEMENT_AUTH_TYPE              = "tokenbased"
     WEB_HTTP_MANAGEMENT_AUTH_KEY               = "password"
     WEB_HTTP_CONTROL_PORT                      = var.ports.control
     WEB_HTTP_CONTROL_PATH                      = "/api/control"
