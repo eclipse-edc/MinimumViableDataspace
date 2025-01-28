@@ -24,9 +24,9 @@ import org.eclipse.edc.catalog.transform.JsonObjectToDistributionTransformer;
 import org.eclipse.edc.connector.controlplane.catalog.spi.Catalog;
 import org.eclipse.edc.connector.controlplane.catalog.spi.Dataset;
 import org.eclipse.edc.connector.controlplane.transform.odrl.OdrlTransformersFactory;
+import org.eclipse.edc.json.JacksonTypeManager;
 import org.eclipse.edc.jsonld.TitaniumJsonLd;
 import org.eclipse.edc.jsonld.spi.JsonLd;
-import org.eclipse.edc.jsonld.util.JacksonJsonLd;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.testfixtures.TestUtils;
 import org.eclipse.edc.participant.spi.ParticipantIdMapper;
@@ -45,6 +45,7 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 /**
  * This test is designed to run against an MVD deployed in a Kubernetes cluster, with an active ingress controller.
@@ -80,11 +81,12 @@ public class TransferEndToEndTest {
 
     @BeforeEach
     void setup() {
+        var typeManager = new JacksonTypeManager();
         transformerRegistry.register(new JsonObjectToCatalogTransformer());
         transformerRegistry.register(new JsonObjectToDatasetTransformer());
         transformerRegistry.register(new JsonObjectToDataServiceTransformer());
         transformerRegistry.register(new JsonObjectToDistributionTransformer());
-        transformerRegistry.register(new JsonValueToGenericTypeTransformer(JacksonJsonLd.createObjectMapper()));
+        transformerRegistry.register(new JsonValueToGenericTypeTransformer(typeManager, JSON_LD));
         OdrlTransformersFactory.jsonObjectToOdrlTransformers(new ParticipantIdMapper() {
             @Override
             public String toIri(String s) {
