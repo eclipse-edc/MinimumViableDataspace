@@ -164,6 +164,11 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_STS_ACCOUNT_API_URL                = var.sts-accounts-api-url
     EDC_STS_ACCOUNTS_API_AUTH_HEADER_VALUE = "password"
     EDC_IAM_ACCESSTOKEN_JTI_VALIDATION     = true
+
+    # remote STS configuration
+    EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
+    EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
   }
 }
 
