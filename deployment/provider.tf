@@ -65,6 +65,7 @@ module "provider-identityhub" {
   }
   sts-accounts-api-url = module.provider-sts.sts-accounts-url
   useSVE               = var.useSVE
+  sts-token-url        = "${module.consumer-sts.sts-token-url}/token"
 }
 
 # provider standalone STS
