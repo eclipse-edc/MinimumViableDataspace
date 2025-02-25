@@ -21,13 +21,14 @@ plugins {
 dependencies {
     implementation(project(":extensions:did-example-resolver"))
     implementation(project(":extensions:dcp-impl"))
+    runtimeOnly(libs.edc.api.secrets)
 
     runtimeOnly(libs.bundles.connector) // base runtime
     runtimeOnly(libs.edc.api.management)
     runtimeOnly(libs.edc.api.management.config)
     runtimeOnly(libs.edc.controlplane.core) //default store impls, etc.
     runtimeOnly(libs.edc.controlplane.services) // aggregate services
-    runtimeOnly(libs.edc.core.edrstore) 
+    runtimeOnly(libs.edc.core.edrstore)
     runtimeOnly(libs.edc.dsp) // protocol webhook
     runtimeOnly(libs.bundles.dcp) // DCP protocol impl
     runtimeOnly(libs.edc.api.dsp.config) // json-ld expansion

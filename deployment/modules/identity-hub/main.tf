@@ -13,7 +13,7 @@
 
 resource "kubernetes_deployment" "identityhub" {
   metadata {
-    name      = lower(var.humanReadableName)
+    name = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
       App = lower(var.humanReadableName)
@@ -144,7 +144,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_PATH                      = "/api"
     WEB_HTTP_IDENTITY_PORT             = var.ports.ih-identity-api
     WEB_HTTP_IDENTITY_PATH             = "/api/identity"
-    WEB_HTTP_IDENTITY_AUTH_KEY         = "password"
+    WEB_HTTP_IDENTITY_auth.key         = "password"
     WEB_HTTP_PRESENTATION_PORT         = var.ports.presentation-api
     WEB_HTTP_PRESENTATION_PATH         = "/api/presentation"
     WEB_HTTP_DID_PORT                  = var.ports.ih-did

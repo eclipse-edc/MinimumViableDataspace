@@ -5,6 +5,7 @@
     <toRun name="Connector Consumer Corp" type="Application" />
     <toRun name="IdentityHub Consumer Corp" type="Application" />
     <toRun name="IdentityHub Provider Corp" type="Application" />
+    <toRun name="IssuerService" type="Application" />
     <toRun name="Provider Catalog Server" type="Application" />
     <method v="2" />
   </configuration>

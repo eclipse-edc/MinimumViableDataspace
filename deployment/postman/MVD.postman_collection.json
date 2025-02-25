@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "d7d568f5-e178-4d6c-b74b-434a8f7530a6",
-		"name": "MVD+IATP",
+		"_postman_id": "6b6afa14-0bb9-472d-8a79-32e788253e4c",
+		"name": "MVD",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "647585"
 	},
@@ -1141,52 +1141,47 @@
 						},
 						{
 							"name": "Regenerate Token",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								},
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript",
-										"packages": {}
-									}
-								}
-							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
-								"method": "POST",
-								"header": [],
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
 								"body": {
 									"mode": "raw",
-									"raw": "",
+									"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
 									"options": {
 										"raw": {
+											"headerFamily": "json",
 											"language": "json"
 										}
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/token",
+									"raw": "{{baseUrl}}/api/admin/v1alpha/attestations?participantId=<string>",
 									"host": [
-										"{{CS_URL}}"
+										"{{baseUrl}}"
 									],
 									"path": [
 										"api",
-										"identity",
+										"admin",
 										"v1alpha",
-										"participants",
-										"{{PARTICIPANT_ID}}",
-										"token"
+										"attestations"
+									],
+									"query": [
+										{
+											"key": "participantId",
+											"value": "<string>"
+										}
 									]
 								}
 							},
@@ -2116,6 +2111,90 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Query Credentials by Type",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status is OK\", function() {",
+											"  pm.expect(pm.response.code).to.be.oneOf([200, 204])",
+											"})"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz/credentials?type=DemoCredential",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
+										"credentials"
+									],
+									"query": [
+										{
+											"key": "type",
+											"value": "DemoCredential"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Make Credential Request",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"issuerDid\": \"{{ISSUER_DID}}\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"credentialType\": \"DemoCredential\"\n    }]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz/credentials/request",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
+										"credentials",
+										"request"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				}
@@ -2151,8 +2230,4249 @@
 						"type": "text/javascript",
 						"exec": [
 							"pm.test(\"Status is OK or conflict\", function() {",
-							"  pm.expect(pm.response.code).to.be.oneOf([200, 204, 409])",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 409])",
 							"})"
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "IssuerService",
+			"item": [
+				{
+					"name": "Admin API",
+					"item": [
+						{
+							"name": "Attestations",
+							"item": [
+								{
+									"name": "get Attestations",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
+									"request": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations?participantId=<string>",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"attestations"
+											],
+											"query": [
+												{
+													"key": "participantId",
+													"value": "<string>"
+												}
+											]
+										},
+										"description": "Get all attestations for a given participant."
+									},
+									"response": [
+										{
+											"name": "A list of attestation metadata.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"attestationType\": \"<string>\",\n    \"configuration\": {\n      \"aliquip2\": {},\n      \"pariatur_b3\": {},\n      \"essebab\": {}\n    },\n    \"id\": \"<string>\"\n  },\n  {\n    \"attestationType\": \"<string>\",\n    \"configuration\": {\n      \"sint_9f6\": {}\n    },\n    \"id\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "create Attestation",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"attestationType\": \"database\",\n  \"configuration\": {\n    \"commodof4\": {},\n    \"laborisb27\": {}\n  },\n  \"id\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"attestations"
+											]
+										},
+										"description": "Creates an attestation definition in the runtime."
+									},
+									"response": [
+										{
+											"name": "The attestation definition was added successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestationType\": \"<string>\",\n  \"configuration\": {\n    \"commodof4\": {},\n    \"laborisb27\": {}\n  },\n  \"id\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestationType\": \"<string>\",\n  \"configuration\": {\n    \"commodof4\": {},\n    \"laborisb27\": {}\n  },\n  \"id\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestationType\": \"<string>\",\n  \"configuration\": {\n    \"commodof4\": {},\n    \"laborisb27\": {}\n  },\n  \"id\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestationType\": \"<string>\",\n  \"configuration\": {\n    \"commodof4\": {},\n    \"laborisb27\": {}\n  },\n  \"id\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't add the participant, because a object with the same ID already exists",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestationType\": \"<string>\",\n  \"configuration\": {\n    \"commodof4\": {},\n    \"laborisb27\": {}\n  },\n  \"id\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations"
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "query Attestations",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations/query",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"attestations",
+												"query"
+											]
+										},
+										"description": "Query attestation definitions"
+									},
+									"response": [
+										{
+											"name": "A list of attestation metadata.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														"query"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"attestationType\": \"<string>\",\n    \"configuration\": {\n      \"aliquip2\": {},\n      \"pariatur_b3\": {},\n      \"essebab\": {}\n    },\n    \"id\": \"<string>\"\n  },\n  {\n    \"attestationType\": \"<string>\",\n    \"configuration\": {\n      \"sint_9f6\": {}\n    },\n    \"id\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														"query"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														"query"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "link Attestation",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"attestations",
+												":attestationDefinitionId",
+												"link"
+											],
+											"query": [
+												{
+													"key": "participantId",
+													"value": "<string>"
+												}
+											],
+											"variable": [
+												{
+													"key": "attestationDefinitionId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Links an attestation definition to a participant. This enables a certain attestation definition for a participant."
+									},
+									"response": [
+										{
+											"name": "The attestation was linked successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"link"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"link"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"link"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"link"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't add the participant, because a object with the same ID already exists",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"link"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "unlink Attestation",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"attestations",
+												":attestationDefinitionId",
+												"unlink"
+											],
+											"query": [
+												{
+													"key": "participantId",
+													"value": "<string>"
+												}
+											],
+											"variable": [
+												{
+													"key": "attestationDefinitionId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Un-Links an attestation definition to a participant. This disables a certain attestation definition for a participant."
+									},
+									"response": [
+										{
+											"name": "The attestation was unlinked successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"unlink"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"unlink"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"unlink"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"unlink"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't add the participant, because a object with the same ID already exists",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"attestations",
+														":attestationDefinitionId",
+														"unlink"
+													],
+													"query": [
+														{
+															"key": "participantId",
+															"value": "<string>"
+														}
+													],
+													"variable": [
+														{
+															"key": "attestationDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "CredentialDefinitions",
+							"item": [
+								{
+									"name": "create Credential Definition",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentialdefinitions"
+											]
+										},
+										"description": "Adds a new credential definition."
+									},
+									"response": [
+										{
+											"name": "The credential definition was created successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't create the credential definition, because a object with the same ID already exists",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "query Credential Definitions",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions/query",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentialdefinitions",
+												"query"
+											]
+										},
+										"description": "Gets all credential definitions for a certain query."
+									},
+									"response": [
+										{
+											"name": "A list of credentials definitions.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														"query"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"attestations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"credentialType\": \"<string>\",\n    \"dataModel\": \"V_1_1\",\n    \"id\": \"<string>\",\n    \"jsonSchema\": \"<string>\",\n    \"jsonSchemaUrl\": \"<string>\",\n    \"mappings\": [\n      {\n        \"input\": \"<string>\",\n        \"output\": \"<string>\",\n        \"required\": \"<boolean>\"\n      },\n      {\n        \"input\": \"<string>\",\n        \"output\": \"<string>\",\n        \"required\": \"<boolean>\"\n      }\n    ],\n    \"rules\": [\n      {\n        \"configuration\": {\n          \"in_85a\": {},\n          \"dolor310\": {},\n          \"incididunt_b\": {}\n        },\n        \"type\": \"<string>\"\n      },\n      {\n        \"configuration\": {\n          \"eud_\": {},\n          \"dolor777\": {},\n          \"Utb\": {}\n        },\n        \"type\": \"<string>\"\n      }\n    ],\n    \"validity\": \"<long>\"\n  },\n  {\n    \"attestations\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"credentialType\": \"<string>\",\n    \"dataModel\": \"V_2_0\",\n    \"id\": \"<string>\",\n    \"jsonSchema\": \"<string>\",\n    \"jsonSchemaUrl\": \"<string>\",\n    \"mappings\": [\n      {\n        \"input\": \"<string>\",\n        \"output\": \"<string>\",\n        \"required\": \"<boolean>\"\n      },\n      {\n        \"input\": \"<string>\",\n        \"output\": \"<string>\",\n        \"required\": \"<boolean>\"\n      }\n    ],\n    \"rules\": [\n      {\n        \"configuration\": {\n          \"laborum7\": {},\n          \"voluptate726\": {}\n        },\n        \"type\": \"<string>\"\n      },\n      {\n        \"configuration\": {\n          \"amet_27c\": {},\n          \"voluptate8\": {}\n        },\n        \"type\": \"<string>\"\n      }\n    ],\n    \"validity\": \"<long>\"\n  }\n]"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														"query"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														"query"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "get by ID",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentialdefinitions",
+												":credentialDefinitionId"
+											],
+											"variable": [
+												{
+													"key": "credentialDefinitionId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Gets a credential definition by its ID."
+									},
+									"response": [
+										{
+											"name": "The credential definition was found.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The credential definition was not found.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "update Credential Definition",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentialdefinitions"
+											]
+										},
+										"description": "Updates credential definition."
+									},
+									"response": [
+										{
+											"name": "The credential definition was updated successfully.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't update the credential definition because it was not found.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "delete Credential Definition By Id",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentialdefinitions",
+												":credentialDefinitionId"
+											],
+											"variable": [
+												{
+													"key": "credentialDefinitionId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Deletes a credential definition by its ID."
+									},
+									"response": [
+										{
+											"name": "The credential definition was deleted.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The credential definition was not found.",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentialdefinitions/:credentialDefinitionId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentialdefinitions",
+														":credentialDefinitionId"
+													],
+													"variable": [
+														{
+															"key": "credentialDefinitionId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Credentials",
+							"item": [
+								{
+									"name": "query Credentials",
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {}
+									},
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/query",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentials",
+												"query"
+											]
+										},
+										"description": "Query credentials, possibly across multiple participants."
+									},
+									"response": [
+										{
+											"name": "A list of verifiable credential metadata. Note that these are not actual VerifiableCredentials.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														"query"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"credential\": {\n      \"credentialSchema\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialStatus\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialSubject\": [\n        {\n          \"id\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\"\n        }\n      ],\n      \"dataModelVersion\": \"V_2_0\",\n      \"description\": \"<string>\",\n      \"expirationDate\": \"<dateTime>\",\n      \"id\": \"<string>\",\n      \"issuanceDate\": \"<dateTime>\",\n      \"issuer\": {\n        \"additionalProperties\": {\n          \"ex_991\": {}\n        },\n        \"id\": \"<string>\"\n      },\n      \"name\": \"<string>\",\n      \"type\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"format\": \"JSON_LD\"\n  },\n  {\n    \"credential\": {\n      \"credentialSchema\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialStatus\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialSubject\": [\n        {\n          \"id\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\"\n        }\n      ],\n      \"dataModelVersion\": \"V_1_1\",\n      \"description\": \"<string>\",\n      \"expirationDate\": \"<dateTime>\",\n      \"id\": \"<string>\",\n      \"issuanceDate\": \"<dateTime>\",\n      \"issuer\": {\n        \"additionalProperties\": {\n          \"enima7\": {},\n          \"ad_a5\": {},\n          \"ipsum_65\": {}\n        },\n        \"id\": \"<string>\"\n      },\n      \"name\": \"<string>\",\n      \"type\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"format\": \"JWT\"\n  }\n]"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														"query"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														"query"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "resume Credential",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/resume",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentials",
+												":credentialId",
+												"resume"
+											],
+											"variable": [
+												{
+													"key": "credentialId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Resumes a credential with the given ID for the given participant. Resumed credentials will be removed from the Revocation List."
+									},
+									"response": [
+										{
+											"name": "The credential was resumed successfully. Check the Revocation List credential to confirm.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/resume",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"resume"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/resume",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"resume"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/resume",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"resume"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The credential or the participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/resume",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"resume"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "revoke Credential",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/revoke",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentials",
+												":credentialId",
+												"revoke"
+											],
+											"variable": [
+												{
+													"key": "credentialId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Revokes a credential with the given ID for the given participant. Revoked credentials will be added to the Revocation List"
+									},
+									"response": [
+										{
+											"name": "The credential was revoked successfully. Check the Revocation List credential to confirm.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/revoke",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"revoke"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/revoke",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"revoke"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/revoke",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"revoke"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The credential or the participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/revoke",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"revoke"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "check Credential Status",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/status",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentials",
+												":credentialId",
+												"status"
+											],
+											"variable": [
+												{
+													"key": "credentialId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Checks the revocation status of a credential with the given ID for the given participant."
+									},
+									"response": [
+										{
+											"name": "The credential status.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/status",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"status"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/status",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"status"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/status",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"status"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The credential or the participant was not found.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/status",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"status"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "suspend Credential",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/suspend",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentials",
+												":credentialId",
+												"suspend"
+											],
+											"variable": [
+												{
+													"key": "credentialId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Suspends a credential with the given ID for the given participant. Suspended credentials will be added to the Revocation List. Suspension is reversible."
+									},
+									"response": [
+										{
+											"name": "The credential was suspended successfully. Check the Revocation List credential to confirm.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/suspend",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"suspend"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "No Content",
+											"code": 204,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/suspend",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"suspend"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/suspend",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"suspend"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The credential or the participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:credentialId/suspend",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":credentialId",
+														"suspend"
+													],
+													"variable": [
+														{
+															"key": "credentialId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "get Credentials",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/{{PARTICIPANT_ID}}",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"credentials",
+												"{{PARTICIPANT_ID}}"
+											]
+										},
+										"description": "Gets all credentials for a certain participant."
+									},
+									"response": [
+										{
+											"name": "A list of verifiable credential metadata. Note that these are not actual VerifiableCredentials.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"credential\": {\n      \"credentialSchema\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialStatus\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialSubject\": [\n        {\n          \"id\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\"\n        }\n      ],\n      \"dataModelVersion\": \"V_2_0\",\n      \"description\": \"<string>\",\n      \"expirationDate\": \"<dateTime>\",\n      \"id\": \"<string>\",\n      \"issuanceDate\": \"<dateTime>\",\n      \"issuer\": {\n        \"additionalProperties\": {\n          \"ex_991\": {}\n        },\n        \"id\": \"<string>\"\n      },\n      \"name\": \"<string>\",\n      \"type\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"format\": \"JSON_LD\"\n  },\n  {\n    \"credential\": {\n      \"credentialSchema\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialStatus\": [\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"type\": \"<string>\"\n        }\n      ],\n      \"credentialSubject\": [\n        {\n          \"id\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\"\n        }\n      ],\n      \"dataModelVersion\": \"V_1_1\",\n      \"description\": \"<string>\",\n      \"expirationDate\": \"<dateTime>\",\n      \"id\": \"<string>\",\n      \"issuanceDate\": \"<dateTime>\",\n      \"issuer\": {\n        \"additionalProperties\": {\n          \"enima7\": {},\n          \"ad_a5\": {},\n          \"ipsum_65\": {}\n        },\n        \"id\": \"<string>\"\n      },\n      \"name\": \"<string>\",\n      \"type\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    \"format\": \"JWT\"\n  }\n]"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The participant was not found.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/credentials/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"credentials",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "Participants",
+							"item": [
+								{
+									"name": "update Participant",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"participants"
+											]
+										},
+										"description": "Updates participant data."
+									},
+									"response": [
+										{
+											"name": "The participant was updated successfully.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't update the participant because it was not found.",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "Create Participant",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"did\": \"did:web:test\",\n  \"participantId\": \"did:web:test\",\n  \"name\": \"Test Participant\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"participants"
+											]
+										},
+										"description": "Adds a new participant."
+									},
+									"response": [
+										{
+											"name": "The participant was added successfully.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "text",
+											"header": [],
+											"cookie": [],
+											"body": ""
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Can't add the participant, because a object with the same ID already exists",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants"
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "query Participants",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants/query",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"participants",
+												"query"
+											]
+										},
+										"description": "Gets all participants for a certain query."
+									},
+									"response": [
+										{
+											"name": "A list of participant metadata.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														"query"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"did\": \"<string>\",\n    \"participantId\": \"<string>\",\n    \"name\": \"<string>\"\n  },\n  {\n    \"did\": \"<string>\",\n    \"participantId\": \"<string>\",\n    \"name\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														"query"
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														"query"
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The participant was not found.",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"filterExpression\": [\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    },\n    {\n      \"operandLeft\": {},\n      \"operandRight\": {},\n      \"operator\": \"<string>\"\n    }\n  ],\n  \"limit\": \"<integer>\",\n  \"offset\": \"<integer>\",\n  \"sortField\": \"<string>\",\n  \"sortOrder\": \"DESC\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/query",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														"query"
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								},
+								{
+									"name": "get Participant By Id",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											}
+										],
+										"url": {
+											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants/:participantId",
+											"host": [
+												"{{ISSUER_BASE_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"participants",
+												":participantId"
+											],
+											"variable": [
+												{
+													"key": "participantId",
+													"value": "<string>",
+													"description": "(Required) "
+												}
+											]
+										},
+										"description": "Gets metadata for a certain participant."
+									},
+									"response": [
+										{
+											"name": "A list of verifiable credential metadata. Note that these are not actual VerifiableCredentials.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"did\": \"<string>\",\n  \"participantId\": \"<string>\",\n  \"participantName\": \"<string>\"\n}"
+										},
+										{
+											"name": "Request body was malformed, or the request could not be processed",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "Bad Request",
+											"code": 400,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The request could not be completed, because either the authentication was missing or was not valid.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "Unauthorized",
+											"code": 401,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										},
+										{
+											"name": "The participant was not found.",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Accept",
+														"value": "application/json"
+													}
+												],
+												"url": {
+													"raw": "{{baseUrl}}/v1alpha/participants/:participantId",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"v1alpha",
+														"participants",
+														":participantId"
+													],
+													"variable": [
+														{
+															"key": "participantId"
+														}
+													]
+												}
+											},
+											"status": "Not Found",
+											"code": 404,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json"
+												}
+											],
+											"cookie": [],
+											"body": "[\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  },\n  {\n    \"invalidValue\": {},\n    \"message\": \"<string>\",\n    \"path\": \"<string>\",\n    \"type\": \"<string>\"\n  }\n]"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Seed Issuer",
+					"item": [
+						{
+							"name": "Create consumer participant",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"{{CONSUMER_ID}}\",\n    \"participantId\": \"{{CONSUMER_ID}}\",\n    \"name\": \"{{CONSUMER_NAME}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"participants"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/participants' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7083\", \"participantId\": \"did:web:localhost%3A7083\", \"name\": \"Consumer Participant\"}'"
+							},
+							"response": []
+						},
+						{
+							"name": "Create provider participant",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"{{PROVIDER_ID}}\",\n    \"participantId\": \"{{PROVIDER_ID}}\",\n    \"name\": \"{{PROVIDER_NAME}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"participants"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/participants' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7093\", \"participantId\": \"did:web:localhost%3A7093\", \"name\": \"Provider Participant\"}'"
+							},
+							"response": []
+						},
+						{
+							"name": "Create attestation definitions",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"attestationType\": \"demo\",\n  \"configuration\": {\n  },\n  \"id\": \"demo-attestation-def-1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:10013/api/admin/v1alpha/attestations",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "10013",
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"attestations"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/attestations' \\\n-H 'Content-Type: application/json' \\\n-d '{\n  \"attestationType\": \"demo\",\n  \"configuration\": {\n  },\n  \"id\": \"demo-attestation-def-1\"\n}'"
+							},
+							"response": []
+						},
+						{
+							"name": "Create credential definitions",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n      \"attestations\": [\n        \"demo-attestation-def-1\"\n      ],\n      \"credentialType\": \"DemoCredential\",\n      \"dataModel\": \"V_1_1\",\n      \"id\": \"demo-credential-def-1\",\n      \"jsonSchema\": \"\",\n      \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n      \"mappings\": [\n        {\n          \"input\": \"participant.name\",\n          \"output\": \"credentialSubject.name\",\n          \"required\": \"true\"\n        }\n      ],\n      \"rules\": [\n        {\n            \"type\": \"expression\",\n            \"configuration\":{\"claim\": \"onboarding.signedDocuments\",\n            \"operator\": \"eq\",\n            \"value\": true}\n        }\n      ]\n    }",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"credentialdefinitions"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/credentialdefinitions' \\\n-H 'Content-Type: application/json' \\\n-d '{\n      \"attestations\": [\n        \"demo-attestation-def-1\"\n      ],\n      \"credentialType\": \"DemoCredential\",\n      \"dataModel\": \"V_1_1\",\n      \"id\": \"demo-credential-def-1\",\n      \"jsonSchema\": \"\",\n      \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n      \"mappings\": [\n        {\n          \"input\": \"name\",\n          \"output\": \"credentialSubject.name\",\n          \"required\": \"true\"\n        }\n      ],\n      \"rules\": []\n    }'"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.test(\"Status is OK or conflict\", function() {",
+									"  pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 409])",
+									"})"
+								]
+							}
+						}
+					]
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
 						]
 					}
 				}

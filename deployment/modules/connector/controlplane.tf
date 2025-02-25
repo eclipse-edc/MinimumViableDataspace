@@ -152,16 +152,16 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_PATH                              = "/api"
     WEB_HTTP_MANAGEMENT_PORT                   = var.ports.management
     WEB_HTTP_MANAGEMENT_PATH                   = "/api/management"
-    WEB_HTTP_MANAGEMENT_AUTH_TYPE              = "tokenbased"
-    WEB_HTTP_MANAGEMENT_AUTH_KEY               = "password"
+    WEB_HTTP_MANAGEMENT_auth.type              = "tokenbased"
+    WEB_HTTP_MANAGEMENT_auth.key               = "password"
     WEB_HTTP_CONTROL_PORT                      = var.ports.control
     WEB_HTTP_CONTROL_PATH                      = "/api/control"
     WEB_HTTP_PROTOCOL_PORT                     = var.ports.protocol
     WEB_HTTP_PROTOCOL_PATH                     = "/api/dsp"
     WEB_HTTP_CATALOG_PORT                      = var.ports.catalog
     WEB_HTTP_CATALOG_PATH                      = "/api/catalog"
-    WEB_HTTP_CATALOG_AUTH_TYPE                 = "tokenbased"
-    WEB_HTTP_CATALOG_AUTH_KEY                  = "password"
+    WEB_HTTP_CATALOG_auth.type                 = "tokenbased"
+    WEB_HTTP_CATALOG_auth.key                  = "password"
     EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = "${var.participantId}#${var.aliases.sts-private-key}"
     EDC_IAM_STS_PUBLICKEY_ID                   = "${var.participantId}#${var.aliases.sts-public-key-id}"
@@ -175,7 +175,7 @@ resource "kubernetes_config_map" "connector-config" {
     EDC_DATASOURCE_DEFAULT_URL                 = var.database.url
     EDC_DATASOURCE_DEFAULT_USER                = var.database.user
     EDC_DATASOURCE_DEFAULT_PASSWORD            = var.database.password
-    EDC_SQL_SCHEMA_AUTOCREATE                  = true
+    EDC_SQL_SCHEMA_AUTOCREATE = true
 
     # remote STS configuration
     EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
