@@ -27,7 +27,7 @@ module "provider-qna-connector" {
   }
   namespace     = kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
-  sts-token-url = "${module.provider-sts.sts-token-url}/token"
+  sts-token-url = "${module.provider-identityhub.sts-token-url}/token"
   useSVE        = var.useSVE
 }
 
@@ -43,7 +43,7 @@ module "provider-manufacturing-connector" {
   }
   namespace     = kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
-  sts-token-url = "${module.provider-sts.sts-token-url}/token"
+  sts-token-url = "${module.provider-identityhub.sts-token-url}/token"
   useSVE        = var.useSVE
 }
 
@@ -63,24 +63,7 @@ module "provider-identityhub" {
     password = "identity"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/identity"
   }
-  sts-accounts-api-url = module.provider-sts.sts-accounts-url
-  useSVE               = var.useSVE
-  sts-token-url        = "${module.consumer-sts.sts-token-url}/token"
-}
-
-# provider standalone STS
-module "provider-sts" {
-  depends_on        = [module.provider-vault]
-  source            = "./modules/sts"
-  humanReadableName = "provider-sts"
-  namespace         = kubernetes_namespace.ns.metadata.0.name
-  database = {
-    user     = "identity"
-    password = "identity"
-    url      = "jdbc:postgresql://${module.provider-postgres.database-url}/identity"
-  }
-  vault-url = "http://provider-vault:8200"
-  useSVE    = var.useSVE
+  useSVE = var.useSVE
 }
 
 # Catalog server runtime
@@ -90,7 +73,7 @@ module "provider-catalog-server" {
   participantId     = var.provider-did
   namespace         = kubernetes_namespace.ns.metadata.0.name
   vault-url         = "http://provider-vault:8200"
-  sts-token-url     = "${module.provider-sts.sts-token-url}/token"
+  sts-token-url     = "${module.provider-identityhub.sts-token-url}/token"
 
   database = {
     user     = "catalog_server"

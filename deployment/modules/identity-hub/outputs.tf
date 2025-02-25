@@ -38,5 +38,5 @@ output "credentials" {
 }
 
 output "sts-token-url" {
-  value = "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.sts-api}/api/sts/token"
+  value = "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.sts-api}${var.sts-token-path}"
 }
