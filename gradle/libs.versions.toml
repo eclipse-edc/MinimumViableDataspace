@@ -60,11 +60,6 @@ edc-sql-lease = { module = "org.eclipse.edc:sql-lease", version.ref = "edc" }
 edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref = "edc" }
 edc-sql-transactionlocal = { module = "org.eclipse.edc:transaction-local", version.ref = "edc" }
 edc-sql-dataplane-instancestore = { module = "org.eclipse.edc:data-plane-instance-store-sql", version.ref = "edc" }
-edc-sql-jtivdalidation = { module = "org.eclipse.edc:jti-validation-store-sql", version.ref = "edc" }
-
-
-# identity hub SQL implementations
-edc-sql-ih-stsstore-sql = { module = "org.eclipse.edc:sts-client-store-sql", version.ref = "edc" }
 
 # identityhub SPI modules
 edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
@@ -75,13 +70,7 @@ edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", 
 edc-oauth2-client = { module = "org.eclipse.edc:oauth2-client", version.ref = "edc" }
 
 # EDC STS dependencies, used in IdentityHub
-edc-sts-spi = { module = "org.eclipse.edc:identity-trust-sts-spi", version.ref = "edc" }
-edc-sts-core = { module = "org.eclipse.edc:identity-trust-sts-core", version.ref = "edc" }
-edc-sts = { module = "org.eclipse.edc:identity-trust-sts-embedded", version.ref = "edc" }
-edc-sts-api = { module = "org.eclipse.edc:identity-trust-sts-api", version.ref = "edc" }
-edc-sts-accountservice-remote = { module = "org.eclipse.edc:sts-account-service-remote", version.ref = "edc" }
 edc-sts-remote-client = { module = "org.eclipse.edc:identity-trust-sts-remote-client", version.ref = "edc" }
-edc-sts-api-accounts = { module = "org.eclipse.edc:identity-trust-sts-accounts-api", version.ref = "edc" }
 
 # federated catalog modules
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
@@ -102,7 +91,6 @@ edc-bom-dataplane = { module = "org.eclipse.edc:dataplane-base-bom", version.ref
 edc-bom-controlplane-sql = { module = "org.eclipse.edc:controlplane-feature-sql-bom", version.ref = "edc" }
 edc-bom-dataplane-sql = { module = "org.eclipse.edc:dataplane-feature-sql-bom", version.ref = "edc" }
 edc-bom-identithub = { module = "org.eclipse.edc:identityhub-bom", version.ref = "edc" }
-edc-bom-identithub-sts = { module = "org.eclipse.edc:identityhub-with-sts-bom", version.ref = "edc" }
 edc-bom-identithub-sql = { module = "org.eclipse.edc:identityhub-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
@@ -112,9 +100,6 @@ dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-c
 
 sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
 
-sql-sts = ["edc-sql-ih-stsstore-sql", "edc-sql-jtivdalidation", "edc-sql-core", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
-
-sts = ["edc-sts-core", "edc-sts-api", "edc-sts-spi", "edc-sts"]
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "8.3.6" }
