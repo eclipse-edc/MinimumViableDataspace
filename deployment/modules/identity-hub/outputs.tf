@@ -32,7 +32,7 @@ output "ih-superuser-apikey" {
 
 output "credentials" {
   value = {
-    path = var.credentials-dir
+    path    = var.credentials-dir
     content = fileset(var.credentials-dir, "*-credential.json")
   }
 }
