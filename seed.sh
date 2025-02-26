@@ -41,7 +41,7 @@ API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 # add participant "consumer"
 echo
 echo
-echo "Create consumer participant"
+echo "Create consumer participant context in IdentityHub"
 PEM_CONSUMER=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/consumer_public.pem)
 DATA_CONSUMER=$(jq -n --arg pem "$PEM_CONSUMER" '{
            "roles":[],
@@ -90,7 +90,7 @@ curl -sL -X POST http://localhost:8081/api/management/v3/secrets -H "x-api-key: 
 # add participant "provider"
 echo
 echo
-echo "Create provider participant"
+echo "Create provider participant context in IdentityHub"
 PEM_PROVIDER=$(sed -E ':a;N;$!ba;s/\r{0,1}\n/\\n/g' deployment/assets/provider_public.pem)
 DATA_PROVIDER=$(jq -n --arg pem "$PEM_PROVIDER" '{
             "roles":[],

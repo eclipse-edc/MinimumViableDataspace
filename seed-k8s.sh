@@ -46,7 +46,7 @@ API_KEY="c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
 # add consumer participant
 echo
 echo
-echo "Create consumer participant"
+echo "Create consumer participant context in IdentityHub"
 CONSUMER_CONTROLPLANE_SERVICE_URL="http://consumer-controlplane:8082"
 CONSUMER_IDENTITYHUB_URL="http://consumer-identityhub:7082"
 DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl "$CONSUMER_IDENTITYHUB_URL" '{
@@ -54,7 +54,7 @@ DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "\($ihurl)/api/presentation/v1/participants/ZGlkOndlYjpjb25zdW1lci1pZGVudGl0eWh1YiUzQTcwODM6Y29uc3VtZXI=",
+                "serviceEndpoint": "\($ihurl)/api/credentials/v1/participants/ZGlkOndlYjpjb25zdW1lci1pZGVudGl0eWh1YiUzQTcwODM6Y29uc3VtZXI=",
                 "id": "consumer-credentialservice-1"
              },
              {
@@ -82,10 +82,9 @@ curl --location "http://127.0.0.1/consumer/cs/api/identity/v1alpha/participants/
 
 
 # add provider participant
-
 echo
 echo
-echo "Create provider participant"
+echo "Create provider participant context in IdentityHub"
 
 PROVIDER_CONTROLPLANE_SERVICE_URL="http://provider-catalog-server-controlplane:8082"
 PROVIDER_IDENTITYHUB_URL="http://provider-identityhub:7082"
@@ -95,7 +94,7 @@ DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            "serviceEndpoints":[
              {
                 "type": "CredentialService",
-                "serviceEndpoint": "\($ihurl)/api/presentation/v1/participants/ZGlkOndlYjpwcm92aWRlci1pZGVudGl0eWh1YiUzQTcwODM6cHJvdmlkZXI=",
+                "serviceEndpoint": "\($ihurl)/api/credentials/v1/participants/ZGlkOndlYjpwcm92aWRlci1pZGVudGl0eWh1YiUzQTcwODM6cHJvdmlkZXI=",
                 "id": "provider-credentialservice-1"
              },
              {

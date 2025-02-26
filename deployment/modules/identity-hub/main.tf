@@ -47,8 +47,8 @@ resource "kubernetes_deployment" "identityhub" {
             }
           }
           port {
-            container_port = var.ports.presentation-api
-            name           = "pres-port"
+            container_port = var.ports.credentials-api
+            name           = "creds-port"
           }
 
           port {
@@ -144,9 +144,9 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_PATH                      = "/api"
     WEB_HTTP_IDENTITY_PORT             = var.ports.ih-identity-api
     WEB_HTTP_IDENTITY_PATH             = "/api/identity"
-    WEB_HTTP_IDENTITY_auth.key         = "password"
-    WEB_HTTP_PRESENTATION_PORT         = var.ports.presentation-api
-    WEB_HTTP_PRESENTATION_PATH         = "/api/presentation"
+    WEB_HTTP_IDENTITY_AUTH_KEY         = "password"
+    WEB_HTTP_CREDENTIALS_PORT          = var.ports.credentials-api
+    WEB_HTTP_CREDENTIALS_PATH          = "/api/credentials"
     WEB_HTTP_DID_PORT                  = var.ports.ih-did
     WEB_HTTP_DID_PATH                  = "/"
     WEB_HTTP_STS_PORT                  = var.ports.sts-api
