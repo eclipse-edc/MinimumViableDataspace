@@ -10,7 +10,7 @@ RUN apk --no-cache add curl
 WORKDIR /app
 
 
-COPY ${JAR} sts.jar
+COPY ${JAR} issuerservice.jar
 
 EXPOSE 8188
 
