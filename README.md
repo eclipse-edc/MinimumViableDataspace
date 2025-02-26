@@ -340,7 +340,7 @@ documentation for more information.
 kind create cluster -n mvd --config deployment/kind.config.yaml
 
 # Load docker images into KinD
-kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest sts:latest -n mvd
+kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest -n mvd
 
 # Deploy an NGINX ingress
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
