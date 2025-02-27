@@ -19,7 +19,8 @@
         * [5.1 Build the runtime images](#51-build-the-runtime-images)
         * [5.2 Create the K8S cluster](#52-create-the-k8s-cluster)
         * [5.3 Seed the dataspace](#53-seed-the-dataspace)
-        * [5.4 Debugging MVD in Kubernetes](#54-debugging-mvd-in-kubernetes)
+        * [5.4 JVM crashes with `SIGILL` on ARM platforms](#54-jvm-crashes-with-sigill-on-arm-platforms)
+        * [5.5 Debugging MVD in Kubernetes](#55-debugging-mvd-in-kubernetes)
     * [6. Differences between Kubernetes and IntelliJ](#6-differences-between-kubernetes-and-intellij)
         * [6.1 In-memory databases](#61-in-memory-databases)
         * [6.2 Memory-based secret vaults](#62-memory-based-secret-vaults)
@@ -40,8 +41,7 @@
         * [8.4 Policy evaluation functions](#84-policy-evaluation-functions)
             * [8.4.1 Membership evaluation function](#841-membership-evaluation-function)
             * [8.4.2 DataAccessLevel evaluation function](#842-dataaccesslevel-evaluation-function)
-        * [8.5 Scope-to-criterion transformer](#85-scope-to-criterion-transformer)
-        * [8.6 Super-user seeding](#86-super-user-seeding)
+        * [8.5 Super-user seeding](#85-super-user-seeding)
     * [9. Advanced topics](#9-advanced-topics)
         * [9.1 Regenerating issuer keys](#91-regenerating-issuer-keys)
         * [9.2 Regenerating participant keys](#92-regenerating-participant-keys)
@@ -52,7 +52,8 @@
         * [10.2 DID resolution](#102-did-resolution)
             * [10.2.1 `did:web` for participants](#1021-didweb-for-participants)
             * [10.2.2 `did:web` for the dataspace issuer](#1022-didweb-for-the-dataspace-issuer)
-        * [10.3 No issuance (yet)](#103-no-issuance-yet)
+        * [10.3 Credential Issuance](#103-credential-issuance)
+        * [10.4 Default scope-to-criterion transformer](#104-default-scope-to-criterion-transformer)
 
 <!-- TOC -->
 
@@ -96,8 +97,9 @@ expose their data catalog directly to the internet.
 To make the catalogs available, Provider Corp also hosts a catalog server that is shared between the catalog server,
 "provider-qna"" and "provider-manufacturing".
 
-Both Consumer Corp and Provider Corp operate an IdentityHub each. Note that This is necessary, because those three
-share the same `participantId`, and thus, the same set of credentials. A catalog server is a stripped-down EDC runtime,
+Both Consumer Corp and Provider Corp each operate an IdentityHub. Note that on the provider side, three runtimes
+share the same `participantId`, and thus, the same set of credentials, and by extension, the same identity. So the
+IdentityHub represents "identities" rather than individual runtimes. A catalog server is a stripped-down EDC runtime,
 that only contains modules for servicing catalog requests.
 
 Consumer Corp has a connector plus its own IdentityHub.
@@ -862,14 +864,34 @@ publicly resolvable CDN or webserver.
 The "dataspace issuer" does not exist as participant yet, so instead of deploying a fake IdentityHub, we opted for
 simply hosting the dataspace issuer's DID as static file with NGINX.
 
-### 10.3 No issuance (yet)
+### 10.3 Credential Issuance
 
-All credentials are pre-generated manually because the DCP Issuance Flow is not implemented yet. Credentials are put
-into the stores by an extension called `IdentityHubExtension.java` and are **different** for local deployments and
-Kubernetes deployments.
+Even though the DCP Credential Issuance Protocol is now supported, credentials are pre-generated manually and
+distributed to the participants during deployment. Credentials are put into the stores by an extension called
+`IdentityHubExtension.java` and are **different** for local deployments and Kubernetes deployments.
 
 The [JwtSigner.java](launchers/identity-hub/src/test/java/org/eclipse/edc/demo/dcp/JwtSigner.java) test class can be
 used to re-generate and sign all credentials.
+
+Additional credentials can be requested from the dataspace issuer using the `MVD/IdentityHub/Make Credential Request`
+Postman request or by executing on a shell:
+
+```shell
+curl --location 'http://localhost/consumer/cs//api/identity/v1alpha/participants/ZGlkOndlYjpjb25zdW1lci1pZGVudGl0eWh1YiUzQTcwODM6Y29uc3VtZXI=/credentials/request' \
+--header 'Content-Type: application/json' \
+--header 'X-Api-Key: c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=' \
+--data '{
+    "issuerDid": "did:web:dataspace-issuer-service%3A10016:issuer",
+    "holderPid": "credential-request-1",
+    "credentials": [{
+        "format": "VC1_0_JWT",
+        "credentialType": "DemoCredential"
+    }]
+}'
+```
+
+Note that the example assumes a Kubernetes deployment. This will cause the `dataspace-issuer-service` to generate and
+deliver a credential of type `DemoCredential` to the consumer's IdentityHub.
 
 ### 10.4 Default scope-to-criterion transformer
 
