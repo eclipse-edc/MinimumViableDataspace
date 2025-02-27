@@ -26,7 +26,7 @@ do
     ./deployment/postman/MVD.postman_collection.json > /dev/null
 done
 
-## Seed linked assets to Catalog Server "Bob"
+## Seed linked assets to Catalog Server
 newman run \
   --folder "Seed Catalog Server" \
   --env-var "HOST=http://127.0.0.1:8091" \

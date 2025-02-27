@@ -119,3 +119,45 @@ curl --location "http://127.0.0.1/provider/cs/api/identity/v1alpha/participants/
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_PROVIDER"
+
+###############################################
+# SEED ISSUER SERVICE
+###############################################
+
+echo
+echo
+echo "Create dataspace issuer"
+DATA_ISSUER=$(jq -n --arg pem "$PEM_ISSUER" '{
+            "roles":["admin"],
+            "serviceEndpoints":[
+              {
+                 "type": "IssuerService",
+                 "serviceEndpoint": "http://dataspace-issuer-service:10012/api/issuance/v1alpha/participants/ZGlkOndlYjpkYXRhc3BhY2UtaXNzdWVyLXNlcnZpY2UlM0ExMDAxNjppc3N1ZXI=",
+                 "id": "issuer-service-1"
+              }
+            ],
+            "active": true,
+            "participantId": "did:web:dataspace-issuer-service%3A10016:issuer",
+            "did": "did:web:dataspace-issuer-service%3A10016:issuer",
+            "key":{
+                "keyId": "did:web:dataspace-issuer-service%3A10016:issuer#key-1",
+                "privateKeyAlias": "key-1",
+                "keyGeneratorParams":{
+                  "algorithm": "EdDSA"
+                }
+            }
+      }')
+
+curl -s --location 'http://127.0.0.1/issuer/cs/api/identity/v1alpha/participants/' \
+--header 'Content-Type: application/json' \
+--data "$DATA_ISSUER"
+
+## Seed participant data to the issuer service
+newman run \
+  --folder "Seed Issuer" \
+  --env-var "ISSUER_ADMIN_URL=http://127.0.0.1/issuer/ad" \
+  --env-var "CONSUMER_ID=did:web:consumer-identityhub%3A7083:consumer" \
+  --env-var "CONSUMER_NAME=MVD Consumer Participant" \
+  --env-var "PROVIDER_ID=did:web:provider-identityhub%3A7083:provider" \
+  --env-var "PROVIDER_NAME=MVD Provider Participant" \
+  ./deployment/postman/MVD.postman_collection.json

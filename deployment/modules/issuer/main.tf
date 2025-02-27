@@ -11,7 +11,7 @@
 #       Cofinity-X - initial API and implementation
 #
 
-resource "kubernetes_deployment" "identityhub" {
+resource "kubernetes_deployment" "issuerservice" {
   metadata {
     name = lower(var.humanReadableName)
     namespace = var.namespace

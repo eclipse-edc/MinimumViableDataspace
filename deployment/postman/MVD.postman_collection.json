@@ -6378,12 +6378,10 @@
 									}
 								},
 								"url": {
-									"raw": "http://localhost:10013/api/admin/v1alpha/attestations",
-									"protocol": "http",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations",
 									"host": [
-										"localhost"
+										"{{ISSUER_ADMIN_URL}}"
 									],
-									"port": "10013",
 									"path": [
 										"api",
 										"admin",
@@ -6402,7 +6400,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n      \"attestations\": [\n        \"demo-attestation-def-1\"\n      ],\n      \"credentialType\": \"DemoCredential\",\n      \"dataModel\": \"V_1_1\",\n      \"id\": \"demo-credential-def-1\",\n      \"jsonSchema\": \"\",\n      \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n      \"mappings\": [\n        {\n          \"input\": \"participant.name\",\n          \"output\": \"credentialSubject.name\",\n          \"required\": \"true\"\n        }\n      ],\n      \"rules\": [\n        {\n            \"type\": \"expression\",\n            \"configuration\":{\"claim\": \"onboarding.signedDocuments\",\n            \"operator\": \"eq\",\n            \"value\": true}\n        }\n      ]\n    }",
+									"raw": "{\n    \"attestations\": [\n        \"demo-attestation-def-1\"\n    ],\n    \"credentialType\": \"DemoCredential\",\n    \"dataModel\": \"V_1_1\",\n    \"id\": \"demo-credential-def-1\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"participant.name\",\n            \"output\": \"credentialSubject.name\",\n            \"required\": \"true\"\n        }\n    ],\n    \"rules\": [\n        {\n            \"type\": \"expression\",\n            \"configuration\": {\n                \"claim\": \"onboarding.signedDocuments\",\n                \"operator\": \"eq\",\n                \"value\": true\n            }\n        }\n    ]\n}",
 									"options": {
 										"raw": {
 											"language": "json"

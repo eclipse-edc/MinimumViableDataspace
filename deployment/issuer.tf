@@ -13,7 +13,7 @@
 
 module "dataspace-issuer" {
   source            = "./modules/issuer"
-  humanReadableName = "dataspace-issuer"
+  humanReadableName = "dataspace-issuer-service"
   participantId     = var.consumer-did
   database = {
     user     = "issuer"
