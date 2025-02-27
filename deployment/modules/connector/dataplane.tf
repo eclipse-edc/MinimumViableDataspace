@@ -132,6 +132,6 @@ resource "kubernetes_config_map" "dataplane-config" {
     # remote STS configuration
     EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
     EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
-    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "consumer-participant-sts-client-secret"
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
   }
 }

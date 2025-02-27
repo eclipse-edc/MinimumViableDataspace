@@ -30,8 +30,10 @@ edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
 edc-api-version = { module = "org.eclipse.edc:version-api", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
+edc-api-secrets = { module = "org.eclipse.edc:secrets-api", version.ref = "edc" }
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
+edc-dataplane-v2 = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
 
 edc-dcp-core = { module = "org.eclipse.edc:identity-trust-core", version.ref = "edc" }
 edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
@@ -39,7 +41,7 @@ edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", versio
 edc-spi-transform = { module = "org.eclipse.edc:transform-spi", version.ref = "edc" }
 edc-spi-catalog = { module = "org.eclipse.edc:catalog-spi", version.ref = "edc" }
 edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
-
+edc-spi-sts = { module = "org.eclipse.edc:sts-spi", version.ref = "edc" }
 
 # EDC lib dependencies
 edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }
@@ -68,6 +70,11 @@ edc-ih-spi-store = { module = "org.eclipse.edc:identity-hub-store-spi", version.
 # identityhub API modules
 edc-ih-lib-credentialquery = { module = "org.eclipse.edc:credential-query-lib", version.ref = "edc" }
 edc-oauth2-client = { module = "org.eclipse.edc:oauth2-client", version.ref = "edc" }
+edc-ih-api-did = { module = "org.eclipse.edc:did-api", version.ref = "edc" }
+edc-ih-api-participants = { module = "org.eclipse.edc:participant-context-api", version.ref = "edc" }
+
+# issuerservice SPI module
+edc-issuance-spi = { module = "org.eclipse.edc:issuerservice-issuance-spi", version.ref = "edc" }
 
 # EDC STS dependencies, used in IdentityHub
 edc-sts-remote-client = { module = "org.eclipse.edc:identity-trust-sts-remote-client", version.ref = "edc" }
@@ -92,6 +99,8 @@ edc-bom-controlplane-sql = { module = "org.eclipse.edc:controlplane-feature-sql-
 edc-bom-dataplane-sql = { module = "org.eclipse.edc:dataplane-feature-sql-bom", version.ref = "edc" }
 edc-bom-identithub = { module = "org.eclipse.edc:identityhub-bom", version.ref = "edc" }
 edc-bom-identithub-sql = { module = "org.eclipse.edc:identityhub-feature-sql-bom", version.ref = "edc" }
+edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-bom", version.ref = "edc" }
+edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
 connector = ["edc-boot", "edc-core-connector", "edc-core-api", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token"]
@@ -99,7 +108,6 @@ connector = ["edc-boot", "edc-core-connector", "edc-core-api", "edc-ext-http", "
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
 sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
-
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "8.3.6" }
