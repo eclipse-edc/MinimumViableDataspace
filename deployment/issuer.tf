@@ -27,11 +27,11 @@ module "dataspace-issuer" {
 
 # Postgres database for the consumer
 module "dataspace-issuer-postgres" {
-  depends_on = [kubernetes_config_map.issuer-initdb-config]
-  source        = "./modules/postgres"
-  instance-name = "issuer"
+  depends_on       = [kubernetes_config_map.issuer-initdb-config]
+  source           = "./modules/postgres"
+  instance-name    = "issuer"
   init-sql-configs = ["issuer-initdb-config"]
-  namespace     = kubernetes_namespace.ns.metadata.0.name
+  namespace        = kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database

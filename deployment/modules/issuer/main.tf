@@ -13,7 +13,7 @@
 
 resource "kubernetes_deployment" "issuerservice" {
   metadata {
-    name = lower(var.humanReadableName)
+    name      = lower(var.humanReadableName)
     namespace = var.namespace
     labels = {
       App = lower(var.humanReadableName)
