@@ -38,13 +38,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.eclipse.edc.demo.tests.TestConstants.TEST_POLL_DELAY;
+import static org.eclipse.edc.demo.tests.TestConstants.TEST_TIMEOUT_DURATION;
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
 /**
@@ -64,10 +65,6 @@ public class TransferEndToEndTest {
     // public API endpoint of the provider-qna connector, goes through the ingress controller
     private static final String PROVIDER_PUBLIC_URL = "http://127.0.0.1/provider-qna/public";
     private static final String PROVIDER_MANAGEMENT_URL = "http://127.0.0.1/provider-qna/cp";
-
-
-    private static final Duration TEST_TIMEOUT_DURATION = Duration.ofSeconds(120);
-    private static final Duration TEST_POLL_DELAY = Duration.ofSeconds(2);
 
     private final TypeTransformerRegistry transformerRegistry = new TypeTransformerRegistryImpl();
     private final JsonLd jsonLd = new TitaniumJsonLd(new ConsoleMonitor());
