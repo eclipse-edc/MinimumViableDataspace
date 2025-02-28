@@ -2318,9 +2318,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations?participantId=<string>",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations?participantId=<string>",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -2485,9 +2485,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -2743,9 +2743,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations/query",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -2910,9 +2910,9 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -3167,9 +3167,9 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -3439,9 +3439,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -3650,9 +3650,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions/query",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -3822,9 +3822,9 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -4027,9 +4027,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -4233,9 +4233,9 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -4437,9 +4437,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/query",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -4609,9 +4609,9 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/resume",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/resume",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -4790,9 +4790,9 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/revoke",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/revoke",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -4971,9 +4971,9 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/status",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/status",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -5152,9 +5152,9 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/:credentialId/suspend",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/suspend",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -5333,9 +5333,9 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/credentials/{{PARTICIPANT_ID}}",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/{{PARTICIPANT_ID}}",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -5527,9 +5527,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -5738,9 +5738,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -5949,9 +5949,9 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/query",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -6169,9 +6169,9 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_BASE_URL}}/api/admin/v1alpha/participants/:participantId",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/:participantId",
 											"host": [
-												"{{ISSUER_BASE_URL}}"
+												"{{ISSUER_ADMIN_URL}}"
 											],
 											"path": [
 												"api",
@@ -6350,6 +6350,43 @@
 									]
 								}
 							]
+						},
+						{
+							"name": "IssuanceProcesses",
+							"item": [
+								{
+									"name": "Query issuance processes",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/issuers/{{ISSUER_CONTEXT_ID}}/issuanceprocesses/query",
+											"host": [
+												"{{ISSUER_ADMIN_URL}}"
+											],
+											"path": [
+												"api",
+												"admin",
+												"v1alpha",
+												"issuers",
+												"{{ISSUER_CONTEXT_ID}}",
+												"issuanceprocesses",
+												"query"
+											]
+										}
+									},
+									"response": []
+								}
+							]
 						}
 					]
 				},
@@ -6508,7 +6545,7 @@
 				"apikey": [
 					{
 						"key": "value",
-						"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
+						"value": "{{ISSUER_ADMIN_API_TOKEN}}",
 						"type": "string"
 					},
 					{
@@ -6610,7 +6647,17 @@
 			"type": "string"
 		},
 		{
+			"key": "ISSUER_ADMIN_URL",
+			"value": "http://localhost:10013",
+			"type": "string"
+		},
+		{
 			"key": "IH_API_TOKEN",
+			"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
+			"type": "string"
+		},
+		{
+			"key": "ISSUER_ADMIN_API_TOKEN",
 			"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
 			"type": "string"
 		},
@@ -6635,6 +6682,21 @@
 		{
 			"key": "TED_DSP_URL",
 			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ISSUER_CONTEXT_ID",
+			"value": "ZGlkOndlYjpsb2NhbGhvc3QlM0ExMDEwMA==",
+			"type": "string"
+		},
+		{
+			"key": "ISSUER_DID",
+			"value": "did:web:localhost%3A10100",
+			"type": "string"
+		},
+		{
+			"key": "PARTICIPANT_ID_BASE64",
+			"value": "ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
 			"type": "string"
 		}
 	]
