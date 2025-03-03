@@ -151,7 +151,7 @@ DATA_ISSUER=$(jq -n --arg pem "$PEM_ISSUER" '{
             "serviceEndpoints":[
               {
                  "type": "IssuerService",
-                 "serviceEndpoint": "http://localhost:10012/api/issuance/v1alpha/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0ExMDEwMA==",
+                 "serviceEndpoint": "http://localhost:10012/api/issuance/v1alpha/issuers/ZGlkOndlYjpsb2NhbGhvc3QlM0ExMDEwMA==",
                  "id": "issuer-service-1"
               }
             ],
