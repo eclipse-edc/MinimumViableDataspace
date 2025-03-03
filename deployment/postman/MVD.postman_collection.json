@@ -2166,6 +2166,23 @@
 						},
 						{
 							"name": "Make Credential Request",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if(pm.response.code < 300 && pm.response.code >= 200){",
+											"    if(pm.response.text().length > 0){",
+											"        const requestId = pm.response.text()",
+											"        pm.environment.set(\"REQUEST_ID\", requestId);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
 							"request": {
 								"method": "POST",
 								"header": [],
@@ -2179,7 +2196,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz/credentials/request",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID_BASE64}}/credentials/request",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -2188,9 +2205,45 @@
 										"identity",
 										"v1alpha",
 										"participants",
-										"ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz",
+										"{{PARTICIPANT_ID_BASE64}}",
 										"credentials",
 										"request"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Credential Reqeusts",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID_BASE64}}/credentials/request/{{REQUEST_ID}}",
+									"host": [
+										"{{CS_URL}}"
+									],
+									"path": [
+										"api",
+										"identity",
+										"v1alpha",
+										"participants",
+										"{{PARTICIPANT_ID_BASE64}}",
+										"credentials",
+										"request",
+										"{{REQUEST_ID}}"
 									]
 								}
 							},
@@ -6451,7 +6504,19 @@
 				}
 			],
 			"auth": {
-				"type": "noauth"
+				"type": "apikey",
+				"apikey": [
+					{
+						"key": "value",
+						"value": "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=",
+						"type": "string"
+					},
+					{
+						"key": "key",
+						"value": "x-api-key",
+						"type": "string"
+					}
+				]
 			},
 			"event": [
 				{
