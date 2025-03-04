@@ -132,7 +132,7 @@ DATA_ISSUER=$(jq -n --arg pem "$PEM_ISSUER" '{
             "serviceEndpoints":[
               {
                  "type": "IssuerService",
-                 "serviceEndpoint": "http://dataspace-issuer-service:10012/api/issuance/v1alpha/issuers/ZGlkOndlYjpkYXRhc3BhY2UtaXNzdWVyLXNlcnZpY2UlM0ExMDAxNjppc3N1ZXI=",
+                 "serviceEndpoint": "http://dataspace-issuer-service:10012/api/issuance/v1alpha/participants/ZGlkOndlYjpkYXRhc3BhY2UtaXNzdWVyLXNlcnZpY2UlM0ExMDAxNjppc3N1ZXI=",
                  "id": "issuer-service-1"
               }
             ],

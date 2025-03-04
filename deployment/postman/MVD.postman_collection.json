@@ -6369,7 +6369,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/issuers/{{ISSUER_CONTEXT_ID}}/issuanceprocesses/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/issuanceprocesses/query",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -6377,7 +6377,7 @@
 												"api",
 												"admin",
 												"v1alpha",
-												"issuers",
+												"participants",
 												"{{ISSUER_CONTEXT_ID}}",
 												"issuanceprocesses",
 												"query"
@@ -6400,7 +6400,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"did\": \"{{CONSUMER_ID}}\",\n    \"participantId\": \"{{CONSUMER_ID}}\",\n    \"name\": \"{{CONSUMER_NAME}}\"\n}",
+									"raw": "{\n    \"did\": \"{{CONSUMER_ID}}\",\n    \"holderId\": \"{{CONSUMER_ID}}\",\n    \"name\": \"{{CONSUMER_NAME}}\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6408,7 +6408,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6416,10 +6416,10 @@
 										"api",
 										"admin",
 										"v1alpha",
-										"participants"
+										"holders"
 									]
 								},
-								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/participants' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7083\", \"participantId\": \"did:web:localhost%3A7083\", \"name\": \"Consumer Participant\"}'"
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/holders' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7083\", \"participantId\": \"did:web:localhost%3A7083\", \"name\": \"Consumer Participant\"}'"
 							},
 							"response": []
 						},
@@ -6430,7 +6430,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"did\": \"{{PROVIDER_ID}}\",\n    \"participantId\": \"{{PROVIDER_ID}}\",\n    \"name\": \"{{PROVIDER_NAME}}\"\n}",
+									"raw": "{\n    \"did\": \"{{PROVIDER_ID}}\",\n    \"holderId\": \"{{PROVIDER_ID}}\",\n    \"name\": \"{{PROVIDER_NAME}}\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6438,7 +6438,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6446,10 +6446,10 @@
 										"api",
 										"admin",
 										"v1alpha",
-										"participants"
+										"holders"
 									]
 								},
-								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/participants' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7093\", \"participantId\": \"did:web:localhost%3A7093\", \"name\": \"Provider Participant\"}'"
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/holders' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7093\", \"participantId\": \"did:web:localhost%3A7093\", \"name\": \"Provider Participant\"}'"
 							},
 							"response": []
 						},
