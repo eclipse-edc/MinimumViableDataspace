@@ -2142,7 +2142,7 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz/credentials?type=DemoCredential",
+									"raw": "{{CS_URL}}/api/identity/v1alpha/participants/ZGlkOndlYjpsb2NhbGhvc3QlM0E3MDgz/credentials?type=FoobarCredential",
 									"host": [
 										"{{CS_URL}}"
 									],
@@ -2157,7 +2157,7 @@
 									"query": [
 										{
 											"key": "type",
-											"value": "DemoCredential"
+											"value": "FoobarCredential"
 										}
 									]
 								}
@@ -2188,7 +2188,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"issuerDid\": \"{{ISSUER_DID}}\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"credentialType\": \"DemoCredential\"\n    }]\n}",
+									"raw": "{\n    \"issuerDid\": \"{{ISSUER_DID}}\",\n    \"holderPid\": \"credential-request-1\",\n    \"credentials\": [{\n        \"format\": \"VC1_0_JWT\",\n        \"credentialType\": \"FoobarCredential\"\n    }]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
