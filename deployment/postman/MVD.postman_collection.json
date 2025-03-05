@@ -6391,7 +6391,7 @@
 					]
 				},
 				{
-					"name": "Seed Issuer",
+					"name": "Seed Issuer SQL",
 					"item": [
 						{
 							"name": "Create consumer participant",
@@ -6491,6 +6491,155 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n    \"attestations\": [\n        \"db-attestation-def-1\"\n    ],\n    \"credentialType\": \"FoobarCredential\",\n    \"dataModel\": \"V_1_1\",\n    \"id\": \"demo-credential-def-2\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"membership_type\",\n            \"output\": \"credentialSubject.membershipType\",\n            \"required\": \"true\"\n        },\n        {\n            \"input\": \"membership_start_date\",\n            \"output\": \"credentialSubject.membershipStartDate\",\n            \"required\": true\n        }\n    ],\n    \"rules\": []\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"credentialdefinitions"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/credentialdefinitions' \\\n-H 'Content-Type: application/json' \\\n-d '{\n      \"attestations\": [\n        \"demo-attestation-def-1\"\n      ],\n      \"credentialType\": \"DemoCredential\",\n      \"dataModel\": \"V_1_1\",\n      \"id\": \"demo-credential-def-1\",\n      \"jsonSchema\": \"\",\n      \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n      \"mappings\": [\n        {\n          \"input\": \"name\",\n          \"output\": \"credentialSubject.name\",\n          \"required\": \"true\"\n        }\n      ],\n      \"rules\": []\n    }'"
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"packages": {},
+								"exec": [
+									"pm.test(\"Status is OK or conflict\", function() {",
+									"  pm.expect(pm.response.code).to.be.oneOf([200, 201, 204, 409])",
+									"})"
+								]
+							}
+						}
+					]
+				},
+				{
+					"name": "Seed Issuer",
+					"item": [
+						{
+							"name": "Create consumer participant",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"{{CONSUMER_ID}}\",\n    \"holderId\": \"{{CONSUMER_ID}}\",\n    \"name\": \"{{CONSUMER_NAME}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"holders"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/holders' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7083\", \"participantId\": \"did:web:localhost%3A7083\", \"name\": \"Consumer Participant\"}'"
+							},
+							"response": []
+						},
+						{
+							"name": "Create provider participant",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"did\": \"{{PROVIDER_ID}}\",\n    \"holderId\": \"{{PROVIDER_ID}}\",\n    \"name\": \"{{PROVIDER_NAME}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"holders"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/holders' \\\n-H 'Content-Type: application/json' \\\n-d '{ \"did\": \"did:web:localhost%3A7093\", \"participantId\": \"did:web:localhost%3A7093\", \"name\": \"Provider Participant\"}'"
+							},
+							"response": []
+						},
+						{
+							"name": "Create attestation definitions",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attestationType\": \"demo\",\n    \"configuration\": {\n    },\n    \"id\": \"demo-attestation-def-1\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations",
+									"host": [
+										"{{ISSUER_ADMIN_URL}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"v1alpha",
+										"attestations"
+									]
+								},
+								"description": "Generated from cURL: curl -sL -X POST 'http://localhost:10013/api/admin/v1alpha/attestations' \\\n-H 'Content-Type: application/json' \\\n-d '{\n  \"attestationType\": \"demo\",\n  \"configuration\": {\n  },\n  \"id\": \"demo-attestation-def-1\"\n}'"
+							},
+							"response": []
+						},
+						{
+							"name": "Create credential definitions",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"attestations\": [\n        \"demo-attestation-def-1\"\n    ],\n    \"credentialType\": \"DemoCredential\",\n    \"dataModel\": \"V_1_1\",\n    \"id\": \"demo-credential-def-1\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"participant.name\",\n            \"output\": \"credentialSubject.participant_name\",\n            \"required\": \"true\"\n        }\n    ],\n    \"rules\": []\n}",
 									"options": {
 										"raw": {
 											"language": "json"
