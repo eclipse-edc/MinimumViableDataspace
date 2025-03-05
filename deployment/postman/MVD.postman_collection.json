@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "cfcc016d-f3b8-4962-a217-511e5d2906e4",
+		"_postman_id": "c707f738-ced2-4971-9cef-75f3b382bd13",
 		"name": "MVD",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "647585"
+		"_exporter_id": "27652630"
 	},
 	"item": [
 		{
@@ -2318,7 +2318,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations?participantId=<string>",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations?participantId=<string>",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -2326,6 +2326,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"attestations"
 											],
 											"query": [
@@ -2485,7 +2487,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -2493,6 +2495,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"attestations"
 											]
 										},
@@ -2743,7 +2747,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations/query",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -2751,6 +2755,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"attestations",
 												"query"
 											]
@@ -2910,7 +2916,7 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/link?participantId=<string>",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations/:attestationDefinitionId/link?participantId=<string>",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -2918,6 +2924,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"attestations",
 												":attestationDefinitionId",
 												"link"
@@ -3167,7 +3175,7 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations/:attestationDefinitionId/unlink?participantId=<string>",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations/:attestationDefinitionId/unlink?participantId=<string>",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -3175,6 +3183,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"attestations",
 												":attestationDefinitionId",
 												"unlink"
@@ -3439,7 +3449,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -3447,6 +3457,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentialdefinitions"
 											]
 										},
@@ -3650,7 +3662,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions/query",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -3658,6 +3670,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentialdefinitions",
 												"query"
 											]
@@ -3822,7 +3836,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions/:credentialDefinitionId",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -3830,6 +3844,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentialdefinitions",
 												":credentialDefinitionId"
 											],
@@ -4027,7 +4043,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -4035,6 +4051,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentialdefinitions"
 											]
 										},
@@ -4233,7 +4251,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions/:credentialDefinitionId",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions/:credentialDefinitionId",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -4241,6 +4259,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentialdefinitions",
 												":credentialDefinitionId"
 											],
@@ -4437,7 +4457,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentials/query",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -4445,6 +4465,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentials",
 												"query"
 											]
@@ -4609,7 +4631,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/resume",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentials/:credentialId/resume",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -4617,6 +4639,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentials",
 												":credentialId",
 												"resume"
@@ -4790,7 +4814,7 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/revoke",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentials/:credentialId/revoke",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -4798,6 +4822,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentials",
 												":credentialId",
 												"revoke"
@@ -4971,7 +4997,7 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/status",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentials/:credentialId/status",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -4979,6 +5005,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentials",
 												":credentialId",
 												"status"
@@ -5152,7 +5180,7 @@
 										"method": "POST",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/:credentialId/suspend",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentials/:credentialId/suspend",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -5160,6 +5188,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentials",
 												":credentialId",
 												"suspend"
@@ -5333,7 +5363,7 @@
 										"method": "GET",
 										"header": [],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentials/{{PARTICIPANT_ID}}",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentials/{{PARTICIPANT_ID}}",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -5341,6 +5371,8 @@
 												"api",
 												"admin",
 												"v1alpha",
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
 												"credentials",
 												"{{PARTICIPANT_ID}}"
 											]
@@ -5527,7 +5559,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -5535,7 +5567,9 @@
 												"api",
 												"admin",
 												"v1alpha",
-												"participants"
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
+												"holders"
 											]
 										},
 										"description": "Updates participant data."
@@ -5738,7 +5772,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -5746,7 +5780,9 @@
 												"api",
 												"admin",
 												"v1alpha",
-												"participants"
+												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
+												"holders"
 											]
 										},
 										"description": "Adds a new participant."
@@ -5949,7 +5985,7 @@
 											}
 										},
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/query",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders/query",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -5958,6 +5994,8 @@
 												"admin",
 												"v1alpha",
 												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
+												"holders",
 												"query"
 											]
 										},
@@ -6169,7 +6207,7 @@
 											}
 										],
 										"url": {
-											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/:participantId",
+											"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders/:participantId",
 											"host": [
 												"{{ISSUER_ADMIN_URL}}"
 											],
@@ -6178,6 +6216,8 @@
 												"admin",
 												"v1alpha",
 												"participants",
+												"{{ISSUER_CONTEXT_ID}}",
+												"holders",
 												":participantId"
 											],
 											"variable": [
@@ -6408,7 +6448,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6416,6 +6456,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"holders"
 									]
 								},
@@ -6438,7 +6480,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6446,6 +6488,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"holders"
 									]
 								},
@@ -6468,7 +6512,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6476,6 +6520,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"attestations"
 									]
 								},
@@ -6498,7 +6544,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6506,6 +6552,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"credentialdefinitions"
 									]
 								},
@@ -6557,7 +6605,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6565,6 +6613,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"holders"
 									]
 								},
@@ -6587,7 +6637,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/holders",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6595,6 +6645,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"holders"
 									]
 								},
@@ -6617,7 +6669,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/attestations",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6625,6 +6677,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"attestations"
 									]
 								},
@@ -6647,7 +6701,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/credentialdefinitions",
+									"raw": "{{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/credentialdefinitions",
 									"host": [
 										"{{ISSUER_ADMIN_URL}}"
 									],
@@ -6655,6 +6709,8 @@
 										"api",
 										"admin",
 										"v1alpha",
+										"participants",
+										"{{ISSUER_CONTEXT_ID}}",
 										"credentialdefinitions"
 									]
 								},
