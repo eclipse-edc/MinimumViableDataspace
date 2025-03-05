@@ -137,12 +137,19 @@ resource "kubernetes_config_map" "issuerservice-config" {
     WEB_HTTP_DID_PORT                       = var.ports.did
     WEB_HTTP_DID_PATH                       = "/"
 
-    JAVA_TOOL_OPTIONS                  = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
-    EDC_VAULT_HASHICORP_URL            = var.vault-url
-    EDC_VAULT_HASHICORP_TOKEN          = var.vault-token
-    EDC_DATASOURCE_DEFAULT_URL         = var.database.url
-    EDC_DATASOURCE_DEFAULT_USER        = var.database.user
-    EDC_DATASOURCE_DEFAULT_PASSWORD    = var.database.password
+    JAVA_TOOL_OPTIONS               = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
+    EDC_VAULT_HASHICORP_URL         = var.vault-url
+    EDC_VAULT_HASHICORP_TOKEN       = var.vault-token
+    EDC_DATASOURCE_DEFAULT_URL      = var.database.url
+    EDC_DATASOURCE_DEFAULT_USER     = var.database.user
+    EDC_DATASOURCE_DEFAULT_PASSWORD = var.database.password
+
+    # even though we have a default data source, we need a named datasource for the DatabaseAttestationSource, because
+    # that is configured in the AttestationDefinition
+    EDC_DATASOURCE_MEMBERSHIP_URL      = var.database.url
+    EDC_DATASOURCE_MEMBERSHIP_USER     = var.database.user
+    EDC_DATASOURCE_MEMBERSHIP_PASSWORD = var.database.password
+
     EDC_SQL_SCHEMA_AUTOCREATE          = true
     EDC_IAM_ACCESSTOKEN_JTI_VALIDATION = true
     EDC_IAM_DID_WEB_USE_HTTPS          = false

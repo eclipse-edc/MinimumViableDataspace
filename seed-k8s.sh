@@ -154,7 +154,7 @@ curl -s --location 'http://127.0.0.1/issuer/cs/api/identity/v1alpha/participants
 
 ## Seed participant data to the issuer service
 newman run \
-  --folder "Seed Issuer" \
+  --folder "Seed Issuer SQL" \
   --env-var "ISSUER_ADMIN_URL=http://127.0.0.1/issuer/ad" \
   --env-var "CONSUMER_ID=did:web:consumer-identityhub%3A7083:consumer" \
   --env-var "CONSUMER_NAME=MVD Consumer Participant" \
