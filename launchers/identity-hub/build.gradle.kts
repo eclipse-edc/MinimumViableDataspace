@@ -24,10 +24,10 @@ dependencies {
 
     implementation(libs.edc.ih.lib.credentialquery) // needed in the extensions here
 
-    runtimeOnly(libs.edc.bom.identithub)
+    runtimeOnly(libs.edc.bom.identityhub)
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.edc.bom.identithub.sql)
+        runtimeOnly(libs.edc.bom.identityhub.sql)
         println("This runtime compiles with a remote STS, Hashicorp Vault and PostgreSQL. You will need properly configured STS, Postgres and HCV instances.")
     }
 
