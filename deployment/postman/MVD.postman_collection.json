@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0325d248-5934-498f-a475-46bada414f26",
+		"_postman_id": "e03235de-753f-49ed-8e70-86dd9b9b8ecd",
 		"name": "MVD",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "27652630"
@@ -2750,7 +2750,7 @@
 										"header": [],
 										"body": {
 											"mode": "raw",
-											"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"dataModel\": \"V_2_0\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\"\n}",
+											"raw": "{\n  \"attestations\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"credentialType\": \"<string>\",\n  \"id\": \"<string>\",\n  \"jsonSchema\": \"<string>\",\n  \"jsonSchemaUrl\": \"<string>\",\n  \"mappings\": [\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    },\n    {\n      \"input\": \"<string>\",\n      \"output\": \"<string>\",\n      \"required\": \"<boolean>\"\n    }\n  ],\n  \"rules\": [\n    {\n      \"configuration\": {\n        \"addca\": {}\n      },\n      \"type\": \"<string>\"\n    },\n    {\n      \"configuration\": {\n        \"incididunt_a1f\": {}\n      },\n      \"type\": \"<string>\"\n    }\n  ],\n  \"validity\": \"<long>\",\n  \"formats\": [\"VC1_0_JWT\"]\n}",
 											"options": {
 												"raw": {
 													"headerFamily": "json",
@@ -5846,7 +5846,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"attestations\": [\n        \"db-attestation-def-1\"\n    ],\n    \"credentialType\": \"FoobarCredential\",\n    \"dataModel\": \"V_1_1\",\n    \"id\": \"demo-credential-def-2\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"membership_type\",\n            \"output\": \"credentialSubject.membershipType\",\n            \"required\": \"true\"\n        },\n        {\n            \"input\": \"membership_start_date\",\n            \"output\": \"credentialSubject.membershipStartDate\",\n            \"required\": true\n        }\n    ],\n    \"rules\": []\n}",
+									"raw": "{\n    \"attestations\": [\n        \"db-attestation-def-1\"\n    ],\n    \"credentialType\": \"FoobarCredential\",\n    \"id\": \"demo-credential-def-2\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"membership_type\",\n            \"output\": \"credentialSubject.membershipType\",\n            \"required\": \"true\"\n        },\n        {\n            \"input\": \"membership_start_date\",\n            \"output\": \"credentialSubject.membershipStartDate\",\n            \"required\": true\n        }\n    ],\n    \"rules\": [],\n    \"formats\": [\"VC1_0_JWT\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -6003,7 +6003,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"attestations\": [\n        \"demo-attestation-def-1\"\n    ],\n    \"credentialType\": \"DemoCredential\",\n    \"dataModel\": \"V_1_1\",\n    \"id\": \"demo-credential-def-1\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"participant.name\",\n            \"output\": \"credentialSubject.participant_name\",\n            \"required\": \"true\"\n        }\n    ],\n    \"rules\": []\n}",
+									"raw": "{\n    \"attestations\": [\n        \"demo-attestation-def-1\"\n    ],\n    \"credentialType\": \"DemoCredential\",\n    \"id\": \"demo-credential-def-1\",\n    \"jsonSchema\": \"{}\",\n    \"jsonSchemaUrl\": \"https://example.com/schema/demo-credential.json\",\n    \"mappings\": [\n        {\n            \"input\": \"participant.name\",\n            \"output\": \"credentialSubject.participant_name\",\n            \"required\": \"true\"\n        }\n    ],\n    \"rules\": [],\n    \"formats\": [\"VC1_0_JWT\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
