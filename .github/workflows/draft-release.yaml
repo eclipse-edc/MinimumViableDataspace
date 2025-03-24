@@ -1,0 +1,119 @@
+#
+#  Copyright (c) 2025 Cofinity-X
+#
+#  See the NOTICE file(s) distributed with this work for additional
+#  information regarding copyright ownership.
+#
+#  This program and the accompanying materials are made available under the
+#  terms of the Apache License, Version 2.0 which is available at
+#  https://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#  License for the specific language governing permissions and limitations
+#  under the License.
+#
+#  SPDX-License-Identifier: Apache-2.0
+#
+
+---
+name: "Draft Release"
+run-name: "Draft Release ${{ inputs.version }} from ${{ github.ref_name }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version of EDC that should be used in this release, e.g. "0.12.0" or "0.13.0-somespecial-SNAPSHOT"'
+        required: true
+
+jobs:
+  validate-and-prepare:
+    name: "Validate that tag does not already exist and prepare branch"
+    runs-on: ubuntu-latest
+    if: ${{ github.ref_name == 'main' || startsWith(github.ref, 'refs/tags/') }}
+    outputs:
+      branch_name: ${{ steps.resolve_branch.outputs.branch_name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: check-tag
+        name: "Check if tag exists"
+        run: |-
+
+          tag=$(git tag -l ${{ inputs.version }})
+
+          if [ ! -z $tag ];
+          then
+            echo "A Git tag $tag already exists! Please delete first or choose another tag."
+            exit 1
+          fi
+      - id: resolve_branch
+        name: "Resolve branch prefix (release or bugfix)"
+        run: |
+          
+          if [[ ${{ github.ref_name }} == "main" ]];
+          then
+            echo "branch_name=release/${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          elif [[ ${{ github.ref }} == refs/tags/* ]]
+          then
+            echo "branch_name=bugfix/${{ inputs.version }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "Ref branch does not match required criteria. Should either be "main" or a tag."
+            exit 1
+          fi
+
+  draft-new-release:
+    name: "Draft a new release"
+    runs-on: ubuntu-latest
+    needs: validate-and-prepare
+    permissions:
+      contents: write
+      packages: write
+      pages: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create Release or Bugfix branch
+        run: git checkout -b ${{ needs.validate-and-prepare.outputs.branch_name }}
+      - name: Initialize mandatory git config
+        run: |
+          git config user.name "eclipse-edc-bot"
+          git config user.email "edc-bot@eclipse.org"
+      - uses: ./.github/actions/gradle-setup
+      - name: Bump version in gradle.properties
+        run: |-
+          # replace the project's (default) version, could be overwritten later with the -Pversion=... flag
+          sed -i  's/version=.*/version=${{ inputs.version }}/g' gradle.properties
+          sed -i  's/edcGradlePluginsVersion=.*/edcGradlePluginsVersion=${{ inputs.version }}/g' gradle.properties
+
+      - name: Bump version in version catalog
+        run: |-
+          sed -i 's/edc\s*=\s*".*"/edc = "${{ inputs.version }}"/g' gradle/libs.versions.toml
+
+      - name: Commit changed files
+        id: make-commit
+        run: |
+          git add gradle.properties gradle/libs.versions.toml
+          git commit --message "Prepare release ${{ inputs.version }}"
+          
+          echo "commit=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      - name: Push new branch
+        run: git push origin ${{ needs.validate-and-prepare.outputs.branch_name }}
+      - name: Create pull request
+        if: ${{ github.ref_name == 'main' }}
+        uses: thomaseizinger/create-pull-request@1.4.0
+        with:
+          head: ${{ needs.validate-and-prepare.outputs.branch_name }}
+          base: main
+          title: Release version ${{ inputs.version }}
+          reviewers: ${{ github.actor }}
+          body: |-
+            This PR was created in response to a manual trigger of the [draft release workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+            Versions have been bumped in [commit ${{ steps.make-commit.outputs.commit }}](${{ steps.make-commit.outputs.commit }}).
+
+            Merging this PR will create a GitHub release and upload any assets that are created as part of the release build.
+
+          github_token: ${{ secrets.GITHUB_TOKEN }}

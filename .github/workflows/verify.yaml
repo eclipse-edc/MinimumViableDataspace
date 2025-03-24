@@ -22,9 +22,14 @@ name: "Verify"
 
 on:
   push:
-  pull_request:
     branches:
       - main
+  pull_request:
+
+  workflow_run:
+    workflows: [ "Draft Release" ]
+    types:
+      - completed
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

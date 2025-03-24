@@ -22,13 +22,16 @@ name: "Execute E2E Tests"
 on:
   push:
   pull_request:
-    branches:
-      - main
   schedule:
     - cron: "0 5 * * *" # once a day
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+  workflow_run:
+    workflows: [ "Draft Release" ]
+    types:
+      - completed
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
