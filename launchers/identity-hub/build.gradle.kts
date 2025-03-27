@@ -22,7 +22,8 @@ dependencies {
     runtimeOnly(project(":extensions:superuser-seed"))
     runtimeOnly(project(":extensions:did-example-resolver"))
 
-    implementation(libs.edc.ih.lib.credentialquery) // needed in the extensions here
+    implementation(libs.edc.ih.spi) // needed in the extensions here
+    implementation(libs.edc.ih.spi.credentials) // needed in the extensions here
 
     runtimeOnly(libs.edc.bom.identityhub)
     if (project.properties.getOrDefault("persistence", "false") == "true") {
