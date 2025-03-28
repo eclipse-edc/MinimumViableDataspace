@@ -85,16 +85,36 @@ assumptions were made that are potentially invalid in other scenarios.
 It merely is a playground for developers wanting to kick the tires in the EDC and DCP space, and its purpose is to
 demonstrate how DCP works to an otherwise unassuming audience.
 
-### 2.1 Which version should I use?
+### 2.1 Version stability and backwards compatibility guarantees
+
+It is important to understand that while we _do_ tag the git tree at certain times, the intention there is to provide
+stable builds for adopters and to avoid randomly breaking builds. MVD releases simply use _release_ versions of upstream
+components, as opposed to the `main` branch, which uses `-SNAPSHOT` versions. The latter case can occasionally lead to
+breaking builds.
+
+However, all of our development work in MVD targets the `main` branch. In other words, we do not backport bugfixes to
+older releases of MVD. If there is a bug or a new feature either in one of the upstream components or MVD, fixes will
+_always_ target `main` and will surface in one of the upcoming MVD releases.
+
+This is yet another reason why MVD should _never_ be used in production scenarios!
+
+Please also note that MVD does not publish any artifacts (Maven, Docker images, ...), adopters have to build from
+source.
+
+TL;DR - there are none. This is a _sample_ project, not a commercial product.
+
+### 2.2 Which version should I use?
 
 The repo's default branch is `main`, which serves as development branch and is checked out by default. If you don't do
-anything, then you'll get the absolute latest version of MVD. This is suitable for everyone who is okay with pulling
+anything, then you'll get the absolute latest version of MVD. This is suitable for anyone who is okay with pulling
 frequently and with the occasional breakage. The upshot is that this branch will always contain the latest features and
 fixes of all upstream components.
 
+> We have monitoring systems im place that inform us about broken builds. No need to raise issues about this.
+
 More conservative developers may fall back
 to [releases of MVD](https://github.com/eclipse-edc/MinimumViableDataspace/releases) that use release versions of all
-upstream components.
+upstream components. If this is you, then don't forget to check out the appropriate tag after cloning the repo.
 
 Either download the ZIP file and use sources therein, or check out the corresponding tag.
 
