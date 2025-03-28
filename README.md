@@ -5,6 +5,7 @@
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
     * [1. Introduction](#1-introduction)
     * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+        * [2.1 Which version should I use?](#21-which-version-should-i-use)
     * [3. The Scenario](#3-the-scenario)
         * [3.1 Participants](#31-participants)
         * [3.2 Data setup](#32-data-setup)
@@ -59,16 +60,18 @@
 
 ## 1. Introduction
 
-The Decentralized Claims Protocol defines a secure way how to participants in a dataspace can exchange and present
-credential information. In particular, the [DCP specification](https://github.com/eclipse-tractusx/identity-trust)
-defines the _Presentation Flow_, which is the process of requesting, presenting and verifying Verifiable Credentials.
+The Decentralized Claims Protocol defines a secure way how to participants in a dataspace can obtain, exchange and
+present credential information. In particular,
+the [DCP specification](https://github.com/eclipse-tractusx/identity-trust) defines the _Presentation Flow_, which is
+the process of requesting, presenting and verifying Verifiable Credentials and the _Credential Issuance Flow_, which is
+used to request and issue Verifiable Credentials to a dataspace participant.
 
-So in order to get the most out of this demo, a basic understanding of VerifiableCredentials, VerifiablePresentations,
+So in order to get the most out of this demo, a basic understanding of Verifiable Credentials, Verifiable Presentations,
 Decentralized Identifiers (DID) and cryptography is necessary. These concepts will not be explained here further.
 
-The Presentation Flow was adopted in the Eclipse Dataspace Components project and is currently implemented in modules
-pertaining to the [Connector](https://github.com/eclipse-edc/connector) as well as the
-[IdentityHub](https://github.com/eclipse-edc/IdentityHub).
+The Decentralized Claims Protocol was adopted in the Eclipse Dataspace Components project and is currently implemented
+in modules pertaining to the [Connector](https://github.com/eclipse-edc/connector) as well as
+the [IdentityHub](https://github.com/eclipse-edc/IdentityHub).
 
 ## 2. Purpose of this Demo
 
@@ -81,6 +84,41 @@ assumptions were made that are potentially invalid in other scenarios.
 
 It merely is a playground for developers wanting to kick the tires in the EDC and DCP space, and its purpose is to
 demonstrate how DCP works to an otherwise unassuming audience.
+
+### 2.1 Version stability and backwards compatibility guarantees
+
+It is important to understand that while we _do_ tag the git tree at certain times, the intention there is to provide
+stable builds for adopters and to avoid randomly breaking builds. MVD releases simply use _release_ versions of upstream
+components, as opposed to the `main` branch, which uses `-SNAPSHOT` versions. The latter case can occasionally lead to
+breaking builds.
+
+However, all of our development work in MVD targets the `main` branch. In other words, we do not backport bugfixes to
+older releases of MVD. If there is a bug or a new feature either in one of the upstream components or MVD, fixes will
+_always_ target `main` and will surface in one of the upcoming MVD releases.
+
+This is yet another reason why MVD should _never_ be used in production scenarios!
+
+Please also note that MVD does not publish any artifacts (Maven, Docker images, ...), adopters have to build from
+source.
+
+TL;DR - there are none. This is a _sample_ project, not a commercial product.
+
+### 2.2 Which version should I use?
+
+The repo's default branch is `main`, which serves as development branch and is checked out by default. If you don't do
+anything, then you'll get the absolute latest version of MVD. This is suitable for anyone who is okay with pulling
+frequently and with the occasional breakage. The upshot is that this branch will always contain the latest features and
+fixes of all upstream components.
+
+> We have monitoring systems im place that inform us about broken builds. No need to raise issues about this.
+
+More conservative developers may fall back
+to [releases of MVD](https://github.com/eclipse-edc/MinimumViableDataspace/releases) that use release versions of all
+upstream components. If this is you, then don't forget to check out the appropriate tag after cloning the repo.
+
+Either download the ZIP file and use sources therein, or check out the corresponding tag.
+
+An MVD release version is typically created shortly after a release of the upstream components was released.
 
 ## 3. The Scenario
 
