@@ -5,6 +5,7 @@
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
     * [1. Introduction](#1-introduction)
     * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+        * [2.1 Which version should I use?](#21-which-version-should-i-use)
     * [3. The Scenario](#3-the-scenario)
         * [3.1 Participants](#31-participants)
         * [3.2 Data setup](#32-data-setup)
@@ -59,16 +60,18 @@
 
 ## 1. Introduction
 
-The Decentralized Claims Protocol defines a secure way how to participants in a dataspace can exchange and present
-credential information. In particular, the [DCP specification](https://github.com/eclipse-tractusx/identity-trust)
-defines the _Presentation Flow_, which is the process of requesting, presenting and verifying Verifiable Credentials.
+The Decentralized Claims Protocol defines a secure way how to participants in a dataspace can obtain, exchange and
+present credential information. In particular,
+the [DCP specification](https://github.com/eclipse-tractusx/identity-trust) defines the _Presentation Flow_, which is
+the process of requesting, presenting and verifying Verifiable Credentials and the _Credential Issuance Flow_, which is
+used to request and issue Verifiable Credentials to a dataspace participant.
 
-So in order to get the most out of this demo, a basic understanding of VerifiableCredentials, VerifiablePresentations,
+So in order to get the most out of this demo, a basic understanding of Verifiable Credentials, Verifiable Presentations,
 Decentralized Identifiers (DID) and cryptography is necessary. These concepts will not be explained here further.
 
-The Presentation Flow was adopted in the Eclipse Dataspace Components project and is currently implemented in modules
-pertaining to the [Connector](https://github.com/eclipse-edc/connector) as well as the
-[IdentityHub](https://github.com/eclipse-edc/IdentityHub).
+The Decentralized Claims Protocol was adopted in the Eclipse Dataspace Components project and is currently implemented
+in modules pertaining to the [Connector](https://github.com/eclipse-edc/connector) as well as
+the [IdentityHub](https://github.com/eclipse-edc/IdentityHub).
 
 ## 2. Purpose of this Demo
 
@@ -81,6 +84,21 @@ assumptions were made that are potentially invalid in other scenarios.
 
 It merely is a playground for developers wanting to kick the tires in the EDC and DCP space, and its purpose is to
 demonstrate how DCP works to an otherwise unassuming audience.
+
+### 2.1 Which version should I use?
+
+The repo's default branch is `main`, which serves as development branch and is checked out by default. If you don't do
+anything, then you'll get the absolute latest version of MVD. This is suitable for everyone who is okay with pulling
+frequently and with the occasional breakage. The upshot is that this branch will always contain the latest features and
+fixes of all upstream components.
+
+More conservative developers may fall back
+to [releases of MVD](https://github.com/eclipse-edc/MinimumViableDataspace/releases) that use release versions of all
+upstream components.
+
+Either download the ZIP file and use sources therein, or check out the corresponding tag.
+
+An MVD release version is typically created shortly after a release of the upstream components was released.
 
 ## 3. The Scenario
 
