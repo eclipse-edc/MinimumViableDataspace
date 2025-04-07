@@ -72,10 +72,6 @@ public class LazyLoadNodeDirectory implements TargetNodeDirectory {
         //noop
     }
 
-    @Override
-    public TargetNode remove(String s) {
-        return null;
-    }
 
     private TargetNode createNode(String name, String did) {
         var didResult = didResolverRegistry.resolve(did);
