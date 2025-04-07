@@ -13,6 +13,7 @@ restAssured = "5.5.1"
 [libraries]
 # upstream EDC dependencies
 edc-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
+edc-config-fs = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
 edc-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
 edc-did-core = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
 edc-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
@@ -102,7 +103,7 @@ edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-bom", version.
 edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
-connector = ["edc-boot", "edc-core-connector", "edc-core-api", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token"]
+connector = ["edc-boot", "edc-core-connector", "edc-core-api", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token", "edc-config-fs"]
 
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
