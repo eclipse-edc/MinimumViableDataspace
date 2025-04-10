@@ -20,6 +20,7 @@ edc-did-web = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc"
 edc-core-api = { module = "org.eclipse.edc:api-core", version.ref = "edc" }
 edc-core-connector = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 edc-core-token = { module = "org.eclipse.edc:token-core", version.ref = "edc" }
+edc-core-runtime = { module = "org.eclipse.edc:runtime-core", version.ref = "edc" }
 edc-core-edrstore = { module = "org.eclipse.edc:edr-store-core", version.ref = "edc" }
 edc-ext-http = { module = "org.eclipse.edc:http", version.ref = "edc" }
 edc-ext-jsonld = { module = "org.eclipse.edc:json-ld", version.ref = "edc" }
@@ -103,7 +104,7 @@ edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-bom", version.
 edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
-connector = ["edc-boot", "edc-core-connector", "edc-core-api", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token", "edc-config-fs"]
+connector = ["edc-boot", "edc-core-connector", "edc-core-runtime", "edc-core-api", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token", "edc-config-fs"]
 
 dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
 
