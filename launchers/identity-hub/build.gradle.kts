@@ -32,6 +32,7 @@ dependencies {
         println("This runtime compiles with a remote STS, Hashicorp Vault and PostgreSQL. You will need properly configured STS, Postgres and HCV instances.")
     }
 
+    testImplementation(libs.edc.spi.identity.did)
     testImplementation(libs.edc.lib.crypto)
     testImplementation(libs.edc.lib.keys)
 }
