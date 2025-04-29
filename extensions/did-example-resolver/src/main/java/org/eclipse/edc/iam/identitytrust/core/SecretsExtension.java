@@ -37,7 +37,7 @@ public class SecretsExtension implements ServiceExtension {
 
     @Provider
     public Clock clock() {
-        // THIS IS A DIRTY HACK, so this extension is intialized before the DcpDefaultServicesExtension, which needs the secrets!
+        // THIS IS A DIRTY HACK, so this extension is initialized before the DcpDefaultServicesExtension, which needs the secrets!
         return Clock.systemUTC();
     }
 
