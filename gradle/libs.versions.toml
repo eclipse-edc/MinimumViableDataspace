@@ -8,7 +8,7 @@ jackson = "2.18.2"
 jakarta-json = "2.1.3"
 parsson = "1.1.6"
 postgres = "42.7.3"
-restAssured = "5.5.1"
+restAssured = "5.5.5"
 
 [libraries]
 # upstream EDC dependencies
