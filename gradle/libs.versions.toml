@@ -3,7 +3,7 @@ format.version = "1.1"
 
 [versions]
 awaitility = "4.3.0"
-edc = "0.13.0-SNAPSHOT"
+edc = "0.14.0-SNAPSHOT"
 jackson = "2.18.2"
 jakarta-json = "2.1.3"
 parsson = "1.1.6"
@@ -104,12 +104,40 @@ edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-bom", version.
 edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
-connector = ["edc-boot", "edc-core-connector", "edc-core-runtime", "edc-core-api", "edc-ext-http", "edc-api-observability", "edc-ext-jsonld", "edc-core-token", "edc-config-fs"]
+connector = [
+  "edc-boot",
+  "edc-core-connector",
+  "edc-core-runtime",
+  "edc-core-api",
+  "edc-ext-http",
+  "edc-api-observability",
+  "edc-ext-jsonld",
+  "edc-core-token",
+  "edc-config-fs",
+]
 
-dcp = ["edc-dcp", "edc-did-core", "edc-did-web", "edc-oauth2-client", "edc-dcp-core"]
+dcp = [
+  "edc-dcp",
+  "edc-did-core",
+  "edc-did-web",
+  "edc-oauth2-client",
+  "edc-dcp-core",
+]
 
-sql-edc = ["edc-sql-assetindex", "edc-sql-contractdef", "edc-sql-contractneg", "edc-sql-policydef", "edc-sql-edrcache", "edc-sql-transferprocess", "edc-sql-dataplane-instancestore", "edc-sql-core", "edc-sql-lease", "edc-sql-pool", "edc-sql-transactionlocal", "postgres"]
+sql-edc = [
+  "edc-sql-assetindex",
+  "edc-sql-contractdef",
+  "edc-sql-contractneg",
+  "edc-sql-policydef",
+  "edc-sql-edrcache",
+  "edc-sql-transferprocess",
+  "edc-sql-dataplane-instancestore",
+  "edc-sql-core",
+  "edc-sql-lease",
+  "edc-sql-pool",
+  "edc-sql-transactionlocal",
+  "postgres",
+]
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "8.3.6" }
-

@@ -58,7 +58,7 @@ public class CredentialIssuanceEndToEndTest {
                           "issuerDid": "%s",
                           "holderPid": "%s",
                           "credentials": [
-                            {"format": "VC1_0_JWT", "credentialType": "FoobarCredential"}
+                            {"format": "VC1_0_JWT", "type": "FoobarCredential", "id": "demo-credential-def-2"}
                           ]
                         }
                         """.formatted(ISSUER_DID, HOLDER_PID))
