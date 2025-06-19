@@ -50,8 +50,8 @@ jobs:
       - name: "Setup Kubectl"
         uses: azure/setup-kubectl@v4
 
-      - name: "Setup Terraform"
-        uses: hashicorp/setup-terraform@v3
+      - name: "Set up OpenTofu"
+        uses: opentofu/setup-opentofu@v1
 
       - uses: actions/checkout@v4
 
@@ -83,19 +83,19 @@ jobs:
 
 
 
-      - name: "Terraform init"
+      - name: "Tofu init"
         working-directory: ./deployment
         run: |-
-          terraform init -reconfigure
-      - name: "Terraform plan"
+          tofu init -reconfigure
+      - name: "Tofu plan"
         working-directory: ./deployment
         run: |-
-          terraform plan -out=$GITHUB_SHA.out
+          tofu plan -out=$GITHUB_SHA.out
 
-      - name: "Terraform apply"
+      - name: "Tofu apply"
         working-directory: ./deployment
         run: |-
-          terraform apply "$GITHUB_SHA.out"
+          tofu apply "$GITHUB_SHA.out"
 
       - name: "Seed dataspace"
         run: |-
