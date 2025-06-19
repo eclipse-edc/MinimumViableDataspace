@@ -17,21 +17,10 @@ pluginManagement {
     repositories {
         mavenLocal()
         maven {
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+            url = uri("https://central.sonatype.com/repository/maven-snapshots/")
         }
         mavenCentral()
         gradlePluginPortal()
-    }
-}
-
-dependencyResolutionManagement {
-
-    repositories {
-        maven {
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-        mavenCentral()
-        mavenLocal()
     }
 }
 
