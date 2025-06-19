@@ -24,24 +24,26 @@ resource "helm_release" "vault" {
   repository = "https://helm.releases.hashicorp.com"
   chart      = "vault"
 
-  set {
-    name  = "server.dev.devRootToken"
-    value = var.vault-token
-  }
-  set {
-    name  = "server.dev.enabled"
-    value = true
-  }
 
-  set {
-    name  = "injector.enabled"
-    value = false
-  }
 
-  set {
-    name  = "hashicorp.token"
-    value = var.vault-token
-  }
+  set = [
+    {
+      name  = "server.dev.devRootToken"
+      value = var.vault-token
+    },
+    {
+      name  = "server.dev.enabled"
+      value = true
+    },
+    {
+      name  = "injector.enabled"
+      value = false
+    },
+    {
+      name  = "hashicorp.token"
+      value = var.vault-token
+    }
+  ]
 
   values = [
     file("${path.module}/vault-values.yaml"),

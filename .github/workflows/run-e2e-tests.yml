@@ -75,7 +75,7 @@ jobs:
       - name: "Install nginx ingress controller"
         run: |-
           echo "::notice title=nginx ingress on KinD::For details how to run nginx ingress on KinD check https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx"
-          kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+          kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
           kubectl wait --namespace ingress-nginx \
             --for=condition=ready pod \
             --selector=app.kubernetes.io/component=controller \
