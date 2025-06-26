@@ -15,6 +15,7 @@
 package org.eclipse.edc.demo.tests.issuance;
 
 import io.restassured.specification.RequestSpecification;
+import jakarta.ws.rs.core.HttpHeaders;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ public class CredentialIssuanceEndToEndTest {
 
     @Test
     void makeCredentialRequest_expectCredential() {
-        var requestId = baseRequest()
+        var location = baseRequest()
                 .body("""
                         {
                           "issuerDid": "%s",
@@ -66,8 +67,10 @@ public class CredentialIssuanceEndToEndTest {
                 .then()
                 .log().ifValidationFails()
                 .statusCode(201)
-                .extract().body().asString();
+                .extract().header(HttpHeaders.LOCATION);
 
+        assertThat(location).endsWith(HOLDER_PID);
+        var requestId = location.substring(location.lastIndexOf('/') + 1);
         assertThat(requestId).isEqualTo(HOLDER_PID);
 
         // wait for the state of the request to become ISSUED
