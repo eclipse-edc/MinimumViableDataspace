@@ -20,5 +20,6 @@ dependencies {
     implementation(libs.edc.spi.identity.did)
     implementation(libs.edc.fc.spi.crawler)
     runtimeOnly(libs.edc.fc.core)
+    runtimeOnly(libs.edc.fc.core2025)
     runtimeOnly(libs.edc.fc.api)
 }

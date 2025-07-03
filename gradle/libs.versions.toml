@@ -83,6 +83,7 @@ edc-sts-remote-client = { module = "org.eclipse.edc:identity-trust-sts-remote-cl
 # federated catalog modules
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
 edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
+edc-fc-core2025 = { module = "org.eclipse.edc:federated-catalog-core-2025", version.ref = "edc" }
 edc-fc-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
 
 # Third party libs
@@ -105,38 +106,38 @@ edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sq
 
 [bundles]
 connector = [
-  "edc-boot",
-  "edc-core-connector",
-  "edc-core-runtime",
-  "edc-core-api",
-  "edc-ext-http",
-  "edc-api-observability",
-  "edc-ext-jsonld",
-  "edc-core-token",
-  "edc-config-fs",
+    "edc-boot",
+    "edc-core-connector",
+    "edc-core-runtime",
+    "edc-core-api",
+    "edc-ext-http",
+    "edc-api-observability",
+    "edc-ext-jsonld",
+    "edc-core-token",
+    "edc-config-fs",
 ]
 
 dcp = [
-  "edc-dcp",
-  "edc-did-core",
-  "edc-did-web",
-  "edc-oauth2-client",
-  "edc-dcp-core",
+    "edc-dcp",
+    "edc-did-core",
+    "edc-did-web",
+    "edc-oauth2-client",
+    "edc-dcp-core",
 ]
 
 sql-edc = [
-  "edc-sql-assetindex",
-  "edc-sql-contractdef",
-  "edc-sql-contractneg",
-  "edc-sql-policydef",
-  "edc-sql-edrcache",
-  "edc-sql-transferprocess",
-  "edc-sql-dataplane-instancestore",
-  "edc-sql-core",
-  "edc-sql-lease",
-  "edc-sql-pool",
-  "edc-sql-transactionlocal",
-  "postgres",
+    "edc-sql-assetindex",
+    "edc-sql-contractdef",
+    "edc-sql-contractneg",
+    "edc-sql-policydef",
+    "edc-sql-edrcache",
+    "edc-sql-transferprocess",
+    "edc-sql-dataplane-instancestore",
+    "edc-sql-core",
+    "edc-sql-lease",
+    "edc-sql-pool",
+    "edc-sql-transactionlocal",
+    "postgres",
 ]
 
 [plugins]
