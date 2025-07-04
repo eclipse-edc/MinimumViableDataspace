@@ -15,12 +15,9 @@
 package org.eclipse.edc.iam.identitytrust.core;
 
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
-import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
-
-import java.time.Clock;
 
 
 public class SecretsExtension implements ServiceExtension {
@@ -33,12 +30,6 @@ public class SecretsExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         seedKeys(context);
-    }
-
-    @Provider
-    public Clock clock() {
-        // THIS IS A DIRTY HACK, so this extension is intialized before the DcpDefaultServicesExtension, which needs the secrets!
-        return Clock.systemUTC();
     }
 
     /**
