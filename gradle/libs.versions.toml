@@ -84,6 +84,7 @@ edc-sts-remote-client = { module = "org.eclipse.edc:identity-trust-sts-remote-cl
 edc-fc-spi-crawler = { module = "org.eclipse.edc:crawler-spi", version.ref = "edc" }
 edc-fc-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
 edc-fc-core2025 = { module = "org.eclipse.edc:federated-catalog-core-2025", version.ref = "edc" }
+edc-fc-core08 = { module = "org.eclipse.edc:federated-catalog-core-08", version.ref = "edc" }
 edc-fc-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
 
 # Third party libs
