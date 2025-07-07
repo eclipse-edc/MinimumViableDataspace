@@ -852,7 +852,7 @@ seed the keys via config or commandline argument. That said, the process is simi
 
 ```shell
 openssl genpkey -algorithm ed25519 -out deployment/assets/consumer_private.pem
-openssl pkey -in assets/consumer_private.pem -pubout -out assets/consumer_public.pem
+openssl pkey -in deployment/assets/consumer_private.pem -pubout -out deployment/assets/consumer_public.pem
 
 # use the same key for provider:
 cp  deployment/assets/consumer_private.pem  deployment/assets/provider_private.pem
