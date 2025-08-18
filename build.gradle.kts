@@ -25,6 +25,7 @@ buildscript {
     dependencies {
         val edcGradlePluginsVersion: String by project
         classpath("org.eclipse.edc.edc-build:org.eclipse.edc.edc-build.gradle.plugin:${edcGradlePluginsVersion}")
+        classpath("org.eclipse.edc.autodoc:org.eclipse.edc.autodoc.gradle.plugin:$version")
     }
 }
 
@@ -32,6 +33,7 @@ val edcGradlePluginsVersion: String by project
 
 allprojects {
     apply(plugin = "${group}.edc-build")
+    apply(plugin = "${group}.autodoc")
 
     // configure which version of the annotation processor to use. defaults to the same version as the plugin
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {
@@ -51,7 +53,7 @@ allprojects {
 subprojects {
     afterEvaluate {
         if (project.plugins.hasPlugin("com.github.johnrengelman.shadow") &&
-                file("${project.projectDir}/src/main/docker/Dockerfile").exists()
+            file("${project.projectDir}/src/main/docker/Dockerfile").exists()
         ) {
 
             //actually apply the plugin to the (sub-)project
