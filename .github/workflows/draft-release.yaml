@@ -87,7 +87,6 @@ jobs:
         run: |-
           # replace the project's (default) version, could be overwritten later with the -Pversion=... flag
           sed -i  's/version=.*/version=${{ inputs.version }}/g' gradle.properties
-          sed -i  's/edcGradlePluginsVersion=.*/edcGradlePluginsVersion=${{ inputs.version }}/g' gradle.properties
 
       - name: Bump version in version catalog
         run: |-
