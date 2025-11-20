@@ -36,17 +36,45 @@ subprojects {
             //actually apply the plugin to the (sub-)project
             apply(plugin = "com.bmuschko.docker-remote-api")
 
-            tasks.register("dockerize", DockerBuildImage::class) {
-                val dockerContextDir = project.projectDir
-                dockerFile.set(file("$dockerContextDir/src/main/docker/Dockerfile"))
+            val dockerTask = tasks.register("dockerize", DockerBuildImage::class) {
+                val dockerContextDir = project.layout.buildDirectory.dir("docker")
+
+                // Set inputs for the task so Gradle knows about them
+                inputs.file("$projectDir/src/main/docker/Dockerfile")
+                inputs.file(project.tasks.named("shadowJar").get().outputs.files.singleFile)
+
                 images.add("${project.name}:${project.version}")
                 images.add("${project.name}:latest")
+
                 // specify platform with the -Dplatform flag:
                 if (System.getProperty("platform") != null)
                     platform.set(System.getProperty("platform"))
-                buildArgs.put("JAR", "build/libs/${project.name}.jar")
-                inputDir.set(file(dockerContextDir))
+
+                // The JAR will be at the root of the context dir
+                buildArgs.put("JAR", "${project.name}.jar")
+
+                inputDir.set(dockerContextDir)
+                dockerFile.set(dockerContextDir.map { it.file("Dockerfile") })
+
                 dependsOn("shadowJar")
+
+                doFirst {
+                    val dest = dockerContextDir.get().asFile
+                    dest.mkdirs()
+
+                    // Copy Dockerfile
+                    copy {
+                        from("$projectDir/src/main/docker/Dockerfile")
+                        into(dest)
+                    }
+
+                    // Copy JAR
+                    copy {
+                        from(project.tasks.named("shadowJar").get().outputs.files.singleFile)
+                        into(dest)
+                        rename { "${project.name}.jar" }
+                    }
+                }
             }
         }
     }
