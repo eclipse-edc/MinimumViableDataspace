@@ -1,0 +1,513 @@
+services:
+  # ------------------------------------------------------------------------------------------------
+  # INFRASTRUCTURE (DBs, Vaults)
+  # ------------------------------------------------------------------------------------------------
+  consumer-postgres:
+    image: postgres:16.3-alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker-compose/postgres/consumer-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  consumer-vault:
+    image: hashicorp/vault:latest
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "8201:8200" # Host map: 8201
+    cap_add:
+      - IPC_LOCK
+
+  provider-postgres:
+    image: postgres:16.3-alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker-compose/postgres/provider-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  provider-vault:
+    image: hashicorp/vault:latest
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    ports:
+      - "8202:8200" # Host map: 8202
+    cap_add:
+      - IPC_LOCK
+
+  issuer-postgres:
+    image: postgres:16.3-alpine3.20
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./docker-compose/postgres/issuer-init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Note: The issuer also needs a vault if it uses the standard EDC vault extension,
+  # but based on issuer.tf, it points to consumer-vault (oddly? No, wait).
+  # issuer.tf: vault-url = "http://consumer-vault:8200"
+  # Let's double check that.
+  # Yes, issuer.tf line 24: vault-url = "http://consumer-vault:8200"
+  # So we do NOT need a separate issuer vault, it uses the consumer one.
+  # But wait, is that a typo in the repo?
+  # "module.dataspace-issuer-postgres" is separate.
+  # I will stick to the K8s config: point issuer to consumer-vault.
+
+  # ------------------------------------------------------------------------------------------------
+  # CONSUMER
+  # ------------------------------------------------------------------------------------------------
+  consumer-controlplane:
+    image: controlplane:latest
+    depends_on:
+      consumer-postgres:
+        condition: service_healthy
+      consumer-vault:
+        condition: service_started
+      consumer-identityhub:
+        condition: service_started
+    ports:
+      - "8080:8080" # Web
+      - "8081:8081" # Management
+      - "8082:8082" # Protocol
+      - "8083:8083" # Control
+      - "8084:8084" # Catalog
+      - "8085:8085" # Version
+      - "5005:1044" # Debug
+    environment:
+      EDC_PARTICIPANT_ID: did:web:consumer-identityhub%3A7083:consumer
+      EDC_IAM_ISSUER_ID: did:web:consumer-identityhub%3A7083:consumer
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_MANAGEMENT_PORT: 8081
+      WEB_HTTP_MANAGEMENT_PATH: /api/management
+      WEB_HTTP_MANAGEMENT_AUTH_TYPE: tokenbased
+      WEB_HTTP_MANAGEMENT_AUTH_KEY: password
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PROTOCOL_PORT: 8082
+      WEB_HTTP_PROTOCOL_PATH: /api/dsp
+      WEB_HTTP_CATALOG_PORT: 8084
+      WEB_HTTP_CATALOG_PATH: /api/catalog
+      WEB_HTTP_CATALOG_AUTH_TYPE: tokenbased
+      WEB_HTTP_CATALOG_AUTH_KEY: password
+      EDC_DSP_CALLBACK_ADDRESS: http://consumer-controlplane:8082/api/dsp
+      EDC_IAM_STS_PRIVATEKEY_ALIAS: did:web:consumer-identityhub%3A7083:consumer#key-1
+      EDC_IAM_STS_PUBLICKEY_ID: did:web:consumer-identityhub%3A7083:consumer#key-1
+      EDC_VAULT_HASHICORP_URL: http://consumer-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 10
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://consumer-postgres:5432/consumer
+      EDC_DATASOURCE_DEFAULT_USER: consumer
+      EDC_DATASOURCE_DEFAULT_PASSWORD: consumer
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      # Remote STS
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://consumer-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:consumer-identityhub%3A7083:consumer
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:consumer-identityhub%3A7083:consumer-sts-client-secret
+      # Map Config
+      EDC_MVD_PARTICIPANTS_LIST_FILE: /etc/participants/participants.json
+    volumes:
+      - ./deployment/assets/participants/participants.k8s.json:/etc/participants/participants.json
+
+  consumer-dataplane:
+    image: dataplane:latest
+    depends_on:
+      consumer-controlplane:
+        condition: service_started
+    ports:
+      - "11001:11002" # Public (Mapped to 11001 to match local env if possible, but K8s uses 11002. Let's use 11001 host)
+      - "5006:1044" # Debug
+    environment:
+      EDC_HOSTNAME: consumer-dataplane
+      EDC_RUNTIME_ID: consumer-dataplane
+      EDC_PARTICIPANT_ID: did:web:consumer-identityhub%3A7083:consumer
+      EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS: did:web:consumer-identityhub%3A7083:consumer#key-1
+      EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS: did:web:consumer-identityhub%3A7083:consumer#key-1
+      EDC_DPF_SELECTOR_URL: http://consumer-controlplane:8083/api/control/v1/dataplanes
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PUBLIC_PORT: 11002
+      WEB_HTTP_PUBLIC_PATH: /api/public
+      EDC_VAULT_HASHICORP_URL: http://consumer-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://consumer-postgres:5432/consumer
+      EDC_DATASOURCE_DEFAULT_USER: consumer
+      EDC_DATASOURCE_DEFAULT_PASSWORD: consumer
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://consumer-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:consumer-identityhub%3A7083:consumer
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:consumer-identityhub%3A7083:consumer-sts-client-secret
+
+  consumer-identityhub:
+    image: identity-hub:latest
+    depends_on:
+      consumer-postgres:
+        condition: service_healthy
+      consumer-vault:
+        condition: service_started
+    ports:
+      - "7080:8080" # Web
+      - "7081:7081" # Credentials
+      - "7082:7082" # Identity
+      - "7083:7083" # DID
+      - "7086:7086" # STS
+      - "5007:1044" # Debug
+    environment:
+      EDC_IH_IAM_ID: did:web:consumer-identityhub%3A7083:consumer
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+      EDC_IH_IAM_PUBLICKEY_ALIAS: consumer-identityhub-publickey
+      EDC_IH_API_SUPERUSER_KEY: c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_IDENTITY_PORT: 7082
+      WEB_HTTP_IDENTITY_PATH: /api/identity
+      WEB_HTTP_IDENTITY_AUTH_KEY: password
+      WEB_HTTP_CREDENTIALS_PORT: 7081
+      WEB_HTTP_CREDENTIALS_PATH: /api/credentials
+      WEB_HTTP_DID_PORT: 7083
+      WEB_HTTP_DID_PATH: /
+      WEB_HTTP_STS_PORT: 7086
+      WEB_HTTP_STS_PATH: /api/sts
+      EDC_IAM_STS_PRIVATEKEY_ALIAS: key-1
+      EDC_IAM_STS_PUBLICKEY_ID: key-1
+      EDC_MVD_CREDENTIALS_PATH: /etc/credentials/
+      EDC_VAULT_HASHICORP_URL: http://consumer-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://consumer-postgres:5432/consumer
+      EDC_DATASOURCE_DEFAULT_USER: consumer
+      EDC_DATASOURCE_DEFAULT_PASSWORD: consumer
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_ACCESSTOKEN_JTI_VALIDATION: "true"
+    volumes:
+      - ./deployment/assets/credentials/k8s/consumer/:/etc/credentials/
+
+  # ------------------------------------------------------------------------------------------------
+  # PROVIDER
+  # ------------------------------------------------------------------------------------------------
+
+  provider-identityhub:
+    image: identity-hub:latest
+    depends_on:
+      provider-postgres:
+        condition: service_healthy
+      provider-vault:
+        condition: service_started
+    ports:
+      - "7090:8080"
+      - "7091:7081"
+      - "7092:7082"
+      - "7093:7083"
+      - "7096:7086"
+      - "5017:1044"
+    environment:
+      EDC_IH_IAM_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+      EDC_IH_IAM_PUBLICKEY_ALIAS: provider-identityhub-publickey
+      EDC_IH_API_SUPERUSER_KEY: c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_IDENTITY_PORT: 7082
+      WEB_HTTP_IDENTITY_PATH: /api/identity
+      WEB_HTTP_IDENTITY_AUTH_KEY: password
+      WEB_HTTP_CREDENTIALS_PORT: 7081
+      WEB_HTTP_CREDENTIALS_PATH: /api/credentials
+      WEB_HTTP_DID_PORT: 7083
+      WEB_HTTP_DID_PATH: /
+      WEB_HTTP_STS_PORT: 7086
+      WEB_HTTP_STS_PATH: /api/sts
+      EDC_IAM_STS_PRIVATEKEY_ALIAS: key-1
+      EDC_IAM_STS_PUBLICKEY_ID: key-1
+      EDC_MVD_CREDENTIALS_PATH: /etc/credentials/
+      EDC_VAULT_HASHICORP_URL: http://provider-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://provider-postgres:5432/identity
+      EDC_DATASOURCE_DEFAULT_USER: identity
+      EDC_DATASOURCE_DEFAULT_PASSWORD: identity
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_ACCESSTOKEN_JTI_VALIDATION: "true"
+    volumes:
+      - ./deployment/assets/credentials/k8s/provider/:/etc/credentials/
+
+  provider-catalog-server:
+    image: catalog-server:latest
+    depends_on:
+      provider-postgres:
+        condition: service_healthy
+      provider-vault:
+        condition: service_started
+    ports:
+      - "8090:8080"
+      - "8091:8081"
+      - "8092:8082"
+      - "8093:8083"
+      - "5018:1044"
+    environment:
+      EDC_PARTICIPANT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_ISSUER_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_MANAGEMENT_PORT: 8081
+      WEB_HTTP_MANAGEMENT_PATH: /api/management
+      WEB_HTTP_MANAGEMENT_AUTH_TYPE: tokenbased
+      WEB_HTTP_MANAGEMENT_AUTH_KEY: password
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PROTOCOL_PORT: 8082
+      WEB_HTTP_PROTOCOL_PATH: /api/dsp
+      EDC_DSP_CALLBACK_ADDRESS: http://provider-catalog-server:8082/api/dsp
+      EDC_IAM_STS_PRIVATEKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_IAM_STS_PUBLICKEY_ID: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_VAULT_HASHICORP_URL: http://provider-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://provider-postgres:5432/catalog_server
+      EDC_DATASOURCE_DEFAULT_USER: catalog_server
+      EDC_DATASOURCE_DEFAULT_PASSWORD: catalog_server
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://provider-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:provider-identityhub%3A7083:provider-sts-client-secret
+
+  provider-qna-controlplane:
+    image: controlplane:latest
+    depends_on:
+      provider-postgres:
+        condition: service_healthy
+      provider-vault:
+        condition: service_started
+    ports:
+      - "8180:8080"
+      - "8181:8081"
+      - "8182:8082"
+      - "8183:8083"
+      - "8184:8084"
+      - "5010:1044"
+    environment:
+      EDC_PARTICIPANT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_ISSUER_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_MANAGEMENT_PORT: 8081
+      WEB_HTTP_MANAGEMENT_PATH: /api/management
+      WEB_HTTP_MANAGEMENT_AUTH_TYPE: tokenbased
+      WEB_HTTP_MANAGEMENT_AUTH_KEY: password
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PROTOCOL_PORT: 8082
+      WEB_HTTP_PROTOCOL_PATH: /api/dsp
+      WEB_HTTP_CATALOG_PORT: 8084
+      WEB_HTTP_CATALOG_PATH: /api/catalog
+      WEB_HTTP_CATALOG_AUTH_TYPE: tokenbased
+      WEB_HTTP_CATALOG_AUTH_KEY: password
+      EDC_DSP_CALLBACK_ADDRESS: http://provider-qna-controlplane:8082/api/dsp
+      EDC_IAM_STS_PRIVATEKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_IAM_STS_PUBLICKEY_ID: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_VAULT_HASHICORP_URL: http://provider-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 10
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://provider-postgres:5432/provider_qna
+      EDC_DATASOURCE_DEFAULT_USER: qna
+      EDC_DATASOURCE_DEFAULT_PASSWORD: provider-qna
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://provider-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:provider-identityhub%3A7083:provider-sts-client-secret
+      EDC_MVD_PARTICIPANTS_LIST_FILE: /etc/participants/participants.json
+    volumes:
+      - ./deployment/assets/participants/participants.k8s.json:/etc/participants/participants.json
+
+  provider-qna-dataplane:
+    image: dataplane:latest
+    depends_on:
+      provider-qna-controlplane:
+        condition: service_started
+    ports:
+      - "11002:11002"
+      - "5011:1044"
+    environment:
+      EDC_HOSTNAME: provider-qna-dataplane
+      EDC_RUNTIME_ID: provider-qna-dataplane
+      EDC_PARTICIPANT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_DPF_SELECTOR_URL: http://provider-qna-controlplane:8083/api/control/v1/dataplanes
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PUBLIC_PORT: 11002
+      WEB_HTTP_PUBLIC_PATH: /api/public
+      EDC_VAULT_HASHICORP_URL: http://provider-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://provider-postgres:5432/provider_qna
+      EDC_DATASOURCE_DEFAULT_USER: qna
+      EDC_DATASOURCE_DEFAULT_PASSWORD: provider-qna
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://provider-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:provider-identityhub%3A7083:provider-sts-client-secret
+
+  provider-manufacturing-controlplane:
+    image: controlplane:latest
+    depends_on:
+      provider-postgres:
+        condition: service_healthy
+      provider-vault:
+        condition: service_started
+    ports:
+      - "8280:8080"
+      - "8281:8081"
+      - "8282:8082"
+      - "8283:8083"
+      - "8284:8084"
+      - "5012:1044"
+    environment:
+      EDC_PARTICIPANT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_ISSUER_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_MANAGEMENT_PORT: 8081
+      WEB_HTTP_MANAGEMENT_PATH: /api/management
+      WEB_HTTP_MANAGEMENT_AUTH_TYPE: tokenbased
+      WEB_HTTP_MANAGEMENT_AUTH_KEY: password
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PROTOCOL_PORT: 8082
+      WEB_HTTP_PROTOCOL_PATH: /api/dsp
+      WEB_HTTP_CATALOG_PORT: 8084
+      WEB_HTTP_CATALOG_PATH: /api/catalog
+      WEB_HTTP_CATALOG_AUTH_TYPE: tokenbased
+      WEB_HTTP_CATALOG_AUTH_KEY: password
+      EDC_DSP_CALLBACK_ADDRESS: http://provider-manufacturing-controlplane:8082/api/dsp
+      EDC_IAM_STS_PRIVATEKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_IAM_STS_PUBLICKEY_ID: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_VAULT_HASHICORP_URL: http://provider-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_CATALOG_CACHE_EXECUTION_DELAY_SECONDS: 5
+      EDC_CATALOG_CACHE_EXECUTION_PERIOD_SECONDS: 10
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://provider-postgres:5432/provider_manufacturing
+      EDC_DATASOURCE_DEFAULT_USER: manufacturing
+      EDC_DATASOURCE_DEFAULT_PASSWORD: provider-manufacturing
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://provider-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:provider-identityhub%3A7083:provider-sts-client-secret
+      EDC_MVD_PARTICIPANTS_LIST_FILE: /etc/participants/participants.json
+    volumes:
+      - ./deployment/assets/participants/participants.k8s.json:/etc/participants/participants.json
+
+  provider-manufacturing-dataplane:
+    image: dataplane:latest
+    depends_on:
+      provider-manufacturing-controlplane:
+        condition: service_started
+    ports:
+      - "11003:11002"
+      - "5013:1044"
+    environment:
+      EDC_HOSTNAME: provider-manufacturing-dataplane
+      EDC_RUNTIME_ID: provider-manufacturing-dataplane
+      EDC_PARTICIPANT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_TRANSFER_PROXY_TOKEN_VERIFIER_PUBLICKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_TRANSFER_PROXY_TOKEN_SIGNER_PRIVATEKEY_ALIAS: did:web:provider-identityhub%3A7083:provider#key-1
+      EDC_DPF_SELECTOR_URL: http://provider-manufacturing-controlplane:8083/api/control/v1/dataplanes
+      WEB_HTTP_PORT: 8080
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_CONTROL_PORT: 8083
+      WEB_HTTP_CONTROL_PATH: /api/control
+      WEB_HTTP_PUBLIC_PORT: 11002
+      WEB_HTTP_PUBLIC_PATH: /api/public
+      EDC_VAULT_HASHICORP_URL: http://provider-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://provider-postgres:5432/provider_manufacturing
+      EDC_DATASOURCE_DEFAULT_USER: manufacturing
+      EDC_DATASOURCE_DEFAULT_PASSWORD: provider-manufacturing
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_STS_OAUTH_TOKEN_URL: http://provider-identityhub:7082/api/sts/token
+      EDC_IAM_STS_OAUTH_CLIENT_ID: did:web:provider-identityhub%3A7083:provider
+      EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS: did:web:provider-identityhub%3A7083:provider-sts-client-secret
+
+  # ------------------------------------------------------------------------------------------------
+  # ISSUER
+  # ------------------------------------------------------------------------------------------------
+
+  dataspace-issuer-service:
+    image: issuerservice:latest
+    depends_on:
+      issuer-postgres:
+        condition: service_healthy
+      # Uses consumer-vault
+      consumer-vault:
+        condition: service_started
+    ports:
+      - "10010:10010"
+      - "10011:10011"
+      - "10012:10012"
+      - "10013:10013"
+      - "10014:10014"
+      - "10015:10015"
+      - "10016:10016"
+      - "5020:1044"
+    environment:
+      EDC_ISSUER_STATUSLIST_SIGNING_KEY_ALIAS: statuslist-signing-key
+      EDC_IH_API_SUPERUSER_KEY: c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=
+      WEB_HTTP_PORT: 10010
+      WEB_HTTP_PATH: /api
+      WEB_HTTP_STS_PORT: 10011
+      WEB_HTTP_STS_PATH: /api/sts
+      WEB_HTTP_ISSUANCE_PORT: 10012
+      WEB_HTTP_ISSUANCE_PATH: /api/issuance
+      WEB_HTTP_ISSUERADMIN_PORT: 10013
+      WEB_HTTP_ISSUERADMIN_PATH: /api/admin
+      WEB_HTTP_VERSION_PORT: 10014
+      WEB_HTTP_VERSION_PATH: /.well-known/api
+      WEB_HTTP_IDENTITY_PORT: 10015
+      WEB_HTTP_IDENTITY_PATH: /api/identity
+      WEB_HTTP_IDENTITY_AUTH_KEY: password
+      WEB_HTTP_DID_PORT: 10016
+      WEB_HTTP_DID_PATH: /
+      EDC_VAULT_HASHICORP_URL: http://consumer-vault:8200
+      EDC_VAULT_HASHICORP_TOKEN: root
+      EDC_DATASOURCE_DEFAULT_URL: jdbc:postgresql://issuer-postgres:5432/issuer
+      EDC_DATASOURCE_DEFAULT_USER: issuer
+      EDC_DATASOURCE_DEFAULT_PASSWORD: issuer
+      # Extra DS for Membership
+      EDC_DATASOURCE_MEMBERSHIP_URL: jdbc:postgresql://issuer-postgres:5432/issuer
+      EDC_DATASOURCE_MEMBERSHIP_USER: issuer
+      EDC_DATASOURCE_MEMBERSHIP_PASSWORD: issuer
+      EDC_SQL_SCHEMA_AUTOCREATE: "true"
+      EDC_IAM_ACCESSTOKEN_JTI_VALIDATION: "true"
+      EDC_IAM_DID_WEB_USE_HTTPS: "false"
+
+  dataspace-issuer-did-server:
+    image: nginx:latest
+    ports:
+      - "11005:80" # Mapping to 11005 to avoid conflicts, but DID resolution inside docker must work
+    volumes:
+      - ./deployment/assets/issuer/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deployment/assets/issuer/did.k8s.json:/var/www/.well-known/did.json:ro

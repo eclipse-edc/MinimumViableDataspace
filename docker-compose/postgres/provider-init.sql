@@ -1,0 +1,11 @@
+CREATE USER catalog_server WITH ENCRYPTED PASSWORD 'catalog_server' SUPERUSER;
+CREATE DATABASE catalog_server;
+
+CREATE USER qna WITH ENCRYPTED PASSWORD 'provider-qna' SUPERUSER;
+CREATE DATABASE provider_qna;
+
+CREATE USER manufacturing WITH ENCRYPTED PASSWORD 'provider-manufacturing' SUPERUSER;
+CREATE DATABASE provider_manufacturing;
+
+CREATE USER identity WITH ENCRYPTED PASSWORD 'identity' SUPERUSER;
+CREATE DATABASE identity;
