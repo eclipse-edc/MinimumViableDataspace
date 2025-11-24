@@ -53,7 +53,7 @@ jobs:
       - name: "Set up OpenTofu"
         uses: opentofu/setup-opentofu@v1
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
