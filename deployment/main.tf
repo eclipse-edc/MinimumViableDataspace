@@ -32,6 +32,7 @@ terraform {
       source = "hashicorp/helm"
     }
   }
+  required_version = ">= 1.13.0"
 }
 
 provider "kubernetes" {
@@ -44,8 +45,15 @@ provider "helm" {
   }
 }
 
-resource "kubernetes_namespace" "ns" {
+resource "kubernetes_namespace" "ns_consumer" {
   metadata {
-    name = "mvd"
+    name = "consumer"
   }
 }
+
+resource "kubernetes_namespace" "ns_provider" {
+  metadata {
+    name = "provider"
+  }
+}
+

@@ -37,8 +37,8 @@ resource "kubernetes_deployment" "identityhub" {
 
       spec {
         container {
-          image_pull_policy = "Never"
-          image             = "identity-hub:latest"
+          image_pull_policy = "IfNotPresent"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-identity-hub:latest"
           name              = "identity-hub"
 
           env_from {

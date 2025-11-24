@@ -21,7 +21,7 @@
 echo
 echo
 echo "Seed data to 'provider-qna' and 'provider-manufacturing'"
-for url in 'http://127.0.0.1/provider-manufacturing/cp' 'http://127.0.0.1/provider-qna/cp'
+for url in 'http://127.0.0.1:8088/provider-manufacturing/cp' 'http://127.0.0.1:8088/provider-qna/cp'
 do
   newman run \
     --folder "Seed" \
@@ -35,7 +35,7 @@ echo
 echo "Create linked assets on the Catalog Server"
 newman run \
   --folder "Seed Catalog Server" \
-  --env-var "HOST=http://127.0.0.1/provider-catalog-server/cp" \
+  --env-var "HOST=http://127.0.0.1:8088/provider-catalog-server/cp" \
   --env-var "PROVIDER_QNA_DSP_URL=http://provider-qna-controlplane:8082" \
   --env-var "PROVIDER_MF_DSP_URL=http://provider-manufacturing-controlplane:8082" \
   ./deployment/postman/MVD.postman_collection.json
@@ -75,7 +75,7 @@ DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            }
        }')
 
-curl --location "http://127.0.0.1/consumer/cs/api/identity/v1alpha/participants/" \
+curl --location "http://127.0.0.1:8088/consumer/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_CONSUMER"
@@ -105,7 +105,7 @@ DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            ],
            "active": true,
            "participantId": "did:web:provider-identityhub%3A7083:provider",
-           "did": "did:web:provider-identityhub%3A7083:provider",
+           "did": "did:web:provider-identityhub%3A7083:provide/seed-k8s.shr",
            "key":{
                "keyId": "did:web:provider-identityhub%3A7083:provider#key-1",
                "privateKeyAlias": "did:web:provider-identityhub%3A7083:provider#key-1",
@@ -115,7 +115,7 @@ DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl
            }
        }')
 
-curl --location "http://127.0.0.1/provider/cs/api/identity/v1alpha/participants/" \
+curl --location "http://127.0.0.1:8088/provider/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
 --data "$DATA_PROVIDER"
@@ -148,14 +148,14 @@ DATA_ISSUER=$(jq -n --arg pem "$PEM_ISSUER" '{
             }
       }')
 
-curl -s --location 'http://127.0.0.1/issuer/cs/api/identity/v1alpha/participants/' \
+curl -s --location 'http://127.0.0.1:8088/issuer/cs/api/identity/v1alpha/participants/' \
 --header 'Content-Type: application/json' \
 --data "$DATA_ISSUER"
 
 ## Seed participant data to the issuer service
 newman run \
   --folder "Seed Issuer SQL" \
-  --env-var "ISSUER_ADMIN_URL=http://127.0.0.1/issuer/ad" \
+  --env-var "ISSUER_ADMIN_URL=http://127.0.0.1:8088/issuer/ad" \
   --env-var "CONSUMER_ID=did:web:consumer-identityhub%3A7083:consumer" \
   --env-var "CONSUMER_NAME=MVD Consumer Participant" \
   --env-var "PROVIDER_ID=did:web:provider-identityhub%3A7083:provider" \

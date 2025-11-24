@@ -46,8 +46,8 @@ resource "kubernetes_deployment" "dataplane" {
       spec {
         container {
           name              = "dataplane-${lower(var.humanReadableName)}"
-          image             = "dataplane:latest"
-          image_pull_policy = "Never"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-dataplane:latest"
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             config_map_ref {

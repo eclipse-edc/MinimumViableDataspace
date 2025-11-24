@@ -44,8 +44,8 @@ resource "kubernetes_deployment" "connector" {
       spec {
         container {
           name              = lower(var.humanReadableName)
-          image             = "catalog-server:latest"
-          image_pull_policy = "Never"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-catalog-server:latest"
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             config_map_ref {

@@ -20,8 +20,8 @@ module "dataspace-issuer" {
     password = "issuer"
     url      = "jdbc:postgresql://${module.dataspace-issuer-postgres.database-url}/issuer"
   }
-  vault-url = "http://consumer-vault:8200"
-  namespace = kubernetes_namespace.ns.metadata.0.name
+  vault-url = "http://consumer-vault.consumer.svc.cluster.local:8200"
+  namespace = "kordat" #kubernetes_namespace.ns.metadata.0.name
   useSVE    = var.useSVE
 }
 
@@ -31,14 +31,14 @@ module "dataspace-issuer-postgres" {
   source           = "./modules/postgres"
   instance-name    = "issuer"
   init-sql-configs = ["issuer-initdb-config"]
-  namespace        = kubernetes_namespace.ns.metadata.0.name
+  namespace        = "kordat" #kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database
 resource "kubernetes_config_map" "issuer-initdb-config" {
   metadata {
     name      = "issuer-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
+    namespace = "kordat" #kubernetes_namespace.ns.metadata.0.name
   }
   data = {
     "issuer-initdb-config.sql" = <<-EOT

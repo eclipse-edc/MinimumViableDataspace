@@ -25,7 +25,7 @@ module "provider-qna-connector" {
     password = "provider-qna"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_qna"
   }
-  namespace     = kubernetes_namespace.ns.metadata.0.name
+  namespace     = "provider" #kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
   sts-token-url = "${module.provider-identityhub.sts-token-url}/token"
   useSVE        = var.useSVE
@@ -41,7 +41,7 @@ module "provider-manufacturing-connector" {
     password = "provider-manufacturing"
     url      = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_manufacturing"
   }
-  namespace     = kubernetes_namespace.ns.metadata.0.name
+  namespace     = "provider" #kubernetes_namespace.ns.metadata.0.name
   vault-url     = "http://provider-vault:8200"
   sts-token-url = "${module.provider-identityhub.sts-token-url}/token"
   useSVE        = var.useSVE
@@ -56,7 +56,7 @@ module "provider-identityhub" {
   participantId = var.provider-did
   vault-url     = "http://provider-vault:8200"
   service-name  = "provider"
-  namespace     = kubernetes_namespace.ns.metadata.0.name
+  namespace     = "provider" #kubernetes_namespace.ns.metadata.0.name
 
   database = {
     user     = "identity"
@@ -71,7 +71,7 @@ module "provider-catalog-server" {
   source            = "./modules/catalog-server"
   humanReadableName = "provider-catalog-server"
   participantId     = var.provider-did
-  namespace         = kubernetes_namespace.ns.metadata.0.name
+  namespace         = "provider" #kubernetes_namespace.ns.metadata.0.name
   vault-url         = "http://provider-vault:8200"
   sts-token-url     = "${module.provider-identityhub.sts-token-url}/token"
 
@@ -86,7 +86,7 @@ module "provider-catalog-server" {
 module "provider-vault" {
   source            = "./modules/vault"
   humanReadableName = "provider-vault"
-  namespace         = kubernetes_namespace.ns.metadata.0.name
+  namespace         = "provider" #kubernetes_namespace.ns.metadata.0.name
 }
 
 # Postgres database for the consumer
@@ -100,13 +100,13 @@ module "provider-postgres" {
     kubernetes_config_map.postgres-initdb-config-pm.metadata[0].name,
     kubernetes_config_map.postgres-initdb-config-ih.metadata[0].name,
   ]
-  namespace = kubernetes_namespace.ns.metadata.0.name
+  namespace = "provider" #kubernetes_namespace.ns.metadata.0.name
 }
 
 resource "kubernetes_config_map" "postgres-initdb-config-cs" {
   metadata {
     name      = "cs-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
+    namespace = "provider" #kubernetes_namespace.ns.metadata.0.name
   }
   data = {
     "cs-initdb-config.sql" = <<-EOT
@@ -121,7 +121,7 @@ resource "kubernetes_config_map" "postgres-initdb-config-cs" {
 resource "kubernetes_config_map" "postgres-initdb-config-pqna" {
   metadata {
     name      = "provider-qna-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
+    namespace = "provider" #kubernetes_namespace.ns.metadata.0.name
   }
   data = {
     "provider-qna-initdb-config.sql" = <<-EOT
@@ -136,7 +136,7 @@ resource "kubernetes_config_map" "postgres-initdb-config-pqna" {
 resource "kubernetes_config_map" "postgres-initdb-config-pm" {
   metadata {
     name      = "provider-manufacturing-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
+    namespace = "provider" #kubernetes_namespace.ns.metadata.0.name
   }
   data = {
     "provider-manufacturing-initdb-config.sql" = <<-EOT
@@ -151,7 +151,7 @@ resource "kubernetes_config_map" "postgres-initdb-config-pm" {
 resource "kubernetes_config_map" "postgres-initdb-config-ih" {
   metadata {
     name      = "ih-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
+    namespace = "provider" #kubernetes_namespace.ns.metadata.0.name
   }
   data = {
     "ih-initdb-config.sql" = <<-EOT

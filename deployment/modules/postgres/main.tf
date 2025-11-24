@@ -125,7 +125,7 @@ resource "kubernetes_service" "pg-service" {
 
 locals {
   app-name = "${var.instance-name}-postgres"
-  pg-image = "postgres:16.3-alpine3.20"
+  pg-image = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-postgres:16.3-alpine3.20"
   db-ip    = kubernetes_service.pg-service.spec.0.cluster_ip
   db-url   = "${kubernetes_service.pg-service.metadata[0].name}:${var.database-port}"
 }

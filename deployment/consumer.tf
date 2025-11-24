@@ -25,7 +25,7 @@ module "consumer-connector" {
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
   vault-url     = "http://consumer-vault:8200"
-  namespace     = kubernetes_namespace.ns.metadata.0.name
+  namespace     = "consumer" #kubernetes_namespace.ns.metadata.0.name
   sts-token-url = "${module.consumer-identityhub.sts-token-url}/token"
   useSVE        = var.useSVE
 }
@@ -44,7 +44,7 @@ module "consumer-identityhub" {
     password = "consumer"
     url      = "jdbc:postgresql://${module.consumer-postgres.database-url}/consumer"
   }
-  namespace = kubernetes_namespace.ns.metadata.0.name
+  namespace = "consumer" #kubernetes_namespace.ns.metadata.0.name
   useSVE    = var.useSVE
 }
 
@@ -53,7 +53,7 @@ module "consumer-identityhub" {
 module "consumer-vault" {
   source            = "./modules/vault"
   humanReadableName = "consumer-vault"
-  namespace         = kubernetes_namespace.ns.metadata.0.name
+  namespace         = "consumer" #kubernetes_namespace.ns.metadata.0.name
 }
 
 # Postgres database for the consumer
@@ -62,14 +62,14 @@ module "consumer-postgres" {
   source           = "./modules/postgres"
   instance-name    = "consumer"
   init-sql-configs = ["consumer-initdb-config"]
-  namespace        = kubernetes_namespace.ns.metadata.0.name
+  namespace        = "consumer" #kubernetes_namespace.ns.metadata.0.name
 }
 
 # DB initialization for the EDC database
 resource "kubernetes_config_map" "postgres-initdb-config-consumer" {
   metadata {
     name      = "consumer-initdb-config"
-    namespace = kubernetes_namespace.ns.metadata.0.name
+    namespace = "consumer" #kubernetes_namespace.ns.metadata.0.name
   }
   data = {
     "consumer-initdb-config.sql" = <<-EOT

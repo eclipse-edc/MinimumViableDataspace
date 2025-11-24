@@ -37,8 +37,8 @@ resource "kubernetes_deployment" "issuerservice" {
 
       spec {
         container {
-          image_pull_policy = "Never"
-          image             = "issuerservice:latest"
+          image_pull_policy = "IfNotPresent"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-issuerservice:latest"
           name              = "issuerservice"
 
           env_from {
