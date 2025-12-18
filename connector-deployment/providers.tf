@@ -40,7 +40,7 @@ terraform {
   backend "s3" {
     region  = "eu-west-1"
     bucket  = "aie-kordat-dev-terraform-remote-state"
-    key     = "infra/kordat/<PARTICIPANT>/terraform.tfstate"
+    key     = "infra/kordat/<PARTICIPANTE>/terraform.tfstate"
   }
 
   required_version = ">= 1.13.0"
