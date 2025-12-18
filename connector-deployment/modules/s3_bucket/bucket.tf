@@ -17,6 +17,14 @@ resource "aws_s3_bucket_ownership_controls" "bucket_ownership" {
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "this" {
+  bucket = aws_s3_bucket.bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 resource "aws_s3_bucket_acl" "bucket_acl" {
   depends_on = [aws_s3_bucket_ownership_controls.bucket_ownership]
 
@@ -32,15 +40,16 @@ resource "aws_s3_bucket_versioning" "bucket_versioning" {
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "bucket_encryption" {
-  count  = (var.encryption ? 1 : 0)
   bucket = aws_s3_bucket.bucket.id
 
   rule {
-    bucket_key_enabled = true
-
     apply_server_side_encryption_by_default {
-      sse_algorithm = "AES256"
+      sse_algorithm     = "aws:kms"
+      kms_master_key_id = var.kms
     }
+
+    # Reduce llamadas a KMS y coste en muchos casos
+    bucket_key_enabled = true
   }
 }
 
@@ -90,3 +99,37 @@ resource "aws_s3_bucket_cors_configuration" "cors_configuration" {
     expose_headers  = var.cors.expose_headers
   }
 }
+
+# (Opcional) Forzar cifrado: deniega PUT si no viene SSE-KMS con TU key
+# resource "aws_s3_bucket_policy" "enforce_kms" {
+#   bucket = aws_s3_bucket.bucket.id
+#   policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Sid    = "DenyUnEncryptedObjectUploads"
+#         Effect = "Deny"
+#         Principal = "*"
+#         Action = "s3:PutObject"
+#         Resource = "${aws_s3_bucket.bucket.arn}/*"
+#         Condition = {
+#           StringNotEquals = {
+#             "s3:x-amz-server-side-encryption" = "aws:kms"
+#           }
+#         }
+#       },
+#       {
+#         Sid    = "DenyWrongKMSKey"
+#         Effect = "Deny"
+#         Principal = "*"
+#         Action = "s3:PutObject"
+#         Resource = "${aws_s3_bucket.bucket.arn}/*"
+#         Condition = {
+#           StringNotEquals = {
+#             "s3:x-amz-server-side-encryption-aws-kms-key-id" = var.kms
+#           }
+#         }
+#       }
+#     ]
+#   })
+# }

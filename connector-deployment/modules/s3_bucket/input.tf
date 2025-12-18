@@ -47,10 +47,9 @@ variable "versioning" {
   description = "Bucket Versioning"
   default     = "Disabled"
 }
-variable "encryption" {
+variable "kms" {
   type        = string
-  description = "Bucket Encryption"
-  default     = true
+  description = "KMS for Encryption"
 }
 variable "cors" {
   type = object({

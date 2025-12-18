@@ -19,13 +19,7 @@ variable "tags" {
 }
 
 # Config vars
-variable "policy" {
-  type        = string
-  description = "KMS policy"
-  default     = ""
-}
 variable "alias" {
   type        = string
   description = "KMS alias"
-  default     = ""
 }

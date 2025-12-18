@@ -5,4 +5,5 @@ module "remote_state_s3" {
   application = "assets"
   bucket_name = "${var.participant}-assets-bucket"
   versioning  = "Enabled"
+  kms         = module.kms.key_arn
 }
