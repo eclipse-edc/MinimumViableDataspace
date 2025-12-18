@@ -1,2 +1,2 @@
-participant = <PARTICIPANTE>
-environment = <ENV>
+participant = "<PARTICIPANTE>"
+environment = "<ENV>"
