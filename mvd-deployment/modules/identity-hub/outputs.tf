@@ -17,43 +17,26 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
-terraform {
-  required_providers {
-    // for generating passwords, clientsecrets etc.
-    random = {
-      source = "hashicorp/random"
-    }
-
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-    }
-    helm = {
-      // used for Hashicorp Vault
-      source = "hashicorp/helm"
-    }
-  }
-  required_version = ">= 1.13.0"
+output "identity-hub-node-ip" {
+  value = kubernetes_service.ih-service.spec.0.cluster_ip
 }
 
-provider "kubernetes" {
-  config_path = "~/.kube/config"
+
+output "ports" {
+  value = var.ports
 }
 
-provider "helm" {
-  kubernetes = {
-    config_path = "~/.kube/config"
+output "ih-superuser-apikey" {
+  value = var.ih_superuser_apikey
+}
+
+output "credentials" {
+  value = {
+    path    = var.credentials-dir
+    content = fileset(var.credentials-dir, "*-credential.json")
   }
 }
 
-resource "kubernetes_namespace" "ns_consumer" {
-  metadata {
-    name = "consumer"
-  }
+output "sts-token-url" {
+  value = "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.sts-api}${var.sts-token-path}"
 }
-
-resource "kubernetes_namespace" "ns_provider" {
-  metadata {
-    name = "provider"
-  }
-}
-

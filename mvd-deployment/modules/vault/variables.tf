@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft
+#  Copyright (c) 2024 Contributors to the Eclipse Foundation
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -17,21 +17,28 @@
 #  SPDX-License-Identifier: Apache-2.0
 #
 
----
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-nodes:
-  - role: control-plane
-    kubeadmConfigPatches:
-      - |
-        kind: InitConfiguration
-        nodeRegistration:
-          kubeletExtraArgs:
-            node-labels: "ingress-ready=true"
-    extraPortMappings:
-      - containerPort: 80
-        hostPort: 80
-        protocol: TCP
-      - containerPort: 443
-        hostPort: 443
-        protocol: TCP
+variable "humanReadableName" {
+  type        = string
+  description = "Human readable name. Should not contain special characters"
+}
+
+variable "namespace" {
+  type = string
+}
+
+variable "vault-token" {
+  default     = "root"
+  description = "This is the authentication token for the vault. DO NOT USE THIS IN PRODUCTION!"
+  type        = string
+}
+
+variable "aliases" {
+  type = object({
+    sts-private-key   = string
+    sts-public-key-id = string
+  })
+  default = {
+    sts-private-key   = "key-1"
+    sts-public-key-id = "key-1"
+  }
+}
