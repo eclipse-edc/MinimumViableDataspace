@@ -15,7 +15,7 @@
 # i.e. the connector, an identityhub and a vault.
 
 #
-resource "kubernetes_namespace" "ns_participant" {
+resource "kubernetes_namespace_v1" "ns_participant" {
   metadata {
     name = var.participant
   }
@@ -28,7 +28,7 @@ module "participant-connector" {
   participantId     = local.participant-did
   database = {
     user     = var.participant
-    password = module.participant_password.random_value
+    password = random_password.participant_password.result
     url      = local.database_url
   }
   vault-url     = local.vault_url
@@ -39,7 +39,7 @@ module "participant-connector" {
 
 # consumer identity hub
 module "participant-identityhub" {
-  depends_on        = [module.consumer-vault]
+  depends_on        = [module.participant-vault]
   source            = "./modules/identity-hub"
   credentials-dir   = dirname("./assets/credentials/k8s/consumer/") # To~Do
   humanReadableName = "${var.participant}-identityhub"
@@ -48,7 +48,7 @@ module "participant-identityhub" {
   service-name      = var.participant
   database = {
     user     = var.participant
-    password = module.participant_password.random_value
+    password = random_password.participant_password.result
     url      = local.database_url
   }
   namespace = kubernetes_namespace.ns_participant.metadata.0.name
