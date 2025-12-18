@@ -1,5 +1,6 @@
-module "participant_password" {
-  source           = "../random_string_generator"
+resource "random_password" "participant_password" {
+  length           = 16
+  special          = true
   override_special = "!#$%&()-_=+[]{}<>?"
 }
 
@@ -17,7 +18,7 @@ provider "postgresql" {
 resource "postgresql_role" "participant_user" {
   name     = var.participant
   login    = true
-  password = module.participant_password.random_value
+  password = random_password.participant_password.result
 }
 
 resource "postgresql_database" "participant_database" {
@@ -29,10 +30,17 @@ resource "postgresql_database" "participant_database" {
   allow_connections = true
 }
 
-resource "postgresql_grant" "participant_privs" {
+resource "postgresql_grant" "db_privs" {
+  database    = postgresql_database.participant_database.name
+  role        = postgresql_role.participant_user.name
+  object_type = "database"
+  privileges  = ["CONNECT", "CREATE", "TEMPORARY"]
+}
+
+resource "postgresql_grant" "schema_privs" {
   database    = postgresql_database.participant_database.name
   role        = postgresql_role.participant_user.name
   schema      = "public"
-  object_type = "database"
-  privileges  = ["ALL"]
+  object_type = "schema"
+  privileges  = ["CREATE", "USAGE"]
 }
