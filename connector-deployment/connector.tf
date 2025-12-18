@@ -32,7 +32,7 @@ module "participant-connector" {
     url      = local.database_url
   }
   vault-url     = local.vault_url
-  namespace     = kubernetes_namespace.ns_participant.metadata.0.name
+  namespace     = kubernetes_namespace_v1.ns_participant.metadata.0.name
   sts-token-url = "${module.participant-identityhub.sts-token-url}/token"
   useSVE        = var.useSVE
 }
@@ -51,7 +51,7 @@ module "participant-identityhub" {
     password = random_password.participant_password.result
     url      = local.database_url
   }
-  namespace = kubernetes_namespace.ns_participant.metadata.0.name
+  namespace = kubernetes_namespace_v1.ns_participant.metadata.0.name
   useSVE    = var.useSVE
 }
 
@@ -59,5 +59,5 @@ module "participant-identityhub" {
 module "participant-vault" {
   source            = "./modules/vault"
   humanReadableName = "${var.participant}-vault"
-  namespace         = kubernetes_namespace.ns_participant.metadata.0.name
+  namespace         = kubernetes_namespace_v1.ns_participant.metadata.0.name
 }
