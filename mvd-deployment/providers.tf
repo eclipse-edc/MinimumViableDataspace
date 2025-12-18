@@ -23,7 +23,6 @@ terraform {
     random = {
       source = "hashicorp/random"
     }
-
     kubernetes = {
       source = "hashicorp/kubernetes"
     }
@@ -32,6 +31,14 @@ terraform {
       source = "hashicorp/helm"
     }
   }
+
+  backend "s3" {
+    region  = "eu-west-1"
+    bucket  = "aie-kordat-dev-terraform-remote-state"
+    key     = "infra/kordat/mvd/terraform.tfstate"
+    profile = "kordat-dev"
+  }
+
   required_version = ">= 1.13.0"
 }
 
@@ -44,16 +51,3 @@ provider "helm" {
     config_path = "~/.kube/config"
   }
 }
-
-resource "kubernetes_namespace" "ns_consumer" {
-  metadata {
-    name = "consumer"
-  }
-}
-
-resource "kubernetes_namespace" "ns_provider" {
-  metadata {
-    name = "provider"
-  }
-}
-
