@@ -8,7 +8,7 @@ edc-build = "1.1.5"
 jackson = "2.20.1"
 jakarta-json = "2.1.3"
 parsson = "1.1.6"
-postgres = "42.7.8"
+postgres = "42.7.9"
 restAssured = "6.0.0"
 
 [libraries]
