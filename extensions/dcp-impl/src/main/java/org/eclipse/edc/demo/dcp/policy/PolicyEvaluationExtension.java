@@ -27,6 +27,7 @@ import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
+import static org.eclipse.edc.demo.dcp.policy.AssignedParticipantConstraintFunction.ASSIGNED_PARTICIPANT_KEY;
 import static org.eclipse.edc.demo.dcp.policy.MembershipCredentialEvaluationFunction.MEMBERSHIP_CONSTRAINT_KEY;
 import static org.eclipse.edc.policy.model.OdrlNamespace.ODRL_SCHEMA;
 
@@ -46,6 +47,7 @@ public class PolicyEvaluationExtension implements ServiceExtension {
         bindPermissionFunction(MembershipCredentialEvaluationFunction.create(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, MEMBERSHIP_CONSTRAINT_KEY);
 
         registerDataAccessLevelFunction();
+        registerAssignedParticipantFunction();
 
     }
 
@@ -71,5 +73,11 @@ public class PolicyEvaluationExtension implements ServiceExtension {
         ruleBindingRegistry.bind(constraintType, scope);
 
         policyEngine.registerFunction(contextClass, Duty.class, constraintType, function);
+    }
+
+    private void registerAssignedParticipantFunction() {
+        bindPermissionFunction(AssignedParticipantConstraintFunction.create(), CatalogPolicyContext.class, CatalogPolicyContext.CATALOG_SCOPE, ASSIGNED_PARTICIPANT_KEY);
+        bindPermissionFunction(AssignedParticipantConstraintFunction.create(), ContractNegotiationPolicyContext.class, ContractNegotiationPolicyContext.NEGOTIATION_SCOPE, ASSIGNED_PARTICIPANT_KEY);
+        bindPermissionFunction(AssignedParticipantConstraintFunction.create(), TransferProcessPolicyContext.class, TransferProcessPolicyContext.TRANSFER_SCOPE, ASSIGNED_PARTICIPANT_KEY);
     }
 }
