@@ -165,7 +165,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_IAM_ACCESSTOKEN_JTI_VALIDATION = true
 
     # remote STS configuration
-    EDC_IAM_STS_OAUTH_TOKEN_URL           = "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.sts-api}${var.sts-token-path}/token"
+    EDC_IAM_STS_OAUTH_TOKEN_URL           = "http://${var.humanReadableName}:${var.ports.sts-api}${var.sts-token-path}/token"
     EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
     EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
 
