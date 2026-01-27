@@ -137,6 +137,7 @@ resource "kubernetes_config_map" "identityhub-config" {
   data = {
     # IdentityHub variables
     EDC_IH_IAM_ID                      = var.participantId
+    EDC_IAM_ISSUER_ID                  = var.participantId
     EDC_IAM_DID_WEB_USE_HTTPS          = false
     EDC_IH_IAM_PUBLICKEY_ALIAS         = local.public-key-alias
     EDC_IH_API_SUPERUSER_KEY           = var.ih_superuser_apikey
@@ -162,6 +163,11 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_DATASOURCE_DEFAULT_PASSWORD    = var.database.password
     EDC_SQL_SCHEMA_AUTOCREATE          = true
     EDC_IAM_ACCESSTOKEN_JTI_VALIDATION = true
+
+    # remote STS configuration
+    EDC_IAM_STS_OAUTH_TOKEN_URL           = "http://${kubernetes_service.ih-service.metadata.0.name}:${var.ports.sts-api}${var.sts-token-path}/token"
+    EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
 
   }
 }
