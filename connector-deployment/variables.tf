@@ -39,6 +39,11 @@ variable "postgres_admin_password" {
   type = string
 }
 
+variable "project" {
+  type = string
+  default = "kordat"
+}
+
 variable "useSVE" {
   type        = bool
   description = "If true, the -XX:UseSVE=0 switch (Scalable Vector Extensions) will be added to the JAVA_TOOL_OPTIONS. Can help on macOs on Apple Silicon processors"

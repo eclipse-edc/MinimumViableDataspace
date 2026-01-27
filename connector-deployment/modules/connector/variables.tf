@@ -113,3 +113,18 @@ locals {
   controlplane-service-name = "${var.humanReadableName}-controlplane"
   dataplane-service-name    = "${var.humanReadableName}-dataplane"
 }
+
+variable "s3_endpoint" {
+  type = string
+  description = "S3 endpoint"
+}
+
+variable "aws_access_key" {
+  type = string
+  description = "IAM user access key"
+}
+
+variable "aws_secret_key" {
+  type = string
+  description = "IAM user secret key"
+}

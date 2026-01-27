@@ -1,7 +1,7 @@
 module "kms" {
   source      = "./modules/kms"
   environment = var.environment
-  project     = "kordat"
+  project     = var.project
   alias       = "${var.participant}-key"
   role        = "kms"
 }
