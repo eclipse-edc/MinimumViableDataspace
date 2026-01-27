@@ -105,6 +105,12 @@ edc-bom-identityhub-sql = { module = "org.eclipse.edc:identityhub-feature-sql-bo
 edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-bom", version.ref = "edc" }
 edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
 
+# AWS
+edc-aws-s3-core                 = { module = "org.eclipse.edc.aws:aws-s3-core",                 version.ref = "edc" }
+edc-aws-data-plane-s3           = { module = "org.eclipse.edc.aws:data-plane-aws-s3",           version.ref = "edc" }
+edc-aws-validator-data-address-s3 = { module = "org.eclipse.edc.aws:validator-data-address-s3", version.ref = "edc" }
+
+
 [bundles]
 connector = [
     "edc-boot",

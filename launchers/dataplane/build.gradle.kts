@@ -19,9 +19,12 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.edc.aws.s3.core)
+    implementation(libs.edc.aws.data.plane.s3)
+
     runtimeOnly(libs.edc.bom.dataplane)
     runtimeOnly(libs.edc.dataplane.v2)
-
+    runtimeOnly(libs.edc.aws.validator.data.address.s3)
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.edc.bom.dataplane.sql)
