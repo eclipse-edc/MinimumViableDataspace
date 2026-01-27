@@ -4,13 +4,13 @@ phases:
   pre_build:
     commands:
       - AWS_REGION="eu-west-1"
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-8)
+      - ECR_IMAGE_CATALOG_SERVER=${REPOSITORY_URI}/kordat-$ENV-catalog-server:${COMMIT_HASH}
+      - ECR_IMAGE_CONTROLPLANE=${REPOSITORY_URI}/kordat-$ENV-controlplane:${COMMIT_HASH}
+      - ECR_IMAGE_DATAPLANE=${REPOSITORY_URI}/kordat-$ENV-dataplane:${COMMIT_HASH}
+      - ECR_IMAGE_IDENTITY_HUB=${REPOSITORY_URI}/kordat-$ENV-identity-hub:${COMMIT_HASH}
+      - ECR_IMAGE_ISSUERSERVICE=${REPOSITORY_URI}/kordat-$ENV-issuerservice:${COMMIT_HASH}
       - echo "Conectando con ECR..."
-      - ECR_IMAGE_CATALOG_SERVER=${REPOSITORY_URI}/kordat-$ENV-catalog-server:latest
-      - ECR_IMAGE_CONTROLPLANE=${REPOSITORY_URI}/kordat-$ENV-controlplane:latest
-      - ECR_IMAGE_DATAPLANE=${REPOSITORY_URI}/kordat-$ENV-dataplane:latest
-      - ECR_IMAGE_IDENTITY_HUB=${REPOSITORY_URI}/kordat-$ENV-identity-hub:latest
-      - ECR_IMAGE_ISSUERSERVICE=${REPOSITORY_URI}/kordat-$ENV-issuerservice:latest
-      - ECR_IMAGE_VAULT=${REPOSITORY_URI}/kordat-$ENV-vault:latest
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
       - gradle --version || echo "Gradle no está instalado"
   build:
@@ -21,14 +21,12 @@ phases:
   post_build:
     commands:
       - echo "Tagging images..."
-      - docker tag controlplane:latest ECR_IMAGE_CONTROLPLANE
-      - docker tag dataplane:latest ECR_IMAGE_DATAPLANE
-      - docker tag controlplane:latest ECR_IMAGE_IDENTITY_HUB
-      - docker tag catalog-server:latest ECR_IMAGE_CATALOG_SERVER
-      - docker tag vault:latest ECR_IMAGE_VAULT
+      - docker tag controlplane:latest $ECR_IMAGE_CONTROLPLANE
+      - docker tag dataplane:latest $ECR_IMAGE_DATAPLANE
+      - docker tag controlplane:latest $ECR_IMAGE_IDENTITY_HUB
+      - docker tag catalog-server:latest $ECR_IMAGE_CATALOG_SERVER
       - echo "Pushing images..."
-      - docker push ECR_IMAGE_CONTROLPLANE
-      - docker push ECR_IMAGE_DATAPLANE
-      - docker push ECR_IMAGE_IDENTITY_HUB
-      - docker push ECR_IMAGE_CATALOG_SERVER
-      - docker push ECR_IMAGE_VAULT
+      - docker push $ECR_IMAGE_CONTROLPLANE
+      - docker push $ECR_IMAGE_DATAPLANE
+      - docker push $ECR_IMAGE_IDENTITY_HUB
+      - docker push $ECR_IMAGE_CATALOG_SERVER
