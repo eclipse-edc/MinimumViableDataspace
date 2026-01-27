@@ -44,7 +44,7 @@ resource "kubernetes_deployment" "controlplane" {
       spec {
         container {
           name              = "connector-${lower(var.humanReadableName)}"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:96545462"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:3cba94bf"
           image_pull_policy = "IfNotPresent"
 
           env_from {
