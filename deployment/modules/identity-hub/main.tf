@@ -162,6 +162,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_DATASOURCE_DEFAULT_PASSWORD    = var.database.password
     EDC_SQL_SCHEMA_AUTOCREATE          = true
     EDC_IAM_ACCESSTOKEN_JTI_VALIDATION = true
+    EDC_RUNTIME_DISABLED_EXTENSIONS    = org.eclipse.edc.demo.participants.ParticipantsResolverExtension
 
   }
 }
