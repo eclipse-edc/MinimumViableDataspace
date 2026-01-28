@@ -169,6 +169,9 @@ resource "kubernetes_config_map" "identityhub-config" {
     EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
     EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
 
+    # Remove participant creation
+    EDC_RUNTIME_DISABLED_EXTENSIONS    = org.eclipse.edc.demo.participants.ParticipantsResolverExtension
+
   }
 }
 
