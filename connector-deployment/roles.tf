@@ -1,7 +1,7 @@
 module "participant-s3-role" {
   source                  = "./modules/iam_role"
-  environment             = lower(var.shared.environment)
-  tenant                  = lower(var.shared.project)
+  environment             = var.environment
+  tenant                  = var.project
   role                    = "kordat-participant"
   role_name               = "${var.participant}-s3-sa-role"
   full_assume_role_policy = <<EOT
