@@ -194,7 +194,6 @@ resource "kubernetes_config_map" "connector-config" {
     # Remove participant creation - participants are controlled elsewhere
     # Note: EDC_RUNTIME_DISABLED_EXTENSIONS may not prevent initialization if extension
     # is in the Docker image classpath. Providing config value as fallback.
-    EDC_RUNTIME_DISABLED_EXTENSIONS    = "org.eclipse.edc.demo.participants.ParticipantsResolverExtension"
     EDC_MVD_PARTICIPANTS_LIST_FILE     = "/dev/null"
   }
 }
