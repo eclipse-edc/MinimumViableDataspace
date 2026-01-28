@@ -31,13 +31,14 @@ module "participant-connector" {
     password = random_password.participant_password.result
     url      = local.database_url
   }
-  vault-url      = local.vault_url
-  namespace      = kubernetes_namespace_v1.ns_participant.metadata.0.name
-  sts-token-url  = "${module.participant-identityhub.sts-token-url}/token"
-  useSVE         = var.useSVE
-  s3_endpoint    = "https://${module.remote_state_s3.bucket_name}.s3.eu-west-1.amazonaws.com"
-  aws_access_key = aws_iam_access_key.deployer.id
-  aws_secret_key = aws_iam_access_key.deployer.secret
+  vault-url                = local.vault_url
+  namespace                = kubernetes_namespace_v1.ns_participant.metadata.0.name
+  sts-token-url            = "${module.participant-identityhub.sts-token-url}/token"
+  useSVE                   = var.useSVE
+  s3_endpoint              = "https://${module.remote_state_s3.bucket_name}.s3.eu-west-1.amazonaws.com"
+  aws_access_key           = aws_iam_access_key.deployer.id
+  aws_secret_key           = aws_iam_access_key.deployer.secret
+  service_account_role_arn = module.participant-s3-role.role_arn
 }
 
 # consumer identity hub

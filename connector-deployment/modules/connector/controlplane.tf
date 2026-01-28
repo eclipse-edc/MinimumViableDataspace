@@ -42,6 +42,7 @@ resource "kubernetes_deployment" "controlplane" {
       }
 
       spec {
+        service_account_name = kubernetes_service_account.s3_sa.metadata[0].name
         container {
           name              = "connector-${lower(var.humanReadableName)}"
           image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:edb07e80"

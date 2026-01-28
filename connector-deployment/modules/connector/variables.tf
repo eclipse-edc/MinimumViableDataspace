@@ -128,3 +128,8 @@ variable "aws_secret_key" {
   type = string
   description = "IAM user secret key"
 }
+
+variable "service_account_role_arn" {
+  type = string
+  description = "ARN of IAM rol to use as service account; controlplane & dataplane"
+}

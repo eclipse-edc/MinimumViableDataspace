@@ -1,4 +1,4 @@
-module "remote_state_s3" {
+module "assets_s3_bucket" {
   source      = "./modules/s3_bucket"
   project     = var.project
   environment = var.environment
