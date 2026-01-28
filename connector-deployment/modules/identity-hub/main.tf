@@ -174,6 +174,8 @@ resource "kubernetes_config_map" "identityhub-config" {
     # is in the Docker image classpath. Providing config value as fallback.
     EDC_RUNTIME_DISABLED_EXTENSIONS    = "org.eclipse.edc.demo.participants.ParticipantsResolverExtension"
     EDC_MVD_PARTICIPANTS_LIST_FILE     = "/dev/null"
+    
+    EDC_CATALOG_CACHE_EXECUTION_ENABLED = "false"
 
   }
 }
