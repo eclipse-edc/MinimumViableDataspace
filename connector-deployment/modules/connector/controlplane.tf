@@ -189,5 +189,11 @@ resource "kubernetes_config_map" "connector-config" {
     AWS_ACCESS_KEY_ID     = var.aws_access_key
     AWS_SECRET_ACCESS_KEY = var.aws_secret_key
     AWS_REGION            = "us-east-1"
+
+    # Remove participant creation - participants are controlled elsewhere
+    # Note: EDC_RUNTIME_DISABLED_EXTENSIONS may not prevent initialization if extension
+    # is in the Docker image classpath. Providing config value as fallback.
+    EDC_RUNTIME_DISABLED_EXTENSIONS    = "org.eclipse.edc.demo.participants.ParticipantsResolverExtension"
+    EDC_MVD_PARTICIPANTS_LIST_FILE     = "/dev/null"
   }
 }
