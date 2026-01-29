@@ -74,6 +74,10 @@ resource "kubernetes_deployment" "controlplane" {
             container_port = var.ports.catalog
             name           = "catalog-port"
           }
+          port {
+            container_port = var.ports.protocol
+            name           = "protocol-port"
+          }
 
           liveness_probe {
             http_get {
