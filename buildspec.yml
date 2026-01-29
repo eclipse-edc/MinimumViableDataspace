@@ -25,8 +25,10 @@ phases:
       - docker tag dataplane:latest $ECR_IMAGE_DATAPLANE
       - docker tag identity-hub:latest $ECR_IMAGE_IDENTITY_HUB
       - docker tag catalog-server:latest $ECR_IMAGE_CATALOG_SERVER
+      - docker tag issuerservice:latest $ECR_IMAGE_ISSUERSERVICE
       - echo "Pushing images..."
       - docker push $ECR_IMAGE_CONTROLPLANE
       - docker push $ECR_IMAGE_DATAPLANE
       - docker push $ECR_IMAGE_IDENTITY_HUB
       - docker push $ECR_IMAGE_CATALOG_SERVER
+      - docker push $ECR_IMAGE_ISSUERSERVICE
