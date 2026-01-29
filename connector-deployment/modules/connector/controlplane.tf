@@ -70,6 +70,10 @@ resource "kubernetes_deployment" "controlplane" {
             container_port = var.ports.control
             name           = "control-port"
           }
+          port {
+            container_port = var.ports.catalog
+            name           = "catalog-port"
+          }
 
           liveness_probe {
             http_get {
