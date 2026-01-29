@@ -12,4 +12,4 @@
 #
 #
 
-org.eclipse.edc.demo.participants.ParticipantsResolverExtension
+# ParticipantsResolverExtension removed: participants are managed by kordat project, no federated catalog used

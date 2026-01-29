@@ -21,7 +21,7 @@ plugins {
 dependencies {
     runtimeOnly(project(":extensions:did-example-resolver"))
     runtimeOnly(project(":extensions:dcp-impl")) // some patches/impls for DCP
-    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
+    // runtimeOnly(project(":extensions:catalog-node-resolver")) // Removed: participants managed by kordat project, no federated catalog
     runtimeOnly(libs.edc.bom.controlplane)
     runtimeOnly(libs.edc.api.secrets)
     runtimeOnly(libs.edc.aws.validator.data.address.s3)
