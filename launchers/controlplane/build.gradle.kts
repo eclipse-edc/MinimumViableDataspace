@@ -25,6 +25,7 @@ dependencies {
     runtimeOnly(libs.edc.bom.controlplane)
     runtimeOnly(libs.edc.api.secrets)
     runtimeOnly(libs.edc.aws.validator.data.address.s3)
+    runtimeOnly(libs.edc.api.management.config) // Ensure catalog API context is registered
 
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
