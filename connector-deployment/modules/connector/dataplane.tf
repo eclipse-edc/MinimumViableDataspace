@@ -47,7 +47,7 @@ resource "kubernetes_deployment" "dataplane" {
         service_account_name = kubernetes_service_account.s3_sa.metadata[0].name
         container {
           name              = "dataplane-${lower(var.humanReadableName)}"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-dataplane:d425278c"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-dataplane:168c3606"
           image_pull_policy = "IfNotPresent"
 
           env_from {

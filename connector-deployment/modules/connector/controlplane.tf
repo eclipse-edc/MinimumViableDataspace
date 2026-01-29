@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "controlplane" {
         service_account_name = kubernetes_service_account.s3_sa.metadata[0].name
         container {
           name              = "connector-${lower(var.humanReadableName)}"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:d425278c"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:168c3606"
           image_pull_policy = "IfNotPresent"
 
           env_from {
