@@ -124,7 +124,7 @@ resource "kubernetes_config_map" "identityhub-credentials-map" {
   }
 
   data = {
-    for f in fileset(var.credentials-dir, "*.json") : f => templatefile(join("/", [var.credentials-dir, f]),
+    for f in fileset(var.credentials-dir, "*-credential.json") : f => templatefile(join("/", [var.credentials-dir, f]),
       {
         did = var.participantId
       }
