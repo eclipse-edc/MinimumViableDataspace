@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "controlplane" {
         service_account_name = kubernetes_service_account.s3_sa.metadata[0].name
         container {
           name              = "connector-${lower(var.humanReadableName)}"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:168c3606"
+          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:10b100ee"
           image_pull_policy = "IfNotPresent"
 
           env_from {
@@ -171,6 +171,10 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_CONTROL_PATH                      = "/api/control"
     WEB_HTTP_PROTOCOL_PORT                     = var.ports.protocol
     WEB_HTTP_PROTOCOL_PATH                     = "/api/dsp"
+    WEB_HTTP_CATALOG_PORT                      = var.ports.catalog
+    WEB_HTTP_CATALOG_PATH                      = "/api/catalog"
+    WEB_HTTP_CATALOG_AUTH_TYPE                 = "tokenbased"
+    WEB_HTTP_CATALOG_AUTH_KEY                  = "password"
     EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = "${var.participantId}#${var.aliases.sts-private-key}"
     EDC_IAM_STS_PUBLICKEY_ID                   = "${var.participantId}#${var.aliases.sts-public-key-id}"
