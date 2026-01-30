@@ -74,3 +74,25 @@ resource "kubernetes_service" "dataplane-service" {
     }
   }
 }
+
+resource "kubernetes_service" "dataspace-issuer" {
+  metadata {
+    name      = "dataspace-issuer"
+    namespace = var.namespace
+  }
+  spec {
+    type          = "ExternalName"
+    external_name = "dataspace-issuer.kordat.svc.cluster.local"
+  }
+}
+
+resource "kubernetes_service" "dataspace-issuer-service" {
+  metadata {
+    name      = "dataspace-issuer-service"
+    namespace = var.namespace
+  }
+  spec {
+    type          = "ExternalName"
+    external_name = "dataspace-issuer-service.kordat.svc.cluster.local"
+  }
+}
