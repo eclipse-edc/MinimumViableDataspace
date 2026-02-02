@@ -113,3 +113,8 @@ variable "sts-token-path" {
   type        = string
   default     = "/api/sts"
 }
+
+variable "identityhub_image" {
+  type        = string
+  description = "Identity Hub container image (tag upgraded in connector-deployment, not Kordat)"
+}

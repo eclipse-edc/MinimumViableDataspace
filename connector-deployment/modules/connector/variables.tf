@@ -112,6 +112,8 @@ locals {
   name                      = lower(var.humanReadableName)
   controlplane-service-name = "${var.humanReadableName}-controlplane"
   dataplane-service-name    = "${var.humanReadableName}-dataplane"
+  # HashiCorp Vault KV path-encodes keys; EDC must look up with the same key under which the secret is stored (URL-encoded).
+  sts_client_secret_alias   = urlencode("${var.participantId}-sts-client-secret")
 }
 
 variable "s3_endpoint" {
@@ -132,4 +134,14 @@ variable "aws_secret_key" {
 variable "service_account_role_arn" {
   type = string
   description = "ARN of IAM rol to use as service account; controlplane & dataplane"
+}
+
+variable "controlplane_image" {
+  type        = string
+  description = "Control Plane container image (tag upgraded in connector-deployment, not Kordat)"
+}
+
+variable "dataplane_image" {
+  type        = string
+  description = "Data Plane container image (tag upgraded in connector-deployment, not Kordat)"
 }

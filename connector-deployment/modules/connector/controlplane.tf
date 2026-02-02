@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "controlplane" {
         service_account_name = kubernetes_service_account.s3_sa.metadata[0].name
         container {
           name              = "connector-${lower(var.humanReadableName)}"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:10b100ee"
+          image             = var.controlplane_image
           image_pull_policy = "IfNotPresent"
 
           env_from {
@@ -194,7 +194,7 @@ resource "kubernetes_config_map" "connector-config" {
     # remote STS configuration
     EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
     EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
-    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = local.sts_client_secret_alias
 
     # S3 configuration for AmazonS3 DataAddress support
     # These variables enable the ControlPlane to validate and accept AmazonS3 DataAddress types

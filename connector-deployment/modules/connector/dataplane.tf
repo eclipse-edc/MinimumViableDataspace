@@ -47,7 +47,7 @@ resource "kubernetes_deployment" "dataplane" {
         service_account_name = kubernetes_service_account.s3_sa.metadata[0].name
         container {
           name              = "dataplane-${lower(var.humanReadableName)}"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-dataplane:10b100ee"
+          image             = var.dataplane_image
           image_pull_policy = "IfNotPresent"
 
           env_from {
@@ -133,7 +133,7 @@ resource "kubernetes_config_map" "dataplane-config" {
     # remote STS configuration
     EDC_IAM_STS_OAUTH_TOKEN_URL           = var.sts-token-url
     EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
-    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = local.sts_client_secret_alias
 
     # Remove participant creation - participants are controlled elsewhere
     # Note: EDC_RUNTIME_DISABLED_EXTENSIONS may not prevent initialization if extension

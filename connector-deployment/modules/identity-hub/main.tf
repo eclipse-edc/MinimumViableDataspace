@@ -38,7 +38,7 @@ resource "kubernetes_deployment" "identityhub" {
       spec {
         container {
           image_pull_policy = "IfNotPresent"
-          image             = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-identity-hub:10b100ee"
+          image             = var.identityhub_image
           name              = "identity-hub"
 
           env_from {
@@ -171,7 +171,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     # remote STS configuration
     EDC_IAM_STS_OAUTH_TOKEN_URL           = "http://${var.humanReadableName}:${var.ports.sts-api}${var.sts-token-path}/token"
     EDC_IAM_STS_OAUTH_CLIENT_ID           = var.participantId
-    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = "${var.participantId}-sts-client-secret"
+    EDC_IAM_STS_OAUTH_CLIENT_SECRET_ALIAS = urlencode("${var.participantId}-sts-client-secret")
 
     # Remove participant creation - participants are controlled elsewhere
     # Note: EDC_RUNTIME_DISABLED_EXTENSIONS may not prevent initialization if extension
