@@ -175,7 +175,8 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_CATALOG_PATH                      = "/api/catalog"
     WEB_HTTP_CATALOG_AUTH_TYPE                 = "tokenbased"
     WEB_HTTP_CATALOG_AUTH_KEY                  = "password"
-    EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}:${var.ports.protocol}/api/dsp"
+    # Namespace-qualified so other participants (e.g. provider) can resolve when sending agreement/termination
+    EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}.${var.namespace}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = "${var.participantId}#${var.aliases.sts-private-key}"
     EDC_IAM_STS_PUBLICKEY_ID                   = "${var.participantId}#${var.aliases.sts-public-key-id}"
     JAVA_TOOL_OPTIONS                          = "${var.useSVE ? "-XX:UseSVE=0 " : ""}-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${var.ports.debug}"
