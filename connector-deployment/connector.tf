@@ -45,7 +45,7 @@ module "participant-connector" {
 module "participant-identityhub" {
   depends_on        = [module.participant-vault]
   source            = "./modules/identity-hub"
-  credentials-dir   = dirname("./assets/credentials/k8s/consumer/") # To~Do
+  credentials-dir   = "./assets/credentials/k8s/${var.participant}"
   humanReadableName = "${var.participant}-identityhub"
   participantId     = local.participant-did
   vault-url         = local.vault_url
@@ -64,4 +64,18 @@ module "participant-vault" {
   source            = "./modules/vault"
   humanReadableName = "${var.participant}-vault"
   namespace         = kubernetes_namespace_v1.ns_participant.metadata.0.name
+}
+
+# Seed Vault with participant private key from assets/<participant>_private.pem (produced by produce_participant_credentials.sh)
+resource "null_resource" "seed_vault_participant_key" {
+  count      = fileexists("${path.module}/assets/${var.participant}_private.pem") ? 1 : 0
+  depends_on = [module.participant-vault]
+  triggers = {
+    participant = var.participant
+    pem         = fileexists("${path.module}/assets/${var.participant}_private.pem") ? filemd5("${path.module}/assets/${var.participant}_private.pem") : "no-file"
+  }
+  provisioner "local-exec" {
+    command     = "chmod +x scripts/seed_vault_participant_key.sh && ./scripts/seed_vault_participant_key.sh ${var.participant}"
+    working_dir = path.module
+  }
 }

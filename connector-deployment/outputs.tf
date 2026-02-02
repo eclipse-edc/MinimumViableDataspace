@@ -29,3 +29,9 @@
 #     provider-manufacturing = "jdbc:postgresql://${module.provider-postgres.database-url}/provider_manufacturing"
 #   }
 # }
+
+# Participant credentials produced by produce_participant_credentials.sh (run in pipeline before Terraform)
+output "participant_public_key_path" {
+  description = "Path to participant public PEM (assets/<participant>_public.pem) for DID doc or backend registration"
+  value       = "${path.module}/assets/${var.participant}_public.pem"
+}
