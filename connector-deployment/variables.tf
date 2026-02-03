@@ -55,17 +55,17 @@ variable "useSVE" {
 variable "controlplane_image" {
   type        = string
   description = "Control Plane (connector) image. Upgrade tag here when releasing new MVD/EDC versions."
-  default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:193aad1e"
+  default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-controlplane:4dd1d16d"
 }
 
 variable "dataplane_image" {
   type        = string
   description = "Data Plane image. Upgrade tag here when releasing new MVD/EDC versions."
-  default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-dataplane:193aad1e"
+  default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-dataplane:4dd1d16d"
 }
 
 variable "identityhub_image" {
   type        = string
   description = "Identity Hub image. Upgrade tag here when releasing new MVD/EDC versions."
-  default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-identity-hub:193aad1e"
+  default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-identity-hub:4dd1d16d"
 }
