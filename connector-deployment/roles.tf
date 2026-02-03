@@ -32,8 +32,11 @@ EOT
         {
             "Effect": "Allow",
             "Action": [
-                "s3:Get*",
-                "s3:List*",
+                "s3:GetBucketLocation",
+                "s3:ListMultiRegionAccessPoints",
+                "s3:GetAccountPublicAccessBlock",
+                "s3:ListAllMyBuckets",
+                "s3:ListAccessGrantsInstances",
             ],
             "Resource": "*"
         },
