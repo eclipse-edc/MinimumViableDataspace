@@ -141,8 +141,9 @@ resource "kubernetes_config_map" "dataplane-config" {
     EDC_MVD_PARTICIPANTS_LIST_FILE     = "/dev/null"
 
     EDC_S3_ENDPOINT       = var.s3_endpoint
-    AWS_ACCESS_KEY_ID     = var.aws_access_key
-    AWS_SECRET_ACCESS_KEY = var.aws_secret_key
-    AWS_REGION            = "us-east-1"
+    # AWS_ACCESS_KEY_ID     = var.aws_access_key
+    # AWS_SECRET_ACCESS_KEY = var.aws_secret_key
+    AWS_REGION            = "eu-west-1"
+    AWS_DEFAULT_REGION            = "eu-west-1"
   }
 }

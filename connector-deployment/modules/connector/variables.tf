@@ -121,15 +121,15 @@ variable "s3_endpoint" {
   description = "S3 endpoint"
 }
 
-variable "aws_access_key" {
-  type = string
-  description = "IAM user access key"
-}
+# variable "aws_access_key" {
+#   type = string
+#   description = "IAM user access key"
+# }
 
-variable "aws_secret_key" {
-  type = string
-  description = "IAM user secret key"
-}
+# variable "aws_secret_key" {
+#   type = string
+#   description = "IAM user secret key"
+# }
 
 variable "service_account_role_arn" {
   type = string

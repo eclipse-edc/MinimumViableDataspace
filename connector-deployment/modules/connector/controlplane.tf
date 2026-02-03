@@ -200,9 +200,10 @@ resource "kubernetes_config_map" "connector-config" {
     # These variables enable the ControlPlane to validate and accept AmazonS3 DataAddress types
     # Default values are for LocalStack (can be overridden by setting these values in the ConfigMap manually)
     EDC_S3_ENDPOINT       = var.s3_endpoint
-    AWS_ACCESS_KEY_ID     = var.aws_access_key
-    AWS_SECRET_ACCESS_KEY = var.aws_secret_key
-    AWS_REGION            = "us-east-1"
+    # AWS_ACCESS_KEY_ID     = var.aws_access_key
+    # AWS_SECRET_ACCESS_KEY = var.aws_secret_key
+    AWS_REGION            = "eu-west-1"
+    AWS_REGION            = "eu-west-1"
 
     # Remove participant creation - participants are controlled elsewhere
     # Note: EDC_RUNTIME_DISABLED_EXTENSIONS may not prevent initialization if extension

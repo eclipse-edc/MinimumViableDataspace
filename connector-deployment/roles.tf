@@ -32,21 +32,8 @@ EOT
         {
             "Effect": "Allow",
             "Action": [
-                "s3:ListAccessPointsForObjectLambda",
-                "s3:GetAccessPoint",
-                "s3:PutAccountPublicAccessBlock",
-                "s3:ListAccessPoints",
-                "s3:CreateStorageLensGroup",
-                "s3:ListJobs",
-                "s3:PutStorageLensConfiguration",
-                "s3:ListMultiRegionAccessPoints",
-                "s3:ListStorageLensGroups",
-                "s3:ListStorageLensConfigurations",
-                "s3:GetAccountPublicAccessBlock",
-                "s3:ListAllMyBuckets",
-                "s3:ListAccessGrantsInstances",
-                "s3:PutAccessPointPublicAccessBlock",
-                "s3:CreateJob"
+                "s3:Get*",
+                "s3:List*",
             ],
             "Resource": "*"
         },
@@ -58,6 +45,15 @@ EOT
             "Resource": [
             "${module.assets_s3_bucket.bucket_arn}",
             "${module.assets_s3_bucket.bucket_arn}/*"
+            ]
+        },
+        {
+            "Action": [
+              "kms:*"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+            "${module.kms.key_arn}"
             ]
         }
     ]

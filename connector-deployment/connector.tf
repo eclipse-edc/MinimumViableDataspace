@@ -38,8 +38,8 @@ module "participant-connector" {
   sts-token-url            = "${module.participant-identityhub.sts-token-url}/token"
   useSVE                   = var.useSVE
   s3_endpoint              = "https://${module.assets_s3_bucket.bucket_name}.s3.eu-west-1.amazonaws.com"
-  aws_access_key           = aws_iam_access_key.deployer.id
-  aws_secret_key           = aws_iam_access_key.deployer.secret
+  # aws_access_key           = aws_iam_access_key.deployer.id
+  # aws_secret_key           = aws_iam_access_key.deployer.secret
   service_account_role_arn = module.participant-s3-role.role_arn
 }
 
