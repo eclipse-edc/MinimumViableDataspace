@@ -166,7 +166,7 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_MANAGEMENT_PORT                   = var.ports.management
     WEB_HTTP_MANAGEMENT_PATH                   = "/api/management"
     WEB_HTTP_MANAGEMENT_AUTH_TYPE              = "tokenbased"
-    WEB_HTTP_MANAGEMENT_AUTH_KEY               = "password"
+    WEB_HTTP_MANAGEMENT_AUTH_KEY               = var.management_auth_key
     WEB_HTTP_CONTROL_PORT                      = var.ports.control
     WEB_HTTP_CONTROL_PATH                      = "/api/control"
     WEB_HTTP_PROTOCOL_PORT                     = var.ports.protocol
@@ -174,7 +174,7 @@ resource "kubernetes_config_map" "connector-config" {
     WEB_HTTP_CATALOG_PORT                      = var.ports.catalog
     WEB_HTTP_CATALOG_PATH                      = "/api/catalog"
     WEB_HTTP_CATALOG_AUTH_TYPE                 = "tokenbased"
-    WEB_HTTP_CATALOG_AUTH_KEY                  = "password"
+    WEB_HTTP_CATALOG_AUTH_KEY                  = var.management_auth_key
     # Namespace-qualified so other participants (e.g. provider) can resolve when sending agreement/termination
     EDC_DSP_CALLBACK_ADDRESS                   = "http://${local.controlplane-service-name}.${var.namespace}:${var.ports.protocol}/api/dsp"
     EDC_IAM_STS_PRIVATEKEY_ALIAS               = "${var.participantId}#${var.aliases.sts-private-key}"
