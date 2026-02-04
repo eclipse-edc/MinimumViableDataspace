@@ -46,8 +46,7 @@ EOT
             ],
             "Effect": "Allow",
             "Resource": [
-            "${module.assets_s3_bucket.bucket_arn}",
-            "${module.assets_s3_bucket.bucket_arn}/*"
+            "*"
             ]
         },
         {
@@ -56,7 +55,7 @@ EOT
             ],
             "Effect": "Allow",
             "Resource": [
-            "${module.kms.key_arn}"
+            "*"
             ]
         }
     ]
