@@ -36,7 +36,7 @@ EOT
                 "s3:ListMultiRegionAccessPoints",
                 "s3:GetAccountPublicAccessBlock",
                 "s3:ListAllMyBuckets",
-                "s3:ListAccessGrantsInstances",
+                "s3:ListAccessGrantsInstances"
             ],
             "Resource": "*"
         },
