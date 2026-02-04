@@ -118,3 +118,9 @@ variable "identityhub_image" {
   type        = string
   description = "Identity Hub container image (tag upgraded in connector-deployment, not Kordat)"
 }
+
+variable "identity_auth_key" {
+  type        = string
+  description = "API key for Identity API (x-api-key). Default 'password' for backward compatibility; set same as management_auth_key when using a fixed key."
+  default     = "password"
+}

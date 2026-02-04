@@ -149,7 +149,7 @@ resource "kubernetes_config_map" "identityhub-config" {
     WEB_HTTP_PATH                      = "/api"
     WEB_HTTP_IDENTITY_PORT             = var.ports.ih-identity-api
     WEB_HTTP_IDENTITY_PATH             = "/api/identity"
-    WEB_HTTP_IDENTITY_AUTH_KEY         = "password"
+    WEB_HTTP_IDENTITY_AUTH_KEY         = var.identity_auth_key
     WEB_HTTP_CREDENTIALS_PORT          = var.ports.credentials-api
     WEB_HTTP_CREDENTIALS_PATH          = "/api/credentials"
     WEB_HTTP_DID_PORT                  = var.ports.ih-did

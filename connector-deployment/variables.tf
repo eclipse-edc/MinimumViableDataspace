@@ -69,3 +69,9 @@ variable "identityhub_image" {
   description = "Identity Hub image. Upgrade tag here when releasing new MVD/EDC versions."
   default     = "150073872684.dkr.ecr.eu-west-1.amazonaws.com/kordat-dev-identity-hub:4dd1d16d"
 }
+
+variable "participant_management_auth_key" {
+  type        = string
+  description = "Default API key for this participant's connector. For Kordat-managed participants the key is created once in Kordat and distributed via K8s patch (this default is overwritten). Set a fixed value for testing; default 'password' for seed scripts."
+  default     = "password"
+}

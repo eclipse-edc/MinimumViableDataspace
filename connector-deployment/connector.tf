@@ -41,6 +41,7 @@ module "participant-connector" {
   # aws_access_key           = aws_iam_access_key.deployer.id
   # aws_secret_key           = aws_iam_access_key.deployer.secret
   service_account_role_arn = module.participant-s3-role.role_arn
+  management_auth_key      = var.participant_management_auth_key
 }
 
 # consumer identity hub
@@ -53,6 +54,7 @@ module "participant-identityhub" {
   vault-url         = local.vault_url
   service-name      = var.participant
   identityhub_image = var.identityhub_image
+  identity_auth_key = var.participant_management_auth_key
   database = {
     user     = var.participant
     password = random_password.participant_password.result
