@@ -25,7 +25,7 @@ dependencies {
     runtimeOnly(libs.edc.bom.controlplane)
     runtimeOnly(libs.edc.api.secrets)
     runtimeOnly(libs.edc.aws.validator.data.address.s3)
-
+    runtimeOnly(project(":extensions:otel-monitor"))
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.edc.bom.controlplane.sql)

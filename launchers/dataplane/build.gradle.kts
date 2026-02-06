@@ -31,7 +31,8 @@ dependencies {
     // Note: This may need to be adjusted based on actual EDC version and available extensions
     // If data-plane-s3 extension is not available, HTTP can be used as fallback
     runtimeOnly(libs.edc.aws.validator.data.address.s3)
-
+    
+    runtimeOnly(project(":extensions:otel-monitor"))
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
         runtimeOnly(libs.edc.bom.dataplane.sql)

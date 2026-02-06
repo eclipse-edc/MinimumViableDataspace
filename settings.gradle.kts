@@ -29,6 +29,7 @@ include(":extensions:did-example-resolver")
 include(":extensions:catalog-node-resolver")
 include(":extensions:dcp-impl")
 include(":extensions:superuser-seed")
+include(":extensions:otel-monitor")
 //include(":tests:performance")
 include(":tests:end2end")
 

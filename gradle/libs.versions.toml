@@ -10,6 +10,7 @@ jakarta-json = "2.1.3"
 parsson = "1.1.6"
 postgres = "42.7.8"
 restAssured = "5.5.6"
+opentelemetry = "1.32.0"
 
 [libraries]
 # upstream EDC dependencies
@@ -109,6 +110,11 @@ edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sq
 edc-aws-s3-core                 = { module = "org.eclipse.edc.aws:aws-s3-core",                 version.ref = "edc" }
 edc-aws-data-plane-s3           = { module = "org.eclipse.edc.aws:data-plane-aws-s3",           version.ref = "edc" }
 edc-aws-validator-data-address-s3 = { module = "org.eclipse.edc.aws:validator-data-address-s3", version.ref = "edc" }
+
+# opentelemetry
+opentelemetry-api = { module = "io.opentelemetry:opentelemetry-api", version.ref = "opentelemetry" }
+opentelemetry-sdk = { module = "io.opentelemetry:opentelemetry-sdk", version.ref = "opentelemetry" }
+opentelemetry-exporter-otlp = { module = "io.opentelemetry:opentelemetry-exporter-otlp", version.ref = "opentelemetry" }
 
 
 [bundles]
