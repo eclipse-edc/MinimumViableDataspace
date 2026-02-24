@@ -54,12 +54,23 @@ EOT
             ],
             "Effect": "Allow",
             "Resource": [
-            "*"
+            "${module.assets_s3_bucket.bucket_arn}",
+            "${module.assets_s3_bucket.bucket_arn}/*"
             ]
         },
         {
             "Action": [
               "kms:*"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+            "${module.kms.key_arn}"
+            ]
+        },
+        {
+            "Action": [
+			  "kms:GenerateDataKey",
+			  "kms:Decrypt"
             ],
             "Effect": "Allow",
             "Resource": [
