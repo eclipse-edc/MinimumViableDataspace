@@ -19,6 +19,13 @@ module "participant-s3-role" {
                     "${local.eks_oidc}:sub": "system:serviceaccount:${var.participant}:${var.participant}-s3-sa"
                 }
             }
+        },
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/kordat-${var.environment}-backend-sa-role"
+            },
+            "Action": "sts:AssumeRole"
         }
     ]
 }
@@ -36,7 +43,8 @@ EOT
                 "s3:ListMultiRegionAccessPoints",
                 "s3:GetAccountPublicAccessBlock",
                 "s3:ListAllMyBuckets",
-                "s3:ListAccessGrantsInstances"
+                "s3:ListAccessGrantsInstances",
+                "s3:PutObject"
             ],
             "Resource": "*"
         },
