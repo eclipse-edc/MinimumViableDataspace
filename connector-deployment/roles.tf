@@ -75,7 +75,12 @@ EOT
             "Effect": "Allow",
             "Resource": [
             "*"
-            ]
+            ],
+            "Condition": {
+                "StringEquals": {
+                    "kms:ViaService": "s3.eu-west-1.amazonaws.com"
+                }
+            }
         }
     ]
 }
