@@ -75,3 +75,22 @@ variable "participant_management_auth_key" {
   description = "Default API key for this participant's connector. For Kordat-managed participants the key is created once in Kordat and distributed via K8s patch (this default is overwritten). Set a fixed value for testing; default 'password' for seed scripts."
   default     = "password"
 }
+
+# S3 replication (isolated per participant - only created when all three are set)
+variable "replicate_to_participant" {
+  type        = bool
+  description = "Enable replication from this participant's bucket to a destination participant bucket"
+  default     = false
+}
+
+variable "participant_account_id" {
+  type        = string
+  description = "Destination AWS account ID for replication (e.g. GDM account)"
+  default     = ""
+}
+
+variable "participant_bucket_name" {
+  type        = string
+  description = "Destination bucket name in the participant account (e.g. gdm-pre-backend-bucket)"
+  default     = ""
+}

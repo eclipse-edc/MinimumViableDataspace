@@ -35,3 +35,9 @@ output "participant_public_key_path" {
   description = "Path to participant public PEM (assets/<participant>_public.pem) for DID doc or backend registration"
   value       = "${path.module}/assets/${var.participant}_public.pem"
 }
+
+# S3 replication role ARN (use in destination account bucket policy when replicate_to_participant=true)
+output "s3_replication_role_arn" {
+  description = "ARN of the S3 replication role, for use in the destination bucket policy"
+  value       = local.replication_enabled ? module.s3_replication[0].replication_role_arn : null
+}
