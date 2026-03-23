@@ -70,15 +70,31 @@ DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl
                "keyId": "did:web:consumer-identityhub%3A7083:consumer#key-1",
                "privateKeyAlias": "did:web:consumer-identityhub%3A7083:consumer#key-1",
                "keyGeneratorParams":{
-                  "algorithm": "EC"
+                  "algorithm": "EC",
+                  "curve": "P-256"
                }
            }
        }')
 
-curl --location "http://127.0.0.1/consumer/cs/api/identity/v1alpha/participants/" \
+CONSUMER_CLIENT_SECRET=$(curl -s --location "http://127.0.0.1/consumer/cs/api/identity/v1alpha/participants/" \
 --header 'Content-Type: application/json' \
 --header "x-api-key: $API_KEY" \
---data "$DATA_CONSUMER"
+--data "$DATA_CONSUMER" | jq -r '.clientSecret')
+
+# store the clientSecret in the consumer connector's vault so it can authenticate with the STS
+CONSUMER_SECRET_DATA=$(jq -n --arg secret "$CONSUMER_CLIENT_SECRET" \
+'{
+  "@context" : {
+    "edc" : "https://w3id.org/edc/v0.0.1/ns/"
+  },
+  "@type" : "https://w3id.org/edc/v0.0.1/ns/Secret",
+  "@id" : "did:web:consumer-identityhub%3A7083:consumer-sts-client-secret",
+  "https://w3id.org/edc/v0.0.1/ns/value": "\($secret)"
+}')
+curl -sL -X POST "http://127.0.0.1/consumer/cp/api/management/v3/secrets" \
+--header "x-api-key: password" \
+--header "Content-Type: application/json" \
+--data "$CONSUMER_SECRET_DATA"
 
 
 # add provider participant
