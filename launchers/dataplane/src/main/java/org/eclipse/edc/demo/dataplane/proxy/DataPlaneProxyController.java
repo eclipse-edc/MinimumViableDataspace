@@ -53,11 +53,11 @@ import static org.eclipse.edc.spi.constants.CoreConstants.EDC_NAMESPACE;
 @Produces(WILDCARD)
 public class DataPlaneProxyController {
 
-    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-
+    private final HttpClient httpClient;
     private final DataPlaneAuthorizationService authorizationService;
 
-    public DataPlaneProxyController(DataPlaneAuthorizationService authorizationService) {
+    public DataPlaneProxyController(HttpClient httpClient, DataPlaneAuthorizationService authorizationService) {
+        this.httpClient = httpClient;
         this.authorizationService = authorizationService;
     }
 
@@ -115,7 +115,7 @@ public class DataPlaneProxyController {
                 }
             });
 
-            var response = HTTP_CLIENT.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
+            var response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofInputStream());
             return Response.status(response.statusCode())
                     .header(CONTENT_TYPE, response.headers().firstValue(CONTENT_TYPE).orElse(APPLICATION_OCTET_STREAM))
                     .entity(response.body())

@@ -35,6 +35,8 @@ import org.eclipse.edc.web.spi.WebService;
 import org.eclipse.edc.web.spi.configuration.PortMapping;
 import org.eclipse.edc.web.spi.configuration.PortMappingRegistry;
 
+import java.net.http.HttpClient;
+
 @Extension(value = DataPlaneProxyExtension.NAME)
 public class DataPlaneProxyExtension implements ServiceExtension {
 
@@ -84,7 +86,8 @@ public class DataPlaneProxyExtension implements ServiceExtension {
         var endpoint = Endpoint.url(publicBaseUrl);
         generatorService.addGeneratorFunction("HttpData", dataAddress -> endpoint);
 
-        webService.registerResource(PUBLIC_API_CONTEXT, new DataPlaneProxyController(authorizationService));
+        var httpClient = HttpClient.newHttpClient();
+        webService.registerResource(PUBLIC_API_CONTEXT, new DataPlaneProxyController(httpClient, authorizationService));
     }
 
     @Settings
