@@ -63,8 +63,7 @@ resource "helm_release" "vault" {
   ]
 }
 #
-# ECDSA key with P256 elliptic curve
+# Ed25519 key for signing
 resource "tls_private_key" "private_signing_key" {
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P256"
+  algorithm = "ED25519"
 }

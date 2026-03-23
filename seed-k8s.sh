@@ -70,7 +70,7 @@ DATA_CONSUMER=$(jq -n --arg url "$CONSUMER_CONTROLPLANE_SERVICE_URL" --arg ihurl
                "keyId": "did:web:consumer-identityhub%3A7083:consumer#key-1",
                "privateKeyAlias": "did:web:consumer-identityhub%3A7083:consumer#key-1",
                "keyGeneratorParams":{
-                  "algorithm": "EC"
+                  "algorithm": "EdDSA"
                }
            }
        }')
@@ -110,7 +110,7 @@ DATA_PROVIDER=$(jq -n --arg url "$PROVIDER_CONTROLPLANE_SERVICE_URL" --arg ihurl
                "keyId": "did:web:provider-identityhub%3A7083:provider#key-1",
                "privateKeyAlias": "did:web:provider-identityhub%3A7083:provider#key-1",
                "keyGeneratorParams":{
-                  "algorithm": "EC"
+                  "algorithm": "EdDSA"
                }
            }
        }')

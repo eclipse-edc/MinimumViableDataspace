@@ -42,17 +42,14 @@ public class SecretsExtension implements ServiceExtension {
         if (vault.getClass().getSimpleName().equals("InMemoryVault")) {
             var publicKey = """
                     -----BEGIN PUBLIC KEY-----
-                    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r
-                    oYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
+                    MCowBQYDK2VwAyEA+E2nO72TBQreTl+vYxAhvqUkKahOu4/WZE1b8UTnRXo=
                     -----END PUBLIC KEY-----
                     """;
 
             var privateKey = """
-                    -----BEGIN EC PRIVATE KEY-----
-                    MHcCAQEEIARDUGJgKy1yzxkueIJ1k3MPUWQ/tbQWQNqW6TjyHpdcoAoGCCqGSM49
-                    AwEHoUQDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5roYnkAXuqCYfNK3ex+hMWFuiX
-                    GUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==
-                    -----END EC PRIVATE KEY-----
+                    -----BEGIN PRIVATE KEY-----
+                    MC4CAQAwBQYDK2VwBCIEIDQA29uIoMZY15Cqc++CuRiRRvoFYhGxi012Q8oMKEWh
+                    -----END PRIVATE KEY-----
                     """;
 
 
