@@ -68,7 +68,7 @@ public class ParticipantContextSeedExtension implements ServiceExtension {
             return;
         }
         participantContextService.createParticipantContext(ParticipantManifest.Builder.newInstance()
-                        .participantId(superUserParticipantId)
+                        .participantContextId(superUserParticipantId)
                         .did("did:web:%s".formatted(superUserParticipantId)) // doesn't matter, not intended for resolution
                         .active(true)
                         .key(KeyDescriptor.Builder.newInstance()

@@ -14,7 +14,7 @@
 
 package org.eclipse.edc.demo.dcp.core;
 
-import org.eclipse.edc.iam.identitytrust.spi.scope.ScopeExtractor;
+import org.eclipse.edc.iam.decentralizedclaims.spi.scope.ScopeExtractor;
 import org.eclipse.edc.policy.context.request.spi.RequestPolicyContext;
 import org.eclipse.edc.policy.model.Operator;
 

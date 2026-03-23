@@ -1,0 +1,92 @@
+/*
+ *  Copyright (c) 2025 Metaform Systems, Inc.
+ *
+ *  This program and the accompanying materials are made available under the
+ *  terms of the Apache License, Version 2.0 which is available at
+ *  https://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  SPDX-License-Identifier: Apache-2.0
+ *
+ *  Contributors:
+ *       Metaform Systems, Inc. - initial API and implementation
+ *
+ */
+
+package org.eclipse.edc.demo.dataplane.proxy;
+
+import org.eclipse.edc.connector.dataplane.spi.Endpoint;
+import org.eclipse.edc.connector.dataplane.spi.iam.DataPlaneAuthorizationService;
+import org.eclipse.edc.connector.dataplane.spi.iam.PublicEndpointGeneratorService;
+import org.eclipse.edc.runtime.metamodel.annotation.Configuration;
+import org.eclipse.edc.runtime.metamodel.annotation.Extension;
+import org.eclipse.edc.runtime.metamodel.annotation.Inject;
+import org.eclipse.edc.runtime.metamodel.annotation.Setting;
+import org.eclipse.edc.runtime.metamodel.annotation.Settings;
+import org.eclipse.edc.spi.system.Hostname;
+import org.eclipse.edc.spi.system.ServiceExtension;
+import org.eclipse.edc.spi.system.ServiceExtensionContext;
+import org.eclipse.edc.web.spi.WebService;
+import org.eclipse.edc.web.spi.configuration.PortMapping;
+import org.eclipse.edc.web.spi.configuration.PortMappingRegistry;
+
+@Extension(value = DataPlaneProxyExtension.NAME)
+public class DataPlaneProxyExtension implements ServiceExtension {
+
+    public static final String NAME = "Data Plane HTTP Proxy";
+
+    private static final String PUBLIC_API_CONTEXT = "public";
+    private static final int DEFAULT_PUBLIC_PORT = 8185;
+    private static final String DEFAULT_PUBLIC_PATH = "/api/public";
+
+    @Setting(description = "Base url of the public API endpoint without the trailing slash. This should point to the public endpoint configured.",
+            required = false, key = "edc.dataplane.api.public.baseurl")
+    private String publicBaseUrl;
+
+    @Configuration
+    private PublicApiConfiguration apiConfiguration;
+
+    @Inject
+    private PortMappingRegistry portMappingRegistry;
+
+    @Inject
+    private WebService webService;
+
+    @Inject
+    private DataPlaneAuthorizationService authorizationService;
+
+    @Inject
+    private PublicEndpointGeneratorService generatorService;
+
+    @Inject
+    private Hostname hostname;
+
+    @Override
+    public String name() {
+        return NAME;
+    }
+
+    @Override
+    public void initialize(ServiceExtensionContext context) {
+        var portMapping = new PortMapping(PUBLIC_API_CONTEXT, apiConfiguration.port(), apiConfiguration.path());
+        portMappingRegistry.register(portMapping);
+
+        if (publicBaseUrl == null) {
+            publicBaseUrl = "http://%s:%d%s".formatted(hostname.get(), portMapping.port(), portMapping.path());
+            context.getMonitor().info("No explicit public endpoint configured, defaulting to '%s'.".formatted(publicBaseUrl));
+        }
+
+        var endpoint = Endpoint.url(publicBaseUrl);
+        generatorService.addGeneratorFunction("HttpData", dataAddress -> endpoint);
+
+        webService.registerResource(PUBLIC_API_CONTEXT, new DataPlaneProxyController(authorizationService));
+    }
+
+    @Settings
+    record PublicApiConfiguration(
+            @Setting(key = "web.http.public.port", description = "Port for public api context", defaultValue = DEFAULT_PUBLIC_PORT + "")
+            int port,
+            @Setting(key = "web.http.public.path", description = "Path for public api context", defaultValue = DEFAULT_PUBLIC_PATH)
+            String path
+    ) {
+    }
+}

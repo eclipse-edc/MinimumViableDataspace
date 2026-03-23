@@ -72,10 +72,11 @@ public class ParticipantsResolverExtension implements ServiceExtension {
 
     @Provider
     public TargetNodeFilter skipSelfNodeFilter(ServiceExtensionContext context) {
+        var participantId = context.getSetting("edc.participant.id", ServiceExtensionContext.ANONYMOUS_PARTICIPANT);
         return targetNode -> {
-            var predicateTest = !targetNode.id().equals(context.getParticipantId());
+            var predicateTest = !targetNode.id().equals(participantId);
             if (!predicateTest) {
-                monitor.debug("Node filter: skipping node '%s' for participant '%s'".formatted(targetNode.id(), context.getParticipantId()));
+                monitor.debug("Node filter: skipping node '%s' for participant '%s'".formatted(targetNode.id(), participantId));
             }
             return predicateTest;
         };

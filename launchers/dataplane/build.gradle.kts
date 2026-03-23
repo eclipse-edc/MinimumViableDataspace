@@ -20,7 +20,10 @@ plugins {
 
 dependencies {
     runtimeOnly(libs.edc.bom.dataplane)
-    runtimeOnly(libs.edc.dataplane.v2)
+
+    implementation(libs.edc.spi.dataplane)
+    implementation(libs.edc.spi.web)
+    implementation(libs.edc.spi.boot)
 
     if (project.properties.getOrDefault("persistence", "false") == "true") {
         runtimeOnly(libs.edc.vault.hashicorp)
