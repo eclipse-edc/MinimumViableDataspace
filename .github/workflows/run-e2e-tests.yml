@@ -51,7 +51,7 @@ jobs:
         uses: azure/setup-kubectl@v4
 
       - name: "Set up OpenTofu"
-        uses: opentofu/setup-opentofu@v1
+        uses: opentofu/setup-opentofu@v2
 
       - uses: actions/checkout@v6
 
