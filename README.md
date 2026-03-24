@@ -741,7 +741,7 @@ a token in the Authorization header, which authorizes the verifier to obtain the
 consumer's IdentityHub.
 
 We achieve this by intercepting the DSP request and adding the correct scope - here:
-`"org.eclipse.edc.vc.type:MembershipCredential:read"` - to the request builder. Technically, this is achieved by
+`"org.eclipse.dspace.dcp.vc.type:MembershipCredential:read"` - to the request builder. Technically, this is achieved by
 registering a `postValidator` function for the relevant policy scopes, check out the
 [DcpPatchExtension.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/core/DcpPatchExtension.java) class.
 
@@ -769,7 +769,7 @@ relevant scope string to the access token upon DSP egress. A policy, that requir
 
 The
 [DataAccessCredentialScopeExtractor.java](extensions/dcp-impl/src/main/java/org/eclipse/edc/demo/dcp/core/DataAccessCredentialScopeExtractor.java)
-class would convert this into a scope string `org.eclipse.edc.vc.type:DataProcessorCredential:read` and add it to the
+class would convert this into a scope string `org.eclipse.dspace.dcp.vc.type:DataProcessorCredential:read` and add it to the
 consumer's access token.
 
 ### 8.4 Policy evaluation functions
@@ -934,7 +934,7 @@ deliver a credential of type `DemoCredential` to the consumer's IdentityHub.
 ### 10.4 Default scope-to-criterion transformer
 
 When IdentityHub receives a Presentation query, that carries an access token, it must be able to convert a scope string
-into a filter expression, for example `org.eclipse.edc.vc.type:DataProcessorCredential:read` is converted into
+into a filter expression, for example `org.eclipse.dspace.dcp.vc.type:DataProcessorCredential:read` is converted into
 `verifiableCredential.credential.type = DataProcessorCredential`. This filter expression is then used by IdentityHub to
 query for `DataProcessorCredentials` in the database.
 

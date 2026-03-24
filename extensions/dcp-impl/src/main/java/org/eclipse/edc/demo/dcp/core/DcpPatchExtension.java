@@ -69,7 +69,7 @@ public class DcpPatchExtension implements ServiceExtension {
         trustedIssuerRegistry.register(new Issuer("did:web:localhost%3A10100", Map.of()), WILDCARD); // for the credential used to demo the issuance flow
 
         // register a default scope provider
-        var contextMappingFunction = new DefaultScopeMappingFunction(Set.of("org.eclipse.edc.vc.type:MembershipCredential:read"));
+        var contextMappingFunction = new DefaultScopeMappingFunction(Set.of("org.eclipse.dspace.dcp.vc.type:MembershipCredential:read"));
 
         policyEngine.registerPostValidator(RequestCatalogPolicyContext.class, contextMappingFunction::apply);
         policyEngine.registerPostValidator(RequestContractNegotiationPolicyContext.class, contextMappingFunction::apply);
