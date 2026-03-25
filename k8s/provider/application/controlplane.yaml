@@ -1,0 +1,112 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: controlplane
+  namespace: provider
+  labels:
+    app: controlplane
+    type: edc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: controlplane
+  template:
+    metadata:
+      name: controlplane
+      labels:
+        app: controlplane
+        platform: edcv
+        type: edc-app
+    spec:
+      containers:
+        - name: controlplane
+          image: ghcr.io/eclipse-edc/mvd/controlplane:latest
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef: { name: controlplane-config }
+          ports:
+            - containerPort: 1044
+              name: debug-port
+          livenessProbe:
+            httpGet:
+              path: /api/check/liveness
+              port: 8080
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /api/check/readiness
+              port: 8080
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 120
+          startupProbe:
+            httpGet:
+              path: /api/check/startup
+              port: 8080
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 120
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: controlplane
+  namespace: provider
+spec:
+  type: ClusterIP
+  selector:
+    app: controlplane
+  ports:
+    - name: health
+      port: 8080
+      targetPort: 8080
+    - name: management
+      port: 8081
+      targetPort: 8081
+    - name: protocol
+      port: 8082
+      targetPort: 8082
+    - name: debug
+      port: 1044
+      targetPort: 1044
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: controlplane
+  namespace: provider
+spec:
+  parentRefs:
+    - name: consumer-gateway
+      kind: Gateway
+      sectionName: http
+  hostnames:
+    - cp.localhost
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: controlplane
+          port: 8081
+          weight: 1
