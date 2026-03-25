@@ -19,8 +19,8 @@ metadata:
   namespace: provider
 data:
   # base config
-  edc.hostname: "controlplane.consumer.svc.cluster.local"
-  edc.vault.hashicorp.url: "http://vault.consumer.svc.cluster.local:8200"
+  edc.hostname: "controlplane.provider.svc.cluster.local"
+  edc.vault.hashicorp.url: "http://vault.provider.svc.cluster.local:8200"
   edc.vault.hashicorp.token: "root"
   edc.participant.id: "did:web:connector"
   edc.iam.did.web.use.https: "false"
@@ -37,7 +37,7 @@ data:
   web.http.control.path: "/api/control"
 
   # dataplane config
-  edc.datasource.default.url: "jdbc:postgresql://postgres.consumer.svc.cluster.local:5432/controlplane"
+  edc.datasource.default.url: "jdbc:postgresql://postgres.provider.svc.cluster.local:5432/controlplane"
   edc.datasource.default.user: "cp"
   edc.datasource.default.password: "cp"
   edc.sql.schema.autocreate: "true"
@@ -49,8 +49,8 @@ data:
   # to do this properly, we should probably configure the following properties on the ingress route:
   #    proxy_set_header Host $host;
   #    proxy_set_header X-Forwarded-Proto $scheme;
-  edc.iam.oauth2.issuer: "http://keycloak.consumer.svc.cluster.local:8080/realms/edcv"
-  edc.iam.oauth2.jwks.url: "http://keycloak.consumer.svc.cluster.local:8080/realms/edcv/protocol/openid-connect/certs"
+  edc.iam.oauth2.issuer: "http://keycloak.provider.svc.cluster.local:8080/realms/edcv"
+  edc.iam.oauth2.jwks.url: "http://keycloak.provider.svc.cluster.local:8080/realms/edcv/protocol/openid-connect/certs"
 
   # Default scopes config
   edc.iam.dcp.scopes.membership.id: "membership-scope"
@@ -63,6 +63,6 @@ data:
   edc.iam.dcp.scopes.manufacturer.prefix-mapping: "ManufacturerCredential"
 
   # Trusted Issuers
-  edc.iam.trusted-issuer.issuer.id: "did:web:issuerservice.consumer.svc.cluster.local%3A10016:issuer"
+  edc.iam.trusted-issuer.issuer.id: "did:web:issuerservice.provider.svc.cluster.local%3A10016:issuer"
 
   JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"

@@ -17,7 +17,7 @@ metadata:
   name: ih-config
   namespace: provider
 data:
-  edc.hostname: "identityhub.consumer.svc.cluster.local"
+  edc.hostname: "identityhub.provider.svc.cluster.local"
   edc.iam.credentia.revocation.mimetype: "application/json"
   edc.iam.did.web.use.https: "false"
   edc.ih.iam.publickey.alias: "publickey-alias"
@@ -34,10 +34,10 @@ data:
   web.http.sts.path: "/api/sts"
   JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"
 
-  edc.vault.hashicorp.url: "http://vault.consumer.svc.cluster.local:8200"
+  edc.vault.hashicorp.url: "http://vault.provider.svc.cluster.local:8200"
   edc.vault.hashicorp.token: "root"
 
-  edc.datasource.default.url: "jdbc:postgresql://postgres.consumer.svc.cluster.local:5432/identityhub"
+  edc.datasource.default.url: "jdbc:postgresql://postgres.provider.svc.cluster.local:5432/identityhub"
   edc.datasource.default.user: "ih"
   edc.datasource.default.password: "ih"
   edc.sql.schema.autocreate: "true"
@@ -51,5 +51,5 @@ data:
   # to do this properly, we should probably configure the following properties on the ingress route:
   #    proxy_set_header Host $host;
   #    proxy_set_header X-Forwarded-Proto $scheme;
-  edc.iam.oauth2.issuer: "http://keycloak.consumer.svc.cluster.local:8080/realms/edcv"
-  edc.iam.oauth2.jwks.url: "http://keycloak.consumer.svc.cluster.local:8080/realms/edcv/protocol/openid-connect/certs"
+  edc.iam.oauth2.issuer: "http://keycloak.provider.svc.cluster.local:8080/realms/edcv"
+  edc.iam.oauth2.jwks.url: "http://keycloak.provider.svc.cluster.local:8080/realms/edcv/protocol/openid-connect/certs"

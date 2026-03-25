@@ -69,7 +69,7 @@ spec:
   parentRefs:
     - name: consumer-gateway
   hostnames:
-    - vault.localhost
+    - vault.consumer.localhost
   rules:
     - matches:
         - path:

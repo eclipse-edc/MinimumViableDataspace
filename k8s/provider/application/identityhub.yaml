@@ -102,7 +102,7 @@ spec:
       kind: Gateway
       sectionName: http
   hostnames:
-    - ih.localhost
+    - ih.provider.localhost
   rules:
     - matches:
         - path:

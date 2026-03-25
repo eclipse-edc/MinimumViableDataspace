@@ -100,7 +100,7 @@ spec:
       kind: Gateway
       sectionName: http
   hostnames:
-    - cp.localhost
+    - cp.provider.localhost
   rules:
     - matches:
         - path:
