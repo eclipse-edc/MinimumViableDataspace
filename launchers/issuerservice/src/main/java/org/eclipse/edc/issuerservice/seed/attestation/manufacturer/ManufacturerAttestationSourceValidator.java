@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2025 Cofinity-X
+ *  Copyright (c) 2025 Metaform Systems, Inc.
  *
  *  This program and the accompanying materials are made available under the
  *  terms of the Apache License, Version 2.0 which is available at
@@ -8,19 +8,19 @@
  *  SPDX-License-Identifier: Apache-2.0
  *
  *  Contributors:
- *       Cofinity-X - initial API and implementation
+ *       Metaform Systems, Inc. - initial API and implementation
  *
  */
 
-package org.eclipse.edc.issuerservice.seed.attestation;
+package org.eclipse.edc.issuerservice.seed.attestation.manufacturer;
 
 import org.eclipse.edc.issuerservice.spi.issuance.model.AttestationDefinition;
 import org.eclipse.edc.validator.spi.ValidationResult;
 import org.eclipse.edc.validator.spi.Validator;
 
-public class DemoAttestatonSourceValidator implements Validator<AttestationDefinition> {
+public class ManufacturerAttestationSourceValidator implements Validator<AttestationDefinition> {
     @Override
-    public ValidationResult validate(AttestationDefinition attestationDefinition) {
+    public ValidationResult validate(AttestationDefinition input) {
         return ValidationResult.success();
     }
 }

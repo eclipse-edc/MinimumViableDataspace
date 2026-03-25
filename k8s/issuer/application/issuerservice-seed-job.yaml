@@ -1,0 +1,318 @@
+#
+# Copyright (c) 2025 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+## This seed job creates a tenant for the "issuer" in the IssuerService, as well as creates an Attestation Definition and
+## Credential Definition.
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: issuerservice-seed
+  namespace: issuer
+  labels:
+    app: issuerservice-seed
+    platform: edcv
+    type: edcv-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: issuerservice-seed
+        platform: edcv
+        type: edcv-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        # Wait for issuerservice to be ready
+        - name: wait-for-issuerservice
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://issuerservice.issuer.svc.cluster.local:10010/api/check/readiness; do
+                echo "Waiting for issuerservice to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "IssuerService is ready!"
+              
+              # Wait for Keycloak to be ready
+              echo "Waiting for Keycloak to be ready..."
+              until wget -q --spider http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/.well-known/openid-configuration > /dev/null 2>&1; do
+                echo "Keycloak not ready yet, retrying in 2 seconds..."
+                sleep 2
+              done
+              echo "Keycloak is ready!"
+      containers:
+        - name: seed-issuerservice
+          image: curlimages/curl:latest
+          env:
+            - name: KC_HOST
+              value: "http://keycloak.issuer.svc.cluster.local:8080"
+            - name: ISSUER_CLIENT_ID
+              value: "issuer"
+            - name: ISSUER_CLIENT_SECRET
+              value: "issuer-secret"
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              echo "================================================"
+              echo "Step 1: Create Vault Access Token (Issuer)"
+              echo "================================================"
+
+              # Get Keycloak admin token
+              KC_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/master/protocol/openid-connect/token" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "grant_type=password" \
+                -d "username=admin" \
+                -d "password=admin" \
+                -d "client_id=admin-cli" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+              if [ -z "$KC_TOKEN" ]; then
+                echo "Failed to get Keycloak admin token"
+                exit 1
+              fi
+
+              # Create Keycloak client for Vault access
+              echo "Creating Vault Access Client"
+              if curl -sf -X POST "${KC_HOST}/admin/realms/mvd/clients" \
+                -H "Authorization: Bearer ${KC_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "clientId": "'"${ISSUER_CLIENT_ID}"'",
+                  "name": "Issuer Client",
+                  "description": "Client for Vault Access (Issuer)",
+                  "enabled": true,
+                  "secret": "'"${ISSUER_CLIENT_SECRET}"'",
+                  "protocol": "openid-connect",
+                  "publicClient": false,
+                  "serviceAccountsEnabled": true,
+                  "standardFlowEnabled": false,
+                  "directAccessGrantsEnabled": false,
+                  "fullScopeAllowed": true,
+                  "protocolMappers": [
+                    {
+                      "name": "participantContextId",
+                      "protocol": "openid-connect",
+                      "protocolMapper": "oidc-hardcoded-claim-mapper",
+                      "consentRequired": false,
+                      "config": {
+                        "claim.name": "participant_context_id",
+                        "claim.value": "issuer",
+                        "jsonType.label": "String",
+                        "access.token.claim": "true",
+                        "id.token.claim": "true",
+                        "userinfo.token.claim": "true"
+                      }
+                    },
+                    {
+                      "name": "role",
+                      "protocol": "openid-connect",
+                      "protocolMapper": "oidc-hardcoded-claim-mapper",
+                      "consentRequired": false,
+                      "config": {
+                        "claim.name": "role",
+                        "claim.value": "participant",
+                        "jsonType.label": "String",
+                        "access.token.claim": "true",
+                        "id.token.claim": "true",
+                        "userinfo.token.claim": "true"
+                      }
+                    }
+                  ]
+                }'; then
+                echo "✓ Vault Access Token created"
+              else
+                echo "⚠ Vault Access Client creation failed (may already exist)"
+              fi
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create Issuer Tenant in IssuerService"
+              echo "================================================"
+
+              # Get provisioner token
+              PROVISIONER_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "grant_type=client_credentials" \
+                -d "client_id=provisioner" \
+                -d "client_secret=provisioner-secret" \
+                -d "scope=issuer-admin-api:write" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+              if [ -z "$PROVISIONER_TOKEN" ]; then
+                echo "Failed to get provisioner token"
+                exit 1
+              fi
+
+              # Create issuer tenant
+              TENANT_RESPONSE=$(curl -sf -X POST "http://issuerservice.issuer.svc.cluster.local:10015/api/identity/v1alpha/participants" \
+                -H "Authorization: Bearer ${PROVISIONER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "roles": ["admin"],
+                  "serviceEndpoints": [
+                    {
+                      "type": "IssuerService",
+                      "serviceEndpoint": "http://issuerservice.issuer.svc.cluster.local:10012/api/issuance/v1alpha/participants/issuer",
+                      "id": "issuer-service-1"
+                    }
+                  ],
+                  "active": true,
+                  "participantContextId": "issuer",
+                  "did": "did:web:issuerservice.issuer.svc.cluster.local%3A10016:issuer",
+                  "key": {
+                    "keyId": "did:web:issuerservice.issuer.svc.cluster.local%3A10016:issuer#key-1",
+                    "privateKeyAlias": "did:web:issuerservice.issuer.svc.cluster.local%3A10016:issuer#key-1",
+                    "keyGeneratorParams": {
+                      "algorithm": "EdDSA"
+                    }
+                  },
+                  "additionalProperties": {
+                    "edc.vault.hashicorp.config": {
+                      "credentials": {
+                        "clientId": "'"${ISSUER_CLIENT_ID}"'",
+                        "clientSecret": "'"${ISSUER_CLIENT_SECRET}"'",
+                        "tokenUrl": "http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/token"
+                      },
+                      "config": {
+                        "secretPath": "v1/participants",
+                        "folderPath": "'"${ISSUER_CLIENT_ID}"'",
+                        "vaultUrl": "http://vault.issuer.svc.cluster.local:8200"
+                      }
+                    }
+                  }
+                }')
+
+              echo "✓ Issuer tenant created"
+
+              echo ""
+              echo "================================================"
+              echo "Step 3: Create AttestationDefinitions"
+              echo "================================================"
+
+              # Get issuer token
+              ISSUER_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
+                -H "Content-Type: application/x-www-form-urlencoded" \
+                -d "grant_type=client_credentials" \
+                -d "client_id=issuer" \
+                -d "client_secret=issuer-secret" \
+                -d "scope=issuer-admin-api:write" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+              if [ -z "$ISSUER_TOKEN" ]; then
+                echo "Failed to get issuer token"
+                exit 1
+              fi
+
+              # Create attestation definitions
+              echo "Creating Membership AttestationDefinition"
+              curl -sfS -w "\nHTTP_STATUS:%{http_code}\n" -X POST "http://issuerservice.issuer.svc.cluster.local:10013/api/admin/v1alpha/participants/issuer/attestations" \
+                -H "Authorization: Bearer ${ISSUER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "attestationType": "membership",
+                  "configuration": {},
+                  "id": "membership-attestation-def-1"
+                }'
+              
+              echo "Creating Manufacturer AttestationDefinition"
+              curl -sfS -w "\nHTTP_STATUS:%{http_code}\n" -X POST "http://issuerservice.issuer.svc.cluster.local:10013/api/admin/v1alpha/participants/issuer/attestations" \
+                -H "Authorization: Bearer ${ISSUER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "attestationType": "manufacturer",
+                  "configuration": {},
+                  "id": "manufacturer-attestation-def-1"
+                }'
+
+              echo "✓ AttestationDefinitions created"
+
+              echo ""
+              echo "================================================"
+              echo "Step 4: Create CredentialDefinitions"
+              echo "================================================"
+
+              # Create credential definitions
+              echo "Creating Membership CredentialDefinition"
+              curl -sfS -w "\nHTTP_STATUS:%{http_code}\n" -X POST "http://issuerservice.issuer.svc.cluster.local:10013/api/admin/v1alpha/participants/issuer/credentialdefinitions" \
+                -H "Authorization: Bearer ${ISSUER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "attestations": ["membership-attestation-def-1"],
+                  "credentialType": "MembershipCredential",
+                  "id": "membership-credential-def",
+                  "jsonSchema": "{}",
+                  "jsonSchemaUrl": "https://example.com/schema/membership-credential.json",
+                  "mappings": [
+                    {
+                      "input": "membership",
+                      "output": "credentialSubject.membership",
+                      "required": true
+                    },
+                    {
+                      "input": "membershipType",
+                      "output": "credentialSubject.membershipType",
+                      "required": "true"
+                    },
+                    {
+                      "input": "membershipStartDate",
+                      "output": "credentialSubject.membershipStartDate",
+                      "required": true
+                    }
+                  ],
+                  "rules": [],
+                  "format": "VC1_0_JWT",
+                  "validity": "604800"
+                }'
+              
+              echo "Creating Manufacturer CredentialDefinition"
+              curl -sfS -w "\nHTTP_STATUS:%{http_code}\n" -X POST "http://issuerservice.issuer.svc.cluster.local:10013/api/admin/v1alpha/participants/issuer/credentialdefinitions" \
+                -H "Authorization: Bearer ${ISSUER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "attestations": ["manufacturer-attestation-def-1"],
+                  "credentialType": "ManufacturerCredential",
+                  "id": "manufacturer-credential-def",
+                  "jsonSchema": "{}",
+                  "jsonSchemaUrl": "https://example.com/schema/manufacturer-credential.json",
+                  "mappings": [
+                    {
+                      "input": "contractVersion",
+                      "output": "credentialSubject.contractVersion",
+                      "required": true
+                    },
+                    {
+                      "input": "component_types",
+                      "output": "credentialSubject.part_types",
+                      "required": "true"
+                    },
+                    {
+                      "input": "since",
+                      "output": "credentialSubject.since",
+                      "required": true
+                    }
+                  ],
+                  "rules": [],
+                  "format": "VC1_0_JWT",
+                  "validity": "604800"
+                }'
+
+              echo "✓ CredentialDefinition created"
+              echo ""
+              echo "================================================"
+              echo "IssuerService seeding completed successfully!"
+              echo "================================================"

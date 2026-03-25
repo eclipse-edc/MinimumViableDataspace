@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.issuerservice.seed.attestation;
+package org.eclipse.edc.issuerservice.seed.attestation.demo;
 
 import org.eclipse.edc.issuerservice.spi.issuance.attestation.AttestationDefinitionValidatorRegistry;
 import org.eclipse.edc.issuerservice.spi.issuance.attestation.AttestationSourceFactoryRegistry;
@@ -21,7 +21,7 @@ import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
-import static org.eclipse.edc.issuerservice.seed.attestation.DemoAttestationsExtension.NAME;
+import static org.eclipse.edc.issuerservice.seed.attestation.demo.DemoAttestationsExtension.NAME;
 
 
 @Extension(value = NAME)

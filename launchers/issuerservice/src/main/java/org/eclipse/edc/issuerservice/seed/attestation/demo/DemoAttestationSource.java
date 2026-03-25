@@ -12,7 +12,7 @@
  *
  */
 
-package org.eclipse.edc.issuerservice.seed.attestation;
+package org.eclipse.edc.issuerservice.seed.attestation.demo;
 
 import org.eclipse.edc.issuerservice.spi.issuance.attestation.AttestationContext;
 import org.eclipse.edc.issuerservice.spi.issuance.attestation.AttestationSource;

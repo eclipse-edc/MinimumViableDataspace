@@ -26,6 +26,8 @@ dependencies {
     runtimeOnly(libs.edc.ih.api.participants)
     runtimeOnly(libs.edc.vault.hashicorp)
     runtimeOnly(libs.edc.bom.issuerservice.sql)
+    runtimeOnly(libs.edc.core.participantcontext.config)
+    runtimeOnly(libs.edc.store.participantcontext.config.sql)
 }
 
 tasks.shadowJar {
