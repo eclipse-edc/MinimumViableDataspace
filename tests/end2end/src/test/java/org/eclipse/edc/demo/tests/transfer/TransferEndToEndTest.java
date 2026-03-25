@@ -17,10 +17,6 @@ package org.eclipse.edc.demo.tests.transfer;
 import io.restassured.specification.RequestSpecification;
 import jakarta.json.Json;
 import jakarta.json.JsonArray;
-import org.eclipse.edc.catalog.transform.JsonObjectToCatalogTransformer;
-import org.eclipse.edc.catalog.transform.JsonObjectToDataServiceTransformer;
-import org.eclipse.edc.catalog.transform.JsonObjectToDatasetTransformer;
-import org.eclipse.edc.catalog.transform.JsonObjectToDistributionTransformer;
 import org.eclipse.edc.connector.controlplane.catalog.spi.Catalog;
 import org.eclipse.edc.connector.controlplane.catalog.spi.Dataset;
 import org.eclipse.edc.connector.controlplane.transform.odrl.OdrlTransformersFactory;
@@ -79,10 +75,10 @@ public class TransferEndToEndTest {
     @BeforeEach
     void setup() {
         var typeManager = new JacksonTypeManager();
-        transformerRegistry.register(new JsonObjectToCatalogTransformer());
-        transformerRegistry.register(new JsonObjectToDatasetTransformer());
-        transformerRegistry.register(new JsonObjectToDataServiceTransformer());
-        transformerRegistry.register(new JsonObjectToDistributionTransformer());
+//        transformerRegistry.register(new JsonObjectToCatalogTransformer());
+//        transformerRegistry.register(new JsonObjectToDatasetTransformer());
+//        transformerRegistry.register(new JsonObjectToDataServiceTransformer());
+//        transformerRegistry.register(new JsonObjectToDistributionTransformer());
         transformerRegistry.register(new JsonValueToGenericTypeTransformer(typeManager, JSON_LD));
         OdrlTransformersFactory.jsonObjectToOdrlTransformers(new ParticipantIdMapper() {
             @Override
