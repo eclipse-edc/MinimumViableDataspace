@@ -98,7 +98,7 @@ metadata:
   namespace: provider
 spec:
   parentRefs:
-    - name: edcv-gateway
+    - name: provider-gateway
       kind: Gateway
       sectionName: http
   hostnames:

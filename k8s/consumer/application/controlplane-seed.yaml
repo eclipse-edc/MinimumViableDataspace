@@ -79,7 +79,7 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Step 2: Create Dataproccesor CEL Expression"
+              echo "Step 2: Create ManufacturerCredential CEL Expression"
               echo "================================================"
 
               create_cel '{
@@ -88,17 +88,17 @@ spec:
                 ],
                 "@type": "CelExpression",
                 "@id": "membership-cel",
-                "leftOperand": "DataProcessorCredential",
-                "description": "Expression for evaluating data processor credential",
+                "leftOperand": "ManufacturerCredential",
+                "description": "Expression for evaluating manufacturer credential",
                 "scopes": [
                   "catalog",
                   "contract.negotiation",
                   "transfer.process"
                 ],
-                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''DataProcessorCredential'\'')).size() > 0"
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''ManufacturerCredential'\'')).size() > 0"
               }'
 
-              echo "✓ Dataprocessor CEL Expression done"
+              echo "✓ ManufacturerCredential CEL Expression done"
 
               echo ""
               echo "================================================"

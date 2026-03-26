@@ -101,7 +101,7 @@ metadata:
   namespace: consumer
 spec:
   parentRefs:
-    - name: edcv-gateway
+    - name: consumer-gateway
       kind: Gateway
       sectionName: http
   hostnames:

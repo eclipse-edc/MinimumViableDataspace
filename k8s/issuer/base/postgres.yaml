@@ -37,11 +37,11 @@ spec:
             - containerPort: 5432
           env:
             - name: POSTGRES_DB
-              value: "controlplane"
+              value: "issuerservice"
             - name: POSTGRES_USER
-              value: "cp"
+              value: "issuer"
             - name: POSTGRES_PASSWORD
-              value: "cp"
+              value: "issuer"
           volumeMounts:
             - name: init-script
               mountPath: /docker-entrypoint-initdb.d
@@ -70,8 +70,6 @@ metadata:
   namespace: issuer
 data:
   init.sql: |
-    CREATE DATABASE issuerservice;
-    CREATE USER issuer WITH PASSWORD 'issuer';
     GRANT ALL PRIVILEGES ON DATABASE issuerservice TO issuer;
     \c issuerservice
     GRANT ALL ON SCHEMA public TO issuer;

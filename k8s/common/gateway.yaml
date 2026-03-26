@@ -15,8 +15,8 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: provider-gateway
-  namespace: provider
+  name: common-gateway
+  namespace: mvd-common
 spec:
   gatewayClassName: traefik
   listeners:

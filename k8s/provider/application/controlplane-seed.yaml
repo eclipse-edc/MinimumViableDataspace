@@ -212,7 +212,7 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Step 2: Create DataProcessor Policy"
+              echo "Step 2: Create Manufacturer Policy"
               echo "================================================"
 
               create_policy '{
@@ -220,23 +220,23 @@ spec:
                   "https://w3id.org/edc/connector/management/v2"
                 ],
                 "@type": "PolicyDefinition",
-                "@id": "require-dataprocessor",
+                "@id": "require-manufacturer",
                 "policy": {
                   "@type": "Set",
                   "obligation": [
                     {
                       "action": "use",
                       "constraint": {
-                        "leftOperand": "DataAccess.level",
+                        "leftOperand": "ManufacturerCredential",
                         "operator": "eq",
-                        "rightOperand": "processing"
+                        "rightOperand": "active"
                       }
                     }
                   ]
                 }
               }'
 
-              echo "✓ DataProcessor policy done"
+              echo "✓ Manufacturer policy done"
 
               echo ""
               echo "================================================"
@@ -332,17 +332,17 @@ spec:
               }
 
               echo "================================================"
-              echo "Step 1: Create member-and-dataprocessor-def"
+              echo "Step 1: Create member-and-manufacturer-def"
               echo "================================================"
 
               create_contractdef '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
-                "@id": "member-and-dataprocessor-def",
+                "@id": "member-and-manufacturer-def",
                 "@type": "ContractDefinition",
                 "accessPolicyId": "require-membership",
-                "contractPolicyId": "require-dataprocessor",
+                "contractPolicyId": "require-manufacturer",
                 "assetsSelector": {
                   "@type": "Criterion",
                   "operandLeft": "https://w3id.org/edc/v0.0.1/ns/id",
@@ -351,7 +351,7 @@ spec:
                 }
               }'
 
-              echo "✓ member-and-dataprocessor-def done"
+              echo "✓ member-and-manufacturer-def done"
 
               echo ""
               echo "================================================"
