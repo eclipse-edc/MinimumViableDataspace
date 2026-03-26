@@ -25,6 +25,8 @@ data:
   edc.participant.id: "did:web:connector"
   edc.iam.did.web.use.https: "false"
   edc.iam.credential.revocation.mimetype: "application/json"
+  # todo: should this be true?
+  edc.policy.validation.enabled: "false"
 
   # web config
   web.http.port: "8080"

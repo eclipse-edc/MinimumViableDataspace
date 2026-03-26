@@ -1,6 +1,6 @@
 {
   "@context": [
-    "https://w3id.org/edc/connector/management/v0.0.1"
+    "https://w3id.org/edc/connector/management/v2"
   ],
   "@type": "ContractRequest",
   "counterPartyAddress": "{{PROVIDER_DSP_URL}}/api/dsp",

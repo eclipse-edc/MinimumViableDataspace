@@ -19,6 +19,9 @@ plugins {
 }
 
 dependencies {
+    runtimeOnly(libs.edc.api.cel.v5)
+    runtimeOnly(libs.edc.core.cel)
+    runtimeOnly(libs.edc.cel.store.sql)
     runtimeOnly(libs.edc.bom.controlplane)
     runtimeOnly(libs.edc.api.secrets)
     runtimeOnly(libs.edc.vault.hashicorp)

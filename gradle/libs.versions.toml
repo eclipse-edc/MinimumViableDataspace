@@ -36,11 +36,12 @@ edc-controlplane-transform = { module = "org.eclipse.edc:control-plane-transform
 edc-controlplane-services = { module = "org.eclipse.edc:control-plane-aggregate-services", version.ref = "edc" }
 edc-api-management-config = { module = "org.eclipse.edc:management-api-configuration", version.ref = "edc" }
 edc-api-management = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
+edc-api-cel-v5 = {module = "org.eclipse.edc:cel-api-v5", version.ref= "edc"}
 edc-api-secrets = { module = "org.eclipse.edc:secrets-api", version.ref = "edc" }
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
 edc-dataplane-v2 = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
-
+edc-core-cel = { module = "org.eclipse.edc:cel-core", version.ref = "edc" }
 edc-dcp-core = { module = "org.eclipse.edc:decentralized-claims-core", version.ref = "edc" }
 edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
 edc-spi-identity-trust = { module = "org.eclipse.edc:decentralized-claims-spi", version.ref = "edc" }
@@ -61,6 +62,8 @@ edc-lib-http = { module = "org.eclipse.edc:http-lib", version.ref = "edc" }
 edc-lib-util = { module = "org.eclipse.edc:util-lib", version.ref = "edc" }
 edc-lib-sql = { module = "org.eclipse.edc:sql-lib", version.ref = "edc" }
 edc-lib-util-dataplane = { module = "org.eclipse.edc:data-plane-util", version.ref = "edc" }
+edc-lib-oauth2-authn = { module = "org.eclipse.edc:auth-authentication-oauth2-lib", version.ref = "edc" }
+edc-lib-oauth2-authz = { module = "org.eclipse.edc:auth-authorization-oauth2-lib", version.ref = "edc" }
 
 # EDC Postgres modules
 edc-sql-assetindex = { module = "org.eclipse.edc:asset-index-sql", version.ref = "edc" }
@@ -75,6 +78,7 @@ edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref
 edc-sql-transactionlocal = { module = "org.eclipse.edc:transaction-local", version.ref = "edc" }
 edc-sql-dataplane-instancestore = { module = "org.eclipse.edc:data-plane-instance-store-sql", version.ref = "edc" }
 edc-store-participantcontext-config-sql = { module = "org.eclipse.edc:participantcontext-config-store-sql", version.ref = "edc" }
+edc-cel-store-sql = { module = "org.eclipse.edc:cel-store-sql", version.ref = "edc" }
 
 # identityhub SPI modules
 edc-ih-spi-did = { module = "org.eclipse.edc:did-spi", version.ref = "edc" }
@@ -113,40 +117,6 @@ edc-bom-issuerservice = { module = "org.eclipse.edc:issuerservice-oauth2-bom", v
 edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sql-bom", version.ref = "edc" }
 
 [bundles]
-connector = [
-    "edc-boot",
-    "edc-core-connector",
-    "edc-core-runtime",
-    "edc-core-api",
-    "edc-ext-http",
-    "edc-api-observability",
-    "edc-ext-jsonld",
-    "edc-core-token",
-    "edc-config-fs",
-]
-
-dcp = [
-    "edc-dcp",
-    "edc-did-core",
-    "edc-did-web",
-    "edc-oauth2-client",
-    "edc-dcp-core",
-]
-
-sql-edc = [
-    "edc-sql-assetindex",
-    "edc-sql-contractdef",
-    "edc-sql-contractneg",
-    "edc-sql-policydef",
-    "edc-sql-edrcache",
-    "edc-sql-transferprocess",
-    "edc-sql-dataplane-instancestore",
-    "edc-sql-core",
-    "edc-sql-lease",
-    "edc-sql-pool",
-    "edc-sql-transactionlocal",
-    "postgres",
-]
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "9.4.0" }

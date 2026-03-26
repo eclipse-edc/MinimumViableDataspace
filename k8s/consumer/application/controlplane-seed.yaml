@@ -1,0 +1,108 @@
+
+---
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: controlplane-seed-cel
+  namespace: consumer
+  labels:
+    app: controlplane-seed-cel
+    platform: edcv
+    type: edc-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: controlplane-seed-cel
+        type: edc-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://controlplane.consumer.svc.cluster.local:8080/api/check/readiness; do
+                echo "Waiting for controlplane to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "Controlplane is ready!"
+      containers:
+        - name: seed-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5alpha/celexpressions"
+
+              # Posts to the management API, treating 409 (already exists) as success.
+              create_cel() {
+                HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "${MGMT_URL}" \
+                  -H "Content-Type: application/json" \
+                  -d "$1")
+                if [ "${HTTP_STATUS}" -eq 409 ]; then
+                  echo "⚠ CEL Expression already exists (HTTP 409), skipping."
+                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  exit 1
+                fi
+              }
+
+              echo "================================================"
+              echo "Step 1: Create Membership CEL Expression "
+              echo "================================================"
+
+              create_cel '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "membership-cel",
+                "leftOperand": "MembershipCredential",
+                "description": "Expression for evaluating membership credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''MembershipCredential'\'')).exists(c, c.credentialSubject.exists(cs, timestamp(cs.membershipStartDate) < now))"
+              }'
+
+              echo "✓ Membership CEL Expression done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create Dataproccesor CEL Expression"
+              echo "================================================"
+
+              create_cel '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "membership-cel",
+                "leftOperand": "DataProcessorCredential",
+                "description": "Expression for evaluating data processor credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''DataProcessorCredential'\'')).size() > 0"
+              }'
+
+              echo "✓ Dataprocessor CEL Expression done"
+
+              echo ""
+              echo "================================================"
+              echo "Controlplane seeding completed successfully!"
+              echo "================================================"
+

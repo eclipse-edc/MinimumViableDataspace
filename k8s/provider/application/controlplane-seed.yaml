@@ -1,0 +1,382 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+## This seed job creates assets, policies and contract definitions provider's control plane via the management API.
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: controlplane-seed-assets
+  namespace: provider
+  labels:
+    app: controlplane-seed-assets
+    platform: edcv
+    type: edc-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: controlplane-seed-assets
+        type: edc-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://controlplane.provider.svc.cluster.local:8080/api/check/readiness; do
+                echo "Waiting for controlplane to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "Controlplane is ready!"
+      containers:
+        - name: seed-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              MGMT_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/assets"
+
+              # Posts to the management API, treating 409 (already exists) as success.
+              create_asset() {
+                HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "${MGMT_URL}" \
+                  -H "Content-Type: application/json" \
+                  -d "$1")
+                if [ "${HTTP_STATUS}" -eq 409 ]; then
+                  echo "⚠ Asset already exists (HTTP 409), skipping."
+                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  exit 1
+                fi
+              }
+
+              echo "================================================"
+              echo "Step 1: Create Asset 1"
+              echo "================================================"
+
+              create_asset '{
+                  "@context": [
+                    "https://w3id.org/edc/connector/management/v2"
+                  ],
+                  "@id": "asset-1",
+                  "@type": "Asset",
+                  "properties": {
+                    "description": "This asset requires Membership to view and negotiate."
+                  },
+                  "dataAddress": {
+                    "@type": "DataAddress",
+                    "type": "HttpData",
+                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
+                    "proxyPath": "true",
+                    "proxyQueryParams": "true"
+                  }
+                }'
+
+              echo "✓ Asset 1 done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create Asset 2"
+              echo "================================================"
+
+              create_asset '{
+                  "@context": [
+                    "https://w3id.org/edc/connector/management/v2"
+                  ],
+                  "@id": "asset-2",
+                  "@type": "Asset",
+                  "properties": {
+                    "description": "This asset requires Membership to view and SensitiveData credential to negotiate."
+                  },
+                  "dataAddress": {
+                    "@type": "DataAddress",
+                    "type": "HttpData",
+                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
+                    "proxyPath": "true",
+                    "proxyQueryParams": "true"
+                  }
+                }'
+
+              echo "✓ Asset 2 done"
+
+              echo ""
+              echo "================================================"
+              echo "Controlplane seeding completed successfully!"
+              echo "================================================"
+
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: controlplane-seed-policies
+  namespace: provider
+  labels:
+    app: controlplane-seed-policies
+    platform: edcv
+    type: edc-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: controlplane-seed-policies
+        type: edc-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://controlplane.provider.svc.cluster.local:8080/api/check/readiness; do
+                echo "Waiting for controlplane to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "Controlplane is ready!"
+      containers:
+        - name: seed-policies
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              MGMT_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/policydefinitions"
+
+              # Posts a policy definition, treating 409 (already exists) as success.
+              create_policy() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST "${MGMT_URL}" \
+                  -H "Content-Type: application/json" \
+                  -d "$1")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
+                if [ "${HTTP_STATUS}" -eq 409 ]; then
+                  echo "⚠ Policy already exists (HTTP 409), skipping."
+                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
+                  exit 1
+                fi
+              }
+
+              echo "================================================"
+              echo "Step 1: Create Membership Policy"
+              echo "================================================"
+
+              create_policy '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "PolicyDefinition",
+                "@id": "require-membership",
+                "policy": {
+                  "@type": "Set",
+                  "permission": [
+                    {
+                      "action": "use",
+                      "constraint": {
+                        "leftOperand": "MembershipCredential",
+                        "operator": "eq",
+                        "rightOperand": "active"
+                      }
+                    }
+                  ]
+                }
+              }'
+
+              echo "✓ Membership policy done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create DataProcessor Policy"
+              echo "================================================"
+
+              create_policy '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "PolicyDefinition",
+                "@id": "require-dataprocessor",
+                "policy": {
+                  "@type": "Set",
+                  "obligation": [
+                    {
+                      "action": "use",
+                      "constraint": {
+                        "leftOperand": "DataAccess.level",
+                        "operator": "eq",
+                        "rightOperand": "processing"
+                      }
+                    }
+                  ]
+                }
+              }'
+
+              echo "✓ DataProcessor policy done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 3: Create Sensitive Data Policy"
+              echo "================================================"
+
+              create_policy '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "PolicyDefinition",
+                "@id": "require-sensitive",
+                "policy": {
+                  "@type": "Set",
+                  "permission": [],
+                  "prohibition": [],
+                  "obligation": [
+                    {
+                      "action": "use",
+                      "constraint": {
+                        "leftOperand": "DataAccess.level",
+                        "operator": "eq",
+                        "rightOperand": "sensitive"
+                      }
+                    }
+                  ]
+                }
+              }'
+
+              echo "✓ Sensitive data policy done"
+
+              echo ""
+              echo "================================================"
+              echo "Policy seeding completed successfully!"
+              echo "================================================"
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: controlplane-seed-contractdefs
+  namespace: provider
+  labels:
+    app: controlplane-seed-contractdefs
+    type: edc-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: controlplane-seed-contractdefs
+        type: edc-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://controlplane.provider.svc.cluster.local:8080/api/check/readiness; do
+                echo "Waiting for controlplane to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "Controlplane is ready!"
+      containers:
+        - name: seed-contractdefs
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              MGMT_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/contractdefinitions"
+
+              # Posts a contract definition, treating 409 (already exists) as success.
+              create_contractdef() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST "${MGMT_URL}" \
+                  -H "Content-Type: application/json" \
+                  -d "$1")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
+                if [ "${HTTP_STATUS}" -eq 409 ]; then
+                  echo "⚠ Contract definition already exists (HTTP 409), skipping."
+                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
+                  exit 1
+                fi
+              }
+
+              echo "================================================"
+              echo "Step 1: Create member-and-dataprocessor-def"
+              echo "================================================"
+
+              create_contractdef '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@id": "member-and-dataprocessor-def",
+                "@type": "ContractDefinition",
+                "accessPolicyId": "require-membership",
+                "contractPolicyId": "require-dataprocessor",
+                "assetsSelector": {
+                  "@type": "Criterion",
+                  "operandLeft": "https://w3id.org/edc/v0.0.1/ns/id",
+                  "operator": "=",
+                  "operandRight": "asset-1"
+                }
+              }'
+
+              echo "✓ member-and-dataprocessor-def done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create sensitive-only-def"
+              echo "================================================"
+
+              create_contractdef '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@id": "sensitive-only-def",
+                "@type": "ContractDefinition",
+                "accessPolicyId": "require-membership",
+                "contractPolicyId": "require-sensitive",
+                "assetsSelector": {
+                  "@type": "Criterion",
+                  "operandLeft": "https://w3id.org/edc/v0.0.1/ns/id",
+                  "operator": "=",
+                  "operandRight": "asset-2"
+                }
+              }'
+
+              echo "✓ sensitive-only-def done"
+
+              echo ""
+              echo "================================================"
+              echo "Contract definition seeding completed successfully!"
+              echo "================================================"
