@@ -96,7 +96,7 @@ metadata:
   namespace: provider
 spec:
   parentRefs:
-    - name: consumer-gateway
+    - name: provider-gateway
       kind: Gateway
       sectionName: http
   hostnames:

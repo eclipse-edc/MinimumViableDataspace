@@ -21,3 +21,4 @@ resources:
   - application/controlplane-seed.yaml
   - application/identityhub-config.yaml
   - application/identityhub.yaml
+  - application/identityhub-seed.yaml

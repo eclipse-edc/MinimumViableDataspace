@@ -11,7 +11,7 @@
 #      Metaform Systems, Inc. - initial API and implementation
 #
 
-## This seed job creates a participant context in the consumer's IdentityHub and a holder entry in the IssuerService.
+# This seed job creates a participant context in the consumer's IdentityHub and a holder entry in the IssuerService.
 
 ---
 apiVersion: batch/v1
@@ -50,7 +50,7 @@ spec:
               echo "IdentityHub is ready!"
 
               until curl -sf http://issuerservice.issuer.svc.cluster.local:10010/api/check/readiness; do
-                echo "Waiting for issuerservice to be ready..."
+                echo "Waiting for issuer service to be ready..."
                 sleep 5
               done
               echo ""

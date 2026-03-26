@@ -198,7 +198,7 @@ metadata:
   namespace: provider
 spec:
   parentRefs:
-    - name: consumer-gateway
+    - name: provider-gateway
   hostnames:
     - vault.provider.localhost
   rules:
