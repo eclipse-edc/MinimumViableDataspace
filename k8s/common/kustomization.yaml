@@ -1,2 +1,5 @@
 resources:
+  - namespace.yaml
   - gateway-class.yaml
+  - postgres.yaml
+  - keycloak.yaml

@@ -89,7 +89,7 @@ spec:
               
               # Wait for Keycloak to be ready
               echo "Waiting for Keycloak to be ready..."
-              until wget -q --spider http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/.well-known/openid-configuration > /dev/null 2>&1; do
+              until wget -q --spider http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/.well-known/openid-configuration > /dev/null 2>&1; do
                 echo "Keycloak not ready yet, retrying in 2 seconds..."
                 sleep 2
               done
@@ -100,7 +100,7 @@ spec:
 
               # Configure JWT auth (example: using Keycloak as JWT backend)
               vault write auth/jwt/config \
-                jwks_url="http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs" \
+                jwks_url="http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs" \
                 default_role="participant" || { echo "Failed to configure JWT auth"; exit 1; }
 
               # create mount for participants, each stores their secrets in a subdirectory

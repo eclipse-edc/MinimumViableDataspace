@@ -50,7 +50,7 @@ spec:
               
               # Wait for Keycloak to be ready
               echo "Waiting for Keycloak to be ready..."
-              until wget -q --spider http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/.well-known/openid-configuration > /dev/null 2>&1; do
+              until wget -q --spider http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/.well-known/openid-configuration > /dev/null 2>&1; do
                 echo "Keycloak not ready yet, retrying in 2 seconds..."
                 sleep 2
               done
@@ -60,7 +60,7 @@ spec:
           image: curlimages/curl:latest
           env:
             - name: KC_HOST
-              value: "http://keycloak.issuer.svc.cluster.local:8080"
+              value: "http://keycloak.mvd-common.svc.cluster.local:8080"
             - name: ISSUER_CLIENT_ID
               value: "issuer"
             - name: ISSUER_CLIENT_SECRET
@@ -147,7 +147,7 @@ spec:
               echo "================================================"
 
               # Get provisioner token
-              PROVISIONER_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
+              PROVISIONER_TOKEN=$(curl -sfv -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
                 -H "Content-Type: application/x-www-form-urlencoded" \
                 -d "grant_type=client_credentials" \
                 -d "client_id=provisioner" \
@@ -160,7 +160,7 @@ spec:
               fi
 
               # Create issuer tenant
-              TENANT_RESPONSE=$(curl -sf -X POST "http://issuerservice.issuer.svc.cluster.local:10015/api/identity/v1alpha/participants" \
+              TENANT_RESPONSE=$(curl -sfv -X POST "http://issuerservice.issuer.svc.cluster.local:10015/api/identity/v1alpha/participants" \
                 -H "Authorization: Bearer ${PROVISIONER_TOKEN}" \
                 -H "Content-Type: application/json" \
                 -d '{
@@ -187,7 +187,7 @@ spec:
                       "credentials": {
                         "clientId": "'"${ISSUER_CLIENT_ID}"'",
                         "clientSecret": "'"${ISSUER_CLIENT_SECRET}"'",
-                        "tokenUrl": "http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/token"
+                        "tokenUrl": "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/token"
                       },
                       "config": {
                         "secretPath": "v1/participants",
@@ -206,7 +206,7 @@ spec:
               echo "================================================"
 
               # Get issuer token
-              ISSUER_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
+              ISSUER_TOKEN=$(curl -sfv -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
                 -H "Content-Type: application/x-www-form-urlencoded" \
                 -d "grant_type=client_credentials" \
                 -d "client_id=issuer" \

@@ -3,7 +3,6 @@ resources:
   - base/vault.yaml
   - base/gateway.yaml
   - base/postgres.yaml
-  - base/keycloak.yaml
   - application/issuerservice-config.yaml
   - application/issuerservice.yaml
   - application/issuerservice-seed-job.yaml

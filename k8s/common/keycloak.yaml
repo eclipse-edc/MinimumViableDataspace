@@ -15,7 +15,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: keycloak
-  namespace: issuer
+  namespace: mvd-common
 spec:
   replicas: 1
   selector:
@@ -49,11 +49,11 @@ spec:
             - name: KC_HTTP_ENABLED
               value: "true"
             - name: KC_HOSTNAME
-              value: http://keycloak.issuer.svc.cluster.local:8080
+              value: http://keycloak.mvd-common.svc.cluster.local:8080
             - name: KC_HOSTNAME_STRICT
               value: "false"
             - name: KC_HOSTNAME_URL
-              value: "http://keycloak.issuer.svc.cluster.local:8080"
+              value: "http://keycloak.mvd-common.svc.cluster.local:8080"
             - name: KC_PROXY
               value: "edge"
             - name: KC_HEALTH_ENABLED
@@ -67,7 +67,7 @@ spec:
             - name: POSTGRES_DB
               value: keycloak
             - name: KC_DB_URL
-              value: jdbc:postgresql://postgres.issuer.svc.cluster.local:5432/keycloak
+              value: jdbc:postgresql://postgres.mvd-common.svc.cluster.local:5432/keycloak
             - name: KC_DB_USERNAME
               value: "kc"
             - name: KC_DB_PASSWORD
@@ -100,7 +100,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: keycloak-realm
-  namespace: issuer
+  namespace: mvd-common
   labels:
     tier: infrastructure
 data:
@@ -136,24 +136,6 @@ data:
         {
           "name": "identity-api:write",
           "description": "Create, update delete objects in the Identity API",
-          "protocol": "openid-connect",
-          "attributes": {
-            "include.in.token.scope": "true",
-            "display.on.consent.screen": "true"
-          }
-        },
-        {
-          "name": "management-api:read",
-          "description": "Read access to the Management API of the EDC Control Plane",
-          "protocol": "openid-connect",
-          "attributes": {
-            "include.in.token.scope": "true",
-            "display.on.consent.screen": "true"
-          }
-        },
-        {
-          "name": "management-api:write",
-          "description": "Create, update and delete objects in the Management API of the EDC Control Plane",
           "protocol": "openid-connect",
           "attributes": {
             "include.in.token.scope": "true",
@@ -221,9 +203,7 @@ data:
             "issuer-admin-api:write",
             "issuer-admin-api:read",
             "identity-api:write",
-            "identity-api:read",
-            "management-api:write",
-            "management-api:read"
+            "identity-api:read"
           ]
         },
         {
@@ -274,7 +254,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: keycloak
-  namespace: issuer
+  namespace: mvd-common
   labels:
     tier: infrastructure
 spec:
@@ -288,24 +268,24 @@ spec:
       targetPort: 9000
       name: health
 
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: keycloak
-  namespace: issuer
-spec:
-  parentRefs:
-    - name: issuer-gateway
-      kind: Gateway
-      sectionName: http
-  hostnames:
-    - keycloak.issuer.localhost
-  rules:
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /
-      backendRefs:
-        - name: keycloak
-          port: 8080
+#---
+#apiVersion: gateway.networking.k8s.io/v1
+#kind: HTTPRoute
+#metadata:
+#  name: keycloak
+#  namespace: mvd-common
+#spec:
+#  parentRefs:
+#    - name: issuer-gateway
+#      kind: Gateway
+#      sectionName: http
+#  hostnames:
+#    - keycloak.issuer.localhost
+#  rules:
+#    - matches:
+#        - path:
+#            type: PathPrefix
+#            value: /
+#      backendRefs:
+#        - name: keycloak
+#          port: 8080

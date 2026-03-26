@@ -55,8 +55,8 @@ data:
   # to do this properly, we should probably configure the following properties on the ingress route:
   #    proxy_set_header Host $host;
   #    proxy_set_header X-Forwarded-Proto $scheme;
-  edc.iam.oauth2.issuer: "http://keycloak.issuer.svc.cluster.local:8080/realms/mvd"
-  edc.iam.oauth2.jwks.url: "http://keycloak.issuer.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs"
+  edc.iam.oauth2.issuer: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd"
+  edc.iam.oauth2.jwks.url: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs"
 
   JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"
 
