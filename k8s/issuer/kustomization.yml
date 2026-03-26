@@ -2,7 +2,6 @@ resources:
   - base/namespace.yaml
   - base/vault.yaml
   - base/gateway.yaml
-  - base/gateway-class.yaml
   - base/postgres.yaml
   - base/keycloak.yaml
   - application/issuerservice-config.yaml
