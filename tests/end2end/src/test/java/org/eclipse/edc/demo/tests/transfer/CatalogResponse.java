@@ -34,13 +34,21 @@ public class CatalogResponse {
     @JsonProperty("service")
     private List<DataService> services;
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getParticipantId() { return participantId; }
+    public String getParticipantId() {
+        return participantId;
+    }
 
-    public List<Dataset> getDatasets() { return datasets; }
+    public List<Dataset> getDatasets() {
+        return datasets;
+    }
 
-    public List<DataService> getServices() { return services; }
+    public List<DataService> getServices() {
+        return services;
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Dataset {
@@ -57,13 +65,21 @@ public class CatalogResponse {
         @JsonProperty("distribution")
         private List<Object> distributions;
 
-        public String getId() { return id; }
+        public String getId() {
+            return id;
+        }
 
-        public String getDescription() { return description; }
+        public String getDescription() {
+            return description;
+        }
 
-        public List<Offer> getPolicies() { return policies; }
+        public List<Offer> getPolicies() {
+            return policies;
+        }
 
-        public List<Object> getDistributions() { return distributions; }
+        public List<Object> getDistributions() {
+            return distributions;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -75,9 +91,13 @@ public class CatalogResponse {
         @JsonProperty("obligation")
         private List<Obligation> obligations;
 
-        public String getId() { return id; }
+        public String getId() {
+            return id;
+        }
 
-        public List<Obligation> getObligations() { return obligations; }
+        public List<Obligation> getObligations() {
+            return obligations;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -89,9 +109,13 @@ public class CatalogResponse {
         @JsonProperty("constraint")
         private List<Constraint> constraints;
 
-        public String getAction() { return action; }
+        public String getAction() {
+            return action;
+        }
 
-        public List<Constraint> getConstraints() { return constraints; }
+        public List<Constraint> getConstraints() {
+            return constraints;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -106,11 +130,17 @@ public class CatalogResponse {
         @JsonProperty("rightOperand")
         private String rightOperand;
 
-        public String getLeftOperand() { return leftOperand; }
+        public String getLeftOperand() {
+            return leftOperand;
+        }
 
-        public String getOperator() { return operator; }
+        public String getOperator() {
+            return operator;
+        }
 
-        public String getRightOperand() { return rightOperand; }
+        public String getRightOperand() {
+            return rightOperand;
+        }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -125,10 +155,16 @@ public class CatalogResponse {
         @JsonProperty("endpointURL")
         private String endpointUrl;
 
-        public String getId() { return id; }
+        public String getId() {
+            return id;
+        }
 
-        public String getEndpointDescription() { return endpointDescription; }
+        public String getEndpointDescription() {
+            return endpointDescription;
+        }
 
-        public String getEndpointUrl() { return endpointUrl; }
+        public String getEndpointUrl() {
+            return endpointUrl;
+        }
     }
 }
