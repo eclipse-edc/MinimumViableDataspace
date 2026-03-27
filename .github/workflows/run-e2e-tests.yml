@@ -94,7 +94,7 @@ jobs:
           kubectl wait -A \
             --selector=type=edc-job \
             --for=condition=complete job --all \
-            --timeout=90s
+            --timeout=180s
 
       - name: "Run E2E Test"
         run: |-
