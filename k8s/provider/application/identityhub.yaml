@@ -74,15 +74,18 @@ spec:
   selector:
     app: identityhub
   ports:
-    - port: 7082
-      targetPort: 7082
-      name: creds-port
     - port: 1044
       targetPort: 1044
       name: debug
+    - port: 7080
+      targetPort: 7080
+      name: web
     - port: 7081
       targetPort: 7081
       name: identity-api
+    - port: 7082
+      targetPort: 7082
+      name: creds-port
     - port: 7083
       targetPort: 7083
       name: did

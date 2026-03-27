@@ -19,6 +19,7 @@ plugins {
 }
 
 dependencies {
+    runtimeOnly(project(":extensions:data-plane-registration"))
     runtimeOnly(libs.edc.api.cel.v5)
     runtimeOnly(libs.edc.core.cel)
     runtimeOnly(libs.edc.cel.store.sql)

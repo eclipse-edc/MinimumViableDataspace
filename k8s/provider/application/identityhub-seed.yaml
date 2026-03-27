@@ -162,7 +162,7 @@ spec:
                     },
                     {
                       \"type\": \"ProtocolEndpoint\",
-                      \"serviceEndpoint\": \"http://controlplane.provider.svc.cluster.local:8082/api/dsp\",
+                      \"serviceEndpoint\": \"http://controlplane.provider.svc.cluster.local:8082/api/dsp/2025-1\",
                       \"id\": \"provider-dsp\"
                     }
                   ],

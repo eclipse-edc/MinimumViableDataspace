@@ -11,16 +11,16 @@
 #      Metaform Systems, Inc. - initial API and implementation
 #
 
-## This seed job creates assets, policies and contract definitions provider's control plane via the management API.
+## This seed job creates assets, policies and contract definitions in the provider's control plane via the management API.
 
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: controlplane-seed-assets
+  name: controlplane-seed
   namespace: provider
   labels:
-    app: controlplane-seed-assets
+    app: controlplane-seed
     platform: edcv
     type: edc-job
 spec:
@@ -28,7 +28,7 @@ spec:
   template:
     metadata:
       labels:
-        app: controlplane-seed-assets
+        app: controlplane-seed
         type: edc-job
     spec:
       restartPolicy: OnFailure
@@ -54,17 +54,23 @@ spec:
             - |
               set -e
 
-              MGMT_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/assets"
+              ASSETS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/assets"
+              POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/policydefinitions"
+              CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/contractdefinitions"
+              DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
 
               # Posts to the management API, treating 409 (already exists) as success.
-              create_asset() {
-                HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "${MGMT_URL}" \
+              post() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X "$2" "$1" \
                   -H "Content-Type: application/json" \
-                  -d "$1")
+                  -d "$3")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
                 if [ "${HTTP_STATUS}" -eq 409 ]; then
-                  echo "⚠ Asset already exists (HTTP 409), skipping."
+                  echo "⚠ Already exists (HTTP 409), skipping."
                 elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
                   echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
                   exit 1
                 fi
               }
@@ -73,7 +79,7 @@ spec:
               echo "Step 1: Create Asset 1"
               echo "================================================"
 
-              create_asset '{
+              post "${ASSETS_URL}" "POST" '{
                   "@context": [
                     "https://w3id.org/edc/connector/management/v2"
                   ],
@@ -98,7 +104,7 @@ spec:
               echo "Step 2: Create Asset 2"
               echo "================================================"
 
-              create_asset '{
+              post "${ASSETS_URL}" "POST" '{
                   "@context": [
                     "https://w3id.org/edc/connector/management/v2"
                   ],
@@ -120,74 +126,10 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Controlplane seeding completed successfully!"
+              echo "Step 3: Create Membership Policy"
               echo "================================================"
 
-
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: controlplane-seed-policies
-  namespace: provider
-  labels:
-    app: controlplane-seed-policies
-    platform: edcv
-    type: edc-job
-spec:
-  backoffLimit: 5
-  template:
-    metadata:
-      labels:
-        app: controlplane-seed-policies
-        type: edc-job
-    spec:
-      restartPolicy: OnFailure
-      initContainers:
-        - name: wait-for-controlplane
-          image: curlimages/curl:latest
-          command:
-            - sh
-            - -c
-            - |
-              until curl -sf http://controlplane.provider.svc.cluster.local:8080/api/check/readiness; do
-                echo "Waiting for controlplane to be ready..."
-                sleep 5
-              done
-              echo ""
-              echo "Controlplane is ready!"
-      containers:
-        - name: seed-policies
-          image: curlimages/curl:latest
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-
-              MGMT_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/policydefinitions"
-
-              # Posts a policy definition, treating 409 (already exists) as success.
-              create_policy() {
-                RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST "${MGMT_URL}" \
-                  -H "Content-Type: application/json" \
-                  -d "$1")
-                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
-                BODY=$(echo "${RESPONSE}" | sed '$d')
-                if [ "${HTTP_STATUS}" -eq 409 ]; then
-                  echo "⚠ Policy already exists (HTTP 409), skipping."
-                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
-                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
-                  echo "Response body: ${BODY}"
-                  exit 1
-                fi
-              }
-
-              echo "================================================"
-              echo "Step 1: Create Membership Policy"
-              echo "================================================"
-
-              create_policy '{
+              post "${POLICIES_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -212,10 +154,10 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Step 2: Create Manufacturer Policy"
+              echo "Step 4: Create Manufacturer Policy"
               echo "================================================"
 
-              create_policy '{
+              post "${POLICIES_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -240,10 +182,10 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Step 3: Create Sensitive Data Policy"
+              echo "Step 5: Create Sensitive Data Policy"
               echo "================================================"
 
-              create_policy '{
+              post "${POLICIES_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -270,72 +212,10 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Policy seeding completed successfully!"
+              echo "Step 6: Create member-and-manufacturer-def"
               echo "================================================"
 
----
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: controlplane-seed-contractdefs
-  namespace: provider
-  labels:
-    app: controlplane-seed-contractdefs
-    type: edc-job
-spec:
-  backoffLimit: 5
-  template:
-    metadata:
-      labels:
-        app: controlplane-seed-contractdefs
-        type: edc-job
-    spec:
-      restartPolicy: OnFailure
-      initContainers:
-        - name: wait-for-controlplane
-          image: curlimages/curl:latest
-          command:
-            - sh
-            - -c
-            - |
-              until curl -sf http://controlplane.provider.svc.cluster.local:8080/api/check/readiness; do
-                echo "Waiting for controlplane to be ready..."
-                sleep 5
-              done
-              echo ""
-              echo "Controlplane is ready!"
-      containers:
-        - name: seed-contractdefs
-          image: curlimages/curl:latest
-          command:
-            - sh
-            - -c
-            - |
-              set -e
-
-              MGMT_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/contractdefinitions"
-
-              # Posts a contract definition, treating 409 (already exists) as success.
-              create_contractdef() {
-                RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST "${MGMT_URL}" \
-                  -H "Content-Type: application/json" \
-                  -d "$1")
-                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
-                BODY=$(echo "${RESPONSE}" | sed '$d')
-                if [ "${HTTP_STATUS}" -eq 409 ]; then
-                  echo "⚠ Contract definition already exists (HTTP 409), skipping."
-                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
-                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
-                  echo "Response body: ${BODY}"
-                  exit 1
-                fi
-              }
-
-              echo "================================================"
-              echo "Step 1: Create member-and-manufacturer-def"
-              echo "================================================"
-
-              create_contractdef '{
+              post "${CONTRACTDEFS_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -355,10 +235,10 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Step 2: Create sensitive-only-def"
+              echo "Step 7: Create sensitive-only-def"
               echo "================================================"
 
-              create_contractdef '{
+              post "${CONTRACTDEFS_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -375,8 +255,21 @@ spec:
               }'
 
               echo "✓ sensitive-only-def done"
-
+              
               echo ""
               echo "================================================"
-              echo "Contract definition seeding completed successfully!"
+              echo "Step 8: Register dataplane"
+              echo "================================================"
+
+              post "${DATAPLANE_URL}" "POST" '{
+                "allowedSourceTypes": [ "HttpData", "HttpCertData" ],
+                "allowedTransferTypes": [ "HttpData-PULL" ],
+                "url": "http://dataplane.provider.svc.cluster.local:8083/api/control/v1/dataflows"
+              }'
+              
+              echo "✓ dataplane registered"              
+              
+              echo ""
+              echo "================================================"
+              echo "Controlplane seeding completed successfully!"
               echo "================================================"

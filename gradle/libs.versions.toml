@@ -51,6 +51,7 @@ edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.re
 edc-spi-http = { module = "org.eclipse.edc:http-spi", version.ref = "edc" }
 edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
 edc-spi-dataplane = { module = "org.eclipse.edc:data-plane-spi", version.ref = "edc" }
+edc-spi-dataplane-selector = { module = "org.eclipse.edc:data-plane-selector-spi", version.ref = "edc" }
 
 # EDC lib dependencies
 edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }

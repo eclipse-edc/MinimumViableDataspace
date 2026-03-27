@@ -3,10 +3,10 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: controlplane-seed-cel
+  name: controlplane-seed
   namespace: consumer
   labels:
-    app: controlplane-seed-cel
+    app: controlplane-seed
     platform: edcv
     type: edc-job
 spec:
@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       labels:
-        app: controlplane-seed-cel
+        app: controlplane-seed
         type: edc-job
     spec:
       restartPolicy: OnFailure

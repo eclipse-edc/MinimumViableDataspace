@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2025 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dataplane-config
+  namespace: provider
+data:
+  edc.hostname: "dataplane.provider.svc.cluster.local"
+
+  edc.transfer.proxy.token.verifier.publickey.alias: "dataplane-private"
+  edc.transfer.proxy.token.signer.privatekey.alias: "dataplane-public"
+
+  edc.dpf.selector.url: "http://controlplane.provider.svc.cluster.local:8083/api/control/v1/dataplanes"
+
+  web.http.port: "8080"
+  web.http.path: "/api"
+  web.http.control.port: "8083"
+  web.http.control.path: "/api/control"
+  web.http.public.port: "11002"
+  web.http.public.path: "/api/public"
+  web.http.certs.port: "8186"
+  web.http.certs.path: "/api/data"
+
+  edc.vault.hashicorp.url: "http://vault.provider.svc.cluster.local:8200"
+  edc.vault.hashicorp.token: "root"
+
+  JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"
+
+  edc.datasource.default.url: "jdbc:postgresql://postgres.provider.svc.cluster.local:5432/dataplane"
+  edc.datasource.default.user: "dp"
+  edc.datasource.default.password: "dp"
+  edc.sql.schema.autocreate: "true"

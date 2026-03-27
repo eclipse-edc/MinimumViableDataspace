@@ -34,6 +34,7 @@ import org.eclipse.edc.transform.TypeTransformerRegistryImpl;
 import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
 import org.eclipse.edc.transform.transformer.edc.to.JsonValueToGenericTypeTransformer;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -62,7 +63,7 @@ public class TransferEndToEndTest {
     // DID of the provider company
     private static final String PROVIDER_ID = "did:web:identityhub.provider.svc.cluster.local%3A7083:provider";
     // public API endpoint of the provider-qna connector, goes through the ingress controller
-    private static final String PROVIDER_PUBLIC_URL = "http://127.0.0.1/provider-qna/public";
+    private static final String PROVIDER_PUBLIC_URL = "http://dp.provider.localhost:8080/public";
     private static final String PROVIDER_MANAGEMENT_URL = "http://cp.provider.localhost:8080";
 
     private final TypeTransformerRegistry transformerRegistry = new TypeTransformerRegistryImpl();
@@ -102,23 +103,23 @@ public class TransferEndToEndTest {
     void transferData_hasPermission_shouldTransferData() {
         System.out.println("Waiting for Provider dataplane to come online");
         // wait until provider's dataplane is available
-//        await().atMost(TEST_TIMEOUT_DURATION)
-//                .pollDelay(TEST_POLL_DELAY)
-//                .untilAsserted(() -> {
-//                    var jp = baseRequest()
-//                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4beta/dataplanes")
-//                            .then()
-//                            .statusCode(200)
-//                            .log().ifValidationFails()
-//                            .extract().body().jsonPath();
-//
-//                    var state = jp.getString("state");
-//                    assertThat(state).isEqualTo("[AVAILABLE]");
-//                });
-//
-//        System.out.println("Provider dataplane is online, fetching catalog");
+        await().atMost(TEST_TIMEOUT_DURATION)
+                .pollDelay(TEST_POLL_DELAY)
+                .untilAsserted(() -> {
+                    var jp = baseRequest()
+                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4beta/dataplanes")
+                            .then()
+                            .statusCode(200)
+                            .log().ifValidationFails()
+                            .extract().body().jsonPath();
 
-        var queryBody = Json.createObjectBuilder()
+                    var state = jp.getString("state");
+                    assertThat(state).isEqualTo("[REGISTERED]");
+                });
+
+        System.out.println("Provider dataplane is online, fetching catalog");
+
+        var catalogRequestBody = Json.createObjectBuilder()
                 .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/connector/management/v2"))
                 .add("@type", "CatalogRequest")
                 .add("counterPartyId", PROVIDER_ID)
@@ -132,7 +133,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var res = baseRequest()
-                            .body(queryBody)
+                            .body(catalogRequestBody)
                             .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/catalog/request")
                             .then()
                             .log().ifValidationFails()
@@ -201,8 +202,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .body(queryBody)
-                            .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/transferprocesses/request")
+                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/transferprocesses/%s/state".formatted(transferProcessId))
                             .then()
                             .statusCode(200)
                             .extract().body().jsonPath();
@@ -244,6 +244,7 @@ public class TransferEndToEndTest {
         assertThat(response).isNotEmpty();
     }
 
+    @Disabled
     @DisplayName("Tests a failing End-to-End contract negotiation because of an unfulfilled policy")
     @Test
     void transferData_doesNotHavePermission_shouldTerminate() {

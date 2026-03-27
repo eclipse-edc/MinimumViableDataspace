@@ -16,9 +16,11 @@ resources:
   - base/vault.yaml
   - base/gateway.yaml
   - base/postgres.yaml
-  - application/controlplane-config.yaml
-  - application/controlplane.yaml
-  - application/controlplane-seed.yaml
   - application/identityhub-config.yaml
   - application/identityhub.yaml
   - application/identityhub-seed.yaml
+  - application/dataplane-config.yaml
+  - application/dataplane.yaml
+  - application/controlplane-config.yaml
+  - application/controlplane.yaml
+  - application/controlplane-seed.yaml

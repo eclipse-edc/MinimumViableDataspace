@@ -1,0 +1,150 @@
+#
+# Copyright (c) 2025 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dataplane
+  namespace: provider
+  labels:
+    app: dataplane
+    type: edcv-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dataplane
+  template:
+    metadata:
+      labels:
+        app: dataplane
+        platform: edcv
+        type: edcv-app
+    spec:
+      containers:
+        - name: dataplane
+          image: ghcr.io/metaform/jad/dataplane:latest
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: dataplane-config
+          ports:
+            - containerPort: 1044
+              name: debug-port
+          livenessProbe:
+            httpGet:
+              path: /api/check/liveness
+              port: 8080
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/check/readiness
+              port: 8080
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 30
+          startupProbe:
+            httpGet:
+              path: /api/check/startup
+              port: 8080
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 30
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dataplane
+  namespace: provider
+spec:
+  type: ClusterIP
+  selector:
+    app: dataplane
+  ports:
+    - name: health
+      port: 8080
+      targetPort: 8080
+    - name: control
+      port: 8083
+      targetPort: 8083
+    - name: certs
+      port: 8186
+      targetPort: 8186
+    - name: public
+      port: 11002
+      targetPort: 11002
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: httproute-dataplane
+  namespace: provider
+spec:
+  parentRefs:
+    - name: provider-gateway
+      namespace: provider
+  hostnames:
+    - dp.provider.localhost
+  rules:
+    # /dp/public → public port 11002
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /public
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: dataplane
+          port: 11002
+          weight: 1
+
+    # /app/internal → control port 8083
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /app/internal
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: dataplane
+          port: 8083
+          weight: 1
+
+    # /app/public → certs port 8186
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /app/public
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: dataplane
+          port: 8186
+          weight: 1
