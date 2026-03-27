@@ -49,73 +49,58 @@ jobs:
 
       - name: "Setup Kubectl"
         uses: azure/setup-kubectl@v4
-
-      - name: "Set up OpenTofu"
-        uses: opentofu/setup-opentofu@v2
-
       - uses: actions/checkout@v6
-
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
       - name: "Build runtime images"
         working-directory: ./
         run: |
-          ./gradlew -Ppersistence=true dockerize 
+          ./gradlew dockerize 
 
 
       - name: "Create k8s Kind Cluster"
         uses: helm/kind-action@v1.14.0
         with:
-          config: deployment/kind.config.yaml
           cluster_name: dcp-demo
 
       - name: "Load runtime images into KinD"
-        run: kind load docker-image controlplane:latest dataplane:latest identity-hub:latest catalog-server:latest issuerservice:latest -n dcp-demo
+        run: kind load docker-image -n dcp-demo \
+          ghcr.io/eclipse-edc/mvd/controlplane:latest \
+          ghcr.io/eclipse-edc/mvd/dataplane:latest \
+          ghcr.io/eclipse-edc/mvd/identity-hub:latest \
+          ghcr.io/eclipse-edc/mvd/issuerservice:latest
 
-      - name: "Install nginx ingress controller"
+      - name: "Install Traefik Gateway controller"
         run: |-
-          echo "::notice title=nginx ingress on KinD::For details how to run nginx ingress on KinD check https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx"
-          kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml
-          kubectl wait --namespace ingress-nginx \
-            --for=condition=ready pod \
-            --selector=app.kubernetes.io/component=controller \
+          helm repo add traefik https://traefik.github.io/charts
+          helm repo update
+          helm upgrade --install --namespace traefik traefik traefik/traefik --create-namespace -f values.yaml
+
+          # Wait for traefik to be ready
+          kubectl rollout status deployment/traefik -n traefik --timeout=120s
+
+          # forward port 80 -> 8080
+          kubectl -n traefik port-forward svc/traefik 8080:80 &
+
+          # install Gateway API CRDs
+          kubectl apply --server-side --force-conflicts -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml
+
+          sleep 5 # to be safe`
+
+      - name: "Deploy MVD"
+        run: |-
+          kubectl apply -k k8s/ 
+
+      - name: "Wait for MVD to be ready"
+        run: |-
+          kubectl wait -A \
+            --selector=type=edc-job \
+            --for=condition=complete job --all \
             --timeout=90s
-
-
-
-      - name: "Tofu init"
-        working-directory: ./deployment
-        run: |-
-          tofu init -reconfigure
-      - name: "Tofu plan"
-        working-directory: ./deployment
-        run: |-
-          tofu plan -out=$GITHUB_SHA.out
-
-      - name: "Tofu apply"
-        working-directory: ./deployment
-        run: |-
-          tofu apply "$GITHUB_SHA.out"
-
-      - name: "Seed dataspace"
-        run: |-
-          chmod +x seed-k8s.sh
-          ./seed-k8s.sh
 
       - name: "Run E2E Test"
         run: |-
           ./gradlew -DincludeTags="EndToEndTest" test -DverboseTest=true
-
-      - name: "Run Newman"
-        continue-on-error: true
-        working-directory: ./deployment/postman
-        run: |-
-          newman run "MVD.postman_collection.json" -e "MVD K8S.postman_environment.json" --folder "ControlPlane Management" --delay-request 5000 --verbose
-
-      - name: "Print log if test failed"
-        if: failure()
-        run: |-
-          kubectl logs deployment/provider-qna-controlplane -n mvd
 
       - name: "Destroy the KinD cluster"
         run: >-
