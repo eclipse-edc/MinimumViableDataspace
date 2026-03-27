@@ -2,13 +2,14 @@
   "@context": {
     "odrl": "http://www.w3.org/ns/odrl/2/"
   },
+  "@type": "TransferRequest",
   "assetId": "asset-1",
-  "counterPartyAddress":  "{{PROVIDER_DSP_URL}}/api/dsp",
+  "counterPartyAddress":  "{{PROVIDER_DSP_URL}}",
   "connectorId": "{{PROVIDER_ID}}",
   "contractId": "{{CONTRACT_ID}}",
   "dataDestination": {
     "type": "HttpProxy"
   },
-  "protocol": "dataspace-protocol-http",
+  "protocol": "dataspace-protocol-http:2025-1",
   "transferType": "HttpData-PULL"
 }

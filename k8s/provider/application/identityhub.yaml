@@ -74,9 +74,6 @@ spec:
   selector:
     app: identityhub
   ports:
-    - port: 7080
-      targetPort: 7080
-      name: web
     - port: 7082
       targetPort: 7082
       name: creds-port

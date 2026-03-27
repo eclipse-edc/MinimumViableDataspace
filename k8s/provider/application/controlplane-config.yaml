@@ -22,11 +22,14 @@ data:
   edc.hostname: "controlplane.provider.svc.cluster.local"
   edc.vault.hashicorp.url: "http://vault.provider.svc.cluster.local:8200"
   edc.vault.hashicorp.token: "root"
-  edc.participant.id: "did:web:connector"
+  edc.participant.id: "did:web:identityhub.provider.svc.cluster.local%3A7083:provider"
   edc.iam.did.web.use.https: "false"
   edc.iam.credential.revocation.mimetype: "application/json"
   # todo: should this be true?
   edc.policy.validation.enabled: "false"
+  edc.iam.sts.oauth.token.url: "http://identityhub.provider.svc.cluster.local:7084/api/sts/token"
+  edc.iam.sts.oauth.client.id: "did:web:identityhub.provider.svc.cluster.local%3A7083:provider"
+  edc.iam.sts.oauth.client.secret.alias: "provider-participant-sts-client-secret"
 
   # web config
   web.http.port: "8080"
@@ -57,14 +60,14 @@ data:
   # Default scopes config
   edc.iam.dcp.scopes.membership.id: "membership-scope"
   edc.iam.dcp.scopes.membership.type: "DEFAULT"
-  edc.iam.dcp.scopes.membership.value: "org.eclipse.edc.vc.type:MembershipCredential:read"
+  edc.iam.dcp.scopes.membership.value: "org.eclipse.dspace.dcp.vc.type:MembershipCredential:read"
 
   edc.iam.dcp.scopes.manufacturer.id: "manufacturer-scope"
   edc.iam.dcp.scopes.manufacturer.type: "POLICY"
-  edc.iam.dcp.scopes.manufacturer.value: "org.eclipse.edc.vc.type:ManufacturerCredential:read"
+  edc.iam.dcp.scopes.manufacturer.value: "org.eclipse.dspace.dcp.vc.type:ManufacturerCredential:read"
   edc.iam.dcp.scopes.manufacturer.prefix-mapping: "ManufacturerCredential"
 
   # Trusted Issuers
-  edc.iam.trusted-issuer.issuer.id: "did:web:issuerservice.provider.svc.cluster.local%3A10016:issuer"
+  edc.iam.trusted-issuer.issuer.id: "did:web:issuerservice.issuer.svc.cluster.local%3A10016:issuer"
 
   JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"

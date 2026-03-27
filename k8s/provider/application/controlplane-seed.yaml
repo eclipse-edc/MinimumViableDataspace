@@ -257,9 +257,9 @@ spec:
                     {
                       "action": "use",
                       "constraint": {
-                        "leftOperand": "DataAccess.level",
+                        "leftOperand": "ManufacturerCredential",
                         "operator": "eq",
-                        "rightOperand": "sensitive"
+                        "rightOperand": "active"
                       }
                     }
                   ]
