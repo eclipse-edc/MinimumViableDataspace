@@ -20,7 +20,6 @@ import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,17 +37,32 @@ import static org.eclipse.edc.demo.tests.TestConstants.TEST_TIMEOUT_DURATION;
 @EndToEndTest
 public class CredentialIssuanceEndToEndTest {
 
-    private static final String CONSUMER_IDENTITYHUB_IDENTITY_URL = "http://127.0.0.1/consumer/cs/";
-    private static final String PARTICIPANT_CONTEXT_ID = "did:web:consumer-identityhub%3A7083:consumer";
-    private static final String ISSUER_DID = "did:web:dataspace-issuer-service%3A10016:issuer";
+    private static final String CONSUMER_IDENTITYHUB_IDENTITY_URL = "http://ih.consumer.localhost:8080/cs/";
+    private static final String PARTICIPANT_CONTEXT_ID = "consumer-participant";
+//    private static final String PARTICIPANT_CONTEXT_ID = "did:web:identityhub.consumer.svc.cluster.local%3A7083:consumer";
+    private static final String ISSUER_DID = "did:web:issuerservice.issuer.svc.cluster.local%3A10016:issuer";
     private static final String HOLDER_PID = UUID.randomUUID().toString();
+    private static final String KEYCLOAK_URL = "http://keycloak.localhost:8080";
 
     private static RequestSpecification baseRequest() {
         return given()
-                .header("X-Api-Key", "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo=")
+                .header("Authorization", "Bearer " + adminToken())
                 .contentType(JSON)
                 .baseUri(CONSUMER_IDENTITYHUB_IDENTITY_URL)
                 .when();
+    }
+
+    private static String adminToken() {
+        return given()
+                .contentType("application/x-www-form-urlencoded")
+                .formParam("client_id", "admin")
+                .formParam("client_secret", "edc-v-admin-secret")
+                .formParam("grant_type", "client_credentials")
+                .post(KEYCLOAK_URL + "/realms/mvd/protocol/openid-connect/token")
+                .then()
+                .log().ifValidationFails()
+                .statusCode(200)
+                .extract().jsonPath().getString("access_token");
     }
 
     @Test
@@ -59,11 +73,11 @@ public class CredentialIssuanceEndToEndTest {
                           "issuerDid": "%s",
                           "holderPid": "%s",
                           "credentials": [
-                            {"format": "VC1_0_JWT", "type": "FoobarCredential", "id": "demo-credential-def-2"}
+                            {"format": "VC1_0_JWT", "type": "MembershipCredential", "id": "membership-credential-def"}
                           ]
                         }
                         """.formatted(ISSUER_DID, HOLDER_PID))
-                .post("/api/identity/v1alpha/participants/%s/credentials/request".formatted(base64(PARTICIPANT_CONTEXT_ID)))
+                .post("/api/identity/v1alpha/participants/%s/credentials/request".formatted(PARTICIPANT_CONTEXT_ID))
                 .then()
                 .log().ifValidationFails()
                 .statusCode(201)
@@ -78,7 +92,7 @@ public class CredentialIssuanceEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     baseRequest()
-                            .get("/api/identity/v1alpha/participants/%s/credentials/request/%s".formatted(base64(PARTICIPANT_CONTEXT_ID), requestId))
+                            .get("/api/identity/v1alpha/participants/%s/credentials/request/%s".formatted(PARTICIPANT_CONTEXT_ID, requestId))
                             .then()
                             .log().ifValidationFails()
                             .statusCode(200)
@@ -91,12 +105,7 @@ public class CredentialIssuanceEndToEndTest {
                 .jsonPath()
                 .getList("verifiableCredential.credential.type");
 
-        assertThat(list).anySatisfy(typesList -> assertThat(typesList).containsExactlyInAnyOrder("FoobarCredential", "VerifiableCredential"));
-
-
-    }
-
-    private String base64(String input) {
-        return Base64.getUrlEncoder().encodeToString(input.getBytes());
+        assertThat(list).anySatisfy(typesList ->
+                assertThat(typesList).containsExactlyInAnyOrder("MembershipCredential", "VerifiableCredential"));
     }
 }
