@@ -25,17 +25,13 @@ pluginManagement {
 }
 
 rootProject.name = "mvd"
-include(":extensions:did-example-resolver")
-include(":extensions:catalog-node-resolver")
-include(":extensions:dcp-impl")
-include(":extensions:superuser-seed")
-//include(":tests:performance")
 include(":tests:end2end")
+
+include(":extensions:data-plane-public-api-v2")
+include(":extensions:data-plane-registration")
 
 // launcher modules
 include(":launchers:identity-hub")
 include(":launchers:controlplane")
 include(":launchers:dataplane")
-include(":launchers:runtime-embedded")
-include(":launchers:catalog-server")
 include(":launchers:issuerservice")

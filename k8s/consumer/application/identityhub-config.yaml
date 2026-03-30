@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ih-config
+  namespace: consumer
+data:
+  edc.hostname: "identityhub.consumer.svc.cluster.local"
+  edc.iam.credentia.revocation.mimetype: "application/json"
+  edc.iam.did.web.use.https: "false"
+  edc.ih.iam.publickey.alias: "publickey-alias"
+  web.http.port: "7080"
+  web.http.path: "/api"
+  web.http.identity.port: "7081"
+  web.http.identity.path: "/api/identity"
+  web.http.identity.auth.key: "password"
+  web.http.credentials.port: "7082"
+  web.http.credentials.path: "/api/credentials"
+  web.http.did.port: "7083"
+  web.http.did.path: "/"
+  web.http.sts.port: "7084"
+  web.http.sts.path: "/api/sts"
+  JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"
+
+  edc.vault.hashicorp.url: "http://vault.consumer.svc.cluster.local:8200"
+  edc.vault.hashicorp.token: "root"
+
+  edc.datasource.default.url: "jdbc:postgresql://postgres.consumer.svc.cluster.local:5432/identityhub"
+  edc.datasource.default.user: "ih"
+  edc.datasource.default.password: "ih"
+  edc.sql.schema.autocreate: "true"
+  edc.iam.accesstoken.jti.validation: "true"
+  # grace period for credential expiry, 3600*24 = 1 day
+  edc.iam.credential.renewal.graceperiod: "86400"
+
+  edc.encryption.aes.key.alias: "aes-key-alias"
+  # Oauth2 config
+  # KeyCloak takes the `iss` claim's host from the request URL. For now, this is the URL defined in the ingress route.
+  # to do this properly, we should probably configure the following properties on the ingress route:
+  #    proxy_set_header Host $host;
+  #    proxy_set_header X-Forwarded-Proto $scheme;
+  edc.iam.oauth2.issuer: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd"
+  edc.iam.oauth2.jwks.url: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs"

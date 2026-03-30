@@ -1,0 +1,227 @@
+meta {
+  name: query Attestations
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations/query
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
+
+docs {
+  Query attestation definitions
+}
+
+example {
+  name: A list of attestation metadata.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "attestationType": "<string>",
+            "configuration": {
+              "aliquip2": {},
+              "pariatur_b3": {},
+              "essebab": {}
+            },
+            "id": "<string>"
+          },
+          {
+            "attestationType": "<string>",
+            "configuration": {
+              "sint_9f6": {}
+            },
+            "id": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: Request body was malformed, or the request could not be processed
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 400
+      text: Bad Request
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The request could not be completed, because either the authentication was missing or was not valid.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 401
+      text: Unauthorized
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}

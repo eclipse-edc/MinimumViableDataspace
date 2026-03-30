@@ -1,0 +1,37 @@
+meta {
+  name: Deactivate Participant
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}/state?isActive=false
+  body: json
+  auth: inherit
+}
+
+params:query {
+  isActive: false
+}
+
+body:json {
+  {
+      "roles":[],
+      "serviceEndpoints":[],
+      "isActive": true,
+      "participantId": "foobar",
+      "did": "did:web:foobar",
+      "key":{
+          "keyId": "key1",
+          "privateKeyAlias": "foobar-alias",
+          "keyGeneratorParams":{
+              "algorithm": "EC",
+              "curve": "secp256r1"
+          }
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

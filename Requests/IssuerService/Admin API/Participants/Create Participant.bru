@@ -1,0 +1,221 @@
+meta {
+  name: Create Participant
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "did": "did:web:test",
+    "participantId": "did:web:test",
+    "name": "Test Participant"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Adds a new participant.
+}
+
+example {
+  name: The participant was added successfully.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+  
+    body:json: {
+      {
+        "did": "<string>",
+        "participantId": "<string>",
+        "name": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 201
+      text: Created
+    }
+  
+    body: {
+      type: text
+      content: '''
+  
+      '''
+    }
+  }
+}
+
+example {
+  name: Request body was malformed, or the request could not be processed
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "did": "<string>",
+        "participantId": "<string>",
+        "name": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 400
+      text: Bad Request
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The request could not be completed, because either the authentication was missing or was not valid.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "did": "<string>",
+        "participantId": "<string>",
+        "name": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 401
+      text: Unauthorized
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: Can't add the participant, because a object with the same ID already exists
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "did": "<string>",
+        "participantId": "<string>",
+        "name": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 409
+      text: Conflict
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}

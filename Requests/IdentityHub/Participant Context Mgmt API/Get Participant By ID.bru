@@ -1,0 +1,16 @@
+meta {
+  name: Get Participant By ID
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

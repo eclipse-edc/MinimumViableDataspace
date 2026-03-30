@@ -1,0 +1,291 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keycloak
+  namespace: mvd-common
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+        type: edc-infra
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:latest
+          args:
+            - "start-dev"
+            - "--health-enabled=true"
+            - "--import-realm"
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9000
+              name: health
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: "admin"
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
+              value: "admin"
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
+              value: "admin"
+            - name: KC_HTTP_ENABLED
+              value: "true"
+            - name: KC_HOSTNAME
+              value: http://keycloak.mvd-common.svc.cluster.local:8080
+            - name: KC_HOSTNAME_STRICT
+              value: "false"
+            - name: KC_HOSTNAME_URL
+              value: "http://keycloak.mvd-common.svc.cluster.local:8080"
+            - name: KC_PROXY
+              value: "edge"
+            - name: KC_HEALTH_ENABLED
+              value: "true"
+            - name: KC_METRICS_ENABLED
+              value: "true"
+            - name: KC_LOG_LEVEL
+              value: INFO
+            - name: KC_DB
+              value: postgres
+            - name: POSTGRES_DB
+              value: keycloak
+            - name: KC_DB_URL
+              value: jdbc:postgresql://postgres.mvd-common.svc.cluster.local:5432/keycloak
+            - name: KC_DB_USERNAME
+              value: "kc"
+            - name: KC_DB_PASSWORD
+              value: "kc"
+          volumeMounts:
+            - name: realm-config
+              mountPath: /opt/keycloak/data/import
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 9000
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 9000
+            initialDelaySeconds: 3
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 12
+      volumes:
+        - name: realm-config
+          configMap:
+            name: keycloak-realm
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+  namespace: mvd-common
+  labels:
+    tier: infrastructure
+data:
+  mvd-realm.json: |
+    {
+      "realm": "mvd",
+      "enabled": true,
+      "sslRequired": "none",
+      "displayName": "MVD Realm",
+      "roles": {
+        "realm": [
+          {
+            "name": "admin",
+            "description": "Administrator with full access to all tenants and their resources"},
+          {
+            "name": "provisioner",
+            "description": "Can create and delete tenants but cannot access their resources"},
+          {
+            "name": "participant",
+            "description": "Regular participant context access role, can access their own resources"}
+        ]
+      },
+      "clientScopes": [
+        {
+          "name": "identity-api:read",
+          "description": "Read access to Identity API",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true"
+          }
+        },
+        {
+          "name": "identity-api:write",
+          "description": "Create, update delete objects in the Identity API",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true"
+          }
+        },
+        {
+          "name": "issuer-admin-api:read",
+          "description": "read access to the Issuer Admin API",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true"
+          }
+        },
+        {
+          "name": "issuer-admin-api:write",
+          "description": "write access to the Issuer Admin API",
+          "protocol": "openid-connect",
+          "attributes": {
+            "include.in.token.scope": "true",
+            "display.on.consent.screen": "true"
+          }
+        }
+      ],
+      "defaultOptionalClientScopes": [
+        "offline_access",
+        "management-api:read",
+        "management-api:write",
+        "identity-api:read",
+        "identity-api:write",
+        "issuer-admin-api:read",
+        "issuer-admin-api:write"
+      ],
+      "clients": [
+        {
+          "clientId": "admin",
+          "name": "EDC-V Admin User",
+          "description": "Global admin client with full access",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": false,
+          "serviceAccountsEnabled": true,
+          "secret": "edc-v-admin-secret",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "fullScopeAllowed": true,
+          "protocolMappers": [
+            {
+              "name": "role",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-hardcoded-claim-mapper",
+              "consentRequired": false,
+              "config": {
+                "claim.name": "role",
+                "claim.value": "admin",
+                "jsonType.label": "String",
+                "access.token.claim": "true",
+                "id.token.claim": "true",
+                "userinfo.token.claim": "true"
+              }
+            }
+          ],
+          "defaultClientScopes": [
+            "issuer-admin-api:write",
+            "issuer-admin-api:read",
+            "identity-api:write",
+            "identity-api:read"
+          ]
+        },
+        {
+          "clientId": "provisioner",
+          "name": "Provisioner User",
+          "description": "Can create and delete tenants",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": false,
+          "serviceAccountsEnabled": true,
+          "secret": "provisioner-secret",
+          "standardFlowEnabled": false,
+          "directAccessGrantsEnabled": false,
+          "fullScopeAllowed": true,
+          "protocolMappers": [
+            {
+              "name": "role",
+              "protocol": "openid-connect",
+              "protocolMapper": "oidc-hardcoded-claim-mapper",
+              "consentRequired": false,
+              "config": {
+                "claim.name": "role",
+                "claim.value": "provisioner",
+                "jsonType.label": "String",
+                "access.token.claim": "true",
+                "id.token.claim": "true",
+                "userinfo.token.claim": "true"
+              }
+            }
+          ],
+          "defaultClientScopes": [
+            "issuer-admin-api:write",
+            "issuer-admin-api:read",
+            "identity-api:write",
+            "identity-api:read",
+            "management-api:write",
+            "management-api:read"
+          ]
+        }
+      ],
+      "users": [],
+      "groups": [],
+      "eventsEnabled": false
+    }
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  namespace: mvd-common
+  labels:
+    tier: infrastructure
+spec:
+  selector:
+    app: keycloak
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+    - port: 9000
+      targetPort: 9000
+      name: health
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: keycloak
+  namespace: mvd-common
+spec:
+  parentRefs:
+    - name: common-gateway
+      kind: Gateway
+      sectionName: http
+  hostnames:
+    - keycloak.localhost
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: keycloak
+          port: 8080

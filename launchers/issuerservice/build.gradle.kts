@@ -21,15 +21,13 @@ plugins {
 
 dependencies {
     implementation(libs.edc.issuance.spi) // for seeding the attestations
-    runtimeOnly(project(":extensions:superuser-seed"))
     runtimeOnly(libs.edc.bom.issuerservice)
     runtimeOnly(libs.edc.ih.api.did)
     runtimeOnly(libs.edc.ih.api.participants)
-    if (project.properties.getOrDefault("persistence", "false") == "true") {
-        runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.edc.bom.issuerservice.sql)
-        println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
-    }
+    runtimeOnly(libs.edc.vault.hashicorp)
+    runtimeOnly(libs.edc.bom.issuerservice.sql)
+    runtimeOnly(libs.edc.core.participantcontext.config)
+    runtimeOnly(libs.edc.store.participantcontext.config.sql)
 }
 
 tasks.shadowJar {

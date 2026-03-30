@@ -1,0 +1,26 @@
+{
+  "@context": [
+    "https://w3id.org/edc/connector/management/v2"
+  ],
+  "@type": "ContractRequest",
+  "counterPartyAddress": "{{PROVIDER_DSP_URL}}",
+  "counterPartyId": "{{PROVIDER_ID}}",
+  "protocol": "dataspace-protocol-http:2025-1",
+  "policy": {
+    "@type": "Offer",
+    "@id": "{{OFFER_ID}}",
+    "assigner": "{{PROVIDER_ID}}",
+    "permission": [],
+    "prohibition": [],
+    "obligation": {
+      "action": "use",
+      "constraint": {
+        "leftOperand": "ManufacturerCredential.part_types",
+        "operator": "eq",
+        "rightOperand": "all"
+      }
+    },
+    "target": "asset-1"
+  },
+  "callbackAddresses": []
+}

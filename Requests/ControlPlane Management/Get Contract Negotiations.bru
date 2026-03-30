@@ -1,0 +1,57 @@
+meta {
+  name: Get Contract Negotiations
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/contractnegotiations/request
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+    ],
+    "@type": "QuerySpec"
+  }
+}
+
+body:text {
+  {
+     "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+      ],
+      "@type": "QuerySpec"
+  }
+}
+
+script:post-response {
+  // get the contact agreement id and save it as an environment variable
+  if(res.getStatus() < 300 && res.getStatus() >= 200 && res.getBody().length > 0){
+      var find_negotiation;
+      if (bru.getVar("CONTRACT_NEGOTIATION_ID") !== undefined && bru.getVar("CONTRACT_NEGOTIATION_ID") !== null){
+          find_negotiation = res.getBody().find((el) => el["@id"] == bru.getVar("CONTRACT_NEGOTIATION_ID"))
+      }
+  
+      if(find_negotiation){
+          const contractAgreementId = find_negotiation["contractAgreementId"];
+          bru.setVar("CONTRACT_AGREEMENT_ID", contractAgreementId);
+      }
+  }
+  
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+  test("Contract Agreement ID is set", function(){
+      expect(bru.getVar("CONTRACT_AGREEMENT_ID")).not.to.be.undefined
+  })
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,286 @@
+meta {
+  name: query Participants
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders/query
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Gets all participants for a certain query.
+}
+
+example {
+  name: A list of participant metadata.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "did": "<string>",
+            "participantId": "<string>",
+            "name": "<string>"
+          },
+          {
+            "did": "<string>",
+            "participantId": "<string>",
+            "name": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: Request body was malformed, or the request could not be processed
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 400
+      text: Bad Request
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The request could not be completed, because either the authentication was missing or was not valid.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 401
+      text: Unauthorized
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The participant was not found.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/query
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "filterExpression": [
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          },
+          {
+            "operandLeft": {},
+            "operandRight": {},
+            "operator": "<string>"
+          }
+        ],
+        "limit": "<integer>",
+        "offset": "<integer>",
+        "sortField": "<string>",
+        "sortOrder": "DESC"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 404
+      text: Not Found
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}

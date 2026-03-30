@@ -1,0 +1,47 @@
+meta {
+  name: Initiate Transfer
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/transferprocesses
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+    ],
+    "assetId": "asset-1",
+    "@type": "TransferRequest",
+    "counterPartyAddress": "{{PROVIDER_DSP}}",
+    "connectorId": "{{PROVIDER_ID}}",
+    "contractId": "{{CONTRACT_AGREEMENT_ID}}",
+    "dataDestination": {
+      "type": "HttpProxy"
+    },
+    "protocol": "dataspace-protocol-http",
+    "transferType": "HttpData-PULL"
+  }
+}
+
+script:pre-request {
+  if(!(bru.getVar("CONTRACT_AGREEMENT_ID") !== undefined && bru.getVar("CONTRACT_AGREEMENT_ID") !== null)){
+      throw new Error('Contract Agreement ID is not yet available, please execute requests "Initiate Negotiation and Get Contract Negotiation" first!');
+  }
+}
+
+script:post-response {
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

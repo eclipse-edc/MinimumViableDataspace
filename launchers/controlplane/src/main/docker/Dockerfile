@@ -14,9 +14,6 @@ COPY ${JAR} edc-controlplane.jar
 
 EXPOSE 8080
 
-ENV WEB_HTTP_PORT="8080"
-ENV WEB_HTTP_PATH="/"
-
 HEALTHCHECK --interval=5s --timeout=5s --retries=10 CMD curl --fail http://localhost:8080/api/check/health
 
 # Use "exec" for graceful termination (SIGINT) to reach JVM.

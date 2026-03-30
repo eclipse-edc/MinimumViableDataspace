@@ -1,0 +1,22 @@
+meta {
+  name: Query issuance processes
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/issuanceprocesses/query
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

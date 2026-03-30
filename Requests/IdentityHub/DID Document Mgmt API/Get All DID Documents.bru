@@ -1,0 +1,21 @@
+meta {
+  name: Get All DID Documents
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{CS_URL}}/api/identity/v1alpha/dids
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      
+  }
+}
+
+settings {
+  encodeUrl: true
+}

@@ -11,4 +11,6 @@
 #       Cofinity-X - initial API and implementation
 #
 #
-org.eclipse.edc.issuerservice.seed.attestation.DemoAttestationsExtension
+org.eclipse.edc.issuerservice.seed.attestation.demo.DemoAttestationsExtension
+org.eclipse.edc.issuerservice.seed.attestation.manufacturer.ManufacturerAttestationExtension
+org.eclipse.edc.issuerservice.seed.attestation.membership.MembershipAttestationsExtension

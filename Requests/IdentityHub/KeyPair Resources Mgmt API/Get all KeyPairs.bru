@@ -1,0 +1,15 @@
+meta {
+  name: Get all KeyPairs
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{CS_URL}}/api/identity/v1alpha/keypairs
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,0 +1,62 @@
+meta {
+  name: Initiate negotiation
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/contractnegotiations
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+    ],
+    "@type": "ContractRequest",
+    "counterPartyAddress": "{{PROVIDER_DSP}}",
+    "counterPartyId": "{{PROVIDER_ID}}",
+    "protocol": "dataspace-protocol-http:2025-1",
+    "policy": {
+      "@type": "Offer",
+      "@id": "{{POLICY_ID_ASSET_1}}",
+      "assigner": "{{PROVIDER_ID}}",
+      "permission": [],
+      "prohibition": [],
+      "obligation": {
+        "action": "use",
+        "constraint": {
+          "leftOperand": "ManufacturerCredential.part_types",
+          "operator": "eq",
+          "rightOperand": "non_critical"
+        }
+      },
+      "target": "asset-1"
+    },
+    "callbackAddresses": []
+  }
+}
+
+script:pre-request {
+  if(!(bru.getVar("POLICY_ID_ASSET_1") !== undefined && bru.getVar("POLICY_ID_ASSET_1") !== null)){
+      throw new Error('Policy-ID of Asset-1 is not yet available, please execute request "Get Cached Catalog" first!');
+  }
+}
+
+script:post-response {
+  bru.setVar("CONTRACT_NEGOTIATION_ID", res.getBody()["@id"])
+  
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+  test("Contract negotiation id is set", function(){
+      expect(bru.getVar("CONTRACT_NEGOTIATION_ID")).not.to.be.undefined
+  })
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

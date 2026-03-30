@@ -1,0 +1,33 @@
+meta {
+  name: Delete Participant
+  type: http
+  seq: 9
+}
+
+delete {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_ID}}
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "roles":[],
+      "serviceEndpoints":[],
+      "isActive": true,
+      "participantId": "foobar",
+      "did": "did:web:foobar",
+      "key":{
+          "keyId": "key1",
+          "privateKeyAlias": "foobar-alias",
+          "keyGeneratorParams":{
+              "algorithm": "EC",
+              "curve": "secp256r1"
+          }
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

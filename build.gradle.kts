@@ -39,8 +39,8 @@ subprojects {
             tasks.register("dockerize", DockerBuildImage::class) {
                 val dockerContextDir = project.projectDir
                 dockerFile.set(file("$dockerContextDir/src/main/docker/Dockerfile"))
-                images.add("${project.name}:${project.version}")
-                images.add("${project.name}:latest")
+                images.add("ghcr.io/eclipse-edc/mvd/${project.name}:${project.version}")
+                images.add("ghcr.io/eclipse-edc/mvd/${project.name}:latest")
                 // specify platform with the -Dplatform flag:
                 if (System.getProperty("platform") != null)
                     platform.set(System.getProperty("platform"))

@@ -19,17 +19,15 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":extensions:did-example-resolver"))
-    runtimeOnly(project(":extensions:dcp-impl")) // some patches/impls for DCP
-    runtimeOnly(project(":extensions:catalog-node-resolver")) // to trigger the federated catalog
+    runtimeOnly(project(":extensions:data-plane-registration"))
+    runtimeOnly(libs.edc.api.cel.v5)
+    runtimeOnly(libs.edc.core.cel)
+    runtimeOnly(libs.edc.decentralized.claims.cel)
+    runtimeOnly(libs.edc.cel.store.sql)
     runtimeOnly(libs.edc.bom.controlplane)
     runtimeOnly(libs.edc.api.secrets)
-
-    if (project.properties.getOrDefault("persistence", "false") == "true") {
-        runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.edc.bom.controlplane.sql)
-        println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
-    }
+    runtimeOnly(libs.edc.vault.hashicorp)
+    runtimeOnly(libs.edc.bom.controlplane.sql)
 }
 
 tasks.shadowJar {

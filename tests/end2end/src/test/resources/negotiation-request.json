@@ -1,11 +1,11 @@
 {
   "@context": [
-    "https://w3id.org/edc/connector/management/v0.0.1"
+    "https://w3id.org/edc/connector/management/v2"
   ],
   "@type": "ContractRequest",
-  "counterPartyAddress": "{{PROVIDER_DSP_URL}}/api/dsp",
+  "counterPartyAddress": "{{PROVIDER_DSP_URL}}",
   "counterPartyId": "{{PROVIDER_ID}}",
-  "protocol": "dataspace-protocol-http",
+  "protocol": "dataspace-protocol-http:2025-1",
   "policy": {
     "@type": "Offer",
     "@id": "{{OFFER_ID}}",
@@ -15,9 +15,9 @@
     "obligation": {
       "action": "use",
       "constraint": {
-        "leftOperand":  "DataAccess.level",
+        "leftOperand": "ManufacturerCredential.part_types",
         "operator": "eq",
-        "rightOperand": "processing"
+        "rightOperand": "non_critical"
       }
     },
     "target": "asset-1"

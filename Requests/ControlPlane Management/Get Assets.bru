@@ -1,0 +1,37 @@
+meta {
+  name: Get Assets
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/assets/request
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@type": "QuerySpec"
+  }
+}
+
+body:text {
+  {
+      "@context": {
+          "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+      },
+      "@type": "QuerySpec"
+  }
+}
+
+script:post-response {
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

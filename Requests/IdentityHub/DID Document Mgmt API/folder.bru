@@ -1,0 +1,14 @@
+meta {
+  name: DID Document Mgmt API
+  seq: 3
+}
+
+auth {
+  mode: inherit
+}
+
+script:post-response {
+  test("Status is OK", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 204])
+  })
+}

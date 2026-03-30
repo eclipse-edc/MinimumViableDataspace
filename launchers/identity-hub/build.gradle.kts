@@ -19,18 +19,9 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":extensions:superuser-seed"))
-    runtimeOnly(project(":extensions:did-example-resolver"))
-
-    implementation(libs.edc.ih.spi) // needed in the extensions here
-    implementation(libs.edc.ih.spi.credentials) // needed in the extensions here
-
     runtimeOnly(libs.edc.bom.identityhub)
-    if (project.properties.getOrDefault("persistence", "false") == "true") {
-        runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.edc.bom.identityhub.sql)
-        println("This runtime compiles with a remote STS, Hashicorp Vault and PostgreSQL. You will need properly configured STS, Postgres and HCV instances.")
-    }
+    runtimeOnly(libs.edc.vault.hashicorp)
+    runtimeOnly(libs.edc.bom.identityhub.sql)
 
     testImplementation(libs.edc.spi.identity.did)
     testImplementation(libs.edc.lib.crypto)

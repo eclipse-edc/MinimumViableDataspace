@@ -1,0 +1,211 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault
+  namespace: issuer
+  labels:
+    type: edc-infra
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+        type: edc-infra
+    spec:
+      containers:
+        - name: vault
+          image: hashicorp/vault:latest
+          ports:
+            - containerPort: 8200
+          env:
+            - name: VAULT_DEV_ROOT_TOKEN_ID
+              value: "root"
+            - name: VAULT_DEV_LISTEN_ADDRESS
+              value: "0.0.0.0:8200"
+          args:
+            - "server"
+            - "-dev"
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vault-auth
+  namespace: issuer
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: vault-bootstrap
+  namespace: issuer
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        type: edc-job
+    spec:
+      serviceAccountName: vault-auth
+      containers:
+        - name: vault-cli
+          image: hashicorp/vault:latest
+          env:
+            - name: VAULT_ADDR
+              value: "http://vault.issuer.svc.cluster.local:8200"
+            - name: VAULT_TOKEN
+              value: "root"
+          command: [ "sh", "-ec" ]
+          args:
+            - |
+              # Wait for vault to be ready
+              echo "Waiting for Vault to be ready..."
+              until vault status > /dev/null 2>&1; do
+                echo "Vault not ready yet, retrying in 2 seconds..."
+                sleep 2
+              done
+              echo "Vault is ready!"
+              
+              # Wait for Keycloak to be ready
+              echo "Waiting for Keycloak to be ready..."
+              until wget -q --spider http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/.well-known/openid-configuration > /dev/null 2>&1; do
+                echo "Keycloak not ready yet, retrying in 2 seconds..."
+                sleep 2
+              done
+              echo "Keycloak is ready!"
+              
+              # Enable JWT auth method
+              vault auth enable jwt || true
+
+              # Configure JWT auth (example: using Keycloak as JWT backend)
+              vault write auth/jwt/config \
+                jwks_url="http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs" \
+                default_role="participant" || { echo "Failed to configure JWT auth"; exit 1; }
+
+              # create mount for participants, each stores their secrets in a subdirectory
+              vault secrets enable -path=participants -version=2 kv || { echo "Failed to enable secrets engine"; exit 1; }
+
+              # get accessor for entity aliases
+              ACCESSOR=$(vault auth list | grep 'jwt/' | awk '{print $3}')
+              if [ -z "$ACCESSOR" ]; then
+                echo "Failed to get JWT accessor"
+                exit 1
+              fi
+              echo "Using JWT accessor: $ACCESSOR"
+
+
+              # Allow full CRUD + list on the participant's own data path
+
+              cat <<EOF | vault policy write participants-restricted - || { echo "Failed to write policy"; exit 1; }
+              path "participants/data/{{identity.entity.aliases.${ACCESSOR}.name}}/*" {
+                  capabilities = ["create", "read", "update", "delete", "list"]
+              }
+
+              path "participants/metadata/{{identity.entity.aliases.${ACCESSOR}.name}}/*" {
+                   capabilities = ["list"]
+              }
+              EOF
+
+              vault write auth/jwt/role/participant -<<EOF || { echo "Failed to create JWT role"; exit 1; }
+              {
+                "role_type": "jwt",
+                "user_claim": "participant_context_id",
+                "bound_issuer": "http://vault.issuer.localhost/realms/mvd",
+                "bound_claims": {
+                  "role": "participant"
+                },
+                "token_policies": ["participants-restricted"],
+                "clock_skew_leeway": 60
+              }
+              EOF
+              
+              
+              # Allow full CRUD + list for provisioner
+              cat <<EOF | vault policy write provisioner-policy - || { echo "Failed to write policy"; exit 1; }
+              path "*" {
+                capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+              }
+              
+              path "sys/*" {
+                capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+              }
+              EOF
+              
+              vault write auth/jwt/role/provisioner -<<EOF || { echo "Failed to create provisioner JWT role"; exit 1; }
+              {
+                "role_type": "jwt",
+                "user_claim": "azp",
+                "bound_issuer": "http://vault.issuer.localhost/realms/mvd",
+                "bound_claims": {
+                  "role": "provisioner"
+                },
+                "token_policies": ["provisioner-policy"],
+                "clock_skew_leeway": 60
+              }
+              EOF
+              vault write secret/data/aes-key-alias -<<EOF || { echo "Failed to create ase key entry"; exit 1; }
+              {
+                "data": {
+                  "content": "yHo9w6m2KOI3FE7vI+fcN6j86JDQ6V10lJPlv9lLWoE="
+                }
+              }
+              EOF
+              
+              echo "Vault bootstrap completed successfully!"
+      restartPolicy: OnFailure
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+  namespace: issuer
+spec:
+  selector:
+    app: vault
+  ports:
+    - port: 8200
+      targetPort: 8200
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vault
+  namespace: issuer
+spec:
+  parentRefs:
+    - name: consumer-gateway
+  hostnames:
+    - vault.provider.localhost
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: vault
+          port: 8200

@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controlplane-config
+  namespace: consumer
+data:
+  # base config
+  edc.hostname: "controlplane.consumer.svc.cluster.local"
+  edc.vault.hashicorp.url: "http://vault.consumer.svc.cluster.local:8200"
+  edc.vault.hashicorp.token: "root"
+  edc.participant.id: "did:web:identityhub.consumer.svc.cluster.local%3A7083:consumer"
+  edc.iam.did.web.use.https: "false"
+  edc.iam.credential.revocation.mimetype: "application/json"
+  edc.iam.sts.oauth.token.url: "http://identityhub.consumer.svc.cluster.local:7084/api/sts/token"
+  edc.iam.sts.oauth.client.id: "did:web:identityhub.consumer.svc.cluster.local%3A7083:consumer"
+  edc.iam.sts.oauth.client.secret.alias: "consumer-participant-sts-client-secret"
+
+
+  # web config
+  web.http.port: "8080"
+  web.http.path: "/api"
+  web.http.protocol.port: "8082"
+  web.http.protocol.path: "/api/dsp"
+  web.http.management.port: "8081"
+  web.http.management.path: "/api/mgmt"
+  web.http.control.port: "8083"
+  web.http.control.path: "/api/control"
+
+  # dataplane config
+  edc.datasource.default.url: "jdbc:postgresql://postgres.consumer.svc.cluster.local:5432/controlplane"
+  edc.datasource.default.user: "cp"
+  edc.datasource.default.password: "cp"
+  edc.sql.schema.autocreate: "true"
+
+  edc.encryption.aes.key.alias: "aes-key-alias"
+
+  # Oauth2 config
+  # KeyCloak takes the `iss` claim's host from the request URL. For now, this is the URL defined in the ingress route.
+  # to do this properly, we should probably configure the following properties on the ingress route:
+  #    proxy_set_header Host $host;
+  #    proxy_set_header X-Forwarded-Proto $scheme;
+  edc.iam.oauth2.issuer: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/edcv"
+  edc.iam.oauth2.jwks.url: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/edcv/protocol/openid-connect/certs"
+
+  # Default scopes config
+  edc.iam.dcp.scopes.membership.id: "membership-scope"
+  edc.iam.dcp.scopes.membership.type: "DEFAULT"
+  edc.iam.dcp.scopes.membership.value: "org.eclipse.dspace.dcp.vc.type:MembershipCredential:read"
+
+  edc.iam.dcp.scopes.manufacturer.id: "manufacturer-scope"
+  edc.iam.dcp.scopes.manufacturer.type: "POLICY"
+  edc.iam.dcp.scopes.manufacturer.value: "org.eclipse.dspace.dcp.vc.type:ManufacturerCredential:read"
+  edc.iam.dcp.scopes.manufacturer.prefix-mapping: "ManufacturerCredential"
+
+  # Trusted Issuers
+  edc.iam.trusted-issuer.issuer.id: "did:web:issuerservice.issuer.svc.cluster.local%3A10016:issuer"
+
+  JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"

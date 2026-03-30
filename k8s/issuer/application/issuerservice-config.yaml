@@ -1,0 +1,67 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: issuerservice-config
+  namespace: issuer
+data:
+  # kv format
+
+  edc.hostname: "issuerservice.issuer.svc.cluster.local"
+  edc.issuer.statuslist.signing.key.alias: "statuslist-signing-key"
+  edc.ih.api.superuser.key: "c3VwZXItdXNlcg==.c3VwZXItc2VjcmV0LWtleQo="
+  edc.iam.did.web.use.https: "false"
+  # Web config
+  web.http.port: "10010"
+  web.http.path: "/api"
+  web.http.sts.port: "10011"
+  web.http.sts.path: "/api/sts"
+  web.http.issuance.port: "10012"
+  web.http.issuance.path: "/api/issuance"
+  web.http.issueradmin.port: "10013"
+  web.http.issueradmin.path: "/api/admin"
+  web.http.identity.port: "10015"
+  web.http.identity.path: "/api/identity"
+  web.http.did.port: "10016"
+  web.http.did.path: "/"
+  web.http.statuslist.port: "9999"
+  web.http.statuslist.path: "/statuslist"
+
+  # persistence and vault
+  edc.vault.hashicorp.url: "http://vault.issuer.svc.cluster.local:8200"
+  edc.vault.hashicorp.token: "root"
+
+  edc.datasource.default.url: "jdbc:postgresql://postgres.issuer.svc.cluster.local:5432/issuerservice"
+  edc.datasource.default.user: "issuer"
+  edc.datasource.default.password: "issuer"
+  edc.sql.schema.autocreate: "true"
+  edc.iam.accesstoken.jti.validation: "true"
+
+  edc.encryption.aes.key.alias: "aes-key-alias"
+  # Oauth2 config
+  # KeyCloak takes the `iss` claim's host from the request URL. For now, this is the URL defined in the ingress route.
+  # to do this properly, we should probably configure the following properties on the ingress route:
+  #    proxy_set_header Host $host;
+  #    proxy_set_header X-Forwarded-Proto $scheme;
+  edc.iam.oauth2.issuer: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd"
+  edc.iam.oauth2.jwks.url: "http://keycloak.mvd-common.svc.cluster.local:8080/realms/mvd/protocol/openid-connect/certs"
+
+  JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044"
+
+  # even though we have a default data source, we need a named datasource for the DatabaseAttestationSource, because
+  # that is configured in the AttestationDefinition
+  edc.datasource.membership.url: "jdbc:postgresql://postgres.issuer.svc.cluster.local:5432/issuerservice"
+  edc.datasource.membership.user: "issuer"
+  edc.datasource.membership.password: "issuer"

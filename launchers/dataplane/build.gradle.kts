@@ -19,14 +19,15 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.edc.bom.dataplane)
-    runtimeOnly(libs.edc.dataplane.v2)
-
-    if (project.properties.getOrDefault("persistence", "false") == "true") {
-        runtimeOnly(libs.edc.vault.hashicorp)
-        runtimeOnly(libs.edc.bom.dataplane.sql)
-        println("This runtime compiles with a remote STS client, Hashicorp Vault and PostgreSQL. You will need properly configured Postgres and HCV instances.")
+    runtimeOnly(libs.tink)
+    implementation(libs.edc.bom.dataplane) {
+        exclude("org.eclipse.edc", "data-plane-self-registration")
     }
+    runtimeOnly(project(":extensions:data-plane-public-api-v2"))
+
+    runtimeOnly(libs.edc.core.participantcontext.config)
+    runtimeOnly(libs.edc.vault.hashicorp)
+    runtimeOnly(libs.edc.bom.dataplane.sql)
 }
 
 tasks.shadowJar {

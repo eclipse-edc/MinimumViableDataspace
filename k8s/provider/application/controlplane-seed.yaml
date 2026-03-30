@@ -1,0 +1,322 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+## This seed job creates assets, policies and contract definitions in the provider's control plane via the management API.
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: controlplane-seed
+  namespace: provider
+  labels:
+    app: controlplane-seed
+    platform: edcv
+    type: edc-job
+spec:
+  backoffLimit: 5
+  template:
+    metadata:
+      labels:
+        app: controlplane-seed
+        type: edc-job
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+        - name: wait-for-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until curl -sf http://controlplane.provider.svc.cluster.local:8080/api/check/readiness; do
+                echo "Waiting for controlplane to be ready..."
+                sleep 5
+              done
+              echo ""
+              echo "Controlplane is ready!"
+      containers:
+        - name: seed-controlplane
+          image: curlimages/curl:latest
+          command:
+            - sh
+            - -c
+            - |
+              set -e
+
+              ASSETS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/assets"
+              POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/policydefinitions"
+              CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/contractdefinitions"
+              DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
+              CEL_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v5alpha/celexpressions"
+
+              # Posts to the management API, treating 409 (already exists) as success.
+              post() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X "$2" "$1" \
+                  -H "Content-Type: application/json" \
+                  -d "$3")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
+                if [ "${HTTP_STATUS}" -eq 409 ]; then
+                  echo "⚠ Already exists (HTTP 409), skipping."
+                elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
+                  echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
+                  exit 1
+                fi
+              }
+
+              echo "================================================"
+              echo "Step 1: Create Asset 1"
+              echo "================================================"
+
+              post "${ASSETS_URL}" "POST" '{
+                  "@context": [
+                    "https://w3id.org/edc/connector/management/v2"
+                  ],
+                  "@id": "asset-1",
+                  "@type": "Asset",
+                  "properties": {
+                    "description": "This asset requires Membership to view and Manufacturer (part_types=non_critical) to negotiate."
+                  },
+                  "dataAddress": {
+                    "@type": "DataAddress",
+                    "type": "HttpData",
+                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
+                    "proxyPath": "true",
+                    "proxyQueryParams": "true"
+                  }
+                }'
+
+              echo "✓ Asset 1 done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create Asset 2"
+              echo "================================================"
+
+              post "${ASSETS_URL}" "POST" '{
+                  "@context": [
+                    "https://w3id.org/edc/connector/management/v2"
+                  ],
+                  "@id": "asset-2",
+                  "@type": "Asset",
+                  "properties": {
+                    "description": "This asset requires Membership to view and Manufacturer (part_types=all) to negotiate."
+                  },
+                  "dataAddress": {
+                    "@type": "DataAddress",
+                    "type": "HttpData",
+                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
+                    "proxyPath": "true",
+                    "proxyQueryParams": "true"
+                  }
+                }'
+
+              echo "✓ Asset 2 done"
+
+              echo "================================================"
+              echo "Step 1: Create Membership CEL Expression "
+              echo "================================================"
+
+              post "${CEL_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "membership-cel",
+                "leftOperand": "MembershipCredential",
+                "description": "Expression for evaluating membership credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t.contains('\''MembershipCredential'\''))).exists(c, c.credentialSubject.exists(cs, timestamp(cs.membershipStartDate) < now))"
+              }'
+
+              echo "✓ Membership CEL Expression done"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create ManufacturerCredential CEL Expression"
+              echo "================================================"
+
+              post "${CEL_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "manufacturer-cel",
+                "leftOperand": "ManufacturerCredential.part_types",
+                "description": "Expression for evaluating manufacturer credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t.contains('\''ManufacturerCredential'\''))).exists(c, c.credentialSubject.exists(cs, cs.part_types == this.rightOperand))"
+              }'
+
+              echo "✓ ManufacturerCredential CEL Expression done"
+
+
+              echo ""
+              echo "================================================"
+              echo "Step 3: Create Membership Policy"
+              echo "================================================"
+
+              post "${POLICIES_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "PolicyDefinition",
+                "@id": "require-membership",
+                "policy": {
+                  "@type": "Set",
+                  "permission": [
+                    {
+                      "action": "use",
+                      "constraint": {
+                        "leftOperand": "MembershipCredential",
+                        "operator": "eq",
+                        "rightOperand": "active"
+                      }
+                    }
+                  ]
+                }
+              }'
+
+              echo "✓ Membership policy done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 4: Create Manufacturer Policy"
+              echo "================================================"
+
+              post "${POLICIES_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "PolicyDefinition",
+                "@id": "require-manufacturer",
+                "policy": {
+                  "@type": "Set",
+                  "obligation": [
+                    {
+                      "action": "use",
+                      "constraint": {
+                        "leftOperand": "ManufacturerCredential.part_types",
+                        "operator": "eq",
+                        "rightOperand": "non_critical"
+                      }
+                    }
+                  ]
+                }
+              }'
+
+              echo "✓ Manufacturer policy done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 5: Create Sensitive Data Policy"
+              echo "================================================"
+
+              post "${POLICIES_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "PolicyDefinition",
+                "@id": "require-manufacturer-all",
+                "policy": {
+                  "@type": "Set",
+                  "permission": [],
+                  "prohibition": [],
+                  "obligation": [
+                    {
+                      "action": "use",
+                      "constraint": {
+                        "leftOperand": "ManufacturerCredential.part_types",
+                        "operator": "eq",
+                        "rightOperand": "all"
+                      }
+                    }
+                  ]
+                }
+              }'
+
+              echo "✓ Sensitive data policy done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 6: Create member-and-manufacturer-def"
+              echo "================================================"
+
+              post "${CONTRACTDEFS_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@id": "member-and-manufacturer-def",
+                "@type": "ContractDefinition",
+                "accessPolicyId": "require-membership",
+                "contractPolicyId": "require-manufacturer",
+                "assetsSelector": {
+                  "@type": "Criterion",
+                  "operandLeft": "https://w3id.org/edc/v0.0.1/ns/id",
+                  "operator": "=",
+                  "operandRight": "asset-1"
+                }
+              }'
+
+              echo "✓ member-and-manufacturer-def done"
+
+              echo ""
+              echo "================================================"
+              echo "Step 7: Create sensitive-only-def"
+              echo "================================================"
+
+              post "${CONTRACTDEFS_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@id": "sensitive-only-def",
+                "@type": "ContractDefinition",
+                "accessPolicyId": "require-membership",
+                "contractPolicyId": "require-manufacturer-all",
+                "assetsSelector": {
+                  "@type": "Criterion",
+                  "operandLeft": "https://w3id.org/edc/v0.0.1/ns/id",
+                  "operator": "=",
+                  "operandRight": "asset-2"
+                }
+              }'
+
+              echo "✓ sensitive-only-def done"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 8: Register dataplane"
+              echo "================================================"
+
+              post "${DATAPLANE_URL}" "POST" '{
+                "allowedSourceTypes": [ "HttpData", "HttpCertData" ],
+                "allowedTransferTypes": [ "HttpData-PULL" ],
+                "url": "http://dataplane.provider.svc.cluster.local:8083/api/control/v1/dataflows"
+              }'
+              
+              echo "✓ dataplane registered"              
+              
+              echo ""
+              echo "================================================"
+              echo "Controlplane seeding completed successfully!"
+              echo "================================================"

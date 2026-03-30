@@ -1,0 +1,155 @@
+#
+# Copyright (c) 2026 Metaform Systems, Inc.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License, Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Contributors:
+#      Metaform Systems, Inc. - initial API and implementation
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: issuerservice
+  namespace: issuer
+  labels:
+    app: issuerservice
+    type: edc-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: issuerservice
+  template:
+    metadata:
+      name: issuerservice
+      labels:
+        app: issuerservice
+        type: edc-app
+    spec:
+      containers:
+        - name: issuerservice
+          image: ghcr.io/eclipse-edc/mvd/issuerservice:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef: { name: issuerservice-config }
+          livenessProbe:
+            httpGet:
+              path: /api/check/liveness
+              port: 10010
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 120
+          readinessProbe:
+            httpGet:
+              path: /api/check/readiness
+              port: 10010
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 120
+          startupProbe:
+            httpGet:
+              path: /api/check/startup
+              port: 10010
+            failureThreshold: 10
+            periodSeconds: 5
+            timeoutSeconds: 120
+      restartPolicy: Always
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: issuerservice
+  namespace: issuer
+spec:
+  type: ClusterIP
+  selector:
+    app: issuerservice
+  ports:
+    - port: 10010
+      targetPort: 10010
+      name: web
+    - port: 10011
+      targetPort: 10011
+      name: sts
+    - port: 10012
+      targetPort: 10012
+      name: issuance
+    - port: 10013
+      targetPort: 10013
+      name: issueradmin
+    - port: 10015
+      targetPort: 10015
+      name: identity
+    - port: 10016
+      targetPort: 10016
+      name: did
+    - port: 9999
+      targetPort: 9999
+      name: statuslist
+
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: issuerservice
+  namespace: issuer
+spec:
+  parentRefs:
+    - name: issuer-gateway
+      kind: Gateway
+      sectionName: http
+  hostnames:
+    - issuer.localhost
+  rules:
+    # Issuer Admin API
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /admin
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: issuerservice
+          port: 10013
+          weight: 1
+
+    # Credential Service API
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /cs
+      filters:
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: /
+      backendRefs:
+        - name: issuerservice
+          port: 10015
+          weight: 1
+
+    # Web DID Resolution endpoint
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: issuerservice
+          port: 10016
+          weight: 1

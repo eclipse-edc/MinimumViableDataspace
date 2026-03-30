@@ -1,0 +1,22 @@
+meta {
+  name: Delete DID
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}/dids
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "did": "did:web:consumer-identityhub%3A7083:connector1"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

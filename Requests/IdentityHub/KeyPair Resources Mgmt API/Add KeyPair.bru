@@ -1,0 +1,33 @@
+meta {
+  name: Add KeyPair
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}/keypairs
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "keyId": "key6",
+      "privateKeyAlias": "new-foobar-alias5",
+      "keyGeneratorParams": {
+          "algorithm": "EdDSA",
+          "curve": "Ed25519"
+      }
+  }
+}
+
+script:post-response {
+  test("Status is OK or conflict", function() {
+    expect(res.getStatus()).to.be.oneOf([200, 204, 409])
+  })
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

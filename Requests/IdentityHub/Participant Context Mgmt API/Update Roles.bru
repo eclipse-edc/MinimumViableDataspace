@@ -1,0 +1,22 @@
+meta {
+  name: Update Roles
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}/roles
+  body: json
+  auth: inherit
+}
+
+body:json {
+  [
+      "role1", "role2", "admin"
+  ]
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
