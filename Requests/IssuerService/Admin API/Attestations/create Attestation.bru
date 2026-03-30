@@ -1,0 +1,292 @@
+meta {
+  name: create Attestation
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/attestations
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "attestationType": "database",
+    "configuration": {
+      "commodof4": {},
+      "laborisb27": {}
+    },
+    "id": "<string>"
+  }
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Creates an attestation definition in the runtime.
+}
+
+example {
+  name: The attestation definition was added successfully.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+    }
+  
+    body:json: {
+      {
+        "attestationType": "<string>",
+        "configuration": {
+          "commodof4": {},
+          "laborisb27": {}
+        },
+        "id": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    status: {
+      code: 201
+      text: Created
+    }
+  
+    body: {
+      type: text
+      content: '''
+  
+      '''
+    }
+  }
+}
+
+example {
+  name: Request body was malformed, or the request could not be processed
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "attestationType": "<string>",
+        "configuration": {
+          "commodof4": {},
+          "laborisb27": {}
+        },
+        "id": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 400
+      text: Bad Request
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The request could not be completed, because either the authentication was missing or was not valid.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "attestationType": "<string>",
+        "configuration": {
+          "commodof4": {},
+          "laborisb27": {}
+        },
+        "id": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 401
+      text: Unauthorized
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The participant was not found.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "attestationType": "<string>",
+        "configuration": {
+          "commodof4": {},
+          "laborisb27": {}
+        },
+        "id": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 404
+      text: Not Found
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: Can't add the participant, because a object with the same ID already exists
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/attestations
+    method: POST
+    mode: json
+    headers: {
+      Content-Type: application/json
+      Accept: application/json
+    }
+  
+    body:json: {
+      {
+        "attestationType": "<string>",
+        "configuration": {
+          "commodof4": {},
+          "laborisb27": {}
+        },
+        "id": "<string>"
+      }
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 409
+      text: Conflict
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}

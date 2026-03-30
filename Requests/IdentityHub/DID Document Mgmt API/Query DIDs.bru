@@ -1,0 +1,22 @@
+meta {
+  name: Query DIDs
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}/dids/query
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,32 @@
+meta {
+  name: Download Data from Public API
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{PROVIDER_PUBLIC_URL}}/api/public
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: {{AUTHORIZATION}}
+}
+
+script:pre-request {
+  if(!(bru.getVar("AUTHORIZATION") !== undefined && bru.getVar("AUTHORIZATION") !== null)){
+      throw new Error(' The authorization token is not yet available, please execute request "Get EDR DataAddress for TransferId" first!');
+  }
+}
+
+script:post-response {
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

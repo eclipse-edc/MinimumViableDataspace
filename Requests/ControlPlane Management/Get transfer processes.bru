@@ -1,0 +1,32 @@
+meta {
+  name: Get transfer processes
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/transferprocesses/request
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+    ],
+    "@type": "QuerySpec"
+  }
+}
+
+script:post-response {
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

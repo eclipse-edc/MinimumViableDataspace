@@ -1,0 +1,33 @@
+meta {
+  name: Get EDR DataAddress for TransferId
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  if(!(bru.getVar("TRANSFER_PROCESS_ID") !== undefined && bru.getVar("TRANSFER_PROCESS_ID") !== null)){
+      throw new Error('Transfer Process ID is not yet available, please execute request "Get Transfer Processes" first!');
+  }
+}
+
+script:post-response {
+  // get the authorization token and save it as an environment variable
+  if(res.getStatus() < 300 && res.getStatus() >= 200){
+    //using the first authorization token found
+    const authorization = res.getBody()["authorization"];
+    bru.setVar("AUTHORIZATION", authorization);
+  }
+  
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

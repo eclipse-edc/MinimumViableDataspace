@@ -1,0 +1,30 @@
+meta {
+  name: Create Participant (existing key)
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "roles":[],
+      "serviceEndpoints":[],
+      "active": true,
+      "participantId": "{{NEW_PARTICIPANT_ID}}",
+      "did": "{{NEW_PARTICIPANT_ID}}",
+      "key":{
+          "keyId": "key-1",
+          "privateKeyAlias": "{{NEW_PARTICIPANT_ID}}-alias",
+          "publicKeyPem":"-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE1l0Lof0a1yBc8KXhesAnoBvxZw5r\noYnkAXuqCYfNK3ex+hMWFuiXGUxHlzShAehR6wvwzV23bbC0tcFcVgW//A==\n-----END PUBLIC KEY-----"
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

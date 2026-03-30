@@ -17,10 +17,7 @@ package org.eclipse.edc.demo.tests.transfer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
-import org.eclipse.edc.connector.controlplane.catalog.spi.Catalog;
-import org.eclipse.edc.connector.controlplane.catalog.spi.Dataset;
 import org.eclipse.edc.jsonld.TitaniumJsonLd;
 import org.eclipse.edc.jsonld.spi.JsonLd;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
@@ -28,7 +25,6 @@ import org.eclipse.edc.junit.testfixtures.TestUtils;
 import org.eclipse.edc.spi.monitor.ConsoleMonitor;
 import org.eclipse.edc.transform.TypeTransformerRegistryImpl;
 import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -114,10 +110,10 @@ public class TransferEndToEndTest {
 
                     // todo: parse asset offer ID, parse JSON
                     var cat = objectMapper.readValue(res.toString(), CatalogResponse.class);
-                    var oid = cat.getDatasets().stream().filter(ds -> ds.getId().equals("asset-2"))
+                    var oid = cat.getDatasets().stream().filter(ds -> ds.getId().equals("asset-1"))
                             .flatMap(ds -> ds.getPolicies().stream())
                             .map(CatalogResponse.Offer::getId)
-                            .findFirst().orElseThrow(() -> new AssertionError("No offer found for asset-2"));
+                            .findFirst().orElseThrow(() -> new AssertionError("No offer found for asset-1"));
                     offerId.set(oid);
                 });
 
@@ -216,7 +212,6 @@ public class TransferEndToEndTest {
         assertThat(response).isNotEmpty();
     }
 
-    @Disabled
     @DisplayName("Tests a failing End-to-End contract negotiation because of an unfulfilled policy")
     @Test
     void transferData_doesNotHavePermission_shouldTerminate() {
@@ -226,78 +221,72 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(PROVIDER_MANAGEMENT_URL + "/api/management/v3/dataplanes")
+                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4beta/dataplanes")
                             .then()
                             .statusCode(200)
                             .log().ifValidationFails()
                             .extract().body().jsonPath();
 
                     var state = jp.getString("state");
-                    assertThat(state).isEqualTo("[AVAILABLE]");
+                    assertThat(state).isEqualTo("[REGISTERED]");
                 });
 
         System.out.println("Provider dataplane is online, fetching catalog");
 
-        var emptyQueryBody = Json.createObjectBuilder()
-                .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/v0.0.1/ns/"))
-                .add("@type", "QuerySpec")
+        var catalogRequestBody = Json.createObjectBuilder()
+                .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/connector/management/v2"))
+                .add("@type", "CatalogRequest")
+                .add("counterPartyId", PROVIDER_ID)
+                .add("counterPartyAddress", "http://controlplane.provider.svc.cluster.local:8082/api/dsp/2025-1")
+                .add("protocol", "dataspace-protocol-http:2025-1")
+                .add("querySpec", Json.createObjectBuilder().build())
                 .build();
         var offerId = new AtomicReference<String>();
         // get catalog, extract offer ID
         await().atMost(TEST_TIMEOUT_DURATION)
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
-                    var jo = baseRequest()
-                            .body(emptyQueryBody)
-                            .post(CONSUMER_CATALOG_URL + "/api/catalog/v1alpha/catalog/query")
+                    var res = baseRequest()
+                            .body(catalogRequestBody)
+                            .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/catalog/request")
                             .then()
-                            .log().ifError()
+                            .log().ifValidationFails()
                             .statusCode(200)
-                            .extract().body().as(JsonArray.class);
+                            .extract().body().as(JsonObject.class);
 
-                    var offerIdsFiltered = jo.stream().map(jv -> {
-
-                        var expanded = jsonLd.expand(jv.asJsonObject()).orElseThrow(f -> new AssertionError(f.getFailureDetail()));
-                        var cat = transformerRegistry.transform(expanded, Catalog.class).orElseThrow(f -> new AssertionError(f.getFailureDetail()));
-                        return cat.getDatasets().stream().filter(ds -> ds instanceof Catalog) // filter for CatalogAssets
-                                .map(ds -> (Catalog) ds)
-                                .filter(sc -> sc.getDataServices().stream().anyMatch(dataService -> dataService.getEndpointUrl().contains("provider-qna"))) // filter for assets from the Q&A Provider
-                                .flatMap(c -> c.getDatasets().stream())
-                                .filter(dataset -> dataset.getId().equals("asset-2")) // we should not be allowed to negotiation for this asset!
-                                .map(Dataset::getOffers)
-                                .map(offers -> offers.keySet().iterator().next())
-                                .findFirst()
-                                .orElse(null);
-                    }).toList();
-                    assertThat(offerIdsFiltered).hasSize(1);
-                    var oid = offerIdsFiltered.get(0);
-                    assertThat(oid).isNotNull();
+                    // todo: parse asset offer ID, parse JSON
+                    var cat = objectMapper.readValue(res.toString(), CatalogResponse.class);
+                    var oid = cat.getDatasets().stream().filter(ds -> ds.getId().equals("asset-2"))
+                            .flatMap(ds -> ds.getPolicies().stream())
+                            .map(CatalogResponse.Offer::getId)
+                            .findFirst().orElseThrow(() -> new AssertionError("No offer found for asset-2"));
                     offerId.set(oid);
                 });
 
         System.out.println("Initiate contract negotiation");
 
         // initiate negotiation
-        var negotiationRequest = TestUtils.getResourceFileContentAsString("negotiation-request.json")
+        var negotiationRequest = TestUtils.getResourceFileContentAsString("negotiation-request_invalid.json")
                 .replace("{{PROVIDER_ID}}", PROVIDER_ID)
                 .replace("{{PROVIDER_DSP_URL}}", PROVIDER_DSP_URL)
-                .replace("{{OFFER_ID}}", offerId.get())
-                .replaceFirst("\"odrl:rightOperand\": \"processing\"", " \"odrl:rightOperand\": \"sensitive\"");
+                .replace("{{OFFER_ID}}", offerId.get());
         var negotiationId = baseRequest()
                 .body(negotiationRequest)
-                .post(CONSUMER_MANAGEMENT_URL + "/api/management/v3/contractnegotiations")
+                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/contractnegotiations")
                 .then()
                 .log().ifError()
                 .statusCode(200)
                 .extract().body().jsonPath().getString("@id");
         assertThat(negotiationId).isNotNull();
 
+        System.out.println("Wait until negotiation is TERMINATED");
+
         //wait until negotiation is TERMINATED
         await().atMost(TEST_TIMEOUT_DURATION)
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(CONSUMER_MANAGEMENT_URL + "/api/management/v3/contractnegotiations/" + negotiationId)
+                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/contractnegotiations/" + negotiationId)
                             .then()
                             .statusCode(200)
                             .extract().body().jsonPath();

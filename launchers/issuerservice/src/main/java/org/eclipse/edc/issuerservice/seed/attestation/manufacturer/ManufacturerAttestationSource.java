@@ -30,7 +30,7 @@ public record ManufacturerAttestationSource(Map<String, Object> config) implemen
 
         return Result.success(Map.of(
                 "contractVersion", contractVersion,
-                "component_types", "all",
+                "component_types", "non_critical",
                 "since", Instant.now().toString(),
                 "id", context.participantContextId()
         ));

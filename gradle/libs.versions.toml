@@ -42,6 +42,8 @@ edc-api-observability = { module = "org.eclipse.edc:api-observability", version.
 edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
 edc-dataplane-v2 = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
 edc-core-cel = { module = "org.eclipse.edc:cel-core", version.ref = "edc" }
+edc-decentralized-claims-cel = { module = "org.eclipse.edc:decentralized-claims-cel", version.ref = "edc" }
+
 edc-dcp-core = { module = "org.eclipse.edc:decentralized-claims-core", version.ref = "edc" }
 edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
 edc-spi-identity-trust = { module = "org.eclipse.edc:decentralized-claims-spi", version.ref = "edc" }

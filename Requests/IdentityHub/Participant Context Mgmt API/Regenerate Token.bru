@@ -1,0 +1,21 @@
+meta {
+  name: Regenerate Token
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}/token
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

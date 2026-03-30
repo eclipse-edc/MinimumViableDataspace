@@ -106,7 +106,7 @@ metadata:
   namespace: issuer
 spec:
   parentRefs:
-    - name: edcv-gateway
+    - name: issuer-gateway
       kind: Gateway
       sectionName: http
   hostnames:

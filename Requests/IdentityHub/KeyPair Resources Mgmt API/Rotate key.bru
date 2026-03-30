@@ -1,0 +1,27 @@
+meta {
+  name: Rotate key
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/{{PARTICIPANT_CONTEXT_ID}}/keypairs/key1/rotate
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "keyId": "key2",
+      "privateKeyAlias": "new-foobar-alias",
+      "keyGeneratorParams": {
+          "algorithm": "EC",
+          "curve": "secp256r1"
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

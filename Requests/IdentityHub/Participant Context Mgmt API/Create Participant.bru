@@ -1,0 +1,33 @@
+meta {
+  name: Create Participant
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{CS_URL}}/api/identity/v1alpha/participants/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+      "roles":[],
+      "serviceEndpoints":[],
+      "active": true,
+      "participantId": "{{NEW_PARTICIPANT_ID}}",
+      "did": "{{NEW_PARTICIPANT_ID}}",
+      "key":{
+          "keyId": "key-1",
+          "privateKeyAlias": "{{NEW_PARTICIPANT_ID}}-alias",
+          "keyGeneratorParams":{
+              "algorithm": "EdDSA",
+              "curve": "Ed25519"
+          }
+      }
+  }
+}
+
+settings {
+  encodeUrl: true
+}

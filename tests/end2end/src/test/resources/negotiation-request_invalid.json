@@ -17,7 +17,7 @@
       "constraint": {
         "leftOperand": "ManufacturerCredential.part_types",
         "operator": "eq",
-        "rightOperand": "non_critical"
+        "rightOperand": "all"
       }
     },
     "target": "asset-1"

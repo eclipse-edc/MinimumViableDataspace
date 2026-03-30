@@ -58,6 +58,7 @@ spec:
               POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/policydefinitions"
               CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/contractdefinitions"
               DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
+              CEL_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v5alpha/celexpressions"
 
               # Posts to the management API, treating 409 (already exists) as success.
               post() {
@@ -86,7 +87,7 @@ spec:
                   "@id": "asset-1",
                   "@type": "Asset",
                   "properties": {
-                    "description": "This asset requires Membership to view and negotiate."
+                    "description": "This asset requires Membership to view and Manufacturer (part_types=non_critical) to negotiate."
                   },
                   "dataAddress": {
                     "@type": "DataAddress",
@@ -111,7 +112,7 @@ spec:
                   "@id": "asset-2",
                   "@type": "Asset",
                   "properties": {
-                    "description": "This asset requires Membership to view and SensitiveData credential to negotiate."
+                    "description": "This asset requires Membership to view and Manufacturer (part_types=all) to negotiate."
                   },
                   "dataAddress": {
                     "@type": "DataAddress",
@@ -123,6 +124,52 @@ spec:
                 }'
 
               echo "✓ Asset 2 done"
+
+              echo "================================================"
+              echo "Step 1: Create Membership CEL Expression "
+              echo "================================================"
+
+              post "${CEL_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "membership-cel",
+                "leftOperand": "MembershipCredential",
+                "description": "Expression for evaluating membership credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t.contains('\''MembershipCredential'\''))).exists(c, c.credentialSubject.exists(cs, timestamp(cs.membershipStartDate) < now))"
+              }'
+
+              echo "✓ Membership CEL Expression done"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 2: Create ManufacturerCredential CEL Expression"
+              echo "================================================"
+
+              post "${CEL_URL}" "POST" '{
+                "@context": [
+                  "https://w3id.org/edc/connector/management/v2"
+                ],
+                "@type": "CelExpression",
+                "@id": "manufacturer-cel",
+                "leftOperand": "ManufacturerCredential.part_types",
+                "description": "Expression for evaluating manufacturer credential",
+                "scopes": [
+                  "catalog",
+                  "contract.negotiation",
+                  "transfer.process"
+                ],
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t.contains('\''ManufacturerCredential'\''))).exists(c, c.credentialSubject.exists(cs, cs.part_types == this.rightOperand))"
+              }'
+
+              echo "✓ ManufacturerCredential CEL Expression done"
+
 
               echo ""
               echo "================================================"
@@ -169,9 +216,9 @@ spec:
                     {
                       "action": "use",
                       "constraint": {
-                        "leftOperand": "ManufacturerCredential",
+                        "leftOperand": "ManufacturerCredential.part_types",
                         "operator": "eq",
-                        "rightOperand": "active"
+                        "rightOperand": "non_critical"
                       }
                     }
                   ]
@@ -190,7 +237,7 @@ spec:
                   "https://w3id.org/edc/connector/management/v2"
                 ],
                 "@type": "PolicyDefinition",
-                "@id": "require-sensitive",
+                "@id": "require-manufacturer-all",
                 "policy": {
                   "@type": "Set",
                   "permission": [],
@@ -199,9 +246,9 @@ spec:
                     {
                       "action": "use",
                       "constraint": {
-                        "leftOperand": "ManufacturerCredential",
+                        "leftOperand": "ManufacturerCredential.part_types",
                         "operator": "eq",
-                        "rightOperand": "active"
+                        "rightOperand": "all"
                       }
                     }
                   ]
@@ -245,7 +292,7 @@ spec:
                 "@id": "sensitive-only-def",
                 "@type": "ContractDefinition",
                 "accessPolicyId": "require-membership",
-                "contractPolicyId": "require-sensitive",
+                "contractPolicyId": "require-manufacturer-all",
                 "assetsSelector": {
                   "@type": "Criterion",
                   "operandLeft": "https://w3id.org/edc/v0.0.1/ns/id",

@@ -1,0 +1,24 @@
+meta {
+  name: MVD
+}
+
+auth {
+  mode: apikey
+}
+
+auth:apikey {
+  key: X-Api-Key
+  value: password
+  placement: header
+}
+vars:pre-request {
+  CONSUMER_CP: http://cp.consumer.localhost
+  PROVIDER_DSP: http://controlplane.provider.svc.cluster.local:8082/api/dsp/2025-1
+  PROVIDER_ID: did:web:identityhub.provider.svc.cluster.local%3A7083:provider
+  CS_URL: http://ih.consumer.localhost/cs
+  ISSUER_ADMIN_URL: http://issuer.localhost/admin
+  ISSUER_DID: did:web:localhost%3A10100
+  PROVIDER_PUBLIC_URL: http://dp.provider.localhost/public
+  PARTICIPANT_CONTEXT_ID: consumer-participant
+  ISSUER_CONTEXT_ID: issuer
+}

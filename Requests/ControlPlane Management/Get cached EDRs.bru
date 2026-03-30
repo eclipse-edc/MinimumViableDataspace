@@ -1,0 +1,50 @@
+meta {
+  name: Get cached EDRs
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/edrs/request
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+    ],
+    "@type": "QuerySpec"
+  }
+}
+
+body:text {
+  {
+      "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+      ],
+      "@type": "QuerySpec"
+  }
+}
+
+script:post-response {
+  // get the transfer process id of "asset-1" and save it as an environment variable if the response body is not empty
+  if(res.getStatus() < 300 && res.getStatus() >= 200 && res.getBody().length > 0){
+    const transferProcessId = res.getBody()[0]["transferProcessId"];
+    bru.setVar("TRANSFER_PROCESS_ID", transferProcessId);
+  }
+  
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+  });
+  test("Transfer process id is set", function(){
+      expect(bru.getVar("TRANSFER_PROCESS_ID")).not.to.be.undefined
+  })
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

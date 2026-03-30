@@ -25,8 +25,6 @@ data:
   edc.participant.id: "did:web:identityhub.provider.svc.cluster.local%3A7083:provider"
   edc.iam.did.web.use.https: "false"
   edc.iam.credential.revocation.mimetype: "application/json"
-  # todo: should this be true?
-  edc.policy.validation.enabled: "false"
   edc.iam.sts.oauth.token.url: "http://identityhub.provider.svc.cluster.local:7084/api/sts/token"
   edc.iam.sts.oauth.client.id: "did:web:identityhub.provider.svc.cluster.local%3A7083:provider"
   edc.iam.sts.oauth.client.secret.alias: "provider-participant-sts-client-secret"

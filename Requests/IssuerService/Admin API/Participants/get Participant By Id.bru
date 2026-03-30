@@ -1,0 +1,214 @@
+meta {
+  name: get Participant By Id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{ISSUER_ADMIN_URL}}/api/admin/v1alpha/participants/{{ISSUER_CONTEXT_ID}}/holders/:participantId
+  body: none
+  auth: inherit
+}
+
+params:path {
+  participantId: <string>
+}
+
+headers {
+  Accept: application/json
+}
+
+settings {
+  encodeUrl: true
+}
+
+docs {
+  Gets metadata for a certain participant.
+}
+
+example {
+  name: A list of verifiable credential metadata. Note that these are not actual VerifiableCredentials.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/:participantId
+    method: GET
+    mode: none
+    params:path: {
+      participantId: 
+    }
+  
+    headers: {
+      Accept: application/json
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 200
+      text: OK
+    }
+  
+    body: {
+      type: json
+      content: '''
+        {
+          "attestations": [
+            "<string>",
+            "<string>"
+          ],
+          "did": "<string>",
+          "participantId": "<string>",
+          "participantName": "<string>"
+        }
+      '''
+    }
+  }
+}
+
+example {
+  name: Request body was malformed, or the request could not be processed
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/:participantId
+    method: GET
+    mode: none
+    params:path: {
+      participantId: 
+    }
+  
+    headers: {
+      Accept: application/json
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 400
+      text: Bad Request
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The request could not be completed, because either the authentication was missing or was not valid.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/:participantId
+    method: GET
+    mode: none
+    params:path: {
+      participantId: 
+    }
+  
+    headers: {
+      Accept: application/json
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 401
+      text: Unauthorized
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}
+
+example {
+  name: The participant was not found.
+  
+  request: {
+    url: {{baseUrl}}/v1alpha/participants/:participantId
+    method: GET
+    mode: none
+    params:path: {
+      participantId: 
+    }
+  
+    headers: {
+      Accept: application/json
+    }
+  }
+  
+  response: {
+    headers: {
+      Content-Type: application/json
+    }
+  
+    status: {
+      code: 404
+      text: Not Found
+    }
+  
+    body: {
+      type: json
+      content: '''
+        [
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          },
+          {
+            "invalidValue": {},
+            "message": "<string>",
+            "path": "<string>",
+            "type": "<string>"
+          }
+        ]
+      '''
+    }
+  }
+}

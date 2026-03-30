@@ -99,7 +99,7 @@ spec:
                   "https://w3id.org/edc/connector/management/v2"
                 ],
                 "@type": "CelExpression",
-                "@id": "membership-cel",
+                "@id": "manufacturer-cel",
                 "leftOperand": "ManufacturerCredential",
                 "description": "Expression for evaluating manufacturer credential",
                 "scopes": [
@@ -107,7 +107,7 @@ spec:
                   "contract.negotiation",
                   "transfer.process"
                 ],
-                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''ManufacturerCredential'\'')).size() > 0"
+                "expression": "ctx.agent.claims.vc.filter(c, c.type.exists(t, t == '\''ManufacturerCredential'\'')).exists(c, c.credentialSubject.exists(cs, cs.part_types == this.rightOperand))"
               }'
 
               echo "✓ ManufacturerCredential CEL Expression done"

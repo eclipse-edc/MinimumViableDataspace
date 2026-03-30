@@ -1,0 +1,62 @@
+meta {
+  name: Request Catalog
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{CONSUMER_CP}}/api/mgmt/v4beta/catalog/request
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+    ],
+    "@type": "CatalogRequest",
+    "counterPartyAddress": "{{PROVIDER_DSP}}",
+    "counterPartyId": "{{PROVIDER_ID}}",
+    "protocol": "dataspace-protocol-http:2025-1",
+    "querySpec": {
+      "offset": 0,
+      "limit": 50
+    }
+  }
+}
+
+body:text {
+  {
+      "@context": [
+        "https://w3id.org/edc/connector/management/v2"
+      ],
+      "@type": "CatalogRequest",
+      "counterPartyAddress": "{{PROVIDER_DSP}}",
+      "counterPartyId": "{{PROVIDER_ID}}",
+      "protocol": "dataspace-protocol-http",
+      "querySpec": {
+          "offset": 0,
+          "limit": 50
+      }
+  }
+}
+
+script:post-response {
+  test("Status code is >=200 and <300", function () {
+      expect(res.getStatus() < 300 && res.getStatus() >= 200).to.be.true
+    
+      const dcat_datasets =res.getBody()["dataset"]                       
+      const asset_1 = dcat_datasets.find((ds) => ds["@id"] == "asset-1")
+    
+      bru.setVar("POLICY_ID_ASSET_1", asset_1["hasPolicy"][0]["@id"]);
+      console.log("asset id", bru.getVar("POLICY_ID_ASSET_1"))
+  });
+  
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
