@@ -46,7 +46,7 @@ jobs:
         uses: azure/setup-helm@v4
 
       - name: "Setup Kubectl"
-        uses: azure/setup-kubectl@v4
+        uses: azure/setup-kubectl@v5
       - uses: actions/checkout@v6
       - uses: eclipse-edc/.github/.github/actions/setup-build@main
 
