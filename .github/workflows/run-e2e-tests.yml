@@ -68,6 +68,10 @@ jobs:
           ghcr.io/eclipse-edc/mvd/identity-hub:latest \
           ghcr.io/eclipse-edc/mvd/issuerservice:latest
 
+      - name: "Update image pull policy"
+        run: |-
+          grep -rlZ "imagePullPolicy: Always" | xargs sed -i "s/imagePullPolicy: Always/imagePullPolicy: Never/g"
+
       - name: "Install Traefik Gateway controller"
         run: |-
           helm repo add traefik https://traefik.github.io/charts
