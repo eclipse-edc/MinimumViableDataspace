@@ -21,9 +21,10 @@ body:json {
     "connectorId": "{{PROVIDER_ID}}",
     "contractId": "{{CONTRACT_AGREEMENT_ID}}",
     "dataDestination": {
+      "@type": "DataAddress",
       "type": "HttpProxy"
     },
-    "protocol": "dataspace-protocol-http",
+    "protocol": "dataspace-protocol-http:2025-1",
     "transferType": "HttpData-PULL"
   }
 }
