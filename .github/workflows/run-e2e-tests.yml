@@ -43,7 +43,7 @@ jobs:
     steps:
 
       - name: "Setup Helm"
-        uses: azure/setup-helm@v4
+        uses: azure/setup-helm@v5
 
       - name: "Setup Kubectl"
         uses: azure/setup-kubectl@v5
