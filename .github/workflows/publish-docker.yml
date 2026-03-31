@@ -27,7 +27,7 @@ concurrency:
 
 jobs:
   build-and-push:
-    name: "Build and publish Docker images"
+    name: "Build docker image for ${{ matrix.name }}"
     runs-on: ubuntu-latest
     if: github.repository_owner == 'eclipse-edc'
     strategy:

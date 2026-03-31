@@ -218,9 +218,9 @@ All commands are executed from the **repository's root folder** unless stated ot
 > Since this is not a production deployment, all applications are deployed _in the same cluster_ and in the same
 > namespace, plainly for the sake of simplicity.
 
-This builds the runtime images and creates the following docker images: `ghcr.io/eclipse-edc/mvd/controlplane:latest`,
-`ghcr.io/eclipse-edc/mvd/dataplane:latest`, `ghcr.io/eclipse-edc/mvd/issuerservice:latest` and
-`ghcr.io/eclipse-edc/mvd/identity-hub:latest` in the local docker image cache.
+This builds the runtime images and creates the following docker images: `ghcr.io/eclipse-edc/minimumviabledataspace/controlplane:latest`,
+`ghcr.io/eclipse-edc/minimumviabledataspace/dataplane:latest`, `ghcr.io/eclipse-edc/minimumviabledataspace/issuerservice:latest` and
+`ghcr.io/eclipse-edc/minimumviabledataspace/identity-hub:latest` in the local docker image cache.
 
 PostgreSQL and Hashicorp Vault obviously require additional configuration, which is handled by the Kubernetes manifests
 via batch jobs.
@@ -257,10 +257,10 @@ grep -rlZ "imagePullPolicy: Always" k8s | xargs sed -i "s/imagePullPolicy: Alway
  
 # Load docker images into KinD
 kind load docker-image \
-  ghcr.io/eclipse-edc/mvd/controlplane:latest \
-  ghcr.io/eclipse-edc/mvd/dataplane:latest \
-  ghcr.io/eclipse-edc/mvd/identity-hub:latest \
-  ghcr.io/eclipse-edc/mvd/issuerservice:latest -n mvd
+  ghcr.io/eclipse-edc/minimumviabledataspace/controlplane:latest \
+  ghcr.io/eclipse-edc/minimumviabledataspace/dataplane:latest \
+  ghcr.io/eclipse-edc/minimumviabledataspace/identity-hub:latest \
+  ghcr.io/eclipse-edc/minimumviabledataspace/issuerservice:latest -n mvd
 ```
 
 #### 4.2.3 Deploy MVD components
