@@ -70,7 +70,7 @@ jobs:
 
       - name: "Update image pull policy"
         run: |-
-          grep -rlZ "imagePullPolicy: Always" k8s | xargs sed -i "s/imagePullPolicy: Always/imagePullPolicy: Never/g"
+          grep -rl "imagePullPolicy: Always" k8s | xargs sed -i "s/imagePullPolicy: Always/imagePullPolicy: Never/g"
 
       - name: "Install Traefik Gateway controller"
         run: |-
