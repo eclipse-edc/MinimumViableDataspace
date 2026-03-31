@@ -72,7 +72,7 @@ def main_menu():
         print("1. Start MVD (Build & Deploy)")
         print("2. Stop MVD (Delete Cluster)")
         print("3. Check MVD Status")
-        print("4. Exit")
+        print("0. Exit")
         
         choice = input("\nSelect an option (0-3): ")
         
