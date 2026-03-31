@@ -47,6 +47,7 @@ subprojects {
                 buildArgs.put("JAR", "build/libs/${project.name}.jar")
                 inputDir.set(file(dockerContextDir))
                 dependsOn("shadowJar")
+                dependsOn("build")
             }
         }
     }
