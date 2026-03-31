@@ -34,8 +34,8 @@ spec:
     spec:
       containers:
         - name: dataplane
-          image: ghcr.io/metaform/jad/dataplane:latest
-          imagePullPolicy: Always
+          image: ghcr.io/eclipse-edc/mvd/dataplane:latest
+          imagePullPolicy: Never
           envFrom:
             - configMapRef:
                 name: dataplane-config
