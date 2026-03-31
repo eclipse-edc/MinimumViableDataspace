@@ -253,7 +253,7 @@ If you would like to build the images from source, please execute the following 
 ./gradlew dockerize
 
 # Force images to be taken from KinD's image cache
-grep -rlZ "imagePullPolicy: Always" | xargs sed -i "s/imagePullPolicy: Always/imagePullPolicy: Never/g"
+grep -rlZ "imagePullPolicy: Always" k8s | xargs sed -i "s/imagePullPolicy: Always/imagePullPolicy: Never/g"
  
 # Load docker images into KinD
 kind load docker-image \

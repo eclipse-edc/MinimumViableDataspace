@@ -34,7 +34,7 @@ spec:
       containers:
         - name: identityhub
           image: ghcr.io/eclipse-edc/mvd/identity-hub:latest
-          imagePullPolicy: Never
+          imagePullPolicy: Always
           envFrom:
             - configMapRef:
                 name: ih-config
