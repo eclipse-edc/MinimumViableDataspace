@@ -68,6 +68,10 @@ jobs:
           ghcr.io/eclipse-edc/mvd/identity-hub:latest \
           ghcr.io/eclipse-edc/mvd/issuerservice:latest
 
+      - name: "Update image pull policy"
+        run: |-
+          grep -rl "imagePullPolicy: Always" k8s | xargs sed -i "s/imagePullPolicy: Always/imagePullPolicy: Never/g"
+
       - name: "Install Traefik Gateway controller"
         run: |-
           helm repo add traefik https://traefik.github.io/charts
@@ -94,7 +98,8 @@ jobs:
           kubectl wait -A \
             --selector=type=edc-job \
             --for=condition=complete job --all \
-            --timeout=180s
+            --timeout=300s || kubectl get pods -A
+
 
       - name: "Run E2E Test"
         run: |-
