@@ -11,7 +11,7 @@ parsson = "1.1.6"
 postgres = "42.7.10"
 restAssured = "6.0.0"
 rsApi = "4.0.0"
-swagger = "2.2.44"
+swagger = "2.2.46"
 
 [libraries]
 # upstream EDC dependencies
