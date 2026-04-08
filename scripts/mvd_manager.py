@@ -2,6 +2,9 @@ import subprocess
 import os
 import sys
 import shutil
+import time
+
+pf_process = None
 
 def run_command(command, description):
     print(f"\n--- {description} ---")
@@ -73,11 +76,50 @@ def check_dependencies():
     return True
 
 def start_port_forward():
-    print("\nStarting Port Forwarding (requires sudo)...")
-    print("This command will block this terminal. Open a new one for other tasks.")
+    global pf_process
+    if pf_process and pf_process.poll() is None:
+        print("\nPort Forwarding is already running.")
+        return
+
+    print("\nStarting Port Forwarding in the background (requires sudo)...")
+    # Validate sudo credentials in the foreground first to avoid blocking in background
+    if not run_command("sudo -v", "Validating Sudo Credentials"):
+        print("Sudo validation failed. Cannot start Port Forwarding.")
+        return
+
     # Using sudo -E to preserve KUBECONFIG for the root user
     cmd = "sudo -E kubectl port-forward svc/traefik 80:80 -n traefik"
-    run_command(cmd, "Port Forwarding")
+    try:
+        # start_new_session=True helps decouple the process from the current terminal
+        pf_process = subprocess.Popen(
+            cmd, 
+            shell=True, 
+            stdout=subprocess.DEVNULL, 
+            stderr=subprocess.DEVNULL,
+            stdin=subprocess.DEVNULL,
+            start_new_session=True
+        )
+        print("Port Forwarding started in background. Output redirected to /dev/null.")
+    except Exception as e:
+        print(f"Error starting Port Forwarding: {e}")
+
+def stop_port_forward():
+    global pf_process
+    print("\nStopping Port Forwarding...")
+    # Using pkill to ensure we catch any sudo-spawned processes
+    # We use subprocess.run directly with check=False to avoid error messages if process is not found
+    subprocess.run("sudo pkill -f 'kubectl port-forward.*traefik'", shell=True, check=False)
+    if pf_process:
+        pf_process.terminate()
+        pf_process = None
+    time.sleep(1) # Give it a moment to settle
+    print("Port Forwarding stopped.")
+
+def run_data_transfer():
+    print("\nRunning Data Transfer...")
+    # Using sys.executable to ensure we use the same python environment
+    cmd = f"{sys.executable} scripts/transfer_data.py"
+    run_command(cmd, "Data Transfer")
 
 def main_menu():
     if not check_dependencies():
@@ -90,10 +132,12 @@ def main_menu():
         print("1. Start MVD (Build & Deploy)")
         print("2. Stop MVD (Delete Cluster)")
         print("3. Check MVD Status")
-        print("4. Start Port Forwarding (80:80)")
+        print("4. Start Port Forwarding (Background)")
+        print("5. Stop Port Forwarding")
+        print("6. Run Data Transfer")
         print("0. Exit")
         
-        choice = input("\nSelect an option (0-4): ")
+        choice = input("\nSelect an option (0-6): ")
         
         if choice == '1':
             start_mvd()
@@ -103,7 +147,12 @@ def main_menu():
             status_mvd()
         elif choice == '4':
             start_port_forward()
+        elif choice == '5':
+            stop_port_forward()
+        elif choice == '6':
+            run_data_transfer()
         elif choice == '0':
+            stop_port_forward()
             print("Exiting...")
             sys.exit(0)
         else:
