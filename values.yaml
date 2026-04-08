@@ -21,6 +21,20 @@ logs:
         # https://doc.traefik.io/traefik/reference/install-configuration/observability/logs-and-accesslogs/#json-format-fields
         names:
           RouterName: drop
+
+# on some bare-metal installations, we need special privileges to run traefik on port 80. If traefik reports an error try
+# uncommenting the following lines.
+
+#deployment:
+#  podSecurityContext:
+#    runAsNonRoot: false
+#
+#securityContext:
+#  runAsNonRoot: false
+#  runAsUser: 0
+#  capabilities:
+#    drop: []
+
 ports:
   web:
     port: 80

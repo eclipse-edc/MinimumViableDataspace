@@ -11,7 +11,7 @@ parsson = "1.1.6"
 postgres = "42.7.10"
 restAssured = "6.0.0"
 rsApi = "4.0.0"
-swagger = "2.2.44"
+swagger = "2.2.46"
 
 [libraries]
 # upstream EDC dependencies
@@ -122,6 +122,6 @@ edc-bom-issuerservice-sql = { module = "org.eclipse.edc:issuerservice-feature-sq
 [bundles]
 
 [plugins]
-shadow = { id = "com.gradleup.shadow", version = "9.4.0" }
+shadow = { id = "com.gradleup.shadow", version = "9.4.1" }
 edc-build = { id = "org.eclipse.edc.edc-build", version.ref = "edc-build" }
 swagger = { id = "io.swagger.core.v3.swagger-gradle-plugin", version.ref = "swagger" }
