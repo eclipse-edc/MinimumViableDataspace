@@ -20,6 +20,7 @@ metadata:
 data:
   # base config
   edc.hostname: "controlplane.consumer.svc.cluster.local"
+  edc.dsp.callback.address: "http://controlplane.consumer.svc.cluster.local:8082/api/dsp"
   edc.vault.hashicorp.url: "http://vault.consumer.svc.cluster.local:8200"
   edc.vault.hashicorp.token: "root"
   edc.participant.id: "did:web:identityhub.consumer.svc.cluster.local%3A7083:consumer"

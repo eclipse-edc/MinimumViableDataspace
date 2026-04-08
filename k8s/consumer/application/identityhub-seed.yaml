@@ -23,7 +23,7 @@ metadata:
     app: identityhub-seed
     type: edc-job
 spec:
-  backoffLimit: 5
+  backoffLimit: 10
   template:
     metadata:
       labels:
@@ -101,17 +101,29 @@ spec:
               echo "Step 1: Create Consumer Holder in IssuerService"
               echo "================================================"
 
-              ISSUER_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
-                -H "Content-Type: application/x-www-form-urlencoded" \
-                -d "grant_type=client_credentials" \
-                -d "client_id=${ISSUER_CLIENT_ID}" \
-                -d "client_secret=${ISSUER_CLIENT_SECRET}" \
-                -d "scope=issuer-admin-api:write" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
-
-              if [ -z "$ISSUER_TOKEN" ]; then
-                echo "Failed to get issuer token"
-                exit 1
-              fi
+              echo "Waiting for issuer client to be ready in Keycloak..."
+              MAX_RETRIES=30
+              RETRY=0
+              ISSUER_TOKEN=""
+              while [ -z "$ISSUER_TOKEN" ]; do
+                if [ "${RETRY}" -ge "${MAX_RETRIES}" ]; then
+                  echo "✗ Failed to get issuer token after ${MAX_RETRIES} attempts"
+                  exit 1
+                fi
+                ISSUER_TOKEN=$(curl -sf -X POST "${KC_HOST}/realms/mvd/protocol/openid-connect/token" \
+                  -H "Content-Type: application/x-www-form-urlencoded" \
+                  -d "grant_type=client_credentials" \
+                  -d "client_id=${ISSUER_CLIENT_ID}" \
+                  -d "client_secret=${ISSUER_CLIENT_SECRET}" \
+                  -d "scope=issuer-admin-api:write" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p' || echo "")
+                
+                if [ -z "$ISSUER_TOKEN" ]; then
+                  echo "Issuer client not ready yet, retrying in 5 seconds..."
+                  RETRY=$((RETRY + 1))
+                  sleep 5
+                fi
+              done
+              echo "✓ Issuer token obtained"
 
               RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST "${ISSUER_ADMIN_URL}/participants/issuer/holders" \
                 -H "Authorization: Bearer ${ISSUER_TOKEN}" \

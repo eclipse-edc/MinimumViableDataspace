@@ -24,7 +24,7 @@ def start_mvd():
         ("kubectl rollout status deployment/traefik -n traefik --timeout=120s", "Waiting for Traefik"),
         ("kubectl apply --server-side --force-conflicts -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml", "Installing Gateway API CRDs"),
         ("kubectl apply -k k8s", "Deploying MVD via Kustomize"),
-        ("kubectl wait -A --selector=type=edc-job --for=condition=complete job --all --timeout=90s", "Waiting for seed jobs")
+        ("kubectl wait -A --selector=type=edc-job --for=condition=complete job --all --timeout=300s", "Waiting for seed jobs")
     ]
     
     for cmd, desc in commands:
@@ -61,6 +61,13 @@ def check_dependencies():
         return False
     return True
 
+def start_port_forward():
+    print("\nStarting Port Forwarding (requires sudo)...")
+    print("This command will block this terminal. Open a new one for other tasks.")
+    # Using sudo -E to preserve KUBECONFIG for the root user
+    cmd = "sudo -E kubectl port-forward svc/traefik 80:80 -n traefik"
+    run_command(cmd, "Port Forwarding")
+
 def main_menu():
     if not check_dependencies():
         sys.exit(1)
@@ -72,9 +79,10 @@ def main_menu():
         print("1. Start MVD (Build & Deploy)")
         print("2. Stop MVD (Delete Cluster)")
         print("3. Check MVD Status")
+        print("4. Start Port Forwarding (80:80)")
         print("0. Exit")
         
-        choice = input("\nSelect an option (0-3): ")
+        choice = input("\nSelect an option (0-4): ")
         
         if choice == '1':
             start_mvd()
@@ -82,6 +90,8 @@ def main_menu():
             stop_mvd()
         elif choice == '3':
             status_mvd()
+        elif choice == '4':
+            start_port_forward()
         elif choice == '0':
             print("Exiting...")
             sys.exit(0)
