@@ -1,6 +1,7 @@
 import subprocess
 import os
 import sys
+import shutil
 
 def run_command(command, description):
     print(f"\n--- {description} ---")
@@ -13,7 +14,17 @@ def run_command(command, description):
         print(f"Error: Command failed with exit code {e.returncode}")
         return False
 
+def toggle_cloudflare(enable=True):
+    action = "connect" if enable else "disconnect"
+    description = f"{'Enabling' if enable else 'Disabling'} Cloudflare WARP"
+    if shutil.which("warp-cli"):
+        return run_command(f"warp-cli {action}", description)
+    else:
+        print(f"Skipping {description}: 'warp-cli' not found.")
+        return True
+
 def start_mvd():
+    toggle_cloudflare(enable=False)
     print("\nStarting MVD (Kubernetes)...")
     commands = [
         ("kind create cluster -n mvd", "Creating KinD cluster"),
@@ -30,10 +41,12 @@ def start_mvd():
     for cmd, desc in commands:
         if not run_command(cmd, desc):
             print("Aborting start sequence due to failure.")
+            toggle_cloudflare(enable=True)
             break
     else:
         print("\nMVD started successfully.")
         print("Note: You might need to run 'kubectl port-forward svc/traefik 80:80 -n traefik' manually (requires sudo).")
+        toggle_cloudflare(enable=True)
 
 def stop_mvd():
     print("\nStopping MVD (Deleting cluster)...")
@@ -43,8 +56,6 @@ def status_mvd():
     print("\nChecking MVD Status...")
     run_command("kubectl get pods -A", "Current Pod Status")
     run_command("kubectl get jobs -A", "Current Job Status")
-
-import shutil
 
 def check_dependencies():
     deps = ["docker", "kind", "helm", "java", "git", "kubectl"]
