@@ -1,39 +1,40 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
-* [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-  * [1. Introduction](#1-introduction)
-  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
-    * [2.1 Version stability and backwards compatibility guarantees](#21-version-stability-and-backwards-compatibility-guarantees)
-    * [2.2 Which version should I use?](#22-which-version-should-i-use)
-  * [3. The Scenario](#3-the-scenario)
-    * [3.1 Participants](#31-participants)
-    * [3.2 Data setup](#32-data-setup)
-    * [3.3 Access control](#33-access-control)
-    * [3.4 DIDs, participant lists, and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-  * [4. Running the Demo (Kubernetes)](#4-running-the-demo-kubernetes)
-    * [4.1 Create the K8S cluster](#41-create-the-k8s-cluster)
-    * [4.2 Deploy the MVD components](#42-deploy-the-mvd-components)
-      * [4.2.1 Using pre-built images](#421-using-pre-built-images)
-      * [4.2.2 Building from source](#422-building-from-source)
-      * [4.2.3 Deploy MVD components](#423-deploy-mvd-components)
-    * [4.3 Seed the dataspace](#43-seed-the-dataspace)
-    * [4.4 Debugging MVD in Kubernetes](#44-debugging-mvd-in-kubernetes)
-  * [5. Executing REST requests using Bruno](#5-executing-rest-requests-using-bruno)
-    * [5.1 Get the catalog](#51-get-the-catalog)
-    * [5.2 Initiate the contract negotiation](#52-initiate-the-contract-negotiation)
-    * [5.3 Query negotiation status](#53-query-negotiation-status)
-    * [5.4 Initiate data transfer](#54-initiate-data-transfer)
-    * [5.5 Query data transfers](#55-query-data-transfers)
-    * [5.6 Get EndpointDataReference](#56-get-endpointdatareference)
-    * [5.7 Get access token for EDR](#57-get-access-token-for-edr)
-    * [5.8 Fetch data](#58-fetch-data)
-  * [6. Custom extensions in MVD](#6-custom-extensions-in-mvd)
-  * [7. Advanced topics](#7-advanced-topics)
-    * [7.2 Regenerating key pairs](#72-regenerating-key-pairs)
-  * [8. Other caveats, shortcuts, and workarounds](#8-other-caveats-shortcuts-and-workarounds)
-    * [8.2 DID resolution for participants](#82-did-resolution-for-participants)
-    * [8.3 Seed Jobs](#83-seed-jobs)
+- [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
+  - [1. Introduction](#1-introduction)
+  - [2. Purpose of this Demo](#2-purpose-of-this-demo)
+    - [2.1 Version stability and backwards compatibility guarantees](#21-version-stability-and-backwards-compatibility-guarantees)
+    - [2.2 Which version should I use?](#22-which-version-should-i-use)
+  - [3. The Scenario](#3-the-scenario)
+    - [3.1 Participants](#31-participants)
+    - [3.2 Data setup](#32-data-setup)
+    - [3.3 Access control](#33-access-control)
+    - [3.4 DIDs, participant lists, and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
+  - [4. Running the Demo (Kubernetes)](#4-running-the-demo-kubernetes)
+    - [4.1 Create the K8S cluster](#41-create-the-k8s-cluster)
+    - [4.2 Deploy the MVD components](#42-deploy-the-mvd-components)
+      - [4.2.1 Using pre-built images](#421-using-pre-built-images)
+      - [4.2.2 Building from source](#422-building-from-source)
+      - [4.2.3 Deploy MVD components](#423-deploy-mvd-components)
+    - [4.3 Seed the dataspace](#43-seed-the-dataspace)
+    - [4.4 Debugging MVD in Kubernetes](#44-debugging-mvd-in-kubernetes)
+  - [5. Executing REST requests using Bruno](#5-executing-rest-requests-using-bruno)
+    - [5.1 Get the catalog](#51-get-the-catalog)
+    - [5.2 Initiate the contract negotiation](#52-initiate-the-contract-negotiation)
+    - [5.3 Query negotiation status](#53-query-negotiation-status)
+    - [5.4 Initiate data transfer](#54-initiate-data-transfer)
+    - [5.5 Query data transfers](#55-query-data-transfers)
+    - [5.6 Get EndpointDataReference](#56-get-endpointdatareference)
+    - [5.7 Get access token for EDR](#57-get-access-token-for-edr)
+    - [5.8 Fetch data](#58-fetch-data)
+  - [6. Automated Management and Testing (Python Scripts)](#6-automated-management-and-testing-python-scripts)
+  - [7. Custom extensions in MVD](#7-custom-extensions-in-mvd)
+  - [7. Advanced topics](#7-advanced-topics)
+    - [7.2 Regenerating key pairs](#72-regenerating-key-pairs)
+  - [8. Other caveats, shortcuts, and workarounds](#8-other-caveats-shortcuts-and-workarounds)
+    - [8.2 DID resolution for participants](#82-did-resolution-for-participants)
+    - [8.3 Seed Jobs](#83-seed-jobs)
 <!-- TOC -->
 
 ## 1. Introduction
@@ -541,7 +542,22 @@ Important: do not prepend a `bearer` prefix!
 
 This will return some dummy JSON data.
 
-## 6. Custom extensions in MVD
+## 6. Automated Management and Testing (Python Scripts)
+
+To simplify the deployment and testing of the Minimum Viable Dataspace, an automated management tool is provided in the `scripts/` directory. These scripts allow you to handle the entire lifecycle of the MVD without needing to run manual Kubernetes or Bruno commands.
+
+- **`scripts/mvd_manager.py`**: An interactive CLI menu to manage the full lifecycle of the MVD. It automates creating the local KinD cluster, building and deploying Docker images, setting up Traefik and Gateway API, applying Kubernetes manifests, managing port-forwarding, and triggering data transfers.
+- **`scripts/transfer_data.py`**: An automated end-to-end testing script. It programmatically acts as the Consumer to fetch the catalog, negotiate a contract with the Provider, wait for its finalization, and initiate a data transfer, following the same flow as the manual Bruno requests.
+- **`scripts/requirements.txt`**: Contains the Python dependencies (e.g., `requests`) required to run the automated data transfer script.
+
+To use the manager, make sure you have the required dependencies and run:
+
+```shell
+pip install -r scripts/requirements.txt
+python scripts/mvd_manager.py
+```
+
+## 7. Custom extensions in MVD
 
 EDC is not a turn-key application, rather it is a set of modules that may be configured, customized, and extended
 to fit the needs of any particular dataspace.
