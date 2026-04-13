@@ -152,7 +152,6 @@ def main_menu():
         elif choice == '6':
             run_data_transfer()
         elif choice == '0':
-            stop_port_forward()
             print("Exiting...")
             sys.exit(0)
         else:
