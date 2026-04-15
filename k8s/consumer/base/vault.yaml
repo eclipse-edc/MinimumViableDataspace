@@ -39,13 +39,11 @@ spec:
               value: "root"
             - name: VAULT_DEV_LISTEN_ADDRESS
               value: "0.0.0.0:8200"
+            - name: SKIP_SETCAP
+              value: "true"
           args:
             - "server"
             - "-dev"
-          securityContext:
-            capabilities:
-              add:
-                - IPC_LOCK
 
 ---
 apiVersion: v1

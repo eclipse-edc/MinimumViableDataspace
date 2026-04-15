@@ -39,9 +39,8 @@ spec:
               value: "root"
             - name: VAULT_DEV_LISTEN_ADDRESS
               value: "0.0.0.0:8200"
-          args:
-            - "server"
-            - "-dev"
+            - name: SKIP_SETCAP
+              value: "true"
           securityContext:
             capabilities:
               add:

@@ -186,7 +186,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/edrs/%s/dataaddress".formatted(transferProcessId))
+                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v3/edrs/%s/dataaddress".formatted(transferProcessId))
                             .then()
                             .log().ifValidationFails()
                             .statusCode(200)
