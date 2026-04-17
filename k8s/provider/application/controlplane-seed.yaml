@@ -54,11 +54,11 @@ spec:
             - |
               set -e
 
-              ASSETS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/assets"
-              POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/policydefinitions"
-              CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/contractdefinitions"
+              ASSETS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/assets"
+              POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/policydefinitions"
+              CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/contractdefinitions"
               DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
-              CEL_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v5alpha/celexpressions"
+              CEL_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
 
               # Posts to the management API, treating 409 (already exists) as success.
               post() {

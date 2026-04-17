@@ -75,7 +75,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4beta/dataplanes")
+                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4/dataplanes")
                             .then()
                             .statusCode(200)
                             .log().ifValidationFails()
@@ -102,7 +102,7 @@ public class TransferEndToEndTest {
                 .untilAsserted(() -> {
                     var res = baseRequest()
                             .body(catalogRequestBody)
-                            .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/catalog/request")
+                            .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/catalog/request")
                             .then()
                             .log().ifValidationFails()
                             .statusCode(200)
@@ -126,7 +126,7 @@ public class TransferEndToEndTest {
                 .replace("{{OFFER_ID}}", offerId.get());
         var negotiationId = baseRequest()
                 .body(negotiationRequest)
-                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/contractnegotiations")
+                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/contractnegotiations")
                 .then()
                 .log().ifError()
                 .statusCode(200)
@@ -140,7 +140,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/contractnegotiations/" + negotiationId)
+                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/contractnegotiations/" + negotiationId)
                             .then()
                             .statusCode(200)
                             .extract().body().jsonPath();
@@ -158,7 +158,7 @@ public class TransferEndToEndTest {
 
         var transferProcessId = baseRequest()
                 .body(tpRequest)
-                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/transferprocesses")
+                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/transferprocesses")
                 .then()
                 .log().ifError()
                 .statusCode(200)
@@ -170,7 +170,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/transferprocesses/%s/state".formatted(transferProcessId))
+                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/transferprocesses/%s/state".formatted(transferProcessId))
                             .then()
                             .statusCode(200)
                             .extract().body().jsonPath();
@@ -221,7 +221,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4beta/dataplanes")
+                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4/dataplanes")
                             .then()
                             .statusCode(200)
                             .log().ifValidationFails()
@@ -248,7 +248,7 @@ public class TransferEndToEndTest {
                 .untilAsserted(() -> {
                     var res = baseRequest()
                             .body(catalogRequestBody)
-                            .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/catalog/request")
+                            .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/catalog/request")
                             .then()
                             .log().ifValidationFails()
                             .statusCode(200)
@@ -272,7 +272,7 @@ public class TransferEndToEndTest {
                 .replace("{{OFFER_ID}}", offerId.get());
         var negotiationId = baseRequest()
                 .body(negotiationRequest)
-                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/contractnegotiations")
+                .post(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/contractnegotiations")
                 .then()
                 .log().ifError()
                 .statusCode(200)
@@ -286,7 +286,7 @@ public class TransferEndToEndTest {
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4beta/contractnegotiations/" + negotiationId)
+                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v4/contractnegotiations/" + negotiationId)
                             .then()
                             .statusCode(200)
                             .extract().body().jsonPath();
