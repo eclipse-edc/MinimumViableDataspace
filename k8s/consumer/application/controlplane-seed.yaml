@@ -52,7 +52,7 @@ spec:
             - |
               set -e
 
-              MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5alpha/celexpressions"
+              MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
 
               # Posts to the management API, treating 409 (already exists) as success.
               create_cel() {
