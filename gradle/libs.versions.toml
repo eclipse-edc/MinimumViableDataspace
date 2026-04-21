@@ -3,7 +3,7 @@ format.version = "1.1"
 
 [versions]
 awaitility = "4.3.0"
-edc = "0.17.0-SNAPSHOT"
+edc = "0.17.0"
 edc-build = "1.5.0"
 jackson = "2.21.2"
 jakarta-json = "2.1.3"
