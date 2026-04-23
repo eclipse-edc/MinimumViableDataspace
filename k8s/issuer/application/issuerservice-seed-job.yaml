@@ -272,10 +272,15 @@ spec:
                       "input": "membershipStartDate",
                       "output": "credentialSubject.membershipStartDate",
                       "required": true
+                    },
+                    {
+                      "input": "id",
+                      "output": "credentialSubject.id",
+                      "required": true
                     }
                   ],
                   "rules": [],
-                  "format": "VC1_0_JWT",
+                  "format": "VC2_0_JOSE",
                   "validity": "604800"
                 }'
               
@@ -304,10 +309,15 @@ spec:
                       "input": "since",
                       "output": "credentialSubject.since",
                       "required": true
+                    },
+                    {
+                      "input": "id",
+                      "output": "credentialSubject.id",
+                      "required": true
                     }
                   ],
                   "rules": [],
-                  "format": "VC1_0_JWT",
+                  "format": "VC2_0_JOSE",
                   "validity": "604800"
                 }'
 
