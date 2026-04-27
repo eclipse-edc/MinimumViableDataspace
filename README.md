@@ -512,7 +512,7 @@ In the `ControlPlane Management/Get EDR DataAddress for TransferId` request we h
 value from the previous step in the URL path, for example:
 
 ```
-{{HOST}}/api/management/v3/edrs/392d1767-e546-4b54-ab6e-6fb20a3dc12a/dataaddress
+{{HOST}}/api/mgmt/v3/edrs/392d1767-e546-4b54-ab6e-6fb20a3dc12a/dataaddress
 ```
 
 Executing this request produces a response that contains both the endpoint where we can fetch the data, and the

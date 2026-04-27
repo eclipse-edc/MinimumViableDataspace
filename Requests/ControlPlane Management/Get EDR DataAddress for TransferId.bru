@@ -5,9 +5,13 @@ meta {
 }
 
 get {
-  url: {{CONSUMER_CP}}/api/mgmt/v4/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress
+  url: {{CONSUMER_CP}}/api/mgmt/v3/edrs/{{TRANSFER_PROCESS_ID}}/dataaddress
   body: none
   auth: inherit
+}
+
+vars:pre-request {
+  TRANSFER_PROCESS_ID: 2595ffc4-b53e-4858-8ba8-52e21c8dde5a
 }
 
 script:pre-request {
