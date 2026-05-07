@@ -74,6 +74,9 @@ jobs:
 
       - name: "Install Traefik Gateway controller"
         run: |-
+          # install Gateway API CRDs
+          kubectl apply --server-side --force-conflicts -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
+
           helm repo add traefik https://traefik.github.io/charts
           helm repo update
           helm upgrade --install --namespace traefik traefik traefik/traefik --create-namespace -f values.yaml
@@ -84,10 +87,7 @@ jobs:
           # forward port 80 -> 8080
           kubectl -n traefik port-forward svc/traefik 8080:80 &
 
-          # install Gateway API CRDs
-          kubectl apply --server-side --force-conflicts -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml
-
-          sleep 5 # to be safe`
+          sleep 5 # to be safe
 
       - name: "Deploy MVD"
         run: |-
