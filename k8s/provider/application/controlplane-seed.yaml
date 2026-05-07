@@ -57,7 +57,7 @@ spec:
               ASSETS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/assets"
               POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/policydefinitions"
               CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/contractdefinitions"
-              DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
+              DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes/ZGlkOndlYjppZGVudGl0eWh1Yi5wcm92aWRlci5zdmMuY2x1c3Rlci5sb2NhbCUzQTcwODM6cHJvdmlkZXI="
               CEL_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
 
               # Posts to the management API, treating 409 (already exists) as success.

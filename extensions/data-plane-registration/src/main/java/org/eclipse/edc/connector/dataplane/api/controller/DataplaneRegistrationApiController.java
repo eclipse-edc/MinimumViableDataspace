@@ -17,9 +17,12 @@ package org.eclipse.edc.connector.dataplane.api.controller;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import org.eclipse.edc.connector.dataplane.selector.spi.DataPlaneSelectorService;
 import org.eclipse.edc.connector.dataplane.selector.spi.instance.DataPlaneInstance;
+
+import java.util.Base64;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.edc.web.spi.exception.ServiceResultHandler.exceptionMapper;
@@ -36,8 +39,10 @@ public class DataplaneRegistrationApiController {
     }
 
     @POST
-    public void registerDataplane(DataPlaneInstance instance) {
-        dataPlaneSelectorService.register(instance.toBuilder().build()) // ugly, but will initialize all internal objects e.g. clock
+    @Path("/{participantContextId}")
+    public void registerDataplane(DataPlaneInstance instance, @PathParam("participantContextId") String participantContextId) {
+        var decoded = new String(Base64.getUrlDecoder().decode(participantContextId));
+        dataPlaneSelectorService.register(instance.toBuilder().participantContextId(decoded).build()) // ugly, but will initialize all internal objects e.g. clock
                 .orElseThrow(exceptionMapper(DataPlaneInstance.class));
 
     }
