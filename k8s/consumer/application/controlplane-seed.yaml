@@ -53,16 +53,19 @@ spec:
               set -e
 
               MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
+              DATAPLANE_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
 
-              # Posts to the management API, treating 409 (already exists) as success.
-              create_cel() {
-                HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "${MGMT_URL}" \
+              post() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X "$2" "$1" \
                   -H "Content-Type: application/json" \
-                  -d "$1")
+                  -d "$3")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
                 if [ "${HTTP_STATUS}" -eq 409 ]; then
-                  echo "⚠ CEL Expression already exists (HTTP 409), skipping."
+                  echo "⚠ Already exists (HTTP 409), skipping."
                 elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
                   echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
                   exit 1
                 fi
               }
@@ -71,7 +74,7 @@ spec:
               echo "Step 1: Create Membership CEL Expression "
               echo "================================================"
 
-              create_cel '{
+              post "${MGMT_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -94,7 +97,7 @@ spec:
               echo "Step 2: Create ManufacturerCredential CEL Expression"
               echo "================================================"
 
-              create_cel '{
+              post "${MGMT_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -112,6 +115,19 @@ spec:
 
               echo "✓ ManufacturerCredential CEL Expression done"
 
+              echo ""
+              echo "================================================"
+              echo "Step 3: Register dataplane"
+              echo "================================================"
+
+              post "${DATAPLANE_URL}" "POST" '{
+                "allowedSourceTypes": [ "HttpData", "HttpCertData" ],
+                "allowedTransferTypes": [ "HttpData-PULL" ],
+                "url": "http://dataplane.consumer.svc.cluster.local:8083/api/control/v1/dataflows"
+              }'
+              
+              echo "✓ dataplane registered"
+              
               echo ""
               echo "================================================"
               echo "Controlplane seeding completed successfully!"
