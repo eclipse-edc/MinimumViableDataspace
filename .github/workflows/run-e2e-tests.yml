@@ -74,15 +74,15 @@ jobs:
 
       - name: "Install Traefik Gateway controller"
         run: |-
-          # install Gateway API CRDs
-          kubectl apply --server-side --force-conflicts -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
-
           helm repo add traefik https://traefik.github.io/charts
           helm repo update
           helm upgrade --install --namespace traefik traefik traefik/traefik --create-namespace -f values.yaml
 
           # Wait for traefik to be ready
           kubectl rollout status deployment/traefik -n traefik --timeout=120s
+
+          # install Gateway API CRDs
+          kubectl apply --server-side --force-conflicts -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.5.1/standard-install.yaml
 
           # forward port 80 -> 8080
           kubectl -n traefik port-forward svc/traefik 8080:80 &
