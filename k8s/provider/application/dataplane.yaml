@@ -80,12 +80,6 @@ spec:
     - name: health
       port: 8080
       targetPort: 8080
-    - name: control
-      port: 8083
-      targetPort: 8083
-    - name: certs
-      port: 8186
-      targetPort: 8186
     - name: public
       port: 11002
       targetPort: 11002

@@ -83,12 +83,6 @@ spec:
     - name: signaling
       port: 8182
       targetPort: 8182
-    - name: control
-      port: 8083
-      targetPort: 8083
-    - name: certs
-      port: 8186
-      targetPort: 8186
     - name: public
       port: 11002
       targetPort: 11002

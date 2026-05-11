@@ -88,13 +88,6 @@ spec:
                   "@type": "Asset",
                   "properties": {
                     "description": "This asset requires Membership to view and Manufacturer (part_types=non_critical) to negotiate."
-                  },
-                  "dataAddress": {
-                    "@type": "DataAddress",
-                    "type": "HttpData",
-                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
-                    "proxyPath": "true",
-                    "proxyQueryParams": "true"
                   }
                 }'
 
@@ -113,13 +106,6 @@ spec:
                   "@type": "Asset",
                   "properties": {
                     "description": "This asset requires Membership to view and Manufacturer (part_types=all) to negotiate."
-                  },
-                  "dataAddress": {
-                    "@type": "DataAddress",
-                    "type": "HttpData",
-                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
-                    "proxyPath": "true",
-                    "proxyQueryParams": "true"
                   }
                 }'
 

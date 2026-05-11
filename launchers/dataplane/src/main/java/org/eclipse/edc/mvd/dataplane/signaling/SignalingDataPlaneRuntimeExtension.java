@@ -23,24 +23,21 @@ import org.eclipse.dataplane.domain.dataflow.DataFlow;
 import org.eclipse.dataplane.domain.registration.Authorization;
 import org.eclipse.dataplane.domain.registration.Oauth2ClientCredentialsAuthorization;
 import org.eclipse.dataplane.logic.OnPrepare;
-import org.eclipse.edc.connector.dataplane.selector.spi.instance.AuthorizationProfile;
+import org.eclipse.edc.http.spi.EdcHttpClient;
+import org.eclipse.edc.mvd.dataplane.data.DataPlanePublicApiController;
 import org.eclipse.edc.runtime.metamodel.annotation.Configuration;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
-import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.runtime.metamodel.annotation.Settings;
-import org.eclipse.edc.signaling.spi.authorization.Header;
-import org.eclipse.edc.signaling.spi.authorization.SignalingAuthorization;
-import org.eclipse.edc.signaling.spi.authorization.SignalingAuthorizationRegistry;
 import org.eclipse.edc.spi.monitor.Monitor;
+import org.eclipse.edc.spi.system.Hostname;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.web.spi.WebService;
 import org.eclipse.edc.web.spi.configuration.ApiContext;
 import org.eclipse.edc.web.spi.configuration.PortMapping;
 import org.eclipse.edc.web.spi.configuration.PortMappingRegistry;
-import org.eclipse.edc.web.spi.exception.InvalidRequestException;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
@@ -48,19 +45,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static java.util.Collections.emptyList;
-import static org.eclipse.edc.spi.result.Result.*;
 
 @Extension(value = SignalingDataPlaneRuntimeExtension.NAME)
 public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
@@ -69,17 +57,25 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
     @Setting(key = "dataplane.id")
     private String dataplaneId;
     @Configuration
-    private ApiConfiguration apiConfiguration;
+    private SignalingApiConfig signalingApiConfig;
+
+    @Configuration
+    private PublicApiConfig publicApiConfig;
 
     @Inject
     private WebService webService;
     @Inject
     private Monitor monitor;
 
-    private final Map<String, ScheduledFuture<?>> ongoingNonFiniteTransfers = new HashMap<>();
     private Dataplane dataplane;
     @Inject
     private PortMappingRegistry portMappingRegistry;
+
+    @Inject
+    private Hostname hostname;
+
+    @Inject
+    private EdcHttpClient httpClient;
 
     @Override
     public String name() {
@@ -99,7 +95,7 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
                     @Override
                     public Result<String> authorizationHeader(org.eclipse.dataplane.domain.registration.AuthorizationProfile profile) {
-                        return Result.success("dummy-token");
+                        return Result.success("Bearer dummy-token");
                     }
 
                     @Override
@@ -107,13 +103,8 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
                         return Result.success("anonymous");
                     }
                 })
-                .endpoint(apiConfiguration.dataFlowEndpoint())
-                .transferType("Finite-PUSH")
-                .transferType("Finite-PULL")
-                .transferType("NonFinite-PUSH")
-                .transferType("NonFinite-PULL")
-                .transferType("AsyncPrepare-PUSH")
-                .transferType("AsyncStart-PULL")
+                .endpoint(signalingApiConfig.dataFlowEndpoint(hostname.get()))
+                .transferType("HttpData-PULL")
                 .onPrepare(new DataplaneOnPrepare())
                 .onStart(this::startDataFlow)
                 .onStarted(this::receiveDataFlow)
@@ -126,23 +117,27 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
         dataplane = builder.build();
 
-        var portMapping = new PortMapping(ApiContext.SIGNALING, apiConfiguration.port(), apiConfiguration.path());
+        var portMapping = new PortMapping(ApiContext.SIGNALING, signalingApiConfig.port(), signalingApiConfig.path());
         portMappingRegistry.register(portMapping);
 
-//        var typeTransformerRegistry = transformerRegistry.forContext("signaling-api");
-//        typeTransformerRegistry.register(new DataAddressToDspDataAddressTransformer());
-//        typeTransformerRegistry.register(new DataFlowStatusMessageToDataFlowResponseTransformer());
-//        typeTransformerRegistry.register(new DspDataAddressToDataAddressTransformer());
+        var publicPortMapping = new PortMapping("public", publicApiConfig.port(), publicApiConfig.path());
+        portMappingRegistry.register(publicPortMapping);
+
+        //        var typeTransformerRegistry = transformerRegistry.forContext("signaling-api");
+        //        typeTransformerRegistry.register(new DataAddressToDspDataAddressTransformer());
+        //        typeTransformerRegistry.register(new DataFlowStatusMessageToDataFlowResponseTransformer());
+        //        typeTransformerRegistry.register(new DspDataAddressToDataAddressTransformer());
+
         webService.registerResource(ApiContext.SIGNALING, dataplane.controller());
         webService.registerResource(ApiContext.SIGNALING, dataplane.registrationController());
-        // webService.registerResource(new DataController(monitor));
+        webService.registerResource("public", new DataPlanePublicApiController(httpClient, monitor));
         // webService.registerResource(new ControlController(monitor, dataplane, apiConfiguration));
     }
 
     private @NotNull Result<DataFlow> startDataFlow(DataFlow dataFlow) {
         switch (dataFlow.getTransferType()) {
             case "NonFinite-PULL", "Finite-PULL", "HttpData-PULL" -> {
-                var dataAddress = new DataAddress(dataFlow.getTransferType(), "http", apiConfiguration.dataSourceEndpoint(), emptyList());
+                var dataAddress = new DataAddress(dataFlow.getTransferType(), "http", publicApiConfig.dataSourceEndpoint(hostname.get()), emptyList());
                 dataFlow.setDataAddress(dataAddress);
                 return Result.success(dataFlow);
             }
@@ -152,28 +147,13 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
         }
     }
 
-    private CompletableFuture<HttpResponse<Void>> pushData(DataFlow dataFlow) {
-        var destinationUri = URI.create(dataFlow.getDataAddress().endpoint());
-        var request = HttpRequest.newBuilder(destinationUri).POST(HttpRequest.BodyPublishers.ofString("test-data")).build();
-        return HttpClient.newHttpClient().sendAsync(request, HttpResponse.BodyHandlers.discarding());
-    }
-
     private Result<DataFlow> receiveDataFlow(DataFlow dataFlow) {
-        switch (dataFlow.getTransferType()) {
-            case "NonFinite-PULL" -> {
-                var sourceUri = URI.create(dataFlow.getDataAddress().endpoint());
-                var future = Executors.newSingleThreadScheduledExecutor()
-                        .scheduleAtFixedRate(() -> requestData(dataFlow, sourceUri), 0, 200, TimeUnit.MILLISECONDS);
-
-                ongoingNonFiniteTransfers.put(dataFlow.getId(), future);
-            }
-            case "Finite-PULL", "AsyncStart-PULL" -> {
-                var sourceUri = URI.create(dataFlow.getDataAddress().endpoint());
-                requestData(dataFlow, sourceUri)
-                        .whenComplete((response, throwable) -> notifyCompletion(dataFlow, response, throwable));
-            }
-            default -> {
-            }
+        if (dataFlow.getTransferType().equals("HttpData-PULL")) {
+            var sourceUri = URI.create(dataFlow.getDataAddress().endpoint());
+            requestData(dataFlow, sourceUri)
+                    .whenComplete((response, throwable) -> notifyCompletion(dataFlow, response, throwable));
+        } else {
+            monitor.warning("TransferType %s not supported".formatted(dataFlow.getTransferType()));
         }
 
         return Result.success(dataFlow);
@@ -195,26 +175,16 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
         });
     }
 
-    private class DataplaneOnPrepare implements OnPrepare {
+    private static class DataplaneOnPrepare implements OnPrepare {
         @Override
         public Result<DataFlow> action(DataFlow dataFlow) {
-            if (dataFlow.getTransferType().startsWith("AsyncPrepare-")) {
-                dataFlow.transitionToPreparing();
-                return Result.success(dataFlow);
-            }
-            var destination = new DataAddress("Finite-PUSH", "http", apiConfiguration.receiveDataEndpoint(), emptyList());
-            dataFlow.setDataAddress(destination);
-            return Result.success(dataFlow);
+            return dataFlow.getTransferType().equals("HttpData-PULL")
+                    ? Result.success(dataFlow)
+                    : Result.failure(new UnsupportedOperationException("unsupported transfer type: " + dataFlow.getTransferType()));
         }
     }
 
     private @NotNull Result<DataFlow> stopDataFlow(DataFlow dataFlow) {
-        var future = ongoingNonFiniteTransfers.get(dataFlow.getId());
-        if (future != null) {
-            future.cancel(true);
-            ongoingNonFiniteTransfers.remove(dataFlow.getId());
-            monitor.info("Ongoing flow %s terminated".formatted(dataFlow.getId()));
-        }
         return Result.success(dataFlow);
     }
 
@@ -242,21 +212,22 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
     }
 
     @Settings
-    public record ApiConfiguration(
+    public record SignalingApiConfig(
             @Setting(key = "web.http." + ApiContext.SIGNALING + ".path") String path,
             @Setting(key = "web.http." + ApiContext.SIGNALING + ".port") int port
     ) {
 
-        public String receiveDataEndpoint() {
-            return "http://localhost:%d%s/data/receive".formatted(port, path);
+        public URI dataFlowEndpoint(String hostname) {
+            return URI.create("http://%s:%d%s/v1/dataflows".formatted(hostname, port, path));
         }
+    }
 
-        public String dataSourceEndpoint() {
-            return "http://localhost:%d%s/data/source".formatted(port, path);
-        }
-
-        public URI dataFlowEndpoint() {
-            return URI.create("http://localhost:%d%s/v1/dataflows".formatted(port, path));
+    @Settings
+    public record PublicApiConfig(
+            @Setting(key = "web.http.public.path", defaultValue = "/api/public") String path,
+            @Setting(key = "web.http.public.port", defaultValue = "11002") int port) {
+        public String dataSourceEndpoint(String hostname) {
+            return "http://%s:%d%s/data/source".formatted(hostname, port, path);
         }
     }
 }
