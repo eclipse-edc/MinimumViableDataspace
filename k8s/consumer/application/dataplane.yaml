@@ -86,6 +86,9 @@ spec:
     - name: public
       port: 11002
       targetPort: 11002
+    - name: proxy
+      port: 11003
+      targetPort: 11003
 
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -100,11 +103,10 @@ spec:
   hostnames:
     - dp.consumer.localhost
   rules:
-    # /dp/public → public port 11002
     - matches:
         - path:
             type: PathPrefix
-            value: /public
+            value: /
       filters:
         - type: URLRewrite
           urlRewrite:
@@ -113,37 +115,5 @@ spec:
               replacePrefixMatch: /
       backendRefs:
         - name: dataplane
-          port: 11002
-          weight: 1
-
-    # /app/internal → control port 8083
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /app/internal
-      filters:
-        - type: URLRewrite
-          urlRewrite:
-            path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /
-      backendRefs:
-        - name: dataplane
-          port: 8083
-          weight: 1
-
-    # /app/public → certs port 8186
-    - matches:
-        - path:
-            type: PathPrefix
-            value: /app/public
-      filters:
-        - type: URLRewrite
-          urlRewrite:
-            path:
-              type: ReplacePrefixMatch
-              replacePrefixMatch: /
-      backendRefs:
-        - name: dataplane
-          port: 8186
+          port: 11003
           weight: 1

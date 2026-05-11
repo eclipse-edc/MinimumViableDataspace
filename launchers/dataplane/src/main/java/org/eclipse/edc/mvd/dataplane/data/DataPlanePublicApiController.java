@@ -16,10 +16,11 @@ package org.eclipse.edc.mvd.dataplane.data;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.PathParam;
 import okhttp3.Request;
 import org.eclipse.edc.http.spi.EdcHttpClient;
 import org.eclipse.edc.spi.monitor.Monitor;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * This controller serves as the public endpoint for the data plane. Its endpoints are intended for consumers to download data
@@ -37,18 +38,27 @@ public class DataPlanePublicApiController {
 
     @GET
     @Path("/source")
-    public String dataSource(@QueryParam("resource") String resource, @QueryParam("id") String id) {
-        // Use default values if parameters are not provided
-        if (resource == null || resource.isEmpty()) {
-            resource = "posts";
-        }
+    public String dataSource() {
+        return downloadJsonFromUrl("https://jsonplaceholder.typicode.com/todos");
+    }
 
-        monitor.info("Data requested for resource: " + resource + ", id: " + id);
 
+
+    @GET
+    @Path("/source/{resource}")
+    public String dataSource(@PathParam("resource") String resource) {
         var formatted = "https://jsonplaceholder.typicode.com/%s".formatted(resource);
-        if (id != null && !id.isEmpty()) {
-            formatted += "/%s".formatted(id);
-        }
+        return downloadJsonFromUrl(formatted);
+    }
+
+    @GET
+    @Path("/source/{resource}/{id}")
+    public String dataSource(@PathParam("resource") String resource, @PathParam("id") String id) {
+        var formatted = "https://jsonplaceholder.typicode.com/%s/%s".formatted(resource, id);
+        return downloadJsonFromUrl(formatted);
+    }
+
+    private @NotNull String downloadJsonFromUrl(String formatted) {
         var request = new Request.Builder()
                 .url(formatted)
                 .get()

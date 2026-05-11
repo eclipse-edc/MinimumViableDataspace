@@ -1,23 +1,17 @@
 meta {
   name: Download Data from Public API
   type: http
-  seq: 9
+  seq: 8
 }
 
 get {
-  url: {{PROVIDER_PUBLIC_URL}}/api/public
+  url: {{CONSUMER_DP}}/api/proxy/flows/{{flowId}}
   body: none
   auth: none
 }
 
 headers {
   Authorization: {{AUTHORIZATION}}
-}
-
-script:pre-request {
-  if(!(bru.getVar("AUTHORIZATION") !== undefined && bru.getVar("AUTHORIZATION") !== null)){
-      throw new Error(' The authorization token is not yet available, please execute request "Get EDR DataAddress for TransferId" first!');
-  }
 }
 
 script:post-response {

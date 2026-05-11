@@ -14,4 +14,4 @@
 
 
 org.eclipse.edc.mvd.dataplane.keyseed.KeySeedExtension
-org.eclipse.edc.mvd.dataplane.signaling.SignalingDataPlaneRuntimeExtension
+org.eclipse.edc.mvd.dataplane.SignalingDataPlaneRuntimeExtension
