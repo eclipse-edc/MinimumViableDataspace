@@ -19,6 +19,7 @@ metadata:
   namespace: provider
 data:
   edc.hostname: "dataplane.provider.svc.cluster.local"
+  dataplane.id: "provider-dataplane"
 
   edc.transfer.proxy.token.verifier.publickey.alias: "dataplane-private"
   edc.transfer.proxy.token.signer.privatekey.alias: "dataplane-public"
@@ -33,6 +34,8 @@ data:
   web.http.public.path: "/api/public"
   web.http.certs.port: "8186"
   web.http.certs.path: "/api/data"
+  web.http.signaling.port: "8182"
+  web.http.signaling.path: "/api/signaling"
 
   edc.vault.hashicorp.url: "http://vault.provider.svc.cluster.local:8200"
   edc.vault.hashicorp.token: "root"

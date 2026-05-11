@@ -42,6 +42,8 @@ spec:
           ports:
             - containerPort: 1044
               name: debug-port
+            - containerPort: 8182
+              name: signaling-port
           livenessProbe:
             httpGet:
               path: /api/check/liveness
@@ -78,6 +80,9 @@ spec:
     - name: health
       port: 8080
       targetPort: 8080
+    - name: signaling
+      port: 8182
+      targetPort: 8182
     - name: control
       port: 8083
       targetPort: 8083

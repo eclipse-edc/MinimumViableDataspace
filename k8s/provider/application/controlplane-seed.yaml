@@ -305,16 +305,32 @@ spec:
               
               echo ""
               echo "================================================"
-              echo "Step 8: Register dataplane"
+              echo "Step 3a: Register dataplane with controlplane"
               echo "================================================"
 
-              post "${DATAPLANE_URL}" "POST" '{
-                "allowedSourceTypes": [ "HttpData", "HttpCertData" ],
-                "allowedTransferTypes": [ "HttpData-PULL" ],
-                "url": "http://dataplane.provider.svc.cluster.local:8083/api/control/v1/dataflows"
+              REG_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/dataplanes"
+              post "${REG_URL}" "PUT" '{
+                "dataplaneId": "provider-participant-dataplane",
+                "endpoint": "http://dataplane.provider.svc.cluster.local:8182/api/signaling",
+                "transferTypes": [ "HttpData-PULL" ],
+                "labels": []
               }'
               
-              echo "✓ dataplane registered"              
+              echo "✓ dataplane registered with controlplane"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 3b: Register controlplane with dataplane"
+              echo "================================================"
+
+              REG_URL="http://dataplane.provider.svc.cluster.local:8182/api/signaling/v1/controlplanes"
+              post "${REG_URL}" "PUT" '{
+                "controlplaneId": "provider-participant-controlplane",
+                "endpoint": "http://controlplane.provider.svc.cluster.local:8182/api/signaling",
+                "authorizationProfile": null
+              }'
+              
+              echo "✓ controlplane registered with dataplane"
               
               echo ""
               echo "================================================"

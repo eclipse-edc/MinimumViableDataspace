@@ -19,14 +19,21 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.tink)
-    implementation(libs.edc.bom.dataplane) {
-        exclude("org.eclipse.edc", "data-plane-self-registration")
-    }
-    runtimeOnly(project(":extensions:data-plane-public-api-v2"))
+    implementation(libs.edc.boot)
+    implementation(libs.edc.core.runtime)
+    implementation(libs.edc.ext.http)
+    implementation(libs.dataplane.sdk)
 
+    // needed for the key seed extension
+    runtimeOnly(libs.tink)
+    implementation(libs.nimbus.jwt)
+
+    // for kubernetes probes
+    runtimeOnly(libs.edc.api.observability)
+
+//    runtimeOnly(project(":extensions:data-plane-public-api-v2"))
     runtimeOnly(libs.edc.core.participantcontext.config)
-    runtimeOnly(libs.edc.vault.hashicorp)
+//    runtimeOnly(libs.edc.vault.hashicorp)
     runtimeOnly(libs.edc.bom.dataplane.sql)
 }
 

@@ -19,7 +19,7 @@ metadata:
   namespace: consumer
 data:
   edc.hostname: "dataplane.consumer.svc.cluster.local"
-
+  dataplane.id: "consumer-dataplane"
   edc.transfer.proxy.token.verifier.publickey.alias: "dataplane-private"
   edc.transfer.proxy.token.signer.privatekey.alias: "dataplane-public"
 
@@ -27,6 +27,9 @@ data:
 
   web.http.port: "8080"
   web.http.path: "/api"
+  web.http.signaling.port: "8182"
+  web.http.signaling.path: "/api/signaling"
+
   web.http.control.port: "8083"
   web.http.control.path: "/api/control"
   web.http.public.port: "11002"

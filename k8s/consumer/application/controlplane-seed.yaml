@@ -53,8 +53,6 @@ spec:
               set -e
 
               MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
-              DATAPLANE_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes/ZGlkOndlYjppZGVudGl0eWh1Yi5jb25zdW1lci5zdmMuY2x1c3Rlci5sb2NhbCUzQTcwODM6Y29uc3VtZXI="
-
               post() {
                 RESPONSE=$(curl -sS -w "\n%{http_code}" -X "$2" "$1" \
                   -H "Content-Type: application/json" \
@@ -117,16 +115,32 @@ spec:
 
               echo ""
               echo "================================================"
-              echo "Step 3: Register dataplane"
+              echo "Step 3a: Register dataplane with controlplane"
               echo "================================================"
 
-              post "${DATAPLANE_URL}" "POST" '{
-                "allowedSourceTypes": [ "HttpData", "HttpCertData" ],
-                "allowedTransferTypes": [ "HttpData-PULL" ],
-                "url": "http://dataplane.consumer.svc.cluster.local:8083/api/control/v1/dataflows"
+              REG_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v4/dataplanes"
+              post "${REG_URL}" "PUT" '{
+                "dataplaneId": "consumer-participant-dataplane",
+                "endpoint": "http://dataplane.consumer.svc.cluster.local:8182/api/signaling",
+                "transferTypes": [ "HttpData-PULL" ],
+                "labels": []
+              }'
+            
+              echo "✓ dataplane registered with controlplane"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 3b: Register controlplane with dataplane"
+              echo "================================================"
+
+              REG_URL="http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/controlplanes"
+              post "${REG_URL}" "PUT" '{
+                "controlplaneId": "consumer-participant-controlplane",
+                "endpoint": "http://controlplane.consumer.svc.cluster.local:8182/api/signaling",
+                "authorizationProfile": null
               }'
               
-              echo "✓ dataplane registered"
+              echo "✓ controlplane registered with dataplane"
               
               echo ""
               echo "================================================"

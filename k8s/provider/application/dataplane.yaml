@@ -40,6 +40,8 @@ spec:
             - configMapRef:
                 name: dataplane-config
           ports:
+            - containerPort: 8182
+              name: signaling-port
             - containerPort: 1044
               name: debug-port
           livenessProbe:
@@ -87,6 +89,9 @@ spec:
     - name: public
       port: 11002
       targetPort: 11002
+    - name: signaling
+      port: 8182
+      targetPort: 8182
 
 ---
 apiVersion: gateway.networking.k8s.io/v1
