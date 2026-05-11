@@ -22,7 +22,7 @@ metadata:
   labels:
     app: issuerservice-seed
     platform: edcv
-    type: edcv-job
+    type: edc-job
 spec:
   backoffLimit: 5
   template:
@@ -30,7 +30,7 @@ spec:
       labels:
         app: issuerservice-seed
         platform: edcv
-        type: edcv-job
+        type: edc-job
     spec:
       restartPolicy: OnFailure
       initContainers:

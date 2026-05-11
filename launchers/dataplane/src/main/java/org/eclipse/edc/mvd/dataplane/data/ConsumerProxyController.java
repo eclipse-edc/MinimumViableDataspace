@@ -35,9 +35,15 @@ public class ConsumerProxyController {
     }
 
     @GET
-    @Path("/{flowId}")
+    @Path("/{flowId}/data")
     public String handleDataFlow(@PathParam("flowId") String flowId) {
         return consumerDataHandler.downloadData(flowId).orElseThrow(ExceptionMapper.MAP_TO_WSRS);
+    }
+
+    @GET
+    @Path("/{flowId}")
+    public DataAddress getFlowMetadata(@PathParam("flowId") String flowId) {
+        return consumerDataHandler.getFlow(flowId);
     }
 
     @GET

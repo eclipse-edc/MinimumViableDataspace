@@ -78,4 +78,8 @@ public class ConsumerDataHandler {
     public Map<String, DataAddress> getAllFlows() {
         return ongoingTransfers;
     }
+
+    public DataAddress getFlow(String flowId) {
+        return ongoingTransfers.get(flowId);
+    }
 }
