@@ -19,6 +19,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":extensions:signaling-auth-none"))
     implementation(libs.edc.boot)
     implementation(libs.edc.core.runtime)
     implementation(libs.edc.ext.http)

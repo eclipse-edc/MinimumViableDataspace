@@ -120,10 +120,13 @@ spec:
 
               REG_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v4/dataplanes"
               post "${REG_URL}" "PUT" '{
-                "dataplaneId": "consumer-participant-dataplane",
-                "endpoint": "http://dataplane.consumer.svc.cluster.local:8182/api/signaling",
+                "dataplaneId": "anonymous",
+                "endpoint": "http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/dataflows",
                 "transferTypes": [ "HttpData-PULL" ],
-                "labels": []
+                "labels": [],
+                "authorization": {
+                  "type": "none"
+                }
               }'
             
               echo "✓ dataplane registered with controlplane"
@@ -135,9 +138,11 @@ spec:
 
               REG_URL="http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/controlplanes"
               post "${REG_URL}" "PUT" '{
-                "controlplaneId": "consumer-participant-controlplane",
+                "controlplaneId": "anonymous",
                 "endpoint": "http://controlplane.consumer.svc.cluster.local:8182/api/signaling",
-                "authorizationProfile": null
+                "authorization": {
+                  "type": "none"
+                }
               }'
               
               echo "✓ controlplane registered with dataplane"

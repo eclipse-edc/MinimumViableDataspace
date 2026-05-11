@@ -20,13 +20,19 @@ import org.eclipse.dataplane.Dataplane;
 import org.eclipse.dataplane.domain.DataAddress;
 import org.eclipse.dataplane.domain.Result;
 import org.eclipse.dataplane.domain.dataflow.DataFlow;
+import org.eclipse.dataplane.domain.registration.Authorization;
 import org.eclipse.dataplane.domain.registration.Oauth2ClientCredentialsAuthorization;
 import org.eclipse.dataplane.logic.OnPrepare;
+import org.eclipse.edc.connector.dataplane.selector.spi.instance.AuthorizationProfile;
 import org.eclipse.edc.runtime.metamodel.annotation.Configuration;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
+import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.runtime.metamodel.annotation.Settings;
+import org.eclipse.edc.signaling.spi.authorization.Header;
+import org.eclipse.edc.signaling.spi.authorization.SignalingAuthorization;
+import org.eclipse.edc.signaling.spi.authorization.SignalingAuthorizationRegistry;
 import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
@@ -42,15 +48,19 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import static java.net.http.HttpResponse.BodyHandlers.ofString;
 import static java.util.Collections.emptyList;
+import static org.eclipse.edc.spi.result.Result.*;
 
 @Extension(value = SignalingDataPlaneRuntimeExtension.NAME)
 public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
@@ -81,6 +91,22 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
         var builder = Dataplane.newInstance()
                 .id(dataplaneId)
                 .registerAuthorization(new Oauth2ClientCredentialsAuthorization())
+                .registerAuthorization(new Authorization() {
+                    @Override
+                    public String type() {
+                        return "none";
+                    }
+
+                    @Override
+                    public Result<String> authorizationHeader(org.eclipse.dataplane.domain.registration.AuthorizationProfile profile) {
+                        return Result.success("dummy-token");
+                    }
+
+                    @Override
+                    public Result<String> extractCallerId(String authorizationHeader) {
+                        return Result.success("anonymous");
+                    }
+                })
                 .endpoint(apiConfiguration.dataFlowEndpoint())
                 .transferType("Finite-PUSH")
                 .transferType("Finite-PULL")
@@ -115,35 +141,9 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
     private @NotNull Result<DataFlow> startDataFlow(DataFlow dataFlow) {
         switch (dataFlow.getTransferType()) {
-            case "NonFinite-PUSH" -> {
-                if (dataFlow.getDataAddress() == null) {
-                    return Result.failure(new InvalidRequestException("DataAddress should not be null for PUSH transfers"));
-                }
-
-                var future = Executors.newSingleThreadScheduledExecutor()
-                        .scheduleAtFixedRate(() -> pushData(dataFlow), 0, 200, TimeUnit.MILLISECONDS);
-
-                ongoingNonFiniteTransfers.put(dataFlow.getId(), future);
-
-                return Result.success(dataFlow);
-            }
-            case "Finite-PUSH", "AsyncPrepare-PUSH" -> {
-                if (dataFlow.getDataAddress() == null) {
-                    return Result.failure(new InvalidRequestException("DataAddress should not be null for PUSH transfers"));
-                }
-
-                pushData(dataFlow)
-                        .whenComplete((response, throwable) -> notifyCompletion(dataFlow, response, throwable));
-
-                return Result.success(dataFlow);
-            }
-            case "NonFinite-PULL", "Finite-PULL" -> {
+            case "NonFinite-PULL", "Finite-PULL", "HttpData-PULL" -> {
                 var dataAddress = new DataAddress(dataFlow.getTransferType(), "http", apiConfiguration.dataSourceEndpoint(), emptyList());
                 dataFlow.setDataAddress(dataAddress);
-                return Result.success(dataFlow);
-            }
-            case "AsyncStart-PULL" -> {
-                dataFlow.transitionToStarting();
                 return Result.success(dataFlow);
             }
             default -> {
