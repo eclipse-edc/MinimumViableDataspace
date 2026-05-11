@@ -42,8 +42,6 @@ import org.jetbrains.annotations.NotNull;
 import java.net.URI;
 import java.util.List;
 
-import static java.util.Collections.emptyList;
-
 @Extension(value = SignalingDataPlaneRuntimeExtension.NAME)
 public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
