@@ -58,7 +58,15 @@ public class ConsumerDataHandler {
             return Result.failure(new IllegalArgumentException("No data flow found for id %s".formatted(flowId)));
         }
         var sourceUri = URI.create(dataAddress.endpoint());
-        var request = new Request.Builder().url(sourceUri.toString()).get().build();
+        var token = dataAddress.endpointProperties().stream().filter(ep -> ep.name().equals("access_token"))
+                .findFirst()
+                .map(DataAddress.EndpointProperty::value)
+                .orElseThrow(() -> new IllegalArgumentException("No access token found in data address properties"));
+        var request = new Request.Builder()
+                .addHeader("Authorization", token)
+                .url(sourceUri.toString())
+                .get()
+                .build();
         try (var response = httpClient.execute(request)) {
             if (response.isSuccessful()) {
                 var body = response.body().string();

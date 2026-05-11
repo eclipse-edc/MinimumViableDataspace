@@ -40,6 +40,7 @@ import org.eclipse.edc.web.spi.configuration.PortMappingRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
+import java.util.List;
 
 import static java.util.Collections.emptyList;
 
@@ -115,7 +116,7 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
         webService.registerResource(ApiContext.SIGNALING, dataplane.controller());
         webService.registerResource(ApiContext.SIGNALING, dataplane.registrationController());
-        webService.registerResource(APICONTEXT_PUBLIC, new DataPlanePublicApiController(httpClient, monitor));
+        webService.registerResource(APICONTEXT_PUBLIC, new DataPlanePublicApiController(httpClient, monitor, "foobar"));
         webService.registerResource(APICONTEXT_PROXY, new ConsumerProxyController(dataFetcher));
     }
 
@@ -135,7 +136,9 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
     private @NotNull Result<DataFlow> startDataFlow(DataFlow dataFlow) {
         switch (dataFlow.getTransferType()) {
             case "NonFinite-PULL", "Finite-PULL", "HttpData-PULL" -> {
-                var dataAddress = new DataAddress(dataFlow.getTransferType(), "http", publicApiConfig.dataSourceEndpoint(hostname.get()), emptyList());
+                var dataAddress = new DataAddress(dataFlow.getTransferType(), "http",
+                        publicApiConfig.dataSourceEndpoint(hostname.get()),
+                        List.of(new DataAddress.EndpointProperty("authorization", "access_token", "foobar")));
                 dataFlow.setDataAddress(dataAddress);
                 return Result.success(dataFlow);
             }

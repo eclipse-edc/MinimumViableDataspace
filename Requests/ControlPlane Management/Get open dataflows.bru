@@ -26,8 +26,14 @@ script:post-response {
   const [flowId, address] = map.entries().next().value;
   
   expect(flowId).not.to.be.undefined
-  bru.setVar("flowId",flowId)
+  bru.setVar("flowId", flowId)
+  console.log(flowId)
   
+  
+  const token = address.endpointProperties.find(obj => obj.name === "access_token");
+  expect(token).not.to.be.undefined
+  console.log(token.value)
+  bru.setVar("accessToken", token.value)
   
 }
 

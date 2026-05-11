@@ -66,24 +66,6 @@ public class TransferEndToEndTest {
     @DisplayName("Tests a successful End-to-End contract negotiation and data transfer")
     @Test
     void transferData_hasPermission_shouldTransferData() {
-//        System.out.println("Waiting for Provider dataplane to come online");
-//        // wait until provider's dataplane is available
-//        await().atMost(TEST_TIMEOUT_DURATION)
-//                .pollDelay(TEST_POLL_DELAY)
-//                .untilAsserted(() -> {
-//                    var jp = baseRequest()
-//                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4/dataplanes")
-//                            .then()
-//                            .statusCode(200)
-//                            .log().ifValidationFails()
-//                            .extract().body().jsonPath();
-//
-//                    var state = jp.getString("state");
-//                    assertThat(state).isEqualTo("[REGISTERED]");
-//                });
-//
-//        System.out.println("Provider dataplane is online, fetching catalog");
-
         var catalogRequestBody = Json.createObjectBuilder()
                 .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/connector/management/v2"))
                 .add("@type", "CatalogRequest")
@@ -191,15 +173,15 @@ public class TransferEndToEndTest {
                             .extract().body().jsonPath();
 
                     endpoint.set(jp.getString("endpoint"));
-//                    token.set(jp.getString("authorization"));
+                    token.set(jp.get("endpointProperties.find { it.name == 'access_token' }.value"));
 
                     assertThat(endpoint.get()).isNotNull().endsWith("/api/public/data/source");
-//                    assertThat(token.get()).isNotNull();
+                    assertThat(token.get()).isNotNull();
                 });
 
         //download exemplary JSON data from public endpoint
         var response = given()
-//                .header("Authorization", token.get())
+                .header("Authorization", token.get())
                 .get(CONSUMER_PROXY_URL + "/flows/%s/data".formatted(transferProcessId))
                 .then()
                 .log().ifError()
@@ -212,24 +194,6 @@ public class TransferEndToEndTest {
     @DisplayName("Tests a failing End-to-End contract negotiation because of an unfulfilled policy")
     @Test
     void transferData_doesNotHavePermission_shouldTerminate() {
-        System.out.println("Waiting for Provider dataplane to come online");
-        // wait until provider's dataplane is available
-        await().atMost(TEST_TIMEOUT_DURATION)
-                .pollDelay(TEST_POLL_DELAY)
-                .untilAsserted(() -> {
-                    var jp = baseRequest()
-                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4/dataplanes")
-                            .then()
-                            .statusCode(200)
-                            .log().ifValidationFails()
-                            .extract().body().jsonPath();
-
-                    var state = jp.getString("state");
-                    assertThat(state).isEqualTo("[REGISTERED]");
-                });
-
-        System.out.println("Provider dataplane is online, fetching catalog");
-
         var catalogRequestBody = Json.createObjectBuilder()
                 .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/connector/management/v2"))
                 .add("@type", "CatalogRequest")

@@ -1,17 +1,17 @@
 meta {
   name: Download Data from Public API
   type: http
-  seq: 8
+  seq: 9
 }
 
 get {
-  url: {{CONSUMER_DP}}/api/proxy/flows/{{flowId}}
+  url: {{CONSUMER_DP}}/api/proxy/flows/{{flowId}}/data
   body: none
   auth: none
 }
 
 headers {
-  Authorization: {{AUTHORIZATION}}
+  ~Authorization: {{accessToken}}
 }
 
 script:post-response {

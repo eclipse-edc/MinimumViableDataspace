@@ -17,6 +17,9 @@ package org.eclipse.edc.mvd.dataplane.data;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 import okhttp3.Request;
 import org.eclipse.edc.http.spi.EdcHttpClient;
 import org.eclipse.edc.spi.monitor.Monitor;
@@ -30,32 +33,48 @@ public class DataPlanePublicApiController {
 
     private final EdcHttpClient client;
     private final Monitor monitor;
+    private final String expectedAuthHeader;
 
-    public DataPlanePublicApiController(EdcHttpClient client, Monitor monitor) {
+    public DataPlanePublicApiController(EdcHttpClient client, Monitor monitor, String expectedAuthHeader) {
         this.client = client;
         this.monitor = monitor;
+        this.expectedAuthHeader = expectedAuthHeader;
     }
 
     @GET
     @Path("/source")
-    public String dataSource() {
-        return downloadJsonFromUrl("https://jsonplaceholder.typicode.com/todos");
+    public Response dataSource(@Context HttpHeaders headers) {
+        if (!isAuthorized(headers)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        return Response.ok(downloadJsonFromUrl("https://jsonplaceholder.typicode.com/todos")).build();
     }
 
 
 
     @GET
     @Path("/source/{resource}")
-    public String dataSource(@PathParam("resource") String resource) {
+    public Response dataSource(@PathParam("resource") String resource, @Context HttpHeaders headers) {
+        if (!isAuthorized(headers)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         var formatted = "https://jsonplaceholder.typicode.com/%s".formatted(resource);
-        return downloadJsonFromUrl(formatted);
+        return Response.ok(downloadJsonFromUrl(formatted)).build();
     }
 
     @GET
     @Path("/source/{resource}/{id}")
-    public String dataSource(@PathParam("resource") String resource, @PathParam("id") String id) {
+    public Response dataSource(@PathParam("resource") String resource, @PathParam("id") String id, @Context HttpHeaders headers) {
+        if (!isAuthorized(headers)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
         var formatted = "https://jsonplaceholder.typicode.com/%s/%s".formatted(resource, id);
-        return downloadJsonFromUrl(formatted);
+        return Response.ok(downloadJsonFromUrl(formatted)).build();
+    }
+
+    private boolean isAuthorized(HttpHeaders headers) {
+        var authHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
+        return expectedAuthHeader.equals(authHeader);
     }
 
     private @NotNull String downloadJsonFromUrl(String formatted) {
