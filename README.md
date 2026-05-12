@@ -1,39 +1,41 @@
 # Minimum Viable Dataspace Demo
 
 <!-- TOC -->
+
 * [Minimum Viable Dataspace Demo](#minimum-viable-dataspace-demo)
-  * [1. Introduction](#1-introduction)
-  * [2. Purpose of this Demo](#2-purpose-of-this-demo)
-    * [2.1 Version stability and backwards compatibility guarantees](#21-version-stability-and-backwards-compatibility-guarantees)
-    * [2.2 Which version should I use?](#22-which-version-should-i-use)
-  * [3. The Scenario](#3-the-scenario)
-    * [3.1 Participants](#31-participants)
-    * [3.2 Data setup](#32-data-setup)
-    * [3.3 Access control](#33-access-control)
-    * [3.4 DIDs, participant lists, and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
-  * [4. Running the Demo (Kubernetes)](#4-running-the-demo-kubernetes)
-    * [4.1 Create the K8S cluster](#41-create-the-k8s-cluster)
-    * [4.2 Deploy the MVD components](#42-deploy-the-mvd-components)
-      * [4.2.1 Using pre-built images](#421-using-pre-built-images)
-      * [4.2.2 Building from source](#422-building-from-source)
-      * [4.2.3 Deploy MVD components](#423-deploy-mvd-components)
-    * [4.3 Seed the dataspace](#43-seed-the-dataspace)
-    * [4.4 Debugging MVD in Kubernetes](#44-debugging-mvd-in-kubernetes)
-  * [5. Executing REST requests using Bruno](#5-executing-rest-requests-using-bruno)
-    * [5.1 Get the catalog](#51-get-the-catalog)
-    * [5.2 Initiate the contract negotiation](#52-initiate-the-contract-negotiation)
-    * [5.3 Query negotiation status](#53-query-negotiation-status)
-    * [5.4 Initiate data transfer](#54-initiate-data-transfer)
-    * [5.5 Query data transfers](#55-query-data-transfers)
-    * [5.6 Get EndpointDataReference](#56-get-endpointdatareference)
-    * [5.7 Get access token for EDR](#57-get-access-token-for-edr)
-    * [5.8 Fetch data](#58-fetch-data)
-  * [6. Custom extensions in MVD](#6-custom-extensions-in-mvd)
-  * [7. Advanced topics](#7-advanced-topics)
-    * [7.2 Regenerating key pairs](#72-regenerating-key-pairs)
-  * [8. Other caveats, shortcuts, and workarounds](#8-other-caveats-shortcuts-and-workarounds)
-    * [8.2 DID resolution for participants](#82-did-resolution-for-participants)
-    * [8.3 Seed Jobs](#83-seed-jobs)
+    * [1. Introduction](#1-introduction)
+    * [2. Purpose of this Demo](#2-purpose-of-this-demo)
+        * [2.1 Version stability and backwards compatibility guarantees](#21-version-stability-and-backwards-compatibility-guarantees)
+        * [2.2 Which version should I use?](#22-which-version-should-i-use)
+    * [3. The Scenario](#3-the-scenario)
+        * [3.1 Participants](#31-participants)
+        * [3.2 Data setup](#32-data-setup)
+        * [3.3 Access control](#33-access-control)
+        * [3.4 DIDs, participant lists, and VerifiableCredentials](#34-dids-participant-lists-and-verifiablecredentials)
+    * [4. Running the Demo (Kubernetes)](#4-running-the-demo-kubernetes)
+        * [4.1 Create the K8S cluster](#41-create-the-k8s-cluster)
+        * [4.2 Deploy the MVD components](#42-deploy-the-mvd-components)
+            * [4.2.1 Using pre-built images](#421-using-pre-built-images)
+            * [4.2.2 Building from source](#422-building-from-source)
+            * [4.2.3 Deploy MVD components](#423-deploy-mvd-components)
+        * [4.3 Seed the dataspace](#43-seed-the-dataspace)
+        * [4.4 Debugging MVD in Kubernetes](#44-debugging-mvd-in-kubernetes)
+    * [5. Executing REST requests using Bruno](#5-executing-rest-requests-using-bruno)
+        * [5.1 Get the catalog](#51-get-the-catalog)
+        * [5.2 Initiate the contract negotiation](#52-initiate-the-contract-negotiation)
+        * [5.3 Query negotiation status](#53-query-negotiation-status)
+        * [5.4 Initiate data transfer](#54-initiate-data-transfer)
+        * [5.5 Query data transfers](#55-query-data-transfers)
+        * [5.6 Get EndpointDataReference](#56-get-endpointdatareference)
+        * [5.7 Get access token for EDR](#57-get-access-token-for-edr)
+        * [5.8 Fetch data](#58-fetch-data)
+    * [6. Custom extensions in MVD](#6-custom-extensions-in-mvd)
+    * [7. Advanced topics](#7-advanced-topics)
+        * [7.2 Regenerating key pairs](#72-regenerating-key-pairs)
+    * [8. Other caveats, shortcuts, and workarounds](#8-other-caveats-shortcuts-and-workarounds)
+        * [8.2 DID resolution for participants](#82-did-resolution-for-participants)
+        * [8.3 Seed Jobs](#83-seed-jobs)
+
 <!-- TOC -->
 
 ## 1. Introduction
@@ -218,8 +220,10 @@ All commands are executed from the **repository's root folder** unless stated ot
 > Since this is not a production deployment, all applications are deployed _in the same cluster_ and in the same
 > namespace, plainly for the sake of simplicity.
 
-This builds the runtime images and creates the following docker images: `ghcr.io/eclipse-edc/minimumviabledataspace/controlplane:latest`,
-`ghcr.io/eclipse-edc/minimumviabledataspace/dataplane:latest`, `ghcr.io/eclipse-edc/minimumviabledataspace/issuerservice:latest` and
+This builds the runtime images and creates the following docker images:
+`ghcr.io/eclipse-edc/minimumviabledataspace/controlplane:latest`,
+`ghcr.io/eclipse-edc/minimumviabledataspace/dataplane:latest`,
+`ghcr.io/eclipse-edc/minimumviabledataspace/issuerservice:latest` and
 `ghcr.io/eclipse-edc/minimumviabledataspace/identity-hub:latest` in the local docker image cache.
 
 PostgreSQL and Hashicorp Vault obviously require additional configuration, which is handled by the Kubernetes manifests
@@ -238,11 +242,12 @@ kind create cluster -n mvd
 
 ### 4.2 Deploy the MVD components
 
-The following commands deploy the MVD components to the cluster. 
+The following commands deploy the MVD components to the cluster.
 
 #### 4.2.1 Using pre-built images
 
-If you are using the Docker images from the GitHub container registry, no further action is required. Process to step [4.2.3](#423-deploy-mvd-components) 
+If you are using the Docker images from the GitHub container registry, no further action is required. Process to
+step [4.2.3](#423-deploy-mvd-components)
 
 #### 4.2.2 Building from source
 
@@ -331,7 +336,8 @@ Remote Debugging is possible, but Kubernetes port-forwards of port 1044 are nece
 
 ### 4.3 Seed the dataspace
 
-Once all pods are up and running, and all seed jobs have completed, all necessary demo data is already in place, **no need
+Once all pods are up and running, and all seed jobs have completed, all necessary demo data is already in place, **no
+need
 to execute scripts or manually invoke the REST API**.
 
 This includes:
@@ -495,49 +501,54 @@ response, we can move on.
 
 The type of data transfer that we are using here (`HttpData-PULL`) means that we can fetch data from the provider
 dataplane's public endpoint, as we would query any other REST API. However, an access token is needed to authenticate
-the request. This access token is provided to the consumer in the form of an EndpointDataReference (EDR). We must thus
-query the consumer's EDR endpoint to obtain the token.
+the request. This access token is provided to the consumer in the form of an EndpointProperty which we can obtain by
+using the`ControlPlane Management/Get Open Dataflows` request.
 
-### 5.6 Get EndpointDataReference
+### 5.6 Get Open Dataflows
 
-Using the `ControlPlane Management/Get Cached EDRs` request, we fetch the EDR and note down the value of the `@id`
-field, for example `392d1767-e546-4b54-ab6e-6fb20a3dc12a`. This should be identical to the value of the
-`transferProcessId` field.
+Using the `ControlPlane Management/Get Open Dataflows` request, we fetch the data flow and note down the value of the
+key entry in the map, for example `392d1767-e546-4b54-ab6e-6fb20a3dc12a`. This should be identical to the value of
+the `transferProcessId` field.
 
-With that value, we can obtain the access token for this particular EDR.
-
-### 5.7 Get access token for EDR
-
-In the `ControlPlane Management/Get EDR DataAddress for TransferId` request we have to paste the `transferProcessId`
-value from the previous step in the URL path, for example:
-
-```
-{{HOST}}/api/management/v3/edrs/392d1767-e546-4b54-ab6e-6fb20a3dc12a/dataaddress
-```
-
-Executing this request produces a response that contains both the endpoint where we can fetch the data, and the
-authorization token:
+The access token is conveyed in the `endpointProperties` field of the response, in particular the `"authorization"`
+field:
 
 ```json
 {
-  //...
-  "endpoint": "http://provider-qna-dataplane:11002/api/public",
-  "authType": "bearer",
-  "endpointType": "https://w3id.org/idsa/v4.1/HTTP",
-  "authorization": "eyJra.....PbovoypJGtWJst30vD9zy5w"
-  //...
+  "f9f3ee24-6968-4603-867f-71cbf2bf9152": {
+    "@type": "DataAddress",
+    "endpointType": "http",
+    "endpoint": "http://dataplane.provider.svc.cluster.local:11002/api/public/63423d1f-846c-4fa4-bfc6-e034f9ad6a85/data/source",
+    "endpointProperties": [
+      {
+        "type": null,
+        "name": "access_token",
+        "value": "eyJraWQiOiJkYXRhcGxhbmUtcHVibGljIiwiYWxnIjoiRWQyNTUxOSJ9.eyJpc3MiOiJwcm92aWRlci1kYXRhcGxhbmUiLCJzdWIiOiI2MzQyM2QxZi04NDZjLTRmYTQtYmZjNi1lMDM0ZjlhZDZhODUiLCJhdWQiOiJwcm92aWRlci1kYXRhcGxhbmUiLCJzY29wZSI6ImRhdGFmbG93In0.gjmSsp5eROrvW98_a0G1QwfCSi7d6yy7Bcye4mT2vhRwWjXPXcJyX0I8T1SE7fh1i3Ab5hKcPAvrvdYkrSI8Cw"
+      },
+      {
+        "type": null,
+        "name": "https://w3id.org/edc/v0.0.1/ns/type",
+        "value": "http"
+      },
+      {
+        "type": null,
+        "name": "https://w3id.org/edc/v0.0.1/ns/endpoint",
+        "value": "http://dataplane.provider.svc.cluster.local:11002/api/public/63423d1f-846c-4fa4-bfc6-e034f9ad6a85/data/source"
+      }
+    ]
+  }
 }
 ```
 
-Note that the token was abbreviated for legibility.
+### 5.7 Download the data
 
-### 5.8 Fetch data
+The data plane comes with a convenience API, that allows us to download data directly from the provider's public
+endpoint. Using that "proxy" API, we can simply invoke the `ControlPlane Management/Download Data from Public API`
+providing the dataflow ID in the path.
 
-Using the endpoint and the authorization token from the previous step, we can then download data using the `ControlPlane
-Management/Download Data from Public API` request. To do that, the token must be copied into the request's
-`Authorization` header.
-
-Important: do not prepend a `bearer` prefix!
+Thus, the request travels Bruno → Consumer Dataplane (Proxy API) → Provider Dataplane (Public API), and since the
+consumer dataplane maintains a list of ongoing dataflows plus auth tokens, all we need to do is provide the dataflow ID
+to the proxy API.
 
 This will return some dummy JSON data.
 
