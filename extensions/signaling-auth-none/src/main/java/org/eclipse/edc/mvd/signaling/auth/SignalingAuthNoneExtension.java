@@ -20,6 +20,7 @@ import org.eclipse.edc.runtime.metamodel.annotation.Provides;
 import org.eclipse.edc.signaling.spi.authorization.Header;
 import org.eclipse.edc.signaling.spi.authorization.SignalingAuthorization;
 import org.eclipse.edc.signaling.spi.authorization.SignalingAuthorizationRegistry;
+import org.eclipse.edc.spi.result.Result;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 
@@ -39,7 +40,7 @@ public class SignalingAuthNoneExtension implements ServiceExtension {
         }
 
         @Override
-        public org.eclipse.edc.spi.result.Result<String> isAuthorized(Function<String, String> headerGetter, AuthorizationProfile authorizationProfile) {
+        public Result<String> isAuthorized(Function<String, String> headerGetter) {
             return success("dummy-token");
         }
 
