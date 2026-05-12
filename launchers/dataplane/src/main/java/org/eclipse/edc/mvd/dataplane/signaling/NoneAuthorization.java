@@ -17,6 +17,9 @@ package org.eclipse.edc.mvd.dataplane.signaling;
 import org.eclipse.dataplane.domain.Result;
 import org.eclipse.dataplane.domain.registration.Authorization;
 
+/**
+ * NOOP authorization between control plane and data plane of a single participant.
+ */
 public class NoneAuthorization implements Authorization {
     @Override
     public String type() {

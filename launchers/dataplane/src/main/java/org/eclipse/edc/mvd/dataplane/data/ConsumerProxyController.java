@@ -24,6 +24,10 @@ import org.eclipse.edc.mvd.dataplane.signaling.ConsumerDataHandler;
 
 import java.util.Map;
 
+/**
+ * Controller that allows consumers to transfer data from the provider by simply providing a data flow ID. This is typically
+ * used on consumer data planes.
+ */
 @Path("/flows")
 @Produces("application/json")
 public class ConsumerProxyController {

@@ -34,7 +34,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- * This controller serves as the public endpoint for the data plane. Its endpoints are intended for consumers to download data
+ * This controller serves as the public endpoint for the data plane. Its endpoints are intended for consumers to download data.
+ * This is typically exposed by provider data planes, and consumed by consumer data planes.
  */
 @Path("/{dataflowId}/data")
 public class DataPlanePublicApiController {

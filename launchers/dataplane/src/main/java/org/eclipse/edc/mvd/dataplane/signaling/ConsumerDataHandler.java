@@ -25,6 +25,10 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Small helper class that receives authorization and endpoint information when a data flow enters the "STARTED" state on
+ * data planes. It records that information and uses it later to download the data.
+ */
 public class ConsumerDataHandler {
 
     private final EdcHttpClient httpClient;
