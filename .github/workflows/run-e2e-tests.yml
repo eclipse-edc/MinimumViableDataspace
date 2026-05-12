@@ -89,16 +89,37 @@ jobs:
 
           sleep 5 # to be safe
 
-      - name: "Deploy MVD"
+      - name: "Deploy MVD common resources"
         run: |-
-          kubectl apply -k k8s/ 
+          kubectl apply -k k8s/common
+          kubectl wait -A \
+            --for=condition=ready pod \
+            --selector=type=edc-infra \
+            --timeout=120s || { kubectl get pods -A; exit 1; }
 
-      - name: "Wait for MVD to be ready"
+      - name: "Deploy MVD issuer resources"
         run: |-
+          kubectl apply -k k8s/issuer
           kubectl wait -A \
             --selector=type=edc-job \
             --for=condition=complete job --all \
-            --timeout=300s || kubectl get pods -A
+            --timeout=240s || { kubectl get pods -A; exit 1; }
+
+      - name: "Deploy MVD consumer resources"
+        run: |-
+          kubectl apply -k k8s/consumer
+          kubectl wait -A \
+            --selector=type=edc-job \
+            --for=condition=complete job --all \
+            --timeout=240s || { kubectl get pods -A; exit 1; }
+
+      - name: "Deploy MVD provider resources"
+        run: |-
+          kubectl apply -k k8s/provider
+          kubectl wait -A \
+            --selector=type=edc-job \
+            --for=condition=complete job --all \
+            --timeout=240s || { kubectl get pods -A; exit 1; }
 
 
       - name: "Run E2E Test"
