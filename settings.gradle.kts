@@ -27,8 +27,7 @@ pluginManagement {
 rootProject.name = "mvd"
 include(":tests:end2end")
 
-include(":extensions:data-plane-public-api-v2")
-include(":extensions:data-plane-registration")
+include(":extensions:signaling-auth-none")
 
 // launcher modules
 include(":launchers:identity-hub")

@@ -19,7 +19,7 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(project(":extensions:data-plane-registration"))
+    runtimeOnly(project(":extensions:signaling-auth-none"))
     runtimeOnly(libs.edc.api.cel.v5)
     runtimeOnly(libs.edc.core.cel)
     runtimeOnly(libs.edc.decentralized.claims.cel)

@@ -1,0 +1,37 @@
+meta {
+  name: Get open dataflow by ID
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{CONSUMER_DP}}/api/proxy/flows/{{flowId}}
+  body: json
+  auth: none
+}
+
+body:text {
+  {
+      "@context": [
+      "https://w3id.org/edc/connector/management/v2"
+      ],
+      "@type": "QuerySpec"
+  }
+}
+
+script:post-response {
+  const body = res.getBody()
+  
+  const token = body.endpointProperties.find(obj => obj.name === "access_token");
+  expect(token).not.to.be.undefined
+  console.log(token.value)
+  bru.setVar("accessToken", token.value)
+  
+  
+  
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

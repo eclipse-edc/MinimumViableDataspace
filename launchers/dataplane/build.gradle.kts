@@ -19,11 +19,22 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":extensions:signaling-auth-none"))
+    implementation(libs.edc.boot)
+    implementation(libs.edc.core.runtime)
+    implementation(libs.edc.ext.http)
+    implementation(libs.dataplane.sdk)
+    implementation(libs.edc.spi.token)
+    implementation(libs.edc.lib.token)
+    implementation(libs.edc.lib.crypto)
+    implementation(libs.edc.lib.keys)
+
+    // needed for the key seed extension
     runtimeOnly(libs.tink)
-    implementation(libs.edc.bom.dataplane) {
-        exclude("org.eclipse.edc", "data-plane-self-registration")
-    }
-    runtimeOnly(project(":extensions:data-plane-public-api-v2"))
+    implementation(libs.nimbus.jwt)
+
+    // for kubernetes probes
+    runtimeOnly(libs.edc.api.observability)
 
     runtimeOnly(libs.edc.core.participantcontext.config)
     runtimeOnly(libs.edc.vault.hashicorp)

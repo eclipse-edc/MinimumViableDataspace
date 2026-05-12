@@ -3,7 +3,6 @@
     "odrl": "http://www.w3.org/ns/odrl/2/"
   },
   "@type": "TransferRequest",
-  "assetId": "asset-1",
   "counterPartyAddress":  "{{PROVIDER_DSP_URL}}",
   "connectorId": "{{PROVIDER_ID}}",
   "contractId": "{{CONTRACT_ID}}",

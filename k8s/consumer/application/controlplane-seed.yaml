@@ -53,16 +53,17 @@ spec:
               set -e
 
               MGMT_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
-
-              # Posts to the management API, treating 409 (already exists) as success.
-              create_cel() {
-                HTTP_STATUS=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "${MGMT_URL}" \
+              post() {
+                RESPONSE=$(curl -sS -w "\n%{http_code}" -X "$2" "$1" \
                   -H "Content-Type: application/json" \
-                  -d "$1")
+                  -d "$3")
+                HTTP_STATUS=$(echo "${RESPONSE}" | tail -n1)
+                BODY=$(echo "${RESPONSE}" | sed '$d')
                 if [ "${HTTP_STATUS}" -eq 409 ]; then
-                  echo "⚠ CEL Expression already exists (HTTP 409), skipping."
+                  echo "⚠ Already exists (HTTP 409), skipping."
                 elif [ "${HTTP_STATUS}" -lt 200 ] || [ "${HTTP_STATUS}" -ge 300 ]; then
                   echo "✗ Unexpected HTTP status: ${HTTP_STATUS}"
+                  echo "Response body: ${BODY}"
                   exit 1
                 fi
               }
@@ -71,7 +72,7 @@ spec:
               echo "Step 1: Create Membership CEL Expression "
               echo "================================================"
 
-              create_cel '{
+              post "${MGMT_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -94,7 +95,7 @@ spec:
               echo "Step 2: Create ManufacturerCredential CEL Expression"
               echo "================================================"
 
-              create_cel '{
+              post "${MGMT_URL}" "POST" '{
                 "@context": [
                   "https://w3id.org/edc/connector/management/v2"
                 ],
@@ -112,6 +113,40 @@ spec:
 
               echo "✓ ManufacturerCredential CEL Expression done"
 
+              echo ""
+              echo "================================================"
+              echo "Step 3a: Register dataplane with controlplane"
+              echo "================================================"
+
+              REG_URL="http://controlplane.consumer.svc.cluster.local:8081/api/mgmt/v4/dataplanes"
+              post "${REG_URL}" "PUT" '{
+                "dataplaneId": "anonymous",
+                "endpoint": "http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/dataflows",
+                "transferTypes": [ "HttpData-PULL" ],
+                "labels": [],
+                "authorization": {
+                  "type": "none"
+                }
+              }'
+            
+              echo "✓ dataplane registered with controlplane"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 3b: Register controlplane with dataplane"
+              echo "================================================"
+
+              REG_URL="http://dataplane.consumer.svc.cluster.local:8182/api/signaling/v1/controlplanes"
+              post "${REG_URL}" "PUT" '{
+                "controlplaneId": "anonymous",
+                "endpoint": "http://controlplane.consumer.svc.cluster.local:8182/api/signaling",
+                "authorization": {
+                  "type": "none"
+                }
+              }'
+              
+              echo "✓ controlplane registered with dataplane"
+              
               echo ""
               echo "================================================"
               echo "Controlplane seeding completed successfully!"

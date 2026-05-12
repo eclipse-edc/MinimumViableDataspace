@@ -45,14 +45,11 @@ import static org.eclipse.edc.demo.tests.TestConstants.TEST_TIMEOUT_DURATION;
 public class TransferEndToEndTest {
     // Management API base URL of the consumer connector, goes through Ingress controller
     private static final String CONSUMER_MANAGEMENT_URL = "http://cp.consumer.localhost:8080";
-    // Catalog Query API URL of the consumer connector, goes through ingress controller
-    private static final String CONSUMER_CATALOG_URL = "http://127.0.0.1/consumer/fc";
     // DSP service URL of the provider, not reachable outside the cluster
     private static final String PROVIDER_DSP_URL = "http://controlplane.provider.svc.cluster.local:8082/api/dsp/2025-1";
     // DID of the provider company
     private static final String PROVIDER_ID = "did:web:identityhub.provider.svc.cluster.local%3A7083:provider";
-    // public API endpoint of the provider-qna connector, goes through the ingress controller
-    private static final String PROVIDER_PUBLIC_URL = "http://dp.provider.localhost:8080/public";
+    private static final String CONSUMER_PROXY_URL = "http://dp.consumer.localhost:8080/api/proxy";
     private static final String PROVIDER_MANAGEMENT_URL = "http://cp.provider.localhost:8080";
 
     private final TypeTransformerRegistry transformerRegistry = new TypeTransformerRegistryImpl();
@@ -69,24 +66,6 @@ public class TransferEndToEndTest {
     @DisplayName("Tests a successful End-to-End contract negotiation and data transfer")
     @Test
     void transferData_hasPermission_shouldTransferData() {
-        System.out.println("Waiting for Provider dataplane to come online");
-        // wait until provider's dataplane is available
-        await().atMost(TEST_TIMEOUT_DURATION)
-                .pollDelay(TEST_POLL_DELAY)
-                .untilAsserted(() -> {
-                    var jp = baseRequest()
-                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4/dataplanes")
-                            .then()
-                            .statusCode(200)
-                            .log().ifValidationFails()
-                            .extract().body().jsonPath();
-
-                    var state = jp.getString("state");
-                    assertThat(state).isEqualTo("[REGISTERED]");
-                });
-
-        System.out.println("Provider dataplane is online, fetching catalog");
-
         var catalogRequestBody = Json.createObjectBuilder()
                 .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/connector/management/v2"))
                 .add("@type", "CatalogRequest")
@@ -178,36 +157,35 @@ public class TransferEndToEndTest {
                     assertThat(jp.getString("state")).contains("STARTED");
                 });
 
-        System.out.printf("Fetch EDR with ID %s%n", transferProcessId);
-        // fetch EDR for transfer processs
+        System.out.printf("Fetch dataflow with ID %s from custom proxy%n", transferProcessId);
         var endpoint = new AtomicReference<String>();
         var token = new AtomicReference<String>();
         await().atMost(TEST_TIMEOUT_DURATION)
                 .pollDelay(TEST_POLL_DELAY)
                 .untilAsserted(() -> {
                     var jp = baseRequest()
-                            .get(CONSUMER_MANAGEMENT_URL + "/api/mgmt/v3/edrs/%s/dataaddress".formatted(transferProcessId))
+                            .get(CONSUMER_PROXY_URL + "/flows/%s".formatted(transferProcessId))
                             .then()
                             .log().ifValidationFails()
                             .statusCode(200)
-                            .onFailMessage("Expected to find an EDR with transfer ID %s but did not!".formatted(transferProcessId))
+                            .onFailMessage("Expected to find a DataFlow ID %s but did not!".formatted(transferProcessId))
                             .extract().body().jsonPath();
 
                     endpoint.set(jp.getString("endpoint"));
-                    token.set(jp.getString("authorization"));
+                    token.set(jp.get("endpointProperties.find { it.name == 'access_token' }.value"));
 
-                    assertThat(endpoint.get()).isNotNull().endsWith("/api/public");
+                    assertThat(endpoint.get()).isNotNull().matches(".*/api/public/.*/data/source");
                     assertThat(token.get()).isNotNull();
                 });
 
         //download exemplary JSON data from public endpoint
         var response = given()
                 .header("Authorization", token.get())
-                .get(PROVIDER_PUBLIC_URL + "/api/public")
+                .get(CONSUMER_PROXY_URL + "/flows/%s/data".formatted(transferProcessId))
                 .then()
                 .log().ifError()
                 .statusCode(200)
-                .extract().body().asString();
+                .extract().body().as(Object[].class);
 
         assertThat(response).isNotEmpty();
     }
@@ -215,24 +193,6 @@ public class TransferEndToEndTest {
     @DisplayName("Tests a failing End-to-End contract negotiation because of an unfulfilled policy")
     @Test
     void transferData_doesNotHavePermission_shouldTerminate() {
-        System.out.println("Waiting for Provider dataplane to come online");
-        // wait until provider's dataplane is available
-        await().atMost(TEST_TIMEOUT_DURATION)
-                .pollDelay(TEST_POLL_DELAY)
-                .untilAsserted(() -> {
-                    var jp = baseRequest()
-                            .get(PROVIDER_MANAGEMENT_URL + "/api/mgmt/v4/dataplanes")
-                            .then()
-                            .statusCode(200)
-                            .log().ifValidationFails()
-                            .extract().body().jsonPath();
-
-                    var state = jp.getString("state");
-                    assertThat(state).isEqualTo("[REGISTERED]");
-                });
-
-        System.out.println("Provider dataplane is online, fetching catalog");
-
         var catalogRequestBody = Json.createObjectBuilder()
                 .add("@context", Json.createObjectBuilder().add("edc", "https://w3id.org/edc/connector/management/v2"))
                 .add("@type", "CatalogRequest")

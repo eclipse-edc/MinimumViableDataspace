@@ -12,6 +12,4 @@
 #
 #
 
-
-org.eclipse.edc.mvd.dataplane.keyseed.KeySeedExtension
-org.eclipse.edc.mvd.dataplane.SignalingDataPlaneRuntimeExtension
+org.eclipse.edc.mvd.signaling.auth.SignalingAuthNoneExtension

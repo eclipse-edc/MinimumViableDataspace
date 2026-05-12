@@ -28,10 +28,10 @@ import java.util.UUID;
 
 public class KeySeedExtension implements ServiceExtension {
 
-    @Setting(key = "edc.transfer.proxy.token.signer.privatekey.alias")
+    @Setting(key = "edc.transfer.proxy.token.signer.privatekey.alias", defaultValue = "privatekey-alias")
     private String tokenSignerPrivateKeyAlias;
 
-    @Setting(key = "edc.transfer.proxy.token.verifier.publickey.alias")
+    @Setting(key = "edc.transfer.proxy.token.verifier.publickey.alias", defaultValue = "publickey-alias")
     private String tokenVerifierPublicKeyAlias;
 
     @Inject

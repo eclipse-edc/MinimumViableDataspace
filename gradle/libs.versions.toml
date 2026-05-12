@@ -3,10 +3,12 @@ format.version = "1.1"
 
 [versions]
 awaitility = "4.3.0"
+dataplane-sdk = "0.0.10-SNAPSHOT"
 edc = "0.18.0-SNAPSHOT"
 edc-build = "1.5.0"
 jackson = "2.21.2"
 jakarta-json = "2.1.3"
+nimbus = "10.8"
 parsson = "1.1.6"
 postgres = "42.7.10"
 restAssured = "6.0.0"
@@ -47,13 +49,16 @@ edc-decentralized-claims-cel = { module = "org.eclipse.edc:decentralized-claims-
 edc-dcp-core = { module = "org.eclipse.edc:decentralized-claims-core", version.ref = "edc" }
 edc-vault-hashicorp = { module = "org.eclipse.edc:vault-hashicorp", version.ref = "edc" }
 edc-spi-identity-trust = { module = "org.eclipse.edc:decentralized-claims-spi", version.ref = "edc" }
+edc-spi-boot = { module = "org.eclipse.edc:boot-spi", version.ref = "edc" }
 edc-spi-transform = { module = "org.eclipse.edc:transform-spi", version.ref = "edc" }
 edc-spi-catalog = { module = "org.eclipse.edc:catalog-spi", version.ref = "edc" }
+edc-spi-token = { module = "org.eclipse.edc:token-spi", version.ref = "edc" }
 edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
 edc-spi-http = { module = "org.eclipse.edc:http-spi", version.ref = "edc" }
 edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
 edc-spi-dataplane = { module = "org.eclipse.edc:data-plane-spi", version.ref = "edc" }
 edc-spi-dataplane-selector = { module = "org.eclipse.edc:data-plane-selector-spi", version.ref = "edc" }
+edc-spi-dataplane-signaling = { module = "org.eclipse.edc:data-plane-signaling-spi", version.ref = "edc" }
 
 # EDC lib dependencies
 edc-lib-jws2020 = { module = "org.eclipse.edc:jws2020-lib", version.ref = "edc" }
@@ -63,6 +68,7 @@ edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
 edc-lib-jsonld = { module = "org.eclipse.edc:json-ld-lib", version.ref = "edc" }
 edc-lib-http = { module = "org.eclipse.edc:http-lib", version.ref = "edc" }
 edc-lib-util = { module = "org.eclipse.edc:util-lib", version.ref = "edc" }
+edc-lib-token = { module = "org.eclipse.edc:token-lib", version.ref = "edc" }
 edc-lib-sql = { module = "org.eclipse.edc:sql-lib", version.ref = "edc" }
 edc-lib-util-dataplane = { module = "org.eclipse.edc:data-plane-util", version.ref = "edc" }
 edc-lib-oauth2-authn = { module = "org.eclipse.edc:auth-authentication-oauth2-lib", version.ref = "edc" }
@@ -108,6 +114,8 @@ jakarta-rsApi = { module = "jakarta.ws.rs:jakarta.ws.rs-api", version.ref = "rsA
 tink = { module = "com.google.crypto.tink:tink", version = "1.21.0" }
 jackson-datatype-jakarta-jsonp = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jakarta-jsonp", version.ref = "jackson" }
 parsson = { module = "org.eclipse.parsson:parsson", version.ref = "parsson" }
+dataplane-sdk = { module = "org.eclipse.dataplane-core:dataplane-sdk", version.ref = "dataplane-sdk" }
+nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
 
 # BOM modules
 edc-bom-controlplane = { module = "org.eclipse.edc:controlplane-dcp-bom", version.ref = "edc" }

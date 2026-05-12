@@ -20,6 +20,7 @@ body:json {
     "counterPartyAddress": "{{PROVIDER_DSP}}",
     "connectorId": "{{PROVIDER_ID}}",
     "contractId": "{{CONTRACT_AGREEMENT_ID}}",
+    
     "dataDestination": {
       "@type": "DataAddress",
       "type": "HttpProxy"
@@ -27,6 +28,7 @@ body:json {
     "protocol": "dataspace-protocol-http:2025-1",
     "transferType": "HttpData-PULL"
   }
+  
 }
 
 script:pre-request {

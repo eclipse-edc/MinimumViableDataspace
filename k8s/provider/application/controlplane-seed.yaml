@@ -57,7 +57,7 @@ spec:
               ASSETS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/assets"
               POLICIES_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/policydefinitions"
               CONTRACTDEFS_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/contractdefinitions"
-              DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes"
+              DATAPLANE_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4beta/dataplanes/ZGlkOndlYjppZGVudGl0eWh1Yi5wcm92aWRlci5zdmMuY2x1c3Rlci5sb2NhbCUzQTcwODM6cHJvdmlkZXI="
               CEL_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v5beta/celexpressions"
 
               # Posts to the management API, treating 409 (already exists) as success.
@@ -88,13 +88,6 @@ spec:
                   "@type": "Asset",
                   "properties": {
                     "description": "This asset requires Membership to view and Manufacturer (part_types=non_critical) to negotiate."
-                  },
-                  "dataAddress": {
-                    "@type": "DataAddress",
-                    "type": "HttpData",
-                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
-                    "proxyPath": "true",
-                    "proxyQueryParams": "true"
                   }
                 }'
 
@@ -113,13 +106,6 @@ spec:
                   "@type": "Asset",
                   "properties": {
                     "description": "This asset requires Membership to view and Manufacturer (part_types=all) to negotiate."
-                  },
-                  "dataAddress": {
-                    "@type": "DataAddress",
-                    "type": "HttpData",
-                    "baseUrl": "https://jsonplaceholder.typicode.com/todos",
-                    "proxyPath": "true",
-                    "proxyQueryParams": "true"
                   }
                 }'
 
@@ -305,16 +291,37 @@ spec:
               
               echo ""
               echo "================================================"
-              echo "Step 8: Register dataplane"
+              echo "Step 3a: Register dataplane with controlplane"
               echo "================================================"
 
-              post "${DATAPLANE_URL}" "POST" '{
-                "allowedSourceTypes": [ "HttpData", "HttpCertData" ],
-                "allowedTransferTypes": [ "HttpData-PULL" ],
-                "url": "http://dataplane.provider.svc.cluster.local:8083/api/control/v1/dataflows"
+              REG_URL="http://controlplane.provider.svc.cluster.local:8081/api/mgmt/v4/dataplanes"
+              post "${REG_URL}" "PUT" '{
+                "dataplaneId": "anonymous",
+                "endpoint": "http://dataplane.provider.svc.cluster.local:8182/api/signaling/v1/dataflows",
+                "transferTypes": [ "HttpData-PULL" ],
+                "labels": [],
+                "authorization": {
+                  "type": "none"
+                }
               }'
               
-              echo "✓ dataplane registered"              
+              echo "✓ dataplane registered with controlplane"
+              
+              echo ""
+              echo "================================================"
+              echo "Step 3b: Register controlplane with dataplane"
+              echo "================================================"
+
+              REG_URL="http://dataplane.provider.svc.cluster.local:8182/api/signaling/v1/controlplanes"
+              post "${REG_URL}" "PUT" '{
+                "controlplaneId": "anonymous",
+                "endpoint": "http://controlplane.provider.svc.cluster.local:8182/api/signaling",
+                "authorization": {
+                  "type": "none"
+                }
+              }'
+              
+              echo "✓ controlplane registered with dataplane"
               
               echo ""
               echo "================================================"
