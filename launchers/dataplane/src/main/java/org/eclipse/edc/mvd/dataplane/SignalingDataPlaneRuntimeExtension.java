@@ -14,12 +14,17 @@
 
 package org.eclipse.edc.mvd.dataplane;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.dataplane.Dataplane;
 import org.eclipse.dataplane.domain.DataAddress;
 import org.eclipse.dataplane.domain.Result;
 import org.eclipse.dataplane.domain.dataflow.DataFlow;
 import org.eclipse.dataplane.domain.registration.Oauth2ClientCredentialsAuthorization;
 import org.eclipse.edc.http.spi.EdcHttpClient;
+import org.eclipse.edc.keys.KeyParserRegistryImpl;
+import org.eclipse.edc.keys.LocalPublicKeyServiceImpl;
+import org.eclipse.edc.keys.VaultPrivateKeyResolver;
+import org.eclipse.edc.keys.keyparsers.JwkParser;
 import org.eclipse.edc.mvd.dataplane.data.ConsumerProxyController;
 import org.eclipse.edc.mvd.dataplane.data.DataPlanePublicApiController;
 import org.eclipse.edc.mvd.dataplane.signaling.ConsumerDataHandler;
@@ -29,10 +34,15 @@ import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.runtime.metamodel.annotation.Settings;
+import org.eclipse.edc.security.token.jwt.DefaultJwsSignerProvider;
 import org.eclipse.edc.spi.monitor.Monitor;
+import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.Hostname;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
+import org.eclipse.edc.token.JwtGenerationService;
+import org.eclipse.edc.token.TokenValidationServiceImpl;
+import org.eclipse.edc.token.spi.TokenGenerationService;
 import org.eclipse.edc.web.spi.WebService;
 import org.eclipse.edc.web.spi.configuration.ApiContext;
 import org.eclipse.edc.web.spi.configuration.PortMapping;
@@ -51,6 +61,10 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
     @Setting(key = "dataplane.id")
     private String dataplaneId;
+    @Setting(key = "edc.transfer.proxy.token.signer.privatekey.alias")
+    private String privateKeyId;
+    @Setting(key = "edc.transfer.proxy.token.verifier.publickey.alias")
+    private String publicKeyId;
     @Configuration
     private SignalingApiConfig signalingApiConfig;
 
@@ -75,6 +89,11 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
     @Inject
     private EdcHttpClient httpClient;
+
+    @Inject
+    private Vault vault;
+
+    private TokenGenerationService tokenGenerationService;
 
     @Override
     public String name() {
@@ -103,6 +122,14 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
         dataplane = builder.build();
 
+        //initialize token services
+        var registry = new KeyParserRegistryImpl();
+        registry.register(new JwkParser(new ObjectMapper(), context.getMonitor()));
+        var signerProvider = new DefaultJwsSignerProvider(new VaultPrivateKeyResolver(registry, vault, context.getMonitor(), context.getConfig()));
+        tokenGenerationService = new JwtGenerationService(signerProvider);
+        var tokenValidationService = new TokenValidationServiceImpl();
+        var publicKeyResolver = new LocalPublicKeyServiceImpl(vault, registry);
+
         var portMapping = new PortMapping(ApiContext.SIGNALING, signalingApiConfig.port(), signalingApiConfig.path());
         portMappingRegistry.register(portMapping);
 
@@ -114,7 +141,7 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
 
         webService.registerResource(ApiContext.SIGNALING, dataplane.controller());
         webService.registerResource(ApiContext.SIGNALING, dataplane.registrationController());
-        webService.registerResource(APICONTEXT_PUBLIC, new DataPlanePublicApiController(httpClient, monitor, "foobar"));
+        webService.registerResource(APICONTEXT_PUBLIC, new DataPlanePublicApiController(httpClient, monitor, tokenValidationService, publicKeyResolver));
         webService.registerResource(APICONTEXT_PROXY, new ConsumerProxyController(dataFetcher));
     }
 
@@ -134,11 +161,26 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
     private @NotNull Result<DataFlow> startDataFlow(DataFlow dataFlow) {
         switch (dataFlow.getTransferType()) {
             case "NonFinite-PULL", "Finite-PULL", "HttpData-PULL" -> {
-                var dataAddress = new DataAddress(dataFlow.getTransferType(), "http",
-                        publicApiConfig.dataSourceEndpoint(hostname.get()),
-                        List.of(new DataAddress.EndpointProperty("authorization", "access_token", "foobar")));
-                dataFlow.setDataAddress(dataAddress);
-                return Result.success(dataFlow);
+
+                var token = tokenGenerationService.generate(privateKeyId,
+                        tokenParameters -> tokenParameters.header("kid", publicKeyId),
+                        tokenParameters -> tokenParameters.claims("sub", dataFlow.getId()),
+                        tokenParameters -> tokenParameters.claims("scope", "dataflow"),
+                        tokenParameters -> tokenParameters.claims("aud", dataplaneId),
+                        tokenParameters -> tokenParameters.claims("iss", dataplaneId)
+                );
+
+                if (token.succeeded()) {
+                    var dataAddress = new DataAddress(dataFlow.getTransferType(), "http",
+                            publicApiConfig.dataSourceEndpoint(hostname.get(), dataFlow.getId()),
+                            List.of(new DataAddress.EndpointProperty("authorization", "access_token", token.getContent().getToken())));
+                    dataFlow.setDataAddress(dataAddress);
+                    return Result.success(dataFlow);
+                } else {
+                    return Result.failure(new RuntimeException("Token generation failed for data flow: " + dataFlow.getId()));
+                }
+
+
             }
             default -> {
                 return Result.failure(new RuntimeException("TransferType %s not supported".formatted(dataFlow.getTransferType())));
@@ -161,8 +203,8 @@ public class SignalingDataPlaneRuntimeExtension implements ServiceExtension {
     public record PublicApiConfig(
             @Setting(key = "web.http." + APICONTEXT_PUBLIC + ".path", defaultValue = "/api/public") String path,
             @Setting(key = "web.http." + APICONTEXT_PUBLIC + ".port", defaultValue = "11002") int port) {
-        public String dataSourceEndpoint(String hostname) {
-            return "http://%s:%d%s/data/source".formatted(hostname, port, path);
+        public String dataSourceEndpoint(String hostname, String dataFlowId) {
+            return "http://%s:%d%s/%s/data/source".formatted(hostname, port, path, dataFlowId);
         }
     }
 

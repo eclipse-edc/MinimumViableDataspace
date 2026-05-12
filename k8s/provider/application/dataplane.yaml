@@ -40,10 +40,10 @@ spec:
             - configMapRef:
                 name: dataplane-config
           ports:
-            - containerPort: 8182
-              name: signaling-port
             - containerPort: 1044
               name: debug-port
+            - containerPort: 8182
+              name: signaling-port
           livenessProbe:
             httpGet:
               path: /api/check/liveness

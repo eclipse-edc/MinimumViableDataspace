@@ -52,6 +52,7 @@ edc-spi-identity-trust = { module = "org.eclipse.edc:decentralized-claims-spi", 
 edc-spi-boot = { module = "org.eclipse.edc:boot-spi", version.ref = "edc" }
 edc-spi-transform = { module = "org.eclipse.edc:transform-spi", version.ref = "edc" }
 edc-spi-catalog = { module = "org.eclipse.edc:catalog-spi", version.ref = "edc" }
+edc-spi-token = { module = "org.eclipse.edc:token-spi", version.ref = "edc" }
 edc-spi-identity-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
 edc-spi-http = { module = "org.eclipse.edc:http-spi", version.ref = "edc" }
 edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
@@ -67,6 +68,7 @@ edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
 edc-lib-jsonld = { module = "org.eclipse.edc:json-ld-lib", version.ref = "edc" }
 edc-lib-http = { module = "org.eclipse.edc:http-lib", version.ref = "edc" }
 edc-lib-util = { module = "org.eclipse.edc:util-lib", version.ref = "edc" }
+edc-lib-token = { module = "org.eclipse.edc:token-lib", version.ref = "edc" }
 edc-lib-sql = { module = "org.eclipse.edc:sql-lib", version.ref = "edc" }
 edc-lib-util-dataplane = { module = "org.eclipse.edc:data-plane-util", version.ref = "edc" }
 edc-lib-oauth2-authn = { module = "org.eclipse.edc:auth-authentication-oauth2-lib", version.ref = "edc" }

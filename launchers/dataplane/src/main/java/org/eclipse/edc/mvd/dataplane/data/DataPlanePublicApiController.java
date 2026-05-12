@@ -22,40 +22,49 @@ import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
 import okhttp3.Request;
 import org.eclipse.edc.http.spi.EdcHttpClient;
+import org.eclipse.edc.keys.spi.PublicKeyResolver;
+import org.eclipse.edc.spi.iam.ClaimToken;
 import org.eclipse.edc.spi.monitor.Monitor;
+import org.eclipse.edc.spi.result.Result;
+import org.eclipse.edc.token.spi.TokenValidationRule;
+import org.eclipse.edc.token.spi.TokenValidationService;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Map;
 
 /**
  * This controller serves as the public endpoint for the data plane. Its endpoints are intended for consumers to download data
  */
-@Path("/data")
+@Path("/{dataflowId}/data")
 public class DataPlanePublicApiController {
 
     private final EdcHttpClient client;
     private final Monitor monitor;
-    private final String expectedAuthHeader;
+    private final TokenValidationService tokenValidationService;
+    private final PublicKeyResolver publicKeyResolver;
 
-    public DataPlanePublicApiController(EdcHttpClient client, Monitor monitor, String expectedAuthHeader) {
+    public DataPlanePublicApiController(EdcHttpClient client, Monitor monitor, TokenValidationService tokenValidationService, PublicKeyResolver publicKeyResolver) {
         this.client = client;
         this.monitor = monitor;
-        this.expectedAuthHeader = expectedAuthHeader;
+        this.tokenValidationService = tokenValidationService;
+        this.publicKeyResolver = publicKeyResolver;
     }
 
     @GET
     @Path("/source")
-    public Response dataSource(@Context HttpHeaders headers) {
-        if (!isAuthorized(headers)) {
+    public Response dataSource(@PathParam("dataflowId") String dataflowId, @Context HttpHeaders headers) {
+        if (isAuthorized(headers, dataflowId).failed()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         return Response.ok(downloadJsonFromUrl("https://jsonplaceholder.typicode.com/todos")).build();
     }
 
 
-
     @GET
     @Path("/source/{resource}")
-    public Response dataSource(@PathParam("resource") String resource, @Context HttpHeaders headers) {
-        if (!isAuthorized(headers)) {
+    public Response dataSource(@PathParam("dataflowId") String dataflowId, @PathParam("resource") String resource, @Context HttpHeaders headers) {
+        if (isAuthorized(headers, dataflowId).failed()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         var formatted = "https://jsonplaceholder.typicode.com/%s".formatted(resource);
@@ -64,17 +73,29 @@ public class DataPlanePublicApiController {
 
     @GET
     @Path("/source/{resource}/{id}")
-    public Response dataSource(@PathParam("resource") String resource, @PathParam("id") String id, @Context HttpHeaders headers) {
-        if (!isAuthorized(headers)) {
+    public Response dataSource(@PathParam("dataflowId") String dataflowId, @PathParam("resource") String resource, @PathParam("id") String id, @Context HttpHeaders headers) {
+        if (isAuthorized(headers, dataflowId).failed()) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         var formatted = "https://jsonplaceholder.typicode.com/%s/%s".formatted(resource, id);
         return Response.ok(downloadJsonFromUrl(formatted)).build();
     }
 
-    private boolean isAuthorized(HttpHeaders headers) {
+    private Result<ClaimToken> isAuthorized(HttpHeaders headers, String dataflowId) {
         var authHeader = headers.getHeaderString(HttpHeaders.AUTHORIZATION);
-        return expectedAuthHeader.equals(authHeader);
+        if (authHeader == null) {
+            return Result.failure("No Authorization header");
+        }
+        if (!authHeader.startsWith("Bearer ")) {
+            return Result.failure("Authorization header is not a Bearer token");
+        }
+        var token = authHeader.replace("Bearer ", "");
+        return tokenValidationService.validate(token, publicKeyResolver, new TokenValidationRule() {
+            @Override
+            public Result<Void> checkRule(@NotNull ClaimToken toVerify, @Nullable Map<String, Object> additional) {
+                return toVerify.getStringClaim("sub").equals(dataflowId) ? Result.success() : Result.failure("Not authorized");
+            }
+        });
     }
 
     private @NotNull String downloadJsonFromUrl(String formatted) {

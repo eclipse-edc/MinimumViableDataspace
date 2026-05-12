@@ -21,8 +21,8 @@ data:
   edc.hostname: "dataplane.provider.svc.cluster.local"
   dataplane.id: "provider-dataplane"
 
-  edc.transfer.proxy.token.verifier.publickey.alias: "dataplane-private"
-  edc.transfer.proxy.token.signer.privatekey.alias: "dataplane-public"
+  edc.transfer.proxy.token.verifier.publickey.alias: "dataplane-public"
+  edc.transfer.proxy.token.signer.privatekey.alias: "dataplane-private"
 
   edc.dpf.selector.url: "http://controlplane.provider.svc.cluster.local:8083/api/control/v1/dataplanes"
 

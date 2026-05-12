@@ -24,6 +24,10 @@ dependencies {
     implementation(libs.edc.core.runtime)
     implementation(libs.edc.ext.http)
     implementation(libs.dataplane.sdk)
+    implementation(libs.edc.spi.token)
+    implementation(libs.edc.lib.token)
+    implementation(libs.edc.lib.crypto)
+    implementation(libs.edc.lib.keys)
 
     // needed for the key seed extension
     runtimeOnly(libs.tink)
@@ -32,9 +36,8 @@ dependencies {
     // for kubernetes probes
     runtimeOnly(libs.edc.api.observability)
 
-//    runtimeOnly(project(":extensions:data-plane-public-api-v2"))
     runtimeOnly(libs.edc.core.participantcontext.config)
-//    runtimeOnly(libs.edc.vault.hashicorp)
+    runtimeOnly(libs.edc.vault.hashicorp)
     runtimeOnly(libs.edc.bom.dataplane.sql)
 }
 

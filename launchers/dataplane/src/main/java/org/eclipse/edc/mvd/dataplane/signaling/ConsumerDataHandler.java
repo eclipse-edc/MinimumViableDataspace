@@ -63,7 +63,7 @@ public class ConsumerDataHandler {
                 .map(DataAddress.EndpointProperty::value)
                 .orElseThrow(() -> new IllegalArgumentException("No access token found in data address properties"));
         var request = new Request.Builder()
-                .addHeader("Authorization", token)
+                .addHeader("Authorization", "Bearer " + token)
                 .url(sourceUri.toString())
                 .get()
                 .build();
