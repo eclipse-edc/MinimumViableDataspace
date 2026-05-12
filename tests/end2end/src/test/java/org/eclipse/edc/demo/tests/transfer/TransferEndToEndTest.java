@@ -158,7 +158,6 @@ public class TransferEndToEndTest {
                 });
 
         System.out.printf("Fetch dataflow with ID %s from custom proxy%n", transferProcessId);
-        // fetch EDR for transfer processs
         var endpoint = new AtomicReference<String>();
         var token = new AtomicReference<String>();
         await().atMost(TEST_TIMEOUT_DURATION)
@@ -175,7 +174,7 @@ public class TransferEndToEndTest {
                     endpoint.set(jp.getString("endpoint"));
                     token.set(jp.get("endpointProperties.find { it.name == 'access_token' }.value"));
 
-                    assertThat(endpoint.get()).isNotNull().endsWith("/api/public/data/source");
+                    assertThat(endpoint.get()).isNotNull().matches(".*/api/public/.*/data/source");
                     assertThat(token.get()).isNotNull();
                 });
 
