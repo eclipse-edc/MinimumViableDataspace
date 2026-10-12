@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 // so distribution.distributionId:title will become title
 public class DistributionMetadataExtractor {
 
-    private static final Map<String, String> FORMAT_BY_TYPE = Map.of(
+    private static final Map<String, String> DISTRIBUTION_FORMAT_BY_TYPE = Map.of(
             "HttpData", "HttpData-PULL"
     );
 
@@ -50,10 +50,18 @@ public class DistributionMetadataExtractor {
         return new EuropeanaDcatDistribution(distributionId, distributionProperties);
     }
 
+
+    /**
+     * Retrieves the distribution format based on the type of the given {@link DataAddress}.
+     *
+     * @param dataAddress the {@link DataAddress} containing the type information. Can be null.
+     * @return the distribution format associated with the type of the {@link DataAddress}, or an empty string if
+     *         the type is null, not found, or no corresponding format exists.
+     */
     public static String getDistributionFormat(DataAddress dataAddress) {
         return Optional.ofNullable(dataAddress)
                 .map(DataAddress::getType)
-                .map(FORMAT_BY_TYPE::get)
+                .map(DISTRIBUTION_FORMAT_BY_TYPE::get)
                 .orElse("");
     }
 

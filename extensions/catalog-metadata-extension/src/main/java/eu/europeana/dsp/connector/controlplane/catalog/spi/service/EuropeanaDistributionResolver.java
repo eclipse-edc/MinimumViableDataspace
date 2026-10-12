@@ -61,39 +61,39 @@ public class EuropeanaDistributionResolver extends DefaultDistributionResolver {
                                 .build())
                         .build());
             }
-            return buildDistributions(asset.getDataAddress(), asset.getId());
+            return buildDistributions(asset);
         }
         if (asset.getDataAddress() != null) {
-            return buildDistributions(asset.getDataAddress(), asset.getId());
+            return buildDistributions(asset);
         }
         return Collections.emptyList();
     }
 
     /**
-     * Builds a list of {@link Distribution} objects based on the given properties and asset ID.
+     * Builds a list of distributions for the given asset based on its properties and metadata.
+     * Each distribution is associated with a data service and contains relevant metadata.
      *
-     * @param dataAddress dataaddress object with a map of properties containing distribution metadata. The keys should follow
-     *                   a specific naming pattern ("distribution.{id}.[property]") to be correctly processed.
-     * @param assetId the unique identifier of the asset to associate with each distribution's data service.
-     * @return a list of {@link Distribution} objects constructed from the provided properties.
-     *         If no distributions are found, an empty list is returned.
+     * @param asset the asset for which the distributions are to be created. It contains metadata and
+     *              a data address that are used to determine the number of distributions and their details.
+     * @return a list of {@code Distribution} objects constructed from the asset's properties.
+     *         The list will be empty if the asset does not have valid distribution data.
      */
-    public static List<Distribution> buildDistributions(DataAddress dataAddress, String assetId) {
+    public static List<Distribution> buildDistributions(Asset asset) {
         List<Distribution> distributions = new ArrayList<>();
-        Map<String, Object> properties = dataAddress.getProperties();
+        Map<String, Object> properties = asset.getDataAddress().getProperties();
         int noOfDistribution = getDistributionCount(properties);
 
         if (noOfDistribution > 0) {
             // TODO check if this will be the same dataservice created everytime based on asset id
             var dataService = DataService.Builder.newInstance()
                     .id(Base64.getUrlEncoder()
-                            .encodeToString(assetId.getBytes()))
+                            .encodeToString(asset.getId().getBytes()))
                     .build();
 
             for (int i = 1; i <= noOfDistribution; i++) {
                 EuropeanaDcatDistribution distribution = buildDistribution(properties, String.valueOf(i));
                 distribution.setDataService(dataService);
-                distribution.setFormat(getDistributionFormat(dataAddress));
+                distribution.setFormat(getDistributionFormat(asset.getDataAddress()));
                 distributions.add(distribution);
             }
         }
