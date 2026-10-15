@@ -67,12 +67,12 @@ spec:
               value: postgres
             - name: POSTGRES_DB
               value: keycloak
-            - name: KC_DB_URL
-              value: jdbc:postgresql://postgres.dsp-common-${ENVIRONMENT}.svc.cluster.local:5432/keycloak
+            - name: ${KC_PG_DB_NAME}
+              value: ${KC_PG_DB_URL}
             - name: KC_DB_USERNAME
-              value: "kc"
+              value: ${KC_PG_DB_USERNAME}
             - name: KC_DB_PASSWORD
-              value: "kc"
+              value: ${KC_PG_DB_PASS}
           volumeMounts:
             - name: realm-config
               mountPath: /opt/keycloak/data/import
