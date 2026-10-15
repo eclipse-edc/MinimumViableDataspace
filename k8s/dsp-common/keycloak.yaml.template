@@ -34,7 +34,7 @@ spec:
           args:
             - "start-dev"
             - "--health-enabled=true"
-            - "--import-realm"
+            - "${KC_IMPORT_REALM}"
           ports:
             - containerPort: 8080
               name: http
