@@ -66,8 +66,8 @@ spec:
             - name: KC_DB
               value: postgres
             - name: POSTGRES_DB
-              value: keycloak
-            - name: ${KC_PG_DB_NAME}
+              value: ${KC_PG_DB_NAME}
+            - name: KC_DB_URL
               value: ${KC_PG_DB_URL}
             - name: KC_DB_USERNAME
               value: ${KC_PG_DB_USERNAME}
